@@ -1,0 +1,110 @@
+	<script src="assets/plugins/jquery/jquery.min.js"></script>
+	<script src="assets/plugins/popper/popper.js"></script>
+	<script src="assets/plugins/jquery-blockui/jquery.blockui.min.js"></script>
+    <script src="assets/plugins/jquery-validation/js/jquery.validate.min.js"></script>
+	<script src="assets/plugins/jquery-validation/js/additional-methods.min.js"></script>
+	<script src="assets/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
+	<!-- bootstrap -->
+	<script src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+	<script src="assets/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
+    <script src="assets/plugins/flatpicker/js/flatpicker.min.js"></script>
+	<script src="assets/js/pages/date-time/date-time.init.js"></script>
+	<script src="assets/plugins/sparkline/jquery.sparkline.js"></script>
+	<script src="assets/js/pages/sparkline/sparkline-data.js"></script>
+    <!-- data tables -->
+	<script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
+	<script src="assets/plugins/datatables/plugins/bootstrap/dataTables.bootstrap4.min.js"></script>
+	<script src="assets/plugins/datatables/export/dataTables.buttons.min.js"></script>
+	<script src="assets/plugins/datatables/export/buttons.flash.min.js"></script>
+	<script src="assets/plugins/datatables/export/jszip.min.js"></script>
+	<script src="assets/plugins/datatables/export/pdfmake.min.js"></script>
+	<script src="assets/plugins/datatables/export/vfs_fonts.js"></script>
+	<script src="assets/plugins/datatables/export/buttons.html5.min.js"></script>
+	<script src="assets/plugins/datatables/export/buttons.print.min.js"></script>
+	<script src="assets/js/pages/table/table_data.js"></script>
+	<!-- Common js-->
+	<script src="assets/js/app.js"></script>
+    <script src="assets/js/pages/validation/form-validation.js"></script>
+	<script src="assets/js/layout.js"></script>
+	<script src="assets/js/theme-color.js"></script>
+	<!--apex chart-->
+	<script src="assets/plugins/apexcharts/apexcharts.min.js"></script>
+	<script src="assets/js/pages/chart/chartjs/home-data.js"></script>
+	<!-- summernote -->
+	<script src="assets/plugins/summernote/summernote.js"></script>
+	<script src="assets/js/pages/summernote/summernote-data.js"></script>
+    <!-- dropzone -->
+	<script src="assets/plugins/dropzone/dropzone.js"></script>
+	<script src="assets/plugins/dropzone/dropzone-call.js"></script>
+	<!-- material -->
+	<script src="assets/plugins/material/material.min.js"></script>
+    <script src="assets/plugins/sweet-alert/sweetalert2.all.min.js"></script>
+	<script src="assets/plugins/sweet-alert/sweetalert2.min.js"></script>
+	<script src="assets/js/pages/sweet-alert/sweet-alert-data.js"></script>
+	
+	<!--delete event calendar function-->
+	<script type="text/javascript">
+		$(document).ready(function(){
+		readData();
+		$(document).on('click', '#delete_event', function(e){
+		var ec_id = $(this).data('id');
+		SwalDelete(ec_id);
+		e.preventDefault();
+		});
+		})
+			
+		function SwalDelete(ec_id){
+			swal.fire({
+				title: 'Are you sure?',
+				text: "It will be deleted permanently!",
+				type: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Yes, delete it!',
+				showLoaderOnConfirm: true,
+				
+				preConfirm: function() {
+				return new Promise(function(resolve) {
+				
+					$.ajax({
+						type:'POST',
+						url:'all_event_calendar.php',
+						data:'delete_ec='+ec_id,
+					})
+					.done(function(response){
+						swal.fire('Deleted!', response.message, response.status);
+						window.location.replace("all_event_calendar.php");
+					})
+					.fail(function(){
+						swal.fire('Oops...', 'Something went wrong!', 'error');
+					});
+				});
+				},
+				allowOutsideClick: false			  
+			});	
+		}
+
+		function readData(){
+				$('#load_content').load('event_calendar_table');	
+		}	
+		
+		$(document).ready(function(){
+                $('#applicant_program').on('change',function(){
+                  var progID = $(this).val();
+                  if(progID){
+                    $.ajax({
+                      type:'POST',
+                      
+                      data:'progid='+progID,
+                      url: '../mode_study.php',
+                      success:function(html){
+                      $('#mode_study').html(html);    
+                      }
+                    }); 
+                  }else{
+                    $('#mode_study').html('<option value="">Select programme first</option>'); 
+                  }
+                });
+              });
+	</script>
