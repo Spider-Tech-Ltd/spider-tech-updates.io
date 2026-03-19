@@ -51,8 +51,9 @@
               <span class="navbar-toggler-icon"></span>
             </button>
             <!-- Links -->
-             <div class="main-menu collapse navbar-collapse" id="nav-content">
-              <ul class="navbar-nav">
+             <div class="main-menu collapse navbar-collapse d-lg-flex justify-content-lg-between w-100" id="nav-content">
+              <!-- Center Links -->
+              <ul class="navbar-nav mx-auto text-center">
                 <li class="nav-item dropdown active">
                   <a class="nav-link"  href="index.php">Home</a>
                 </li>
@@ -75,10 +76,18 @@
                 <li class="nav-item dropdown">
                   <a class="nav-link" href="trainings.php">Trainings</a>
                 </li>
+                <!-- New Links -->
                  <li class="nav-item dropdown">
-                  <a class="nav-link" href="contact-us.php">Contact Us</a>
+                  <a class="nav-link" href="pages/forum/index.php">Forum</a>
+                </li>
+                 <li class="nav-item dropdown">
+                  <a class="nav-link" href="blog.php">Blog</a>
                 </li>
               </ul>
+              <!-- Right CTA -->
+              <div class="text-center mt-3 mt-lg-0 ml-lg-3">
+                  <a class="btn text-white px-4 py-2" href="contact-us.php" style="background-color: #f48221; border-radius: 50px; font-weight: 600; box-shadow: 0 4px 10px rgba(244,130,33,0.3);">Contact Us</a>
+              </div>
             </div>
           </nav>
     </div>
