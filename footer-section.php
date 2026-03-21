@@ -1,225 +1,227 @@
-<footer class="home index-2">
-  <div class="container">
-    <div class="col-lg-12">
-      <div class="row row-safari">
-        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-          <div class="section_heading">
-            <h2>Contact Info</h2>
-              <div class="separator left-align">
-                <ul>
-                  <li></li>
-                  <li></li>
-                  <li></li>
-                </ul>
-              </div>
+<?php
+/**
+ * Global Footer Section — Phase 7 Redesign
+ * Features: Minimalist 4-Column Grid, Brand Navigation, Social Integration, Africa Pride
+ * Generated via Stitch Design Principles & Brand Alliance
+ */
+?>
+
+<style>
+  /* ====== Modern Footer Reset & Base ====== */
+  .site-footer {
+    background-color: #ffffff;
+    padding: 80px 0 40px 0;
+    font-family: 'Open Sans', sans-serif;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    color: #555555;
+  }
+
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+    gap: 40px;
+    margin-bottom: 60px;
+  }
+
+  /* Column Typography */
+  .footer-col h4 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #111111;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .footer-col p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  /* Footer Links */
+  .footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .footer-links li {
+    margin-bottom: 12px;
+  }
+  .footer-links a {
+    color: #555555;
+    text-decoration: none !important;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover {
+    color: #f48221;
+  }
+
+  /* Branding & Social */
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    text-decoration: none !important;
+  }
+  .footer-logo-icon {
+    width: 32px;
+    height: 32px;
+    background-color: #f48221;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+  }
+  .footer-logo-text {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #111111;
+  }
+
+  .social-links {
+    display: flex;
+    gap: 12px;
+  }
+  .social-icon {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #e9ecef;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555555;
+    transition: all 0.3s;
+    text-decoration: none !important;
+  }
+  .social-icon:hover {
+    background-color: #f48221;
+    border-color: #f48221;
+    color: #ffffff;
+    transform: translateY(-3px);
+  }
+
+  /* Contact Specifics */
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+  }
+  .contact-item i {
+    color: #f48221;
+    font-size: 1.1rem;
+  }
+  .contact-item span {
+    font-weight: 600;
+    color: #111111;
+  }
+
+  /* Bottom Bar */
+  .footer-bottom {
+    border-top: 1px solid #edf2f7;
+    padding-top: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #718096;
+  }
+  .heart-icon { color: #f48221; }
+
+  /* Responsive Adjustments */
+  @media (max-width: 992px) {
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 576px) {
+    .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+    .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+  }
+</style>
+
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-grid">
+      
+      <!-- Col 1: Branding -->
+      <div class="footer-col">
+        <a href="index.php" class="footer-logo">
+          <div class="footer-logo-icon">
+            <span class="material-symbols-outlined" style="font-size: 20px;">hub</span>
           </div>
-          <div class="contact_info">
-             <ul>
-               <li>
-                 <div class="icon">
-                   <i class="flat flaticon-facebook-placeholder-for-locate-places-on-maps"></i>
-                 </div>
-                 <div class="detail">
-                   <h5>Address</h5>
-                   <div class="content">
-                       Head Office : <span class="value"> <?php echo stripslashes($fetch_contact['contact_address']); ?></span>
-                   </div>
-                 </div>
-               </li>
-               <li>
-                 <div class="icon">
-                   <i class="flat flaticon-phone-receiver"></i>
-                 </div>
-                 <div class="detail">
-                   <h5>Call Us On</h5>
-                   <div class="content">
-                      Main Office : <span class="value"><?php echo stripslashes($fetch_contact['contact_pno']); ?></span> <br /> 
-                      
-                   </div>
-                 </div>
-               </li>
-               <li>
-                 <div class="icon">
-                   <i class="flat flaticon-mail-black-envelope-symbol"></i>
-                 </div>
-                  <div class="detail">
-                   <h5>Mail Us On</h5>
-                   <div class="content">
-                      Customer Support : <span class="value"><a href="javascript:void(0)" title="<?= $fetch_contact['contact_email']; ?>"><?= $fetch_contact['contact_email']; ?></a></span><br />
-                   </div>
-                 </div>
-               </li>
-               <li>
-                 <div class="icon">
-                   <i class="flat flaticon-share"></i>
-                 </div>
-                 <div class="detail">
-                   <h5>Follow Us On</h5>
-                   <div class="content">
-                      <a target="_blank" href="https://web.facebook.com/people/Spider-Hub-Spider-Technologies-Limited/61561284852721/" title="Facebook" ><i class="fab fa-facebook-f"></i></a>
-                      <a href="javascript:void(0)" title="Twitter" ><i class="fab fa-twitter"></i></a>
-                      <a target="_blank" href="https://www.youtube.com/channel/UCBg_EHRiMiwkJyCuva84zNw" title="Youtube" ><i class="fab fa-youtube"></i></a>
-                      <a href="javascript:void(0)" title="Linkedin" ><i class="fab fa-linkedin-in"></i></a>
-                      <a target="_blank" href="https://www.instagram.com/spidertech.hub?igsh=bGhnbWU3OHE5cWtp" title="Instagram" ><i class="fab fa-instagram"></i></a>
-                   </div>
-                 </div>
-               </li>
-             </ul>    
-          </div>
-        </div>
-        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-           <div class="section_heading">
-            <h2>Contact Form</h2>
-              <div class="separator left-align">
-                <ul>
-                  <li></li>
-                  <li></li>
-                  <li></li>
-                </ul>
-              </div>
-          </div>
-           <div class="contact-form">
-              <form id="footerForm" action="" method="post">
-                <div class="col-lg-12 col-md-6 mb10" id="footerMessage">
-                  <?php if(!empty($success_msg)) { echo $success_msg; } ?>
-                </div>
-                <div class="form-group">
-                  <input name="name" type="text" placeholder="Full Name" value="<?php if (isset($_POST['send']) && !empty($name)) { echo $name; } ?>" />
-                </div>
-                <div class="form-group">
-                  <input name="email" type="text" placeholder="Email" value="<?php if (isset($_POST['send']) && !empty($email)) { echo $email; } ?>" />
-                </div>
-                <div class="form-group">
-                  <input name="subject" type="text" placeholder="Subject" value="<?php if (isset($_POST['send']) && !empty($subject)) { echo $subject; } ?>" />
-                </div>
-                <div class="form-group">
-                  <textarea name="message" placeholder="Message"><?php if (isset($_POST['send']) && !empty($message)) { echo $message; } ?></textarea>
-                </div>
-                <div class="form-group">
-                  <div class="g-recaptcha" data-sitekey="6Lfl_gsqAAAAABRSBy90ezX53ZwoZZDScFsJieVg"></div>
-                </div>
-                <div class="form-group">
-                  <button id="send" name="send" type="submit">Submit</button>
-                </div>
-              </form>
-           </div>
+          <span class="footer-logo-text">Spider Tech</span>
+        </a>
+        <p>Empowering African Tech Innovators since 2020. We build, nurture, and scale the next generation of digital solutions.</p>
+        <div class="social-links">
+          <a target="_blank" href="https://web.facebook.com/people/Spider-Hub-Spider-Technologies-Limited/61561284852721/" class="social-icon" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="javascript:void(0)" class="social-icon" title="Twitter"><i class="fab fa-twitter"></i></a>
+          <a target="_blank" href="https://www.youtube.com/channel/UCBg_EHRiMiwkJyCuva84zNw" class="social-icon" title="Youtube"><i class="fab fa-youtube"></i></a>
+          <a href="javascript:void(0)" class="social-icon" title="Linkedin"><i class="fab fa-linkedin-in"></i></a>
+          <a target="_blank" href="https://www.instagram.com/spidertech.hub?igsh=bGhnbWU3OHE5cWtp" class="social-icon" title="Instagram"><i class="fab fa-instagram"></i></a>
         </div>
       </div>
-    </div>
-  </div>
-<div class="bottom">
-    <div class="container">
-      <div class="navigation">
-         <ul>
-          <li><a href="index.php" title="Homepage">Home</a></li>
-          <li class="separator-pipesign white"></li>
-          <li><a href="about-us.php" title="About Us">About Us</a></li>
-          <li class="separator-pipesign white"></li>
-          <li><a href="services.php" title="Services">Services</a></li>
-          <li class="separator-pipesign white"></li>
-          <li><a href="projects.php" title="Projects">Project</a></li>
-          <li class="separator-pipesign white"></li>
-          <li><a href="trainings.php" title="Trainings">Trainings</a></li>
-          <li class="separator-pipesign white"></li>
-          <li><a href="contact-us.php" title="Contact Us">Contact Us</a></li>
+
+      <!-- Col 2: Company -->
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul class="footer-links">
+          <li><a href="about-us.php">About Us</a></li>
+          <li><a href="services.php">Services</a></li>
+          <li><a href="projects.php">Projects</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press Kit</a></li>
         </ul>
       </div>
-    </div>
-    <hr />
-    <div class="container">
-      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 copyright">
-        <div class="row">
-          <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12"> Copyright &copy;<span id="copyright-year"></span> 
-            <span class="separator-pipesign white"></span>
-            All Rights Reserved
-            <span class="separator-pipesign white"></span>
-            <a href="#"></a></div>
-          <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 text-right"> <a href="javascript:void(0)">Privacy Policy</a>
-            <span class="separator-pipesign white"></span>
-            <a href="javascript:void(0)">Terms &amp; Conditions</a>
-            <span class="separator-pipesign white"></span>
-            <a href="faq.php">FAQ's</a> </div>
+
+      <!-- Col 3: Community -->
+      <div class="footer-col">
+        <h4>Community</h4>
+        <ul class="footer-links">
+          <li><a href="pages/forum/index.php">Forum</a></li>
+          <li><a href="pages/blog/index.php">Blog</a></li>
+          <li><a href="upcoming-events.php">Upcoming Events</a></li>
+          <li><a href="#">Developer Hub</a></li>
+          <li><a href="#">Resources</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 4: Support -->
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul class="footer-links" style="margin-bottom: 24px;">
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms & Conditions</a></li>
+          <li><a href="faq.php">FAQ's</a></li>
+        </ul>
+        <div class="contact-item">
+          <span class="material-symbols-outlined" style="font-size: 18px; color: #f48221;">mail</span>
+          <a href="mailto:<?= $fetch_contact['contact_email']; ?>" style="color: #111111; font-weight: 600; text-decoration: none;"><?= $fetch_contact['contact_email']; ?></a>
+        </div>
+        <div class="contact-item">
+          <span class="material-symbols-outlined" style="font-size: 18px; color: #f48221;">call</span>
+          <span style="font-weight: 600; color: #111111;"><?= $fetch_contact['contact_pno']; ?></span>
         </div>
       </div>
+
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="footer-bottom">
+      <div>© <?php echo date('Y'); ?> Spider Technologies Limited. All Rights Reserved.</div>
+      <div>Made with <span class="heart-icon">❤️</span> in Africa</div>
     </div>
   </div>
 </footer>
-<script src="js/jquery-2.2.4.min.js"></script>
-<script src="js/jquery.validate.js"></script>
-<script type="text/javascript">
-    $(document).ready(function() {
-        $("#footerForm").validate({
-            rules: {
-                name: { required: true },
-                email: { required: true },          
-                subject: { required: true },
-                message: { required: true },
-            },
-            messages: {
-                name: { required: "<font color='#FF0000'>Name is required!</font>" },
-                email: { required: "<font color='#FF0000'>Email is required!</font>" },
-                subject: { required: "<font color='#FF0000'>Subject is required!</font>" },
-                message: { required: "<font color='#FF0000'>Message is required!</font>" },                    
-            },
-            submitHandler: function(form) {
-                var sendButton = $("#send");
-                var msg = $('#footerMessage');
-
-                // Disable button and show sending state
-                sendButton.prop('disabled', true).html('Submitting...');
-
-                $.ajax({
-                    url: 'includes/footer-form-function.php',
-                    type: 'POST',
-                    dataType: 'html',
-                    data: $(form).serialize(),
-                    success: function(data) {
-                        // Show the success message after the "Sending..." text has been displayed for 1.5 seconds
-                      if(data == "<div class='alert alert-danger'>Please check the reCAPTCHA checkbox.</div>")
-                      {
-                        setTimeout(function() {
-                            // Reset the button text
-                            sendButton.prop('disabled', false).html('Submit');
-                            
-                            // Show the success message and hide it after 3 seconds
-                            msg.html(data).fadeIn().delay(5000).fadeOut("slow");
-                            
-                            // Reset the form
-                            //form.reset();
-                        }, 1000); // Delay of 1 second
-                      }
-                      else
-                      {
-                        setTimeout(function() {
-                            // Reset the button text
-                            sendButton.prop('disabled', false).html('Submit');
-                            
-                            // Show the success message and hide it after 3 seconds
-                            msg.html(data).fadeIn().delay(5000).fadeOut("slow");
-                            
-                            // Reset the form
-                            form.reset();
-                        }, 1000); // Delay of 1 second
-                        // Reinitialize recaptcha widget
-                        grecaptcha.reset();
-                      }
-                    },
-                    error: function(e) {
-                        console.log("AJAX call failed. Error: " + e);
-                        msg.html('<p class="text-center text-danger">An error occurred. Please try again later.</p>').fadeIn();
-                        sendButton.prop('disabled', false).html('Submit');
-                    }
-                    
-                });
-                return false; // Prevent the default form submission
-            }
-        });
-    });
-</script>
-<script>
-    // JavaScript to update the copyright year dynamically
-    document.addEventListener('DOMContentLoaded', function() {
-        const currentYear = new Date().getFullYear();
-        document.getElementById('copyright-year').textContent = currentYear;
-    });
-</script>

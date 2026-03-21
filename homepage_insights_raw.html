@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f38320",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#221810",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased">
+<!-- Top Navigation Bar -->
+<header class="border-b border-slate-200 dark:border-primary/20 px-6 lg:px-20 py-4 bg-background-light dark:bg-background-dark sticky top-0 z-50">
+<div class="max-w-7xl mx-auto flex items-center justify-between">
+<div class="flex items-center gap-10">
+<div class="flex items-center gap-3">
+<div class="size-8 bg-primary flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-background-dark font-bold">grid_view</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight uppercase">Spider Tech</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8 text-sm font-medium">
+<a class="hover:text-primary transition-colors" href="#">Solutions</a>
+<a class="text-primary underline underline-offset-8" href="#">Case Studies</a>
+<a class="hover:text-primary transition-colors" href="#">Insights</a>
+<a class="hover:text-primary transition-colors" href="#">About</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="pl-10 pr-4 py-2 bg-slate-100 dark:bg-primary/10 border-none rounded-lg text-sm focus:ring-1 focus:ring-primary w-64" placeholder="Search insights..." type="text"/>
+</div>
+<button class="bg-primary hover:bg-primary/90 text-background-dark px-5 py-2 rounded-lg text-sm font-bold transition-all">
+                    Contact Us
+                </button>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-6 lg:px-20 py-16">
+<!-- Section Header -->
+<div class="mb-12 max-w-3xl">
+<h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-4 leading-tight">
+                Technical Intelligence &amp; <span class="text-primary">Global Impact</span>
+</h2>
+<p class="text-lg text-slate-600 dark:text-slate-400 font-light">
+                Exploring the intersection of industrial innovation and digital excellence through rigorous thought leadership.
+            </p>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Component 1: Main Featured Case Study -->
+<div class="lg:col-span-2 group flex flex-col justify-between overflow-hidden rounded-xl border border-slate-200 dark:border-primary/20 bg-white dark:bg-primary/5 shadow-sm transition-all hover:shadow-md">
+<div class="relative h-72 md:h-96 w-full overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/80 to-transparent z-10"></div>
+<div class="absolute top-4 left-4 z-20">
+<span class="bg-primary text-background-dark px-3 py-1 text-xs font-bold uppercase tracking-widest rounded">Featured Case Study</span>
+</div>
+<div class="absolute bottom-6 left-6 z-20 flex items-center gap-4">
+<div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-lg">
+<p class="text-primary text-2xl font-bold leading-none">30%</p>
+<p class="text-white text-[10px] uppercase font-medium tracking-tighter">Efficiency Increase</p>
+</div>
+</div>
+<div class="w-full h-full bg-center bg-cover transition-transform duration-700 group-hover:scale-105" data-alt="Modern green energy solar farm and wind turbines at dusk" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBPKOG6twIyDJLkSJ71EoWAGQ5zRnuAJz1RvSEy3OBIuKgbryw_2Rlk9uzdj5Rn3YojnYEGEwk2LMz5ID80E1aUTIC8eoL5JZhamTMUwSYkowvDvowF2wpm9arq3nEkuF-wavsKf4Cn8ZtAEZnfbnfRkNY2tpPdjjLwB8tcHVq1s-ZjrFrDQOneIHTxo_U9oeeUu_wRQf8lQaUrhwGl2rxPn5HYApT5TYT5c6UVLINkZ_0do7KGBMGLurJekLTjx0CWGfO2iPRZ_AT7");'>
+</div>
+</div>
+<div class="p-8 flex flex-col justify-between grow">
+<div>
+<h3 class="text-2xl font-bold mb-4 group-hover:text-primary transition-colors">Green Energy Infrastructure: A Zero-Trust Approach</h3>
+<p class="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed max-w-xl">
+                            A comprehensive deep-dive into securing modern power grids with next-gen protocols. Learn how we implemented a hardware-rooted security layer across 4,000 distributed nodes.
+                        </p>
+</div>
+<div class="flex items-center">
+<button class="group/btn flex items-center gap-3 bg-primary text-background-dark px-6 py-3 rounded-lg font-bold text-sm transition-all hover:pr-8">
+                            View Full Case Study
+                            <span class="material-symbols-outlined text-xl transition-transform group-hover/btn:translate-x-1">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Component 2: Research Stack -->
+<div class="flex flex-col gap-6">
+<div class="flex items-center justify-between px-2">
+<h3 class="text-lg font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">analytics</span>
+                        Research Stack
+                    </h3>
+</div>
+<!-- Research Card 1 -->
+<div class="group flex flex-col p-6 rounded-xl border border-slate-200 dark:border-primary/10 bg-white dark:bg-primary/5 hover:border-primary/40 transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<span class="text-[10px] font-bold tracking-[0.2em] text-slate-500 dark:text-primary/60 uppercase">Logistics</span>
+<span class="text-[10px] font-medium text-slate-400">8 MIN READ</span>
+</div>
+<h4 class="text-lg font-bold mb-4 group-hover:text-primary transition-colors">The Future of AI in Logistics</h4>
+<div class="flex items-center justify-between mt-auto">
+<p class="text-xs text-slate-500 dark:text-slate-400">Autonomous supply chain resilience.</p>
+<span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">north_east</span>
+</div>
+</div>
+<!-- Research Card 2 -->
+<div class="group flex flex-col p-6 rounded-xl border border-slate-200 dark:border-primary/10 bg-white dark:bg-primary/5 hover:border-primary/40 transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<span class="text-[10px] font-bold tracking-[0.2em] text-slate-500 dark:text-primary/60 uppercase">Quantum</span>
+<span class="text-[10px] font-medium text-slate-400">12 MIN READ</span>
+</div>
+<h4 class="text-lg font-bold mb-4 group-hover:text-primary transition-colors">Quantum Computing Readiness</h4>
+<div class="flex items-center justify-between mt-auto">
+<p class="text-xs text-slate-500 dark:text-slate-400">Post-quantum cryptography standards.</p>
+<span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">north_east</span>
+</div>
+</div>
+<!-- Research Card 3 -->
+<div class="group flex flex-col p-6 rounded-xl border border-slate-200 dark:border-primary/10 bg-white dark:bg-primary/5 hover:border-primary/40 transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<span class="text-[10px] font-bold tracking-[0.2em] text-slate-500 dark:text-primary/60 uppercase">Cloud</span>
+<span class="text-[10px] font-medium text-slate-400">6 MIN READ</span>
+</div>
+<h4 class="text-lg font-bold mb-4 group-hover:text-primary transition-colors">Scalable Cloud Orchestration</h4>
+<div class="flex items-center justify-between mt-auto">
+<p class="text-xs text-slate-500 dark:text-slate-400">Multi-region latency optimization.</p>
+<span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">north_east</span>
+</div>
+</div>
+<!-- View All Insights -->
+<a class="flex items-center justify-center gap-2 py-4 border border-dashed border-slate-300 dark:border-primary/20 rounded-xl text-sm font-medium hover:bg-primary/5 transition-colors group" href="#">
+                    View All Insights
+                    <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">trending_flat</span>
+</a>
+</div>
+</div>
+<!-- Metric Bar Footer (Industrial Style) -->
+<div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 py-10 border-t border-slate-200 dark:border-primary/10">
+<div class="flex flex-col">
+<span class="text-primary font-display text-3xl font-bold">500+</span>
+<span class="text-slate-500 text-xs uppercase tracking-widest mt-1">Global Deployments</span>
+</div>
+<div class="flex flex-col">
+<span class="text-primary font-display text-3xl font-bold">24/7</span>
+<span class="text-slate-500 text-xs uppercase tracking-widest mt-1">Active Monitoring</span>
+</div>
+<div class="flex flex-col">
+<span class="text-primary font-display text-3xl font-bold">12ms</span>
+<span class="text-slate-500 text-xs uppercase tracking-widest mt-1">Average Latency</span>
+</div>
+<div class="flex flex-col">
+<span class="text-primary font-display text-3xl font-bold">142</span>
+<span class="text-slate-500 text-xs uppercase tracking-widest mt-1">Technical Patents</span>
+</div>
+</div>
+</main>
+<footer class="bg-slate-100 dark:bg-primary/5 py-12 px-6 lg:px-20 border-t border-slate-200 dark:border-primary/10">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-3 grayscale opacity-70">
+<div class="size-6 bg-slate-500 flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-white text-[16px] font-bold">grid_view</span>
+</div>
+<h1 class="text-sm font-bold tracking-tight uppercase">Spider Tech Industries</h1>
+</div>
+<div class="flex gap-8 text-xs font-medium text-slate-500 uppercase tracking-widest">
+<a class="hover:text-primary" href="#">Privacy Policy</a>
+<a class="hover:text-primary" href="#">Security Audit</a>
+<a class="hover:text-primary" href="#">Compliance</a>
+</div>
+<div class="text-xs text-slate-400">
+                © 2024 Spider Tech. All Rights Reserved.
+            </div>
+</div>
+</footer>
+</body></html>
