@@ -542,7 +542,7 @@ $redirect = isset($_GET['redirect']) ? htmlspecialchars($_GET['redirect']) : 'fe
         <!-- Register Link -->
         <p class="register-text">
             New to Spider Tech?
-            <a href="pages/forum/register.php">Create a free account &rarr;</a>
+            <a href="pages/forum/sign-up.php">Create a free account &rarr;</a>
         </p>
 
     </div>
