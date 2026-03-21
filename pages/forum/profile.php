@@ -583,5 +583,6 @@ $member = [
             document.getElementById('tab-' + tabId).classList.add('active');
         }
     </script>
+    <?php require("../../javascript-section.html"); ?>
 </body>
 </html>
