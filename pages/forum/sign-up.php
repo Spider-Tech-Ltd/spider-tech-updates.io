@@ -1,8 +1,8 @@
 <?php
 /**
- * Sign-Up Page (sign-up.php) — Phase 8 Redesign (V5)
+ * Sign-Up Page (sign-up.php) — Phase 8 Redesign (V6)
  * Goal: Refined, clean full-page registration form matching sign-in.php components.
- * Features: Two-column layout, no card background, fully rounded buttons.
+ * Features: Mix of two-column and full-width inputs, top border, no card background.
  */
 ?>
 <!DOCTYPE html>
@@ -46,6 +46,16 @@
         color: var(--text-dark);
       }
 
+      /* Top Border Accent */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #f48221, #e6751c);
+        z-index: 20;
+      }
+
       /* ======================================
          PAGE CONTAINER
          ====================================== */
@@ -55,7 +65,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 60px 20px 100px 20px;
+        padding: 80px 20px 100px 20px;
         position: relative;
       }
 
@@ -73,17 +83,18 @@
         font-size: 0.9rem;
         text-decoration: none !important;
         transition: color 0.2s;
+        z-index: 10;
       }
 
       .back-link:hover { color: var(--brand-orange); }
       .back-link .material-symbols-outlined { font-size: 20px; }
 
       /* ======================================
-         SIGN-UP FORM WRAPPER (No Background)
+         SIGN-UP FORM WRAPPER (Clean No-Card look)
          ====================================== */
       .signup-form-wrapper {
         width: 100%;
-        max-width: 650px;
+        max-width: 600px;
         background: transparent;
         padding: 0;
         z-index: 5;
@@ -95,15 +106,15 @@
         align-items: center;
         justify-content: center;
         gap: 12px;
-        margin-bottom: 32px;
+        margin-bottom: 24px;
         text-decoration: none !important;
       }
 
       .card-logo-icon {
-        width: 36px;
-        height: 36px;
-        background-color: var(--brand-orange);
-        border-radius: 10px;
+        width: 44px;
+        height: 44px;
+        background: linear-gradient(135deg, #f48221, #e6751c);
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -114,7 +125,7 @@
       .card-logo-text {
         font-family: 'Poppins', sans-serif;
         font-weight: 700;
-        font-size: 1.25rem;
+        font-size: 1.4rem;
         color: #111111;
         letter-spacing: -0.02em;
       }
@@ -124,11 +135,12 @@
       /* Typography */
       .card-heading {
         font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        font-size: 1.75rem;
+        font-weight: 800;
+        font-size: 1.85rem;
         text-align: center;
         margin-bottom: 8px;
         color: #111111;
+        letter-spacing: -0.01em;
       }
 
       .card-subtext {
@@ -136,14 +148,15 @@
         font-size: 0.95rem;
         color: var(--text-muted);
         text-align: center;
-        margin-bottom: 40px;
+        margin-bottom: 32px;
       }
 
       .card-divider {
         border: 0;
         height: 1px;
         background: #e2e8f0;
-        margin: 40px 0;
+        margin: 32px 0;
+        opacity: 0.6;
       }
 
       /* ======================================
@@ -168,10 +181,10 @@
         width: 100%;
         height: 52px;
         background-color: #ffffff;
-        border: 1px solid #e9ecef;
+        border: 1.5px solid #e9ecef;
         border-radius: 50px;
         padding: 0 24px;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         color: #111111;
         transition: all 0.2s ease;
         outline: none;
@@ -214,8 +227,8 @@
       .custom-checkbox {
         width: 18px;
         height: 18px;
-        border: 2px solid #e9ecef;
-        border-radius: 4px;
+        border: 2.5px solid #cbd5e1;
+        border-radius: 6px;
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -231,7 +244,7 @@
       }
 
       .custom-checkbox span {
-        font-size: 12px;
+        font-size: 14px;
         color: #fff;
         display: none;
       }
@@ -241,7 +254,7 @@
       .consent-text {
         font-size: 0.85rem;
         color: var(--text-muted);
-        line-height: 1.4;
+        line-height: 1.5;
         margin-bottom: 0;
       }
 
@@ -255,13 +268,13 @@
       .btn-signup {
         width: 100%;
         height: 54px;
-        background-color: var(--brand-orange);
+        background: linear-gradient(135deg, #f48221 0%, #e6751c 100%);
         color: #ffffff;
         border: none;
         border-radius: 50px;
         font-family: 'Poppins', sans-serif;
         font-weight: 700;
-        font-size: 0.9rem;
+        font-size: 1rem;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -276,7 +289,6 @@
       }
 
       .btn-signup:hover {
-        background-color: var(--brand-orange-hover);
         transform: translateY(-2px);
         box-shadow: 0 6px 18px rgba(244, 130, 33, 0.3);
       }
@@ -353,7 +365,7 @@
 
       /* Footer note */
       .signup-footer-note {
-        margin-top: 80px;
+        margin-top: 100px;
         text-align: center;
         font-family: 'Open Sans', sans-serif;
         font-size: 0.8rem;
@@ -373,8 +385,8 @@
       /* Mobile Adjustments */
       @media (max-width: 768px) {
         .signup-form-wrapper { max-width: 100%; padding: 0 10px; }
-        .back-link { top: 20px; left: 20px; position: static; margin-bottom: 40px; align-self: flex-start; }
-        .signup-page { padding-top: 40px; }
+        .back-link { top: 24px; left: 20px; position: static; margin-bottom: 40px; align-self: flex-start; }
+        .signup-page { padding-top: 60px; }
         .social-btn-row { flex-direction: column; align-items: center; }
         .btn-social { width: 100%; max-width: 320px; }
       }
@@ -402,8 +414,8 @@
         </a>
 
         <!-- Heading -->
-        <h1 class="card-heading">Join the Network</h1>
-        <p class="card-subtext">Sign up to join the conversation.</p>
+        <h1 class="card-heading">Create Account</h1>
+        <p class="card-subtext">Join the industrial tech conversations.</p>
 
         <form id="signupForm" novalidate>
 
@@ -425,17 +437,19 @@
                 </div>
             </div>
 
+            <!-- Company / Role (Full Width) -->
             <div class="row">
-                <!-- Company / Role -->
-                <div class="col-md-6">
+                <div class="col-12">
                     <div class="input-pill-wrapper">
                         <label class="form-label-custom">Company / Role</label>
                         <input type="text" class="input-pill" placeholder="Senior Systems Architect" required>
                     </div>
                 </div>
+            </div>
 
-                <!-- Password -->
-                <div class="col-md-6">
+            <!-- Password (Full Width) -->
+            <div class="row">
+                <div class="col-12">
                     <div class="input-pill-wrapper">
                         <label class="form-label-custom">Password</label>
                         <input type="password" id="passwordInput" class="input-pill" placeholder="••••••••" required>
@@ -449,7 +463,7 @@
             <!-- Consent -->
             <div class="consent-wrapper">
                 <div class="custom-checkbox" id="consentCheckbox">
-                    <span class="material-symbols-outlined">check</span>
+                    <span class="material-symbols-outlined" style="display: none;">check</span>
                 </div>
                 <p class="consent-text">
                     I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
@@ -526,8 +540,10 @@
      * Consent Checkbox
      */
     const checkbox = document.getElementById('consentCheckbox');
+    const checkIcon = checkbox.querySelector('.material-symbols-outlined');
     checkbox.addEventListener('click', () => {
-        checkbox.classList.toggle('checked');
+        const isChecked = checkbox.classList.toggle('checked');
+        checkIcon.style.display = isChecked ? 'block' : 'none';
     });
 
     /**
