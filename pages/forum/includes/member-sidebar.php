@@ -342,7 +342,7 @@
           <small>Upvotes</small>
         </div>
       </div>
-      <a href="#" class="profile-link">
+      <a href="pages/forum/profile.php" class="profile-link">
         View Profile <span class="material-symbols-outlined">arrow_forward</span>
       </a>
     </div>
