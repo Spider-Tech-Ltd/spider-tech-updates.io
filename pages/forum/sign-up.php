@@ -1,8 +1,8 @@
 <?php
 /**
- * Sign-Up Page (sign-up.php) — Phase 8 Redesign (V4)
- * Goal: Clean, full-page registration form matching sign-in.php design exactly.
- * Uses: Bootstrap 4, Vanilla CSS, Material Symbols
+ * Sign-Up Page (sign-up.php) — Phase 8 Redesign (V5)
+ * Goal: Refined, clean full-page registration form matching sign-in.php components.
+ * Features: Two-column layout, no card background, fully rounded buttons.
  */
 ?>
 <!DOCTYPE html>
@@ -34,7 +34,7 @@
         --bg-light: #f8fafc;
         --text-dark: #111111;
         --text-muted: #64748b;
-        --border-color: #e2e8f0;
+        --border-color: #e9ecef;
       }
 
       * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -52,9 +52,10 @@
       .signup-page {
         min-height: 100vh;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 40px 20px;
+        padding: 60px 20px 100px 20px;
         position: relative;
       }
 
@@ -78,16 +79,13 @@
       .back-link .material-symbols-outlined { font-size: 20px; }
 
       /* ======================================
-         SIGN-UP FORM WRAPPER
+         SIGN-UP FORM WRAPPER (No Background)
          ====================================== */
       .signup-form-wrapper {
         width: 100%;
-        max-width: 450px;
-        background: #ffffff;
-        padding: 40px;
-        border-radius: 24px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.02), 0 4px 10px rgba(0, 0, 0, 0.01);
-        border: 1px solid rgba(0, 0, 0, 0.05);
+        max-width: 650px;
+        background: transparent;
+        padding: 0;
         z-index: 5;
       }
 
@@ -97,7 +95,7 @@
         align-items: center;
         justify-content: center;
         gap: 12px;
-        margin-bottom: 24px;
+        margin-bottom: 32px;
         text-decoration: none !important;
       }
 
@@ -127,7 +125,7 @@
       .card-heading {
         font-family: 'Poppins', sans-serif;
         font-weight: 700;
-        font-size: 1.5rem;
+        font-size: 1.75rem;
         text-align: center;
         margin-bottom: 8px;
         color: #111111;
@@ -138,14 +136,14 @@
         font-size: 0.95rem;
         color: var(--text-muted);
         text-align: center;
-        margin-bottom: 24px;
+        margin-bottom: 40px;
       }
 
       .card-divider {
         border: 0;
         height: 1px;
-        background: #f1f5f9;
-        margin: 24px 0;
+        background: #e2e8f0;
+        margin: 40px 0;
       }
 
       /* ======================================
@@ -153,7 +151,7 @@
          ====================================== */
       .input-pill-wrapper {
         position: relative;
-        margin-bottom: 20px;
+        margin-bottom: 24px;
       }
 
       .form-label-custom {
@@ -168,7 +166,7 @@
 
       .input-pill {
         width: 100%;
-        height: 50px;
+        height: 52px;
         background-color: #ffffff;
         border: 1px solid #e9ecef;
         border-radius: 50px;
@@ -190,7 +188,7 @@
       .input-toggle-btn {
         position: absolute;
         right: 20px;
-        bottom: 13px;
+        bottom: 14px;
         background: none;
         border: none;
         color: #94a3b8;
@@ -209,7 +207,7 @@
         display: flex;
         align-items: flex-start;
         gap: 12px;
-        margin: 20px 0;
+        margin: 24px 0;
         padding-left: 10px;
       }
 
@@ -256,7 +254,7 @@
       /* Submit Button */
       .btn-signup {
         width: 100%;
-        height: 52px;
+        height: 54px;
         background-color: var(--brand-orange);
         color: #ffffff;
         border: none;
@@ -271,7 +269,10 @@
         box-shadow: 0 4px 14px rgba(244, 130, 33, 0.2);
         transition: all 0.3s ease;
         cursor: pointer;
-        margin-bottom: 24px;
+        margin-bottom: 32px;
+        max-width: 320px;
+        margin-left: auto;
+        margin-right: auto;
       }
 
       .btn-signup:hover {
@@ -285,10 +286,10 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 24px;
+        margin-bottom: 32px;
       }
 
-      .or-line { flex: 1; height: 1px; background: #e9ecef; }
+      .or-line { flex: 1; height: 1px; background: #e9ecef; max-width: 150px; }
       .or-text {
         padding: 0 16px;
         font-family: 'Open Sans', sans-serif;
@@ -296,18 +297,19 @@
         color: #94a3b8;
       }
 
-      /* Social Buttons */
+      /* Social Buttons (Fully Rounded) */
       .social-btn-row {
         display: flex;
-        gap: 12px;
-        margin-bottom: 32px;
+        gap: 16px;
+        margin-bottom: 40px;
+        justify-content: center;
       }
 
       .btn-social {
-        flex: 1;
+        width: 180px;
         height: 48px;
         border: 1px solid #e9ecef;
-        border-radius: 12px;
+        border-radius: 50px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -320,6 +322,7 @@
         transition: all 0.2s ease;
         text-decoration: none !important;
         white-space: nowrap;
+        background: #ffffff;
       }
 
       .btn-social:hover {
@@ -350,14 +353,12 @@
 
       /* Footer note */
       .signup-footer-note {
-        position: absolute;
-        bottom: 24px;
-        left: 0; right: 0;
+        margin-top: 80px;
         text-align: center;
         font-family: 'Open Sans', sans-serif;
         font-size: 0.8rem;
         color: #94a3b8;
-        z-index: 2;
+        width: 100%;
       }
 
       .signup-footer-note a {
@@ -370,12 +371,12 @@
       .signup-footer-note .sep { margin: 0 10px; opacity: 0.5; }
 
       /* Mobile Adjustments */
-      @media (max-width: 576px) {
-        .signup-form-wrapper { padding: 32px 24px; border-radius: 0; box-shadow: none; border: none; }
-        .back-link { top: 20px; left: 20px; }
-        .signup-page { padding: 0; align-items: flex-start; }
-        .signup-footer-note { position: static; margin-top: 40px; padding-bottom: 24px; }
-        .social-btn-row { flex-direction: column; }
+      @media (max-width: 768px) {
+        .signup-form-wrapper { max-width: 100%; padding: 0 10px; }
+        .back-link { top: 20px; left: 20px; position: static; margin-bottom: 40px; align-self: flex-start; }
+        .signup-page { padding-top: 40px; }
+        .social-btn-row { flex-direction: column; align-items: center; }
+        .btn-social { width: 100%; max-width: 320px; }
       }
     </style>
 </head>
@@ -404,35 +405,45 @@
         <h1 class="card-heading">Join the Network</h1>
         <p class="card-subtext">Sign up to join the conversation.</p>
 
-        <hr class="card-divider">
-
         <form id="signupForm" novalidate>
 
-            <!-- Full Name -->
-            <div class="input-pill-wrapper">
-                <label class="form-label-custom">Full Name</label>
-                <input type="text" class="input-pill" placeholder="Alan Turing" required>
+            <div class="row">
+                <!-- Full Name -->
+                <div class="col-md-6">
+                    <div class="input-pill-wrapper">
+                        <label class="form-label-custom">Full Name</label>
+                        <input type="text" class="input-pill" placeholder="Alan Turing" required>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="col-md-6">
+                    <div class="input-pill-wrapper">
+                        <label class="form-label-custom">Email Address</label>
+                        <input type="email" class="input-pill" placeholder="you@company.tech" required>
+                    </div>
+                </div>
             </div>
 
-            <!-- Email -->
-            <div class="input-pill-wrapper">
-                <label class="form-label-custom">Email Address</label>
-                <input type="email" class="input-pill" placeholder="you@company.tech" required>
-            </div>
+            <div class="row">
+                <!-- Company / Role -->
+                <div class="col-md-6">
+                    <div class="input-pill-wrapper">
+                        <label class="form-label-custom">Company / Role</label>
+                        <input type="text" class="input-pill" placeholder="Senior Systems Architect" required>
+                    </div>
+                </div>
 
-            <!-- Company / Role -->
-            <div class="input-pill-wrapper">
-                <label class="form-label-custom">Company / Role</label>
-                <input type="text" class="input-pill" placeholder="Senior Systems Architect" required>
-            </div>
-
-            <!-- Password -->
-            <div class="input-pill-wrapper">
-                <label class="form-label-custom">Password</label>
-                <input type="password" id="passwordInput" class="input-pill" placeholder="••••••••" required>
-                <button type="button" class="input-toggle-btn" id="pwToggle" aria-label="Show or hide password">
-                    <span class="material-symbols-outlined" id="pwToggleIcon">visibility_off</span>
-                </button>
+                <!-- Password -->
+                <div class="col-md-6">
+                    <div class="input-pill-wrapper">
+                        <label class="form-label-custom">Password</label>
+                        <input type="password" id="passwordInput" class="input-pill" placeholder="••••••••" required>
+                        <button type="button" class="input-toggle-btn" id="pwToggle">
+                            <span class="material-symbols-outlined" id="pwToggleIcon">visibility_off</span>
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Consent -->
@@ -460,7 +471,7 @@
             <div class="or-line"></div>
         </div>
 
-        <!-- Social Logins -->
+        <!-- Social Logins (Fully Rounded) -->
         <div class="social-btn-row">
             <a href="#" class="btn-social btn-social-google">
                 <span class="social-icon"><i class="fab fa-google"></i></span>
@@ -480,7 +491,7 @@
 
     </div>
 
-    <!-- Footer note -->
+    <!-- Footer note (Pushed down) -->
     <div class="signup-footer-note">
         &copy; <?php echo date('Y'); ?> Spider Tech Ltd
         <span class="sep">&middot;</span>
