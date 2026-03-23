@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Member Sidebar — Phase 2
  * Dashboard-style sidebar for logged-in members.
@@ -17,7 +18,8 @@
     gap: 20px;
     position: sticky;
     top: 136px;
-    margin-top: 6px; /* Align top edge with feed card */
+    margin-top: 6px;
+    /* Align top edge with feed card */
   }
 
   .sidebar-widget {
@@ -138,9 +140,14 @@
     transition: opacity 0.2s;
   }
 
-  .profile-link:hover { opacity: 0.75; color: #f48221; }
+  .profile-link:hover {
+    opacity: 0.75;
+    color: #f48221;
+  }
 
-  .profile-link .material-symbols-outlined { font-size: 14px; }
+  .profile-link .material-symbols-outlined {
+    font-size: 14px;
+  }
 
   /* ============================
      WIDGET 2: ACTIVE MEMBERS
@@ -148,7 +155,8 @@
   .active-members-row {
     display: flex;
     align-items: center;
-    gap: 0; /* Removed gap for overlap */
+    gap: 0;
+    /* Removed gap for overlap */
     margin-bottom: 14px;
     flex-wrap: wrap;
   }
@@ -156,14 +164,15 @@
   .active-member-avatar {
     position: relative;
     flex-shrink: 0;
-    margin-left: -12px; /* Overlap effect */
+    margin-left: -12px;
+    /* Overlap effect */
     transition: transform 0.2s ease, z-index 0.2s;
   }
-  
+
   .active-member-avatar:first-child {
     margin-left: 0;
   }
-  
+
   .active-member-avatar:hover {
     transform: translateY(-4px);
     z-index: 10;
@@ -173,20 +182,21 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    border: 2px solid #ffffff; /* Cutout effect for overlap */
+    border: 2px solid #ffffff;
+    /* Cutout effect for overlap */
     object-fit: cover;
   }
 
-  .active-member-avatar .online-dot {
+  /* .active-member-avatar .online-dot {
     position: absolute;
     bottom: 1px;
-    left: 1px; /* Moved to left for overlap visibility */
+    left: 1px;
     width: 9px;
     height: 9px;
     background-color: #22c55e;
     border-radius: 50%;
     border: 1.5px solid #ffffff;
-  }
+  } */
 
   .active-count-pill {
     font-family: 'Poppins', sans-serif;
@@ -215,9 +225,14 @@
     transition: opacity 0.2s;
   }
 
-  .widget-see-all:hover { opacity: 0.75; color: #f48221; }
+  .widget-see-all:hover {
+    opacity: 0.75;
+    color: #f48221;
+  }
 
-  .widget-see-all .material-symbols-outlined { font-size: 14px; }
+  .widget-see-all .material-symbols-outlined {
+    font-size: 14px;
+  }
 
   /* ============================
      WIDGET 3: TRENDING TOPICS
@@ -256,17 +271,21 @@
     box-shadow: 0 2px 6px rgba(244, 130, 33, 0.3);
   }
 
-  .trending-rank-badge.rank-2, .trending-rank-badge.rank-3 {
+  .trending-rank-badge.rank-2,
+  .trending-rank-badge.rank-3 {
     background-color: rgba(244, 130, 33, 0.15);
     color: #f48221;
   }
 
-  .trending-rank-badge.rank-4, .trending-rank-badge.rank-5 {
+  .trending-rank-badge.rank-4,
+  .trending-rank-badge.rank-5 {
     background-color: #f1f3f5;
     color: #555555;
   }
 
-  .trending-topic-content { flex: 1; }
+  .trending-topic-content {
+    flex: 1;
+  }
 
   .trending-topic-name {
     font-family: 'Poppins', sans-serif;
@@ -279,7 +298,9 @@
     transition: color 0.2s;
   }
 
-  .trending-topic-item:hover .trending-topic-name { color: #f48221; }
+  .trending-topic-item:hover .trending-topic-name {
+    color: #f48221;
+  }
 
   .trending-topic-meta {
     display: flex;
@@ -306,7 +327,6 @@
     padding: 1px 7px;
     border-radius: 50px;
   }
-
 </style>
 
 <aside class="member-sidebar">
@@ -322,8 +342,7 @@
         <img
           src="https://ui-avatars.com/api/?name=<?php echo urlencode($member['name']); ?>&background=f48221&color=fff&size=64"
           class="profile-avatar"
-          alt="<?php echo htmlspecialchars($member['name']); ?>"
-        >
+          alt="<?php echo htmlspecialchars($member['name']); ?>">
         <div class="profile-online-dot"></div>
       </div>
       <div class="profile-name"><?php echo htmlspecialchars($member['name']); ?></div>
@@ -342,7 +361,7 @@
           <small>Upvotes</small>
         </div>
       </div>
-      <a href="#" class="profile-link">
+      <a href="pages/forum/profile.php" class="profile-link">
         View Profile <span class="material-symbols-outlined">arrow_forward</span>
       </a>
     </div>
