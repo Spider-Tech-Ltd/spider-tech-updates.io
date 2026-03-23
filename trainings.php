@@ -39,6 +39,10 @@
 
     .fill-1 { font-variation-settings: 'FILL' 1; }
     .text-orange { color: #f48221 !important; }
+    .gap-1 { gap: 0.25rem; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-3 { gap: 1rem; }
+    .gap-4 { gap: 1.5rem; }
 
     /* Hero Section Styles */
     .training-hero {
@@ -199,34 +203,37 @@
     .featured-badge {
         background: rgba(255,255,255,0.2);
         backdrop-filter: blur(10px);
-        padding: 4px 12px;
-        border-radius: 50px;
-        font-size: 0.625rem;
+        padding: 8px 16px;
+        border-radius: 9999px;
+        font-size: 0.75rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.1em;
         display: inline-block;
-        margin-bottom: 2rem;
     }
     .featured-title {
-        font-size: 2rem;
+        font-size: 2.5rem;
         font-weight: 800;
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
     }
     .featured-desc {
-        font-size: 0.95rem;
-        opacity: 0.9;
-        margin-bottom: 2rem;
+        font-size: 1rem;
+        color: #ffffff;
+        opacity: 0.8;
+        margin-bottom: 3rem;
+        line-height: 1.6;
     }
     .featured-btn {
         background: #ffffff;
         color: #f48221;
-        padding: 1rem 2rem;
-        border-radius: 50px;
+        padding: 1.25rem 2rem;
+        border-radius: 9999px;
         text-align: center;
         font-weight: 700;
         text-decoration: none !important;
-        transition: transform 0.2s ease;
+        transition: all 0.2s ease;
+        font-size: 1.1rem;
     }
     .featured-btn:hover {
         transform: scale(1.02);
@@ -354,8 +361,8 @@
               <p class="featured-desc"><?= $fetch_training['training_description']; ?></p>
               <div class="mt-auto pt-4">
                 <div class="d-flex gap-2 mb-4">
-                  <span class="px-2 py-1 bg-white-20 rounded small font-weight-bold" style="background: rgba(255,255,255,0.1); font-size: 10px;">TRAINING</span>
-                  <span class="px-2 py-1 bg-white-20 rounded small font-weight-bold" style="background: rgba(255,255,255,0.1); font-size: 10px;">24 WEEKS</span>
+                  <span class="px-3 py-1 bg-white-20 font-weight-bold" style="background: rgba(255,255,255,0.2); font-size: 11px; border-radius: 9999px;">TRAINING</span>
+                  <span class="px-3 py-1 bg-white-20 font-weight-bold" style="background: rgba(255,255,255,0.2); font-size: 11px; border-radius: 9999px;">24 WEEKS</span>
                 </div>
                 <a href="training-detail.php?id=<?php echo stripslashes($fetch_training['id']); ?>#registerNow" class="featured-btn w-100 d-block text-center">Register Now</a>
               </div>
