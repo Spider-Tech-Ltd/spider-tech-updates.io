@@ -43,42 +43,66 @@
     .gap-2 { gap: 0.5rem; }
     .gap-3 { gap: 1rem; }
     .gap-4 { gap: 1.5rem; }
+    .-space-x-2 > * + * { margin-left: -0.5rem; }
 
-    /* Hero Section Styles */
+    /* Hero Section Styles (Aligned with Forum Hero) */
     .training-hero {
         position: relative;
         background-color: #f4f4f4;
-        padding: 100px 0 60px;
+        padding: 100px 16px 80px;
         overflow: hidden;
+        text-align: center;
     }
     .training-hero::before {
         content: '';
         position: absolute;
         inset: 0;
-        background: radial-gradient(circle at 70% 30%, rgba(244, 130, 33, 0.08) 0%, transparent 60%);
+        background: radial-gradient(circle at center, rgba(244, 130, 33, 0.08) 0%, transparent 68%);
+        pointer-events: none;
+        z-index: 0;
+    }
+    .hero-blob {
+        position: absolute;
+        border-radius: 50%;
+        background-color: rgba(244, 130, 33, 0.06);
+        filter: blur(60px);
         pointer-events: none;
     }
-    .hero-eyebrow {
+    .hero-blob-left  { width: 280px; height: 280px; top: 20%; left: -80px; }
+    .hero-blob-right { width: 320px; height: 320px; bottom: 15%; right: -80px; }
+
+    .hero-inner { position: relative; z-index: 1; }
+
+    .hero-eyebrow-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 18px;
+        border-radius: 50px;
+        background-color: rgba(244, 130, 33, 0.12);
+        border: 1px solid rgba(244, 130, 33, 0.25);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
-        letter-spacing: 0.2em;
-        font-weight: 700;
-        font-size: 0.75rem;
         color: #f48221;
-        display: block;
-        margin-bottom: 1rem;
+        margin-bottom: 28px;
     }
     .hero-title {
         font-size: 4.5rem;
         font-weight: 800;
         line-height: 1.1;
-        margin-bottom: 1.5rem;
+        margin: 0 auto 1.5rem;
         color: #111111;
+        max-width: 800px;
     }
     .hero-subtitle {
         font-size: 1.1rem;
         color: #555555;
-        max-width: 500px;
-        line-height: 1.6;
+        max-width: 600px;
+        margin: 0 auto 48px;
+        line-height: 1.7;
     }
     .industry-standard-badge {
         background-color: #ffffff;
@@ -130,13 +154,20 @@
         padding: 0 1.5rem 1.5rem;
     }
     .card-category {
-        font-size: 0.625rem;
-        font-weight: 700;
+        font-size: 0.65rem;
+        font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.1em;
         color: #f48221;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0;
         display: block;
+    }
+    .card-provider {
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #aaaaaa;
     }
     .card-title {
         font-size: 1.25rem;
@@ -162,13 +193,17 @@
         align-items: center;
     }
     .register-btn {
-        color: #f48221;
+        color: #964900;
         font-weight: 700;
         font-size: 0.875rem;
         display: flex;
         align-items: center;
         gap: 0.25rem;
         text-decoration: none !important;
+        transition: color 0.2s;
+    }
+    .register-btn:hover {
+        color: #f48221;
     }
     .register-btn span {
         transition: transform 0.3s ease;
@@ -201,28 +236,32 @@
         filter: blur(40px);
     }
     .featured-badge {
-        background: rgba(255,255,255,0.2);
+        background: rgba(255,255,255,0.3);
         backdrop-filter: blur(10px);
-        padding: 8px 16px;
+        padding: 6px 16px;
         border-radius: 9999px;
-        font-size: 0.75rem;
-        font-weight: 700;
+        font-size: 0.65rem;
+        font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.1em;
         display: inline-block;
+        color: #ffffff;
     }
     .featured-title {
-        font-size: 2.5rem;
+        font-size: 2.75rem;
         font-weight: 800;
         margin-bottom: 1.5rem;
-        line-height: 1.2;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        color: #ffffff;
     }
     .featured-desc {
         font-size: 1rem;
         color: #ffffff;
-        opacity: 0.8;
+        opacity: 0.9;
         margin-bottom: 3rem;
-        line-height: 1.6;
+        line-height: 1.5;
+        max-width: 100%;
     }
     .featured-btn {
         background: #ffffff;
@@ -316,20 +355,30 @@
   
   <!-- ====== Hero Section Start ====== -->
   <section class="training-hero">
-    <div class="container">
-      <div class="row align-items-end">
-        <div class="col-lg-8">
-          <span class="hero-eyebrow">Professional Growth</span>
-          <h1 class="hero-title">Our Training <br>Programs</h1>
+    <!-- Decorative blobs -->
+    <div class="hero-blob hero-blob-left"></div>
+    <div class="hero-blob hero-blob-right"></div>
+
+    <div class="container hero-inner">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <span class="hero-eyebrow-pill">
+            <span class="material-symbols-outlined" style="font-size: 16px;">auto_awesome</span>
+            Professional Growth
+          </span>
+          <h1 class="hero-title">Our Training Programs</h1>
           <p class="hero-subtitle">Elevate your technical and interpersonal skills through curated paths designed by industry leaders at the Digital Atelier.</p>
-        </div>
-        <div class="col-lg-4 d-none d-lg-block">
-          <div class="industry-standard-badge">
-            <div class="badge-label">
-              <span class="material-symbols-outlined fill-1">verified</span>
-              Industry Standard
+
+          <div class="row justify-content-center mt-4">
+            <div class="col-lg-6">
+              <div class="industry-standard-badge text-left">
+                <div class="badge-label">
+                  <span class="material-symbols-outlined fill-1">verified</span>
+                  Industry Standard
+                </div>
+                <p class="mb-0 text-muted small">All programs are verified and recognized by our global network of enterprise partners.</p>
+              </div>
             </div>
-            <p class="mb-0 text-muted small">All programs are verified and recognized by our global network of enterprise partners.</p>
           </div>
         </div>
       </div>
@@ -377,7 +426,7 @@
               <div class="card-content">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                   <span class="card-category">Program</span>
-                  <span class="material-symbols-outlined text-muted small">more_horiz</span>
+                  <span class="card-provider">Spider Tech</span>
                 </div>
                 <h3 class="card-title"><?= $fetch_training['training_name']; ?></h3>
                 <p class="card-desc"><?= $fetch_training['training_description']; ?></p>
@@ -397,6 +446,66 @@
           <?php } ?>
           <?php
               }
+
+              // Static Card 1: Executive Communication
+              ?>
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="training-card">
+              <div class="card-img-wrap">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuADFietS9_POzTT0z2HEn4xUiTDWtCiTTYSbQn5lvDTIyjoGFCa3pLK9W7LOLUdM9bj6t2fCT5x3Fok-NJ-O9c2ryxIJfCB-BuxpQM6XvdXSmRxy7ihvXAsBxGbBw_n4me2Qn1vMPurcLDhh_aTyDqwyC9iMCxTxfRDHBw8V3uf3fNQSDfH1h-B3Lr9iYgJvVWhwMcCuAe7xQ8qSWrx5sEkjgnB0kWkjUK9Oc0ZMN79N46zGv4DNIgswKjtX6rzrqFn9Gel0CoIRwBX" alt="Executive Communication">
+              </div>
+              <div class="card-content">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="card-category">Soft Skills</span>
+                  <span class="text-muted small" style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Jobberman</span>
+                </div>
+                <h3 class="card-title">Executive Communication</h3>
+                <p class="card-desc">Refine your ability to articulate complex technical ideas to diverse stakeholders and leadership.</p>
+                <div class="card-footer bg-transparent p-0">
+                  <div class="text-muted small d-flex align-items-center gap-1">
+                    <div class="d-flex -space-x-2">
+                        <img src="https://ui-avatars.com/api/?name=Mentor&background=f48221&color=fff" class="rounded-circle border border-white" style="width: 24px; height: 24px;" alt="Mentor">
+                    </div>
+                  </div>
+                  <a href="#" class="register-btn">
+                    Register Now
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <?php
+          // Static Card 2: Digital Venture Building
+          ?>
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="training-card">
+              <div class="card-img-wrap">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8qAQxiOY_RXsbwr14BZK6sPVNGtxuRzDbk-74zAX6mT82Y4JRTDSZKgRzAu-NXmxjhoDLwM9LMqeJwUiM41SyRmSViQYshv2NlfXkDDXB4lqXNk9KGQ1AI0Wr88bk3zoO4h9Oh-omhcmzSksiVvhTHLhoJfeT7uWZtQ9_4jyQBjWCRhQ_pGb-SQ6R6VqcksnGIgJeTY8caukGef0xaAXThxxp2RRo3gbXMOGCdpVFM1IyD2QpyCY3l5wFZGRrfvPs-UgiQh4XM_zY" alt="Digital Venture Building">
+              </div>
+              <div class="card-content">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="card-category">Entrepreneurship</span>
+                  <span class="text-muted small" style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">DSE</span>
+                </div>
+                <h3 class="card-title">Digital Venture Building</h3>
+                <p class="card-desc">From ideation to MVP. Learn the industrial-grade methodology for launching scalable digital products.</p>
+                <div class="card-footer bg-transparent p-0">
+                  <div class="text-muted small d-flex align-items-center gap-1">
+                    <span class="material-symbols-outlined text-orange fill-1" style="font-size: 16px;">bolt</span>
+                    Intensive
+                  </div>
+                  <a href="#" class="register-btn">
+                    Register Now
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <?php
              }else{
               echo '<div class="col-12"><p class="empty">No trainings found!</p></div>';
              }
