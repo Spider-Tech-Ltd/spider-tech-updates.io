@@ -2,26 +2,23 @@
 /**
  * Forum Member Feed Page — Phase 2
  * Member-only interactive discussion feed.
- * Access: Simulated via session. Redirects to index.php if no session.
+ * Access: Restricted using middleware.
  * Architecture: Bootstrap 4 + Vanilla CSS, mirrors index.php structure.
  */
-require('../../includes/connect.php');
-require('../../home_functions.php');
+require_once '../../config/db.php';
+require_once '../../home_functions.php';
+require_once '../../auth/middleware.php';
 
-// Simulated session check — replace with real auth when backend is ready
-// session_start();
-// if (!isset($_SESSION['user_id'])) {
-//     header('Location: index.php');
-//     exit;
-// }
+// Enforce authentication
+requireAuth();
 
-// Simulated logged-in member data
+// Logged-in member data from session
 $member = [
-    'name'       => 'James Harrison',
-    'initials'   => 'JH',
+    'name'       => $_SESSION['username'],
+    'initials'   => strtoupper(substr($_SESSION['username'], 0, 1)),
     'role'       => 'Verified Member',
-    'posts'      => 48,
-    'new_replies'=> 3,
+    'posts'      => 0,
+    'new_replies'=> 0,
 ];
 ?>
 <!doctype html>

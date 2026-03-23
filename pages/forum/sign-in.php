@@ -1,365 +1,270 @@
 <?php
-
 /**
- * Forum Sign-In Gateway — Full Page Form (White)
- * Standalone authentication page.
- * Design: Full-page white background, centered form, no nested card box.
- * Stack: Bootstrap 4 + Vanilla CSS. No Tailwind.
+ * Sign-In Page — Spider Tech Forum
+ * Logic: Handles user login using Auth class.
  */
+require_once '../../config/db.php';
+require_once '../../auth/Auth.php';
+require_once '../../auth/middleware.php';
 
-// Detect where to redirect after sign-in
-$redirect = isset($_GET['redirect']) ? htmlspecialchars($_GET['redirect']) : 'feed.php';
+// Redirect if already logged in
+if (isLoggedIn()) {
+    header('Location: feed.php');
+    die();
+}
+
+$message = '';
+$status = '';
+$redirect = $_GET['redirect'] ?? 'pages/forum/feed.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $auth = new Auth($conn);
+    $identifier = $_POST['identifier'] ?? '';
+    $password = $_POST['password'] ?? '';
+
+    $result = $auth->loginUser($identifier, $password);
+
+    if ($result['status'] === 'success') {
+        header('Location: ' . $result['redirect']);
+        die();
+    } else {
+        $status = $result['status'];
+        $message = $result['message'];
+    }
+}
 ?>
 <!doctype html>
 <html lang="en">
-
 <head>
   <base href="../../">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Sign In — Spider Tech Forum</title>
-  <meta name="description" content="Sign in to Spider Tech Forum to join industry discussions, post replies, and connect with 5,200+ industrial tech professionals.">
-  <meta name="robots" content="noindex, nofollow">
 
-  <!-- Favicon -->
-  <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+  <!-- Material Symbols & Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
   <!-- Bootstrap 4 -->
-  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Open+Sans:wght@400;600&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-
-  <!-- Font Awesome (social icons) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <title>Sign In — Spider Tech</title>
 
   <style>
-    /* ======================================
-         SIGN-IN GATEWAY — FULL PAGE WHITE
-         ====================================== */
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    :root {
+      --brand-orange: #f48221;
+      --bg-light: #f8fafc;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
     }
 
-    html,
-    body {
+    html, body {
       height: 100%;
       margin: 0;
-      overflow: hidden;
-      /* Prevent vertical overflow/scrolling */
+      background-color: var(--bg-light);
+      color: var(--text-main);
       font-family: 'Open Sans', sans-serif;
-      background-color: #ffffff;
+      overflow: hidden;
     }
 
-    /* ======================================
-         FULL-PAGE CONTAINER
-         ====================================== */
     .signin-page {
-      height: 100%;
+      height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 20px;
       position: relative;
-      background-color: #ffffff;
     }
 
-    /* Very subtle grid overlay (optional, soft gray) */
-    .signin-page::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
-      background-size: 48px 48px;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* Orange top accent line (Moved to top of screen as a brand bar) */
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #f48221, #e6751c);
-      z-index: 20;
-    }
-
-    /* ======================================
-         BACK LINK — TOP LEFT
-         ====================================== */
+    /* --- Back Link --- */
     .back-link {
       position: absolute;
-      top: 24px;
-      left: 28px;
-      display: inline-flex;
+      top: 40px;
+      left: 40px;
+      display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      text-decoration: none !important;
+      color: var(--text-muted);
       font-family: 'Poppins', sans-serif;
       font-weight: 600;
-      font-size: 0.85rem;
-      color: #94a3b8;
-      text-decoration: none !important;
-      transition: color 0.2s ease;
+      font-size: 0.9rem;
+      transition: color 0.2s;
       z-index: 10;
     }
 
-    .back-link:hover {
-      color: #f48221;
-    }
+    .back-link:hover { color: var(--brand-orange); }
 
-    .back-link .material-symbols-outlined {
-      font-size: 18px;
-      transition: transform 0.2s ease;
-    }
-
-    .back-link:hover .material-symbols-outlined {
-      transform: translateX(-4px);
-    }
-
-    /* ======================================
-         SIGN-IN FORM CENTERED
-         ====================================== */
+    /* --- Form Card --- */
     .signin-form-wrapper {
-      position: relative;
-      z-index: 1;
       width: 100%;
-      max-width: 420px;
-      /* No background or shadow -> Form is floating directly */
+      max-width: 480px;
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+      padding: 48px;
+      z-index: 2;
     }
 
-    /* --- Logo --- */
+    /* Logo */
     .card-logo {
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 12px;
       text-decoration: none !important;
-      margin-bottom: 24px;
+      margin-bottom: 32px;
+      justify-content: center;
     }
 
     .card-logo-icon {
-      width: 44px;
-      height: 44px;
-      background: linear-gradient(135deg, #f48221, #e6751c);
-      border-radius: 12px;
+      width: 40px;
+      height: 40px;
+      background: var(--brand-orange);
+      color: #fff;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #ffffff;
-      box-shadow: 0 4px 12px rgba(244, 130, 33, 0.3);
-      flex-shrink: 0;
-    }
-
-    .card-logo-icon .material-symbols-outlined {
-      font-size: 26px;
     }
 
     .card-logo-text {
       font-family: 'Poppins', sans-serif;
-      font-weight: 700;
-      font-size: 1.4rem;
-      color: #111111;
-      letter-spacing: -0.02em;
-    }
-
-    .card-logo-text span {
-      color: #f48221;
-    }
-
-    /* --- Heading --- */
-    .card-heading {
-      font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
       font-weight: 800;
-      font-size: 2rem;
-      color: #111111;
+      font-size: 1.4rem;
+      color: #111;
+      letter-spacing: -0.5px;
+    }
+
+    .card-logo-text span { color: var(--brand-orange); }
+
+    /* Heading */
+    .card-heading {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 1.75rem;
       text-align: center;
-      margin-bottom: 6px;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
+      margin-bottom: 8px;
+      color: #0f172a;
     }
 
     .card-subtext {
-      font-family: 'Open Sans', sans-serif;
-      font-size: 0.95rem;
-      color: #64748b;
       text-align: center;
-      margin-bottom: 0;
-      line-height: 1.5;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 32px;
     }
 
-    /* Thin divider */
     .card-divider {
-      border: none;
-      border-top: 1px solid #f1f5f9;
-      margin: 28px 0;
+      border: 0;
+      height: 1px;
+      background: #f1f5f9;
+      margin-bottom: 32px;
     }
 
-    /* --- Form Labels --- */
+    /* --- Input Fields --- */
+    .input-pill-wrapper {
+      margin-bottom: 24px;
+      position: relative;
+    }
+
     .form-label-custom {
+      display: block;
       font-family: 'Poppins', sans-serif;
       font-weight: 600;
       font-size: 0.85rem;
-      color: #111111;
-      display: block;
-      margin-bottom: 10px;
-    }
-
-    /* --- Pill Inputs --- */
-    .input-pill-wrapper {
-      position: relative;
-      margin-bottom: 20px;
+      color: #475569;
+      margin-bottom: 8px;
+      padding-left: 4px;
     }
 
     .input-pill {
       width: 100%;
       height: 52px;
-      background-color: #f8f9fa;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 50px;
-      padding: 0 54px 0 22px;
-      font-family: 'Open Sans', sans-serif;
+      background: #f1f5f9;
+      border: 2px solid transparent;
+      border-radius: 14px;
+      padding: 0 20px;
       font-size: 0.95rem;
-      color: #262626;
-      outline: none;
-      transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
-      -webkit-appearance: none;
-      appearance: none;
-    }
-
-    .input-pill::placeholder {
-      color: #b0b8c1;
-      font-weight: 400;
+      color: #1e293b;
+      transition: all 0.2s ease;
     }
 
     .input-pill:focus {
-      background-color: #ffffff;
-      border-color: #f48221;
-      box-shadow: 0 0 0 4px rgba(244, 130, 33, 0.12);
+      outline: none;
+      background: #ffffff;
+      border-color: var(--brand-orange);
+      box-shadow: 0 0 0 4px rgba(244, 130, 33, 0.1);
     }
 
-    /* Password toggle button */
+    /* Password Toggle */
     .input-toggle-btn {
       position: absolute;
-      right: 18px;
-      top: 50%;
-      /* transform: translateY(-50%);  */
+      right: 16px;
+      top: 40px;
       background: none;
       border: none;
-      padding: 6px;
-      margin: 0;
-      cursor: pointer;
       color: #94a3b8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: color 0.2s;
+      cursor: pointer;
+      padding: 4px;
     }
 
-    .input-toggle-btn:focus {
-      outline: none;
-    }
-
-    .input-toggle-btn:hover {
-      color: #f48221;
-    }
-
-    .input-toggle-btn .material-symbols-outlined {
-      font-size: 20px;
-      line-height: 1;
-    }
-
-    /* Forgot password link */
+    /* Forgot Password */
     .forgot-link {
       display: block;
       text-align: right;
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Open Sans', sans-serif;
       font-weight: 600;
-      font-size: 0.82rem;
-      color: #f48221;
+      font-size: 0.85rem;
+      color: var(--brand-orange);
       text-decoration: none !important;
-      margin-top: -8px;
-      margin-bottom: 30px;
-      transition: opacity 0.2s;
+      margin-top: -16px;
+      margin-bottom: 32px;
     }
 
-    .forgot-link:hover {
-      opacity: 0.8;
-    }
-
-    /* --- Primary CTA Button --- */
+    /* --- Buttons --- */
     .btn-signin {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
       width: 100%;
       height: 54px;
       background: linear-gradient(135deg, #f48221 0%, #e6751c 100%);
       color: #ffffff;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 700;
-      font-size: 1.05rem;
       border: none;
       border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 14px rgba(244, 130, 33, 0.2);
+      transition: all 0.3s ease;
       cursor: pointer;
-      box-shadow: 0 4px 16px rgba(244, 130, 33, 0.35);
-      transition: all 0.25s ease;
-      text-decoration: none !important;
-      letter-spacing: 0.01em;
-      margin-bottom: 28px;
+      margin-bottom: 32px;
     }
 
     .btn-signin:hover {
-      background: linear-gradient(135deg, #e6751c 0%, #d9690e 100%);
-      color: #ffffff;
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(244, 130, 33, 0.45);
+      box-shadow: 0 6px 18px rgba(244, 130, 33, 0.3);
     }
 
-    .btn-signin:active {
-      transform: translateY(0);
-    }
-
-    .btn-signin .material-symbols-outlined {
-      font-size: 20px;
-    }
-
-    /* --- OR Divider --- */
+    /* OR Divider */
     .or-divider {
       display: flex;
       align-items: center;
-      gap: 14px;
-      margin-bottom: 24px;
+      justify-content: center;
+      margin-bottom: 32px;
     }
 
-    .or-line {
-      flex: 1;
-      height: 1px;
-      background-color: #f1f5f9;
-    }
-
+    .or-line { flex: 1; height: 1px; background: #e9ecef; }
     .or-text {
-      font-family: 'Poppins', sans-serif;
-      font-weight: 600;
-      font-size: 0.75rem;
+      padding: 0 16px;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 0.85rem;
       color: #94a3b8;
-      white-space: nowrap;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
 
-    /* --- Social Login Buttons --- */
+    /* Social Buttons */
     .social-btn-row {
       display: flex;
       gap: 16px;
@@ -368,14 +273,14 @@ $redirect = isset($_GET['redirect']) ? htmlspecialchars($_GET['redirect']) : 'fe
 
     .btn-social {
       flex: 1;
-      display: inline-flex;
+      height: 48px;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 50px;
+      display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      height: 50px;
-      background-color: #ffffff;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 50px;
       font-family: 'Poppins', sans-serif;
       font-weight: 600;
       font-size: 0.9rem;
@@ -387,54 +292,31 @@ $redirect = isset($_GET['redirect']) ? htmlspecialchars($_GET['redirect']) : 'fe
     }
 
     .btn-social:hover {
-      border-color: #f48221;
+      border-color: var(--brand-orange);
       box-shadow: 0 0 0 3px rgba(244, 130, 33, 0.1);
     }
 
-    .btn-social .social-icon {
-      width: 18px;
-      height: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
+    .btn-social .social-icon { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .btn-social-google .social-icon { color: #DB4437; }
+    .btn-social-linkedin .social-icon { color: #0A66C2; }
 
-    /* Google G colors */
-    .btn-social-google .social-icon {
-      color: #DB4437;
-    }
-
-    /* LinkedIn blue */
-    .btn-social-linkedin .social-icon {
-      color: #0A66C2;
-    }
-
-    /* --- Register Link --- */
+    /* Register Link */
     .register-text {
       text-align: center;
       font-family: 'Open Sans', sans-serif;
       font-size: 0.95rem;
-      color: #64748b;
+      color: var(--text-muted);
       margin-bottom: 0;
     }
 
     .register-text a {
       font-family: 'Poppins', sans-serif;
       font-weight: 700;
-      color: #f48221;
+      color: var(--brand-orange);
       text-decoration: none !important;
-      transition: opacity 0.2s;
     }
 
-    .register-text a:hover {
-      opacity: 0.8;
-      text-decoration: underline !important;
-    }
-
-    /* ======================================
-         FOOTER NOTE BELOW FORM
-         ====================================== */
+    /* --- Footer Note --- */
     .signin-footer-note {
       position: absolute;
       bottom: 24px;
@@ -453,76 +335,22 @@ $redirect = isset($_GET['redirect']) ? htmlspecialchars($_GET['redirect']) : 'fe
       transition: color 0.2s;
     }
 
-    .signin-footer-note a:hover {
-      color: #f48221;
-    }
+    .signin-footer-note .sep { margin: 0 10px; opacity: 0.5; }
 
-    .signin-footer-note .sep {
-      margin: 0 10px;
-      opacity: 0.5;
-    }
-
-    /* ======================================
-         FORM VALIDATION STATES
-         ====================================== */
-    .input-pill.is-invalid {
-      border-color: #e11d48;
-      box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.1);
-    }
-
-    .input-pill.is-valid {
-      border-color: #22c55e;
-      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
-    }
-
-    .field-error-msg {
-      font-family: 'Open Sans', sans-serif;
-      font-size: 0.85rem;
-      color: #e11d48;
-      margin-top: 8px;
-      padding-left: 20px;
-      display: none;
-    }
-
-    .field-error-msg.visible {
-      display: block;
-    }
-
-    /* Loading spinner on button */
-    .btn-signin.is-loading {
-      pointer-events: none;
-      opacity: 0.85;
-    }
-
-    /* Minor fixes for small screens vertically */
     @media (max-height: 750px) {
-
-      html,
-      body {
-        overflow: auto;
-      }
-
-      /* Allow scrolling ONLY on very short screens to prevent unreachability */
-      .signin-page {
-        justify-content: flex-start;
-        padding-top: 60px;
-        padding-bottom: 80px;
-      }
-
-      .signin-footer-note {
-        position: static;
-        margin-top: 40px;
-      }
+      html, body { overflow: auto; }
+      .signin-page { justify-content: flex-start; padding-top: 60px; padding-bottom: 80px; }
+      .signin-footer-note { position: static; margin-top: 40px; }
     }
   </style>
 </head>
 
 <body>
 
-  <div class="signin-page" id="signinPage">
+  <div class="signin-page">
 
-    <!-- Back to Forum link -->
-    <a href="pages/forum/index.php" class="back-link" id="backToForumLink">
+    <!-- Back to Forum -->
+    <a href="pages/forum/index.php" class="back-link">
       <span class="material-symbols-outlined">arrow_back</span>
       Back to Forum
     </a>
@@ -544,21 +372,26 @@ $redirect = isset($_GET['redirect']) ? htmlspecialchars($_GET['redirect']) : 'fe
 
       <hr class="card-divider">
 
-      <form id="signinForm" novalidate>
-        <input type="hidden" name="redirect" value="<?php echo $redirect; ?>">
+      <?php if ($message): ?>
+          <div class="alert alert-danger text-center">
+              <?php echo htmlspecialchars($message); ?>
+          </div>
+      <?php endif; ?>
 
-        <!-- Email -->
+      <form id="signinForm" action="pages/forum/sign-in.php" method="POST" novalidate>
+        <input type="hidden" name="redirect" value="<?php echo htmlspecialchars($redirect); ?>">
+
+        <!-- Identifier (Email or Username) -->
         <div class="input-pill-wrapper">
-          <label class="form-label-custom" for="emailInput">Email Address</label>
+          <label class="form-label-custom" for="identifierInput">Email or Username</label>
           <input
-            type="email"
-            id="emailInput"
-            name="email"
+            type="text"
+            id="identifierInput"
+            name="identifier"
             class="input-pill"
-            placeholder="you@company.com"
-            autocomplete="email"
-            required>
-          <span class="field-error-msg" id="emailError">Please enter a valid email address.</span>
+            placeholder="you@company.com or username"
+            required
+            value="<?php echo htmlspecialchars($_POST['identifier'] ?? ''); ?>">
         </div>
 
         <!-- Password -->
@@ -570,12 +403,10 @@ $redirect = isset($_GET['redirect']) ? htmlspecialchars($_GET['redirect']) : 'fe
             name="password"
             class="input-pill"
             placeholder="••••••••"
-            autocomplete="current-password"
             required>
-          <button type="button" class="input-toggle-btn" id="pwToggle" aria-label="Show or hide password">
+          <button type="button" class="input-toggle-btn" id="pwToggle">
             <span class="material-symbols-outlined" id="pwToggleIcon">visibility_off</span>
           </button>
-          <span class="field-error-msg" id="passwordError">Password is required.</span>
         </div>
 
         <!-- Forgot Password -->
@@ -584,7 +415,7 @@ $redirect = isset($_GET['redirect']) ? htmlspecialchars($_GET['redirect']) : 'fe
         <!-- Sign In Button -->
         <button type="submit" class="btn-signin" id="signinBtn">
           <span class="btn-label">Sign In</span>
-          <span class="material-symbols-outlined" id="signinArrow">arrow_forward</span>
+          <span class="material-symbols-outlined">arrow_forward</span>
         </button>
 
       </form>
@@ -598,11 +429,11 @@ $redirect = isset($_GET['redirect']) ? htmlspecialchars($_GET['redirect']) : 'fe
 
       <!-- Social Logins -->
       <div class="social-btn-row">
-        <a href="#" class="btn-social btn-social-google" id="googleSignIn">
+        <a href="#" class="btn-social btn-social-google">
           <span class="social-icon"><i class="fab fa-google"></i></span>
           Google
         </a>
-        <a href="#" class="btn-social btn-social-linkedin" id="linkedinSignIn">
+        <a href="#" class="btn-social btn-social-linkedin">
           <span class="social-icon"><i class="fab fa-linkedin-in"></i></span>
           LinkedIn
         </a>
@@ -615,11 +446,10 @@ $redirect = isset($_GET['redirect']) ? htmlspecialchars($_GET['redirect']) : 'fe
       </p>
 
     </div>
-    <!-- /signin-form-wrapper -->
 
     <!-- Footer note -->
     <div class="signin-footer-note">
-      &copy; 2026 Spider Tech Ltd
+      &copy; <?php echo date('Y'); ?> Spider Tech Ltd
       <span class="sep">&middot;</span>
       <a href="pages/privacy.php">Privacy Policy</a>
       <span class="sep">&middot;</span>
@@ -627,19 +457,12 @@ $redirect = isset($_GET['redirect']) ? htmlspecialchars($_GET['redirect']) : 'fe
     </div>
 
   </div>
-  <!-- /signin-page -->
 
-  <!-- jQuery (required for Bootstrap 4) -->
-  <script src="js/jquery.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-
-      /**
-       * Password Show / Hide Toggle
-       */
       const pwToggle = document.getElementById('pwToggle');
       const pwInput = document.getElementById('passwordInput');
       const pwIcon = document.getElementById('pwToggleIcon');
@@ -649,69 +472,8 @@ $redirect = isset($_GET['redirect']) ? htmlspecialchars($_GET['redirect']) : 'fe
         pwInput.type = isVisible ? 'password' : 'text';
         pwIcon.textContent = isVisible ? 'visibility_off' : 'visibility';
       });
-
-      /**
-       * Form Validation & Submission
-       */
-      const form = document.getElementById('signinForm');
-      const emailInput = document.getElementById('emailInput');
-      const passwordInput = document.getElementById('passwordInput');
-      const emailError = document.getElementById('emailError');
-      const passwordError = document.getElementById('passwordError');
-      const signinBtn = document.getElementById('signinBtn');
-
-      function validateEmail(val) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim());
-      }
-
-      function setFieldState(input, errorEl, isValid) {
-        input.classList.toggle('is-invalid', !isValid);
-        input.classList.toggle('is-valid', isValid);
-        errorEl.classList.toggle('visible', !isValid);
-      }
-
-      // Real-time validation on blur
-      emailInput.addEventListener('blur', function() {
-        setFieldState(emailInput, emailError, validateEmail(this.value));
-      });
-
-      passwordInput.addEventListener('blur', function() {
-        setFieldState(passwordInput, passwordError, this.value.length >= 6);
-      });
-
-      // Clear error on input
-      [emailInput, passwordInput].forEach(function(el) {
-        el.addEventListener('input', function() {
-          this.classList.remove('is-invalid');
-        });
-      });
-
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const emailOk = validateEmail(emailInput.value);
-        const passwordOk = passwordInput.value.length >= 6;
-
-        setFieldState(emailInput, emailError, emailOk);
-        setFieldState(passwordInput, passwordError, passwordOk);
-
-        if (!emailOk || !passwordOk) return;
-
-        // Simulate loading state
-        signinBtn.classList.add('is-loading');
-        signinBtn.querySelector('.btn-label').textContent = 'Signing in…';
-        document.getElementById('signinArrow').textContent = 'hourglass_empty';
-
-        // TODO: Replace with real AJAX / PHP form submission
-        setTimeout(function() {
-          // Simulate redirect to feed after login
-          window.location.href = 'pages/forum/feed.php';
-        }, 1200);
-      });
-
     });
   </script>
 
 </body>
-
 </html>

@@ -1,198 +1,176 @@
 <?php
 /**
- * Sign-Up Page (sign-up.php) — Phase 8 Redesign (V6)
- * Goal: Refined, clean full-page registration form matching sign-in.php components.
- * Features: Mix of two-column and full-width inputs, top border, no card background.
+ * Sign-Up Page — Spider Tech Forum
+ * Logic: Handles user registration using Auth class.
  */
+require_once '../../config/db.php';
+require_once '../../auth/Auth.php';
+require_once '../../auth/middleware.php';
+
+// Redirect if already logged in
+if (isLoggedIn()) {
+    header('Location: feed.php');
+    die();
+}
+
+$message = '';
+$status = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $auth = new Auth($conn);
+    $username = $_POST['username'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
+
+    $result = $auth->registerUser($username, $email, $password);
+    $status = $result['status'];
+    $message = $result['message'];
+}
 ?>
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account | Spider Tech Ltd</title>
+    <base href="../../">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap 4 CSS -->
+    <!-- Material Symbols & Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Bootstrap 4 -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-    <!-- Google Fonts: Poppins (Headlines), Open Sans (Body) -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-
-    <!-- Material Symbols -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1" />
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Create Account — Spider Tech</title>
 
     <style>
-      /* ======================================
-         CORE RESET & BASE STYLES
-         ====================================== */
       :root {
         --brand-orange: #f48221;
-        --brand-orange-hover: #e6751c;
-        --bg-light: #f8fafc;
-        --text-dark: #111111;
+        --deep-charcoal: #111319;
+        --text-main: #1e293b;
         --text-muted: #64748b;
-        --border-color: #e9ecef;
+        --bg-light: #f8fafc;
       }
 
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-
-      body, html {
+      html, body {
         height: 100%;
-        font-family: 'Open Sans', sans-serif;
+        margin: 0;
         background-color: var(--bg-light);
-        color: var(--text-dark);
+        color: var(--text-main);
+        font-family: 'Open Sans', sans-serif;
+        overflow-x: hidden;
       }
 
-      /* Top Border Accent */
-      body::before {
-        content: '';
-        position: fixed;
-        top: 0; left: 0; right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #f48221, #e6751c);
-        z-index: 20;
-      }
-
-      /* ======================================
-         PAGE CONTAINER
-         ====================================== */
       .signup-page {
         min-height: 100vh;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 80px 20px 100px 20px;
+        padding: 40px 20px;
         position: relative;
       }
 
       /* Back link */
       .back-link {
         position: absolute;
-        top: 32px;
-        left: 32px;
+        top: 40px;
+        left: 40px;
         display: flex;
         align-items: center;
         gap: 8px;
+        text-decoration: none !important;
         color: var(--text-muted);
         font-family: 'Poppins', sans-serif;
-        font-weight: 500;
+        font-weight: 600;
         font-size: 0.9rem;
-        text-decoration: none !important;
         transition: color 0.2s;
         z-index: 10;
       }
-
       .back-link:hover { color: var(--brand-orange); }
-      .back-link .material-symbols-outlined { font-size: 20px; }
 
-      /* ======================================
-         SIGN-UP FORM WRAPPER (Clean No-Card look)
-         ====================================== */
+      /* Form Card Wrapper */
       .signup-form-wrapper {
         width: 100%;
-        max-width: 600px;
-        background: transparent;
-        padding: 0;
-        z-index: 5;
+        max-width: 580px;
+        background: #ffffff;
+        border-radius: 24px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+        padding: 48px;
+        z-index: 2;
       }
 
       /* Logo */
       .card-logo {
         display: flex;
         align-items: center;
-        justify-content: center;
         gap: 12px;
-        margin-bottom: 24px;
         text-decoration: none !important;
+        margin-bottom: 32px;
+        justify-content: center;
       }
-
       .card-logo-icon {
-        width: 44px;
-        height: 44px;
-        background: linear-gradient(135deg, #f48221, #e6751c);
-        border-radius: 12px;
+        width: 40px;
+        height: 40px;
+        background: var(--brand-orange);
+        color: #fff;
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #fff;
-        box-shadow: 0 4px 10px rgba(244, 130, 33, 0.2);
       }
-
       .card-logo-text {
         font-family: 'Poppins', sans-serif;
-        font-weight: 700;
+        font-weight: 800;
         font-size: 1.4rem;
-        color: #111111;
-        letter-spacing: -0.02em;
+        color: #111;
+        letter-spacing: -0.5px;
       }
-
       .card-logo-text span { color: var(--brand-orange); }
 
-      /* Typography */
+      /* Headings */
       .card-heading {
         font-family: 'Poppins', sans-serif;
-        font-weight: 800;
-        font-size: 1.85rem;
+        font-weight: 700;
+        font-size: 1.75rem;
         text-align: center;
         margin-bottom: 8px;
-        color: #111111;
-        letter-spacing: -0.01em;
+        color: #0f172a;
       }
-
       .card-subtext {
-        font-family: 'Open Sans', sans-serif;
-        font-size: 0.95rem;
-        color: var(--text-muted);
         text-align: center;
-        margin-bottom: 32px;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        margin-bottom: 40px;
       }
 
-      .card-divider {
-        border: 0;
-        height: 1px;
-        background: #e2e8f0;
-        margin: 32px 0;
-        opacity: 0.6;
-      }
-
-      /* ======================================
-         FORM COMPONENTS
-         ====================================== */
-      .input-pill-wrapper {
-        position: relative;
-        margin-bottom: 24px;
-      }
-
+      /* Inputs */
+      .input-pill-wrapper { margin-bottom: 24px; position: relative; }
       .form-label-custom {
         display: block;
         font-family: 'Poppins', sans-serif;
         font-weight: 600;
         font-size: 0.85rem;
-        color: #111111;
+        color: #475569;
         margin-bottom: 8px;
-        padding-left: 20px;
+        padding-left: 4px;
       }
 
       .input-pill {
         width: 100%;
         height: 52px;
-        background-color: #ffffff;
-        border: 1.5px solid #e9ecef;
-        border-radius: 50px;
-        padding: 0 24px;
+        background: #f1f5f9;
+        border: 2px solid transparent;
+        border-radius: 14px;
+        padding: 0 20px;
         font-size: 0.95rem;
-        color: #111111;
+        color: #1e293b;
         transition: all 0.2s ease;
-        outline: none;
       }
-
-      .input-pill:hover { border-color: #ced4da; }
-
       .input-pill:focus {
+        outline: none;
+        background: #ffffff;
         border-color: var(--brand-orange);
         box-shadow: 0 0 0 4px rgba(244, 130, 33, 0.1);
       }
@@ -200,64 +178,48 @@
       /* Password Toggle */
       .input-toggle-btn {
         position: absolute;
-        right: 20px;
-        bottom: 14px;
+        right: 16px;
+        top: 40px;
         background: none;
         border: none;
         color: #94a3b8;
         cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: color 0.2s;
-        outline: none !important;
+        padding: 4px;
       }
 
-      .input-toggle-btn:hover { color: var(--brand-orange); }
-
-      /* Consent */
+      /* Checkbox */
       .consent-wrapper {
         display: flex;
         align-items: flex-start;
         gap: 12px;
-        margin: 24px 0;
-        padding-left: 10px;
+        margin-bottom: 32px;
+        padding: 0 4px;
       }
-
       .custom-checkbox {
-        width: 18px;
-        height: 18px;
-        border: 2.5px solid #cbd5e1;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #cbd5e1;
         border-radius: 6px;
-        cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
+        cursor: pointer;
         transition: all 0.2s;
-        flex-shrink: 0;
         margin-top: 2px;
+        flex-shrink: 0;
       }
-
       .custom-checkbox.checked {
-        background-color: var(--brand-orange);
+        background: var(--brand-orange);
         border-color: var(--brand-orange);
-      }
-
-      .custom-checkbox span {
-        font-size: 14px;
         color: #fff;
-        display: none;
       }
-
-      .custom-checkbox.checked span { display: block; }
-
+      .custom-checkbox .material-symbols-outlined { font-size: 14px; font-weight: 800; }
       .consent-text {
         font-size: 0.85rem;
         color: var(--text-muted);
         line-height: 1.5;
         margin-bottom: 0;
       }
-
       .consent-text a {
         color: var(--brand-orange);
         font-weight: 700;
@@ -287,7 +249,6 @@
         margin-left: auto;
         margin-right: auto;
       }
-
       .btn-signup:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 18px rgba(244, 130, 33, 0.3);
@@ -300,7 +261,6 @@
         justify-content: center;
         margin-bottom: 32px;
       }
-
       .or-line { flex: 1; height: 1px; background: #e9ecef; max-width: 150px; }
       .or-text {
         padding: 0 16px;
@@ -309,14 +269,13 @@
         color: #94a3b8;
       }
 
-      /* Social Buttons (Fully Rounded) */
+      /* Social Buttons */
       .social-btn-row {
         display: flex;
         gap: 16px;
         margin-bottom: 40px;
         justify-content: center;
       }
-
       .btn-social {
         width: 180px;
         height: 48px;
@@ -336,12 +295,10 @@
         white-space: nowrap;
         background: #ffffff;
       }
-
       .btn-social:hover {
         border-color: var(--brand-orange);
         box-shadow: 0 0 0 3px rgba(244, 130, 33, 0.1);
       }
-
       .btn-social .social-icon { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
       .btn-social-google .social-icon { color: #DB4437; }
       .btn-social-linkedin .social-icon { color: #0A66C2; }
@@ -353,14 +310,12 @@
         font-size: 0.95rem;
         color: var(--text-muted);
       }
-
       .signin-text a {
         font-family: 'Poppins', sans-serif;
         font-weight: 700;
         color: var(--brand-orange);
         text-decoration: none !important;
       }
-
       .signin-text a:hover { opacity: 0.8; text-decoration: underline !important; }
 
       /* Footer note */
@@ -372,13 +327,11 @@
         color: #94a3b8;
         width: 100%;
       }
-
       .signup-footer-note a {
         color: #64748b;
         text-decoration: none !important;
         transition: color 0.2s;
       }
-
       .signup-footer-note a:hover { color: var(--brand-orange); }
       .signup-footer-note .sep { margin: 0 10px; opacity: 0.5; }
 
@@ -417,14 +370,20 @@
         <h1 class="card-heading">Create Account</h1>
         <p class="card-subtext">Join the industrial tech conversations.</p>
 
-        <form id="signupForm" novalidate>
+        <?php if ($message): ?>
+            <div class="alert alert-<?php echo $status === 'success' ? 'success' : 'danger'; ?> text-center">
+                <?php echo htmlspecialchars($message); ?>
+            </div>
+        <?php endif; ?>
+
+        <form id="signupForm" action="pages/forum/sign-up.php" method="POST" novalidate>
 
             <div class="row">
-                <!-- Full Name -->
+                <!-- Username -->
                 <div class="col-md-6">
                     <div class="input-pill-wrapper">
-                        <label class="form-label-custom">Full Name</label>
-                        <input type="text" class="input-pill" placeholder="Alan Turing" required>
+                        <label class="form-label-custom">Username</label>
+                        <input type="text" name="username" class="input-pill" placeholder="alanturing" required value="<?php echo htmlspecialchars($_POST['username'] ?? ''); ?>">
                     </div>
                 </div>
 
@@ -432,17 +391,7 @@
                 <div class="col-md-6">
                     <div class="input-pill-wrapper">
                         <label class="form-label-custom">Email Address</label>
-                        <input type="email" class="input-pill" placeholder="you@company.tech" required>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Company / Role (Full Width) -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="input-pill-wrapper">
-                        <label class="form-label-custom">Company / Role</label>
-                        <input type="text" class="input-pill" placeholder="Senior Systems Architect" required>
+                        <input type="email" name="email" class="input-pill" placeholder="you@company.tech" required value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>">
                     </div>
                 </div>
             </div>
@@ -452,7 +401,7 @@
                 <div class="col-12">
                     <div class="input-pill-wrapper">
                         <label class="form-label-custom">Password</label>
-                        <input type="password" id="passwordInput" class="input-pill" placeholder="••••••••" required>
+                        <input type="password" name="password" id="passwordInput" class="input-pill" placeholder="••••••••" required>
                         <button type="button" class="input-toggle-btn" id="pwToggle">
                             <span class="material-symbols-outlined" id="pwToggleIcon">visibility_off</span>
                         </button>
@@ -465,6 +414,7 @@
                 <div class="custom-checkbox" id="consentCheckbox">
                     <span class="material-symbols-outlined" style="display: none;">check</span>
                 </div>
+                <input type="hidden" name="consent" id="consentInput" value="0">
                 <p class="consent-text">
                     I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
                 </p>
@@ -485,7 +435,7 @@
             <div class="or-line"></div>
         </div>
 
-        <!-- Social Logins (Fully Rounded) -->
+        <!-- Social Logins -->
         <div class="social-btn-row">
             <a href="#" class="btn-social btn-social-google">
                 <span class="social-icon"><i class="fab fa-google"></i></span>
@@ -505,7 +455,7 @@
 
     </div>
 
-    <!-- Footer note (Pushed down) -->
+    <!-- Footer note -->
     <div class="signup-footer-note">
         &copy; <?php echo date('Y'); ?> Spider Tech Ltd
         <span class="sep">&middot;</span>
@@ -516,7 +466,7 @@
 
 </div>
 
-<!-- jQuery (required for Bootstrap 4) -->
+<!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
@@ -540,23 +490,25 @@
      * Consent Checkbox
      */
     const checkbox = document.getElementById('consentCheckbox');
+    const consentInput = document.getElementById('consentInput');
     const checkIcon = checkbox.querySelector('.material-symbols-outlined');
+
     checkbox.addEventListener('click', () => {
         const isChecked = checkbox.classList.toggle('checked');
         checkIcon.style.display = isChecked ? 'block' : 'none';
+        consentInput.value = isChecked ? '1' : '0';
     });
 
     /**
-     * Form Submission
+     * Form Submission (Client-side validation)
      */
     const form = document.getElementById('signupForm');
     form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        if (!checkbox.classList.contains('checked')) {
+        if (consentInput.value !== '1') {
+            e.preventDefault();
             alert('Please agree to the Terms and Privacy Policy.');
             return;
         }
-        alert('Registration processing...');
     });
 
   });
