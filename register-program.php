@@ -18,8 +18,8 @@ $form_fields = $select_fields->fetchAll(PDO::FETCH_ASSOC);
 // Group fields by section for rendering
 $sections = [];
 foreach ($form_fields as $field) {
-    $section_name = $field['field_section'] ?: 'Additional Information';
-    $sections[$section_name][] = $field;
+  $section_name = $field['field_section'] ?: 'Additional Information';
+  $sections[$section_name][] = $field;
 }
 
 // Fetch contact details for footer
@@ -252,25 +252,28 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
       .btn-group {
         grid-template-columns: 1fr;
       }
+
       .registration-form-wrapper {
         padding: 30px 20px;
       }
+
       .registration-hero-title {
         font-size: 2rem;
       }
     }
 
     /* Input focus effects */
-    .form-control:focus, .custom-select:focus {
+    .form-control:focus,
+    .custom-select:focus {
       border-color: #f48221 !important;
       box-shadow: 0 0 0 0.2rem rgba(244, 130, 33, 0.15) !important;
     }
 
     /* Dropdown fix */
     .custom-select {
-        background-color: #fff;
-        cursor: pointer;
-        padding-right: 40px;
+      background-color: #fff;
+      cursor: pointer;
+      padding-right: 40px;
     }
 
     .required-note {
@@ -282,7 +285,7 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
 
     /* Ensure icons are aligned */
     .material-symbols-outlined {
-        vertical-align: middle;
+      vertical-align: middle;
     }
   </style>
 </head>
@@ -297,7 +300,7 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
     <section class="registration-hero">
       <!-- Breadcrumb Navigation -->
       <?php require('includes/breadcrumbs.html'); ?>
-      
+
       <div class="container registration-hero-inner">
         <h1 class="registration-hero-title">Program Not Found</h1>
         <p class="registration-hero-subtitle text-danger">The program you're trying to register for does not exist or may have been removed.</p>
@@ -308,7 +311,7 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
     <section class="registration-hero">
       <!-- Breadcrumb Navigation -->
       <?php require('includes/breadcrumbs.html'); ?>
-      
+
       <div class="container registration-hero-inner">
         <div class="badge px-3 py-2 mb-3" style="background: rgba(244, 130, 33, 0.1); color: #f48221; border-radius: 50px; font-weight: 700;">REGISTRATION OPEN</div>
         <h1 class="registration-hero-title"><?= cleanText($program['training_name']); ?></h1>
@@ -352,14 +355,23 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
                   <h3 class="form-section-title">
                     <span class="material-symbols-outlined" style="color: #f48221;">
                       <?php
-                          // Select icon based on section name
-                          switch($section_name) {
-                              case 'Basic Information': echo 'person'; break;
-                              case 'Background Information': echo 'analytics'; break;
-                              case 'Professional Information': echo 'work'; break;
-                              case 'Additional Information': echo 'info'; break;
-                              default: echo 'info';
-                          }
+                      // Select icon based on section name
+                      switch ($section_name) {
+                        case 'Basic Information':
+                          echo 'person';
+                          break;
+                        case 'Background Information':
+                          echo 'analytics';
+                          break;
+                        case 'Professional Information':
+                          echo 'work';
+                          break;
+                        case 'Additional Information':
+                          echo 'info';
+                          break;
+                        default:
+                          echo 'info';
+                      }
                       ?>
                     </span>
                     <?= htmlspecialchars($section_name); ?>
@@ -438,19 +450,19 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
   <script>
     // Enhanced File Input Styling
     document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.custom-file-input').forEach(input => {
-            input.addEventListener('change', function(e) {
-                if (this.files && this.files[0]) {
-                    let fileName = this.files[0].name;
-                    let label = this.nextElementSibling;
-                    let nameSpan = label.querySelector('.file-name-text');
-                    if (nameSpan) {
-                        nameSpan.textContent = fileName;
-                        nameSpan.style.color = '#333';
-                    }
-                }
-            });
+      document.querySelectorAll('.custom-file-input').forEach(input => {
+        input.addEventListener('change', function(e) {
+          if (this.files && this.files[0]) {
+            let fileName = this.files[0].name;
+            let label = this.nextElementSibling;
+            let nameSpan = label.querySelector('.file-name-text');
+            if (nameSpan) {
+              nameSpan.textContent = fileName;
+              nameSpan.style.color = '#333';
+            }
+          }
         });
+      });
     });
   </script>
 </body>

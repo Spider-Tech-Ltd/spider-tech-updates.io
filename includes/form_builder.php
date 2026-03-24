@@ -8,7 +8,8 @@
 /**
  * Renders an individual form field based on its configuration
  */
-function render_form_field($field) {
+function render_form_field($field)
+{
     $name = $field['field_name'];
     $label = $field['field_label'];
     $type = $field['field_type'];
@@ -98,7 +99,8 @@ function render_form_field($field) {
 /**
  * Validates dynamic form inputs based on field definitions
  */
-function validate_dynamic_inputs($fields, $post_data, $files_data) {
+function validate_dynamic_inputs($fields, $post_data, $files_data)
+{
     $errors = [];
     $valid_data = [];
 
