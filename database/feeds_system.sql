@@ -11,7 +11,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 CREATE TABLE members (
     id INT AUTO_INCREMENT PRIMARY KEY,
     uuid CHAR(36) NOT NULL UNIQUE,
-    name VARCHAR(255) NOT NULL,
+    username VARCHAR(255) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -63,9 +63,9 @@ INSERT INTO categories (uuid, name, slug, description, created_at, updated_at) V
 ('c1a1b2c3-d4e5-6789-0123-abcdef00005', 'Lifestyle', 'lifestyle', 'Personal development, health, wellness, work-life balance, and community content.', NOW(), NOW());
 
 -- Sample Members (passwords are 'password123')
-INSERT INTO members (uuid, name, email, password_hash) VALUES
-('u1a1b2c3-d4e5-6789-0123-abcdef00001', 'Alan Turing', 'alan@spider.tech', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
-('u1a1b2c3-d4e5-6789-0123-abcdef00002', 'Ada Lovelace', 'ada@spider.tech', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
+INSERT INTO members (uuid, username, email, password_hash) VALUES
+('u1a1b2c3-d4e5-6789-0123-abcdef00001', 'alanturing', 'alan@spider.tech', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('u1a1b2c3-d4e5-6789-0123-abcdef00002', 'adalovelace', 'ada@spider.tech', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
 
 -- Sample Category Memberships
 INSERT INTO category_members (member_id, category_uuid, role) VALUES
