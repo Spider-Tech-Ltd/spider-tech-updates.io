@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Feed Banner — Member Welcome Banner
  * Compact slim banner visible only to logged-in members.
@@ -7,26 +8,26 @@
 require_once __DIR__ . '/../../../config/db.php';
 
 try {
-    // 1. Total Members Count
-    $stmtMembers = $conn->query("SELECT COUNT(*) FROM members");
-    $totalMembers = $stmtMembers->fetchColumn();
+  // 1. Total Members Count
+  $stmtMembers = $conn->query("SELECT COUNT(*) FROM members");
+  $totalMembers = $stmtMembers->fetchColumn();
 
-    // 2. Total Discussions (Feeds) Count
-    $stmtFeeds = $conn->query("SELECT COUNT(*) FROM feeds WHERE status = 'published'");
-    $totalDiscussions = $stmtFeeds->fetchColumn();
+  // 2. Total Discussions (Feeds) Count
+  $stmtFeeds = $conn->query("SELECT COUNT(*) FROM feeds WHERE status = 'published'");
+  $totalDiscussions = $stmtFeeds->fetchColumn();
 
-    // 3. Current Member Post Count
-    $memberPostCount = 0;
-    if (isset($_SESSION['member_id'])) {
-        $stmtMyPosts = $conn->prepare("SELECT COUNT(*) FROM feeds WHERE member_id = ?");
-        $stmtMyPosts->execute([$_SESSION['member_id']]);
-        $memberPostCount = $stmtMyPosts->fetchColumn();
-    }
+  // 3. Current Member Post Count
+  $memberPostCount = 0;
+  if (isset($_SESSION['member_id'])) {
+    $stmtMyPosts = $conn->prepare("SELECT COUNT(*) FROM feeds WHERE member_id = ?");
+    $stmtMyPosts->execute([$_SESSION['member_id']]);
+    $memberPostCount = $stmtMyPosts->fetchColumn();
+  }
 } catch (PDOException $e) {
-    error_log("Banner Stats Error: " . $e->getMessage());
-    $totalMembers = '...';
-    $totalDiscussions = '...';
-    $memberPostCount = 0;
+  error_log("Banner Stats Error: " . $e->getMessage());
+  $totalMembers = '...';
+  $totalDiscussions = '...';
+  $memberPostCount = 0;
 }
 ?>
 
@@ -46,7 +47,10 @@ try {
   .feed-member-banner::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background-image:
       linear-gradient(rgba(244, 130, 33, 0.04) 1px, transparent 1px),
       linear-gradient(90deg, rgba(244, 130, 33, 0.04) 1px, transparent 1px);
@@ -58,7 +62,9 @@ try {
   .feed-member-banner::after {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 3px;
     background: linear-gradient(90deg, #f48221, #e6751c 60%, transparent);
   }
@@ -184,10 +190,24 @@ try {
       flex-direction: column;
       align-items: flex-start;
     }
-    .banner-greeting { font-size: 1.3rem; }
-    .btn-start-discussion { width: 100%; justify-content: center; }
-    .banner-cta-group { width: 100%; }
-    .banner-stats { flex-wrap: wrap; gap: 12px; }
+
+    .banner-greeting {
+      font-size: 1.3rem;
+    }
+
+    .btn-start-discussion {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .banner-cta-group {
+      width: 100%;
+    }
+
+    .banner-stats {
+      flex-wrap: wrap;
+      gap: 12px;
+    }
   }
 </style>
 
@@ -198,7 +218,7 @@ try {
       <!-- Left: Welcome Text -->
       <div class="banner-text-group">
         <h2 class="banner-greeting">
-          Welcome back, <span><?php echo htmlspecialchars($_SESSION['member_name'] ?? 'Member'); ?></span>. 👋
+          Welcome back, <span><?php echo htmlspecialchars($_SESSION['username'] ?? 'Member'); ?></span>. 👋
         </h2>
         <p class="banner-subtitle">
           Stay ahead of the curve.
