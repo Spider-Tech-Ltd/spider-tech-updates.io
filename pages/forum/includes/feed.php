@@ -3,8 +3,12 @@
 /**
  * Forum Feed Component (Guest/Public View)
  * Dynamically fetches and displays latest discussions from the database.
+ * Now shows Like and Reply counts (Read-only for guests).
  */
 require_once __DIR__ . '/../../../config/db.php';
+require_once __DIR__ . '/../../../auth/FeedActions.php';
+
+$feedActions = new FeedActions($conn);
 
 try {
   // Fetch latest published feeds with member and category info
@@ -74,7 +78,6 @@ if (!function_exists('time_ago')) {
     padding: 10px 20px;
     border-radius: 50px;
     text-decoration: none !important;
-    transition: background-color 0.2s;
   }
 
   .btn-new-topic:hover {
@@ -98,7 +101,10 @@ if (!function_exists('time_ago')) {
     padding-bottom: 12px;
     text-decoration: none !important;
     position: relative;
-    transition: color 0.2s;
+  }
+
+  .tab-link.active {
+    color: #111111;
   }
 
   .tab-link:hover {
@@ -135,6 +141,7 @@ if (!function_exists('time_ago')) {
     text-decoration: none !important;
     transition: all 0.2s ease;
     display: block;
+    margin-bottom: 16px;
   }
 
   .discussion-card:hover {
@@ -297,16 +304,9 @@ if (!function_exists('time_ago')) {
 
   <div class="feed-header">
     <h2 class="feed-title">Latest Discussions</h2>
-    <a href="pages/forum/sign-in.php?redirect=pages/forum/feed.php" class="btn-new-topic">
-      <span class="material-symbols-outlined">add</span>
-      New Topic
+    <a href="pages/forum/sign-in.php" class="btn-new-topic">
+      <span class="material-symbols-outlined">add</span> New Topic
     </a>
-  </div>
-
-  <div class="feed-tabs">
-    <a href="#" class="tab-link active">Latest</a>
-    <a href="#" class="tab-link">Top</a>
-    <a href="#" class="tab-link">Unanswered</a>
   </div>
 
   <div class="discussion-card-list">
@@ -356,9 +356,4 @@ if (!function_exists('time_ago')) {
       Next <span class="material-symbols-outlined">chevron_right</span>
     </a>
   </div>
-
-  <a href="pages/forum/sign-in.php" class="fab-mobile">
-    <span class="material-symbols-outlined">edit</span>
-  </a>
-
 </div>
