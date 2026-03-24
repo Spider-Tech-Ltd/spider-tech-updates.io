@@ -2,6 +2,12 @@
 require('../../includes/connect.php');
 require_once('../../auth/middleware.php');
 require('../../home_functions.php');
+
+// Redirect authenticated users to the members feed page
+if (isLoggedIn()) {
+    header('Location: feed.php');
+    die();
+}
 ?>
 <!doctype html>
 <html lang="en">
