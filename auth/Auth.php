@@ -2,7 +2,7 @@
 /**
  * Authentication Helper Class
  * Handles registration, login, and secure user data storage.
- * Updated to support username/email login and username field.
+ * Updated with strict uniqueness checks and improved session management.
  */
 
 class Auth {
@@ -26,6 +26,25 @@ class Auth {
     }
 
     /**
+     * Clear all session data securely
+     */
+    private function clearSession() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $_SESSION = [];
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]
+            );
+        }
+        session_destroy();
+        session_start();
+    }
+
+    /**
      * Validates and registers a new member
      */
     public function registerUser($username, $email, $password) {
@@ -34,7 +53,7 @@ class Auth {
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return ["status" => "error", "message" => "Invalid email format."];
+            return ["status" => "error", "message" => "Please enter a valid email address."];
         }
 
         if (strlen($password) < 6) {
@@ -42,11 +61,18 @@ class Auth {
         }
 
         try {
-            // Check if username or email already exists
-            $stmt = $this->db->prepare("SELECT COUNT(*) FROM members WHERE username = ? OR email = ?");
-            $stmt->execute([$username, $email]);
-            if ($stmt->fetchColumn() > 0) {
-                return ["status" => "error", "message" => "Username or Email already registered."];
+            // 1. Strict check for existing Username
+            $stmtUser = $this->db->prepare("SELECT COUNT(*) FROM members WHERE username = ?");
+            $stmtUser->execute([$username]);
+            if ($stmtUser->fetchColumn() > 0) {
+                return ["status" => "error", "message" => "This username is already taken."];
+            }
+
+            // 2. Strict check for existing Email
+            $stmtEmail = $this->db->prepare("SELECT COUNT(*) FROM members WHERE email = ?");
+            $stmtEmail->execute([$email]);
+            if ($stmtEmail->fetchColumn() > 0) {
+                return ["status" => "error", "message" => "This email is already registered."];
             }
 
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
@@ -71,7 +97,6 @@ class Auth {
         }
 
         try {
-            // Detect if identifier is email or username
             $field = filter_var($identifier, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
             $stmt = $this->db->prepare("SELECT id, uuid, username, password_hash FROM members WHERE $field = ?");
@@ -79,9 +104,9 @@ class Auth {
             $user = $stmt->fetch();
 
             if ($user && password_verify($password, $user['password_hash'])) {
-                if (session_status() === PHP_SESSION_NONE) {
-                    session_start();
-                }
+                // Clear any existing session before logging in new member
+                $this->clearSession();
+
                 $_SESSION['user_id'] = $user['uuid'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['member_id'] = $user['id'];
