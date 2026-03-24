@@ -14,7 +14,14 @@ function render_form_field($field) {
     $type = $field['field_type'];
     $required = $field['is_required'] ? 'required' : '';
     $options = !empty($field['options']) ? json_decode($field['options'], true) : [];
-    $width_class = isset($field['field_width']) && $field['field_width'] === 'half' ? 'col-md-6' : 'col-12';
+
+    // Clean column control based on field semantic set; phone always full width
+    $half_width_fields = ['first_name', 'last_name', 'lastname', 'middle_name', 'email'];
+    if (in_array(strtolower($name), $half_width_fields, true)) {
+        $width_class = 'col-md-6';
+    } else {
+        $width_class = 'col-12';
+    }
 
     $html = '<div class="' . $width_class . ' mb-3">';
     $html .= '<div class="form-group">';
@@ -25,8 +32,9 @@ function render_form_field($field) {
     $html .= '</label>';
 
     // Base style for all text-based inputs and selects
-    $input_style = 'border-radius: 50px; padding: 12px 20px; border: 1px solid #ddd; transition: all 0.3s ease;';
-    $textarea_style = 'border-radius: 20px; padding: 15px 20px; border: 1px solid #ddd; transition: all 0.3s ease;';
+    $input_style = 'border-radius: 50px; padding: 15px 20px; border: 1px solid #ddd; min-height: 52px; transition: all 0.3s ease;';
+    $select_style = 'border-radius: 50px; padding: 15px 20px; border: 1px solid #ddd; min-height: 52px; transition: all 0.3s ease;';
+    $textarea_style = 'border-radius: 20px; padding: 15px 20px; border: 1px solid #ddd; min-height: 140px; transition: all 0.3s ease;';
 
     switch ($type) {
         case 'text':
@@ -40,7 +48,7 @@ function render_form_field($field) {
             break;
 
         case 'select':
-            $html .= '<select id="' . $name . '" name="' . $name . '" class="form-control custom-select" style="' . $input_style . ' height: auto; -webkit-appearance: none;" ' . $required . '>';
+            $html .= '<select id="' . $name . '" name="' . $name . '" class="form-control custom-select" style="' . $select_style . ' height: auto; -webkit-appearance: none;" ' . $required . '>';
             $html .= '<option value="">-- Select ' . htmlspecialchars($label) . ' --</option>';
             foreach ($options as $option) {
                 $html .= '<option value="' . htmlspecialchars($option) . '">' . htmlspecialchars($option) . '</option>';
@@ -49,11 +57,14 @@ function render_form_field($field) {
             break;
 
         case 'file':
-            $html .= '<div class="custom-file" style="border-radius: 50px; overflow: hidden;">';
-            $html .= '<input type="file" id="' . $name . '" name="' . $name . '" class="custom-file-input" ' . $required . '>';
-            $html .= '<label class="custom-file-label" for="' . $name . '" style="border-radius: 50px; padding: 12px 20px; height: auto;">Choose file</label>';
+            $html .= '<div style="position: relative; border-radius: 50px; overflow: hidden; border: 1px solid #ddd; background: #fff;">';
+            $html .= '<input type="file" id="' . $name . '" name="' . $name . '" class="custom-file-input" style="position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer;" ' . $required . '>';
+            $html .= '<label for="' . $name . '" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; min-height: 52px; cursor: pointer; background: #fff; margin: 0;">';
+            $html .= '<span class="file-name-text" style="color: #999; font-weight: normal;">Choose file</span>';
+            $html .= '<span style="background: #f48221; color: #fff; padding: 8px 18px; border-radius: 20px; font-weight: 600; font-size: 0.9rem; white-space: nowrap; margin-left: 10px;">Select</span>';
+            $html .= '</label>';
             $html .= '</div>';
-            $html .= '<small class="form-text text-muted mt-1">Max file size: 5MB. Allowed: JPG, PNG, PDF.</small>';
+            $html .= '<small class="form-text text-muted" style="display: block; margin-top: 8px;">Max file size: 5MB. Allowed: JPG, PNG, PDF.</small>';
             break;
 
         case 'radio':

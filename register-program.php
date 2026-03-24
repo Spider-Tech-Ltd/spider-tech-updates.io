@@ -18,7 +18,7 @@ $form_fields = $select_fields->fetchAll(PDO::FETCH_ASSOC);
 // Group fields by section for rendering
 $sections = [];
 foreach ($form_fields as $field) {
-    $section_name = $field['field_section'] ?: 'Other Info';
+    $section_name = $field['field_section'] ?: 'Additional Information';
     $sections[$section_name][] = $field;
 }
 
@@ -73,7 +73,7 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
     /* Restore Light Orange Hero Section */
     .registration-hero {
       background: linear-gradient(135deg, #fef4ea 0%, #fff7f0 100%);
-      padding: 80px 0;
+      padding: 40px 0 80px 0;
       color: #333;
       text-align: center;
       position: relative;
@@ -94,8 +94,14 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
       margin: 0 auto;
     }
 
+    .registration-page {
+      min-height: 100vh;
+      position: relative;
+      padding-bottom: 240px;
+    }
+
     .registration-intro {
-      padding: 60px 0 100px;
+      padding: 60px 0 130px;
       position: relative;
       z-index: 20;
     }
@@ -104,26 +110,56 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
       background: #fff;
       border-radius: 20px;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
-      padding: 50px;
+      padding: 40px;
       max-width: 950px;
-      margin: 0 auto;
+      margin: 0 auto 80px;
       border: 1px solid #eee;
+      position: relative;
+      z-index: 20;
     }
+
+    footer.home {
+      position: relative;
+      z-index: 10;
+    }
+
+    footer {
+      position: relative !important;
+      margin-top: 0 !important;
+      min-height: auto !important;
+      padding: 80px 0 !important;
+      background: #f8f9fa;
+    }
+
+    body.registration-page {
+      min-height: auto;
+      padding-bottom: 40px;
+    }
+
 
     .form-section-title {
       font-size: 1.4rem;
       font-weight: 700;
-      margin: 40px 0 25px;
-      padding-bottom: 12px;
-      border-bottom: 3px solid #f48221;
-      color: #1a1a1a;
+      margin: 0 0 0 0;
+      padding: 15px 20px;
+      background: #f48221;
+      color: #fff !important;
       display: flex;
       align-items: center;
       gap: 10px;
+      border-radius: 10px 10px 0 0;
     }
 
-    .form-section-title:first-child {
-      margin-top: 0;
+    .form-section-title .material-symbols-outlined {
+      color: #fff !important;
+    }
+
+    .form-section {
+      margin-top: 30px;
+      border: 1px solid #eee;
+      border-radius: 15px;
+      background: #fafafa;
+      overflow: hidden;
     }
 
     .program-info-box {
@@ -138,6 +174,15 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
       color: #f48221;
       font-weight: 800;
       margin-bottom: 8px;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 30px;
+      padding-top: 30px;
+      border-top: 1px solid #eee;
     }
 
     .submit-btn {
@@ -155,11 +200,12 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
       cursor: pointer;
       transition: all 0.3s ease;
       width: 100%;
+      min-height: 56px;
     }
 
     .submit-btn:hover {
       background: #e6751c;
-      transform: translateY(-3px);
+      transform: translateY(-2px);
       box-shadow: 0 10px 20px rgba(244, 130, 33, 0.3);
     }
 
@@ -168,32 +214,39 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
-      background: #fff;
+      background: transparent;
       color: #f48221;
       border: 2px solid #f48221;
       border-radius: 50px;
-      padding: 14px 35px;
+      padding: 14px 40px;
       font-weight: 700;
       text-decoration: none;
       font-size: 1rem;
       cursor: pointer;
       transition: all 0.3s ease;
-      margin-top: 20px;
+      min-height: 56px;
+      width: 100%;
     }
 
     .cancel-btn:hover {
       background: #fef4ea;
+      color: #f48221;
       text-decoration: none;
     }
 
-    .btn-group {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 20px;
-      margin-top: 40px;
-      padding-top: 30px;
-      border-top: 1px solid #eee;
+    @media (max-width: 768px) {
+      .btn-group {
+        margin-top: 20px;
+        padding-top: 20px;
+      }
+
+      .submit-btn,
+      .cancel-btn {
+        min-height: 52px;
+        padding: 14px 30px;
+      }
     }
+
 
     @media (max-width: 768px) {
       .btn-group {
@@ -237,14 +290,14 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
 <body class="registration-page">
   <?php require('includes/preloader.html'); ?>
 
-  <!-- Breadcrumb Navigation -->
-  <?php require('includes/breadcrumbs.html'); ?>
-
   <!-- Header -->
   <?php require('header-section.php'); ?>
 
   <?php if (!$program) : ?>
     <section class="registration-hero">
+      <!-- Breadcrumb Navigation -->
+      <?php require('includes/breadcrumbs.html'); ?>
+      
       <div class="container registration-hero-inner">
         <h1 class="registration-hero-title">Program Not Found</h1>
         <p class="registration-hero-subtitle text-danger">The program you're trying to register for does not exist or may have been removed.</p>
@@ -253,6 +306,9 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
     </section>
   <?php else : ?>
     <section class="registration-hero">
+      <!-- Breadcrumb Navigation -->
+      <?php require('includes/breadcrumbs.html'); ?>
+      
       <div class="container registration-hero-inner">
         <div class="badge px-3 py-2 mb-3" style="background: rgba(244, 130, 33, 0.1); color: #f48221; border-radius: 50px; font-weight: 700;">REGISTRATION OPEN</div>
         <h1 class="registration-hero-title"><?= cleanText($program['training_name']); ?></h1>
@@ -292,25 +348,28 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
 
             <?php if (!empty($sections)) : ?>
               <?php foreach ($sections as $section_name => $fields) : ?>
-                <h3 class="form-section-title">
-                  <span class="material-symbols-outlined" style="color: #f48221;">
-                    <?php
-                        // Select icon based on section name
-                        switch($section_name) {
-                            case 'Personal Info': echo 'person'; break;
-                            case 'Demographics': echo 'analytics'; break;
-                            case 'Professional Info': echo 'work'; break;
-                            default: echo 'info';
-                        }
-                    ?>
-                  </span>
-                  <?= $section_name; ?>
-                </h3>
+                <div class="form-section">
+                  <h3 class="form-section-title">
+                    <span class="material-symbols-outlined" style="color: #f48221;">
+                      <?php
+                          // Select icon based on section name
+                          switch($section_name) {
+                              case 'Basic Information': echo 'person'; break;
+                              case 'Background Information': echo 'analytics'; break;
+                              case 'Professional Information': echo 'work'; break;
+                              case 'Additional Information': echo 'info'; break;
+                              default: echo 'info';
+                          }
+                      ?>
+                    </span>
+                    <?= htmlspecialchars($section_name); ?>
+                  </h3>
 
-                <div class="row">
-                  <?php foreach ($fields as $field) : ?>
-                    <?= render_form_field($field); ?>
-                  <?php endforeach; ?>
+                  <div class="row" style="padding: 20px;">
+                    <?php foreach ($fields as $field) : ?>
+                      <?= render_form_field($field); ?>
+                    <?php endforeach; ?>
+                  </div>
                 </div>
               <?php endforeach; ?>
 
@@ -318,9 +377,9 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
               <!-- Fallback to static fields if no custom fields defined -->
               <h3 class="form-section-title">
                 <span class="material-symbols-outlined">person</span>
-                Personal Information
+                Basic Information
               </h3>
-              <div class="row">
+              <div class="row" style="margin-bottom: 30px;">
                 <div class="col-md-6 mb-3">
                   <div class="form-group">
                     <label class="font-weight-bold">First Name <span class="text-danger">*</span></label>
@@ -355,7 +414,6 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
                 Submit Registration
               </button>
               <a href="program-detail.php?id=<?= $program_id; ?>" class="cancel-btn">
-                <span class="material-symbols-outlined align-middle" style="font-size: 20px;">arrow_back</span>
                 Cancel
               </a>
             </div>
@@ -374,14 +432,23 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
 
   <?php require('javascript-section.html'); ?>
 
+  <!-- Nigerian Locations JavaScript -->
+  <script src="js/nigerian-locations.js"></script>
+
   <script>
     // Enhanced File Input Styling
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.custom-file-input').forEach(input => {
-            input.addEventListener('change', e => {
-                let fileName = e.target.files[0].name;
-                let nextSibling = e.target.nextElementSibling;
-                nextSibling.innerText = fileName;
+            input.addEventListener('change', function(e) {
+                if (this.files && this.files[0]) {
+                    let fileName = this.files[0].name;
+                    let label = this.nextElementSibling;
+                    let nameSpan = label.querySelector('.file-name-text');
+                    if (nameSpan) {
+                        nameSpan.textContent = fileName;
+                        nameSpan.style.color = '#333';
+                    }
+                }
             });
         });
     });
