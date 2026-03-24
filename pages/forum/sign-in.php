@@ -1,7 +1,6 @@
 <?php
 /**
  * Sign-In Page — Spider Tech Forum
- * Logic: Handles member login (Email or Username).
  */
 require_once '../../config/db.php';
 require_once '../../auth/Auth.php';
@@ -23,7 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $result = $auth->loginUser($identifier, $password);
     if ($result['status'] === 'success') {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         header('Location: ' . $result['redirect']);
+        session_write_close();
         die();
     } else {
         $status = $result['status'];
