@@ -253,6 +253,7 @@
     </div>
   </section>
 
+  <?php if (!function_exists('isLoggedIn') || !isLoggedIn()): ?>
   <!-- WIDGET 3: Join CTA -->
   <section class="sidebar-join-card">
     <h3 class="join-title">New Here?</h3>
@@ -260,9 +261,10 @@
       Join the Spider Tech Community to start posting, ask questions, and connect with thousands of tech professionals.
     </p>
     <div class="join-btn-group">
-      <a href="pages/forum/sign-in.php?redirect=pages/forum/feed.php" class="join-btn-primary">Register Free</a>
-      <a href="pages/forum/sign-in.php?redirect=pages/forum/feed.php" class="join-btn-secondary">Sign In</a>
+      <a href="pages/forum/sign-up.php" class="join-btn-primary">Register Free</a>
+      <a href="pages/forum/sign-in.php" class="join-btn-secondary">Sign In</a>
     </div>
   </section>
+  <?php endif; ?>
 
 </aside>

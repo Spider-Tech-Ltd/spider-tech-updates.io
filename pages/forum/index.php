@@ -1,5 +1,6 @@
 <?php
 require('../../includes/connect.php');
+require_once('../../auth/middleware.php');
 require('../../home_functions.php');
 ?>
 <!doctype html>

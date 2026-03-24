@@ -225,7 +225,9 @@
     <div class="hero-action-row">
       <div class="hero-btn-group">
         <a href="pages/forum/new-topic.php" class="hero-btn-primary">Start a Discussion</a>
-        <a href="pages/forum/sign-in.php" class="hero-btn-secondary">Sign In</a>
+        <?php if (!function_exists('isLoggedIn') || !isLoggedIn()): ?>
+            <a href="pages/forum/sign-in.php" class="hero-btn-secondary">Sign In</a>
+        <?php endif; ?>
       </div>
     </div>
 
