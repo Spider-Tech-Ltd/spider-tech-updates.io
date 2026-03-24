@@ -1,11 +1,14 @@
 <?php
 /**
  * Dynamic Forum Feed Component
- * Fetches and displays feeds from the database with category filtering.
+ * Enhanced with Likes and Replies integration.
  */
 require_once __DIR__ . '/../../../config/db.php';
+require_once __DIR__ . '/../../../auth/FeedActions.php';
 
+$feedActions = new FeedActions($conn);
 $categoryFilter = $_GET['category'] ?? 'all';
+$currentMemberId = $_SESSION['member_id'] ?? null;
 
 try {
     $sql = "
@@ -58,9 +61,8 @@ if (!function_exists('time_ago')) {
     text-decoration: none !important;
     transition: all 0.2s ease;
     position: relative;
-    overflow: hidden;
   }
-  .discussion-card:hover { border-color: #f48221; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transform: translateY(-2px); }
+  .discussion-card:hover { border-color: #f48221; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 
   .category-badge {
     display: inline-flex;
@@ -76,24 +78,8 @@ if (!function_exists('time_ago')) {
     background: #f1f5f9; color: #64748b;
   }
 
-  .card-title {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 1.35rem;
-    line-height: 1.4;
-    color: #1e293b;
-    margin-bottom: 12px;
-  }
-  .card-excerpt {
-    font-family: 'Open Sans', sans-serif;
-    color: #64748b;
-    line-height: 1.6;
-    margin-bottom: 20px;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
+  .card-title { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1.35rem; color: #1e293b; margin-bottom: 12px; }
+  .card-excerpt { font-family: 'Open Sans', sans-serif; color: #64748b; line-height: 1.6; margin-bottom: 20px; }
 
   .card-author-row { display: flex; align-items: center; gap: 12px; }
   .author-avatar-sm { width: 32px; height: 32px; border-radius: 50%; }
@@ -103,7 +89,7 @@ if (!function_exists('time_ago')) {
   .card-interaction-bar {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 12px;
     margin-top: 20px;
     padding-top: 16px;
     border-top: 1px solid #f1f5f9;
@@ -120,107 +106,101 @@ if (!function_exists('time_ago')) {
     font-size: 0.78rem;
     cursor: pointer;
     transition: all 0.2s ease;
-    padding: 6px 12px;
+    padding: 6px 14px;
     border-radius: 50px;
-    text-decoration: none !important;
   }
   .btn-interact:hover { background-color: rgba(244, 130, 33, 0.08); color: #f48221; }
+  .btn-interact.active { color: #f48221; background-color: rgba(244, 130, 33, 0.1); }
   .btn-interact .material-symbols-outlined { font-size: 18px; }
   .interact-spacer { flex: 1; }
 
-  /* Pagination — Styled to match Guest Feed */
-  .member-feed-pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    margin-top: 40px;
+  /* Reply Section Styles */
+  .reply-section {
+    display: none;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed #e2e8f0;
   }
+  .reply-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+  .reply-item { background: #f8fafc; padding: 12px 16px; border-radius: 12px; font-size: 0.9rem; }
+  .reply-author { font-weight: 700; color: #1e293b; margin-right: 8px; }
+  .reply-content { color: #475569; }
 
-  .pag-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 0.85rem;
-    color: #f48221;
-    background: none;
-    border: 1.5px solid #f48221;
-    padding: 8px 18px;
-    border-radius: 50px;
-    transition: all 0.2s ease;
-    text-decoration: none !important;
-  }
+  .reply-input-group { display: flex; gap: 10px; }
+  .reply-input { flex: 1; height: 40px; border-radius: 20px; border: 1px solid #e2e8f0; padding: 0 16px; font-size: 0.85rem; outline: none; }
+  .reply-input:focus { border-color: #f48221; }
+  .btn-post-reply { width: 40px; height: 40px; border-radius: 50%; background: #f48221; color: #fff; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
-  .pag-btn:hover {
-    background-color: #f48221;
-    color: #ffffff;
-  }
-
-  .pag-info {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 0.85rem;
-    color: #797979;
-  }
-
-  .empty-feed {
-    text-align: center;
-    padding: 60px 20px;
-    background: #ffffff;
-    border-radius: 16px;
-    border: 1px dashed #cbd5e1;
-  }
-  .empty-icon { font-size: 48px; color: #94a3b8; margin-bottom: 16px; display: block; }
+  .member-feed-pagination { display: flex; justify-content: center; align-items: center; gap: 20px; margin-top: 40px; }
+  .pag-btn { display: inline-flex; align-items: center; gap: 4px; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.85rem; color: #f48221; background: none; border: 1.5px solid #f48221; padding: 8px 18px; border-radius: 50px; transition: all 0.2s ease; text-decoration: none !important; }
+  .pag-btn:hover { background-color: #f48221; color: #ffffff; }
 </style>
 
 <div class="discussion-card-list">
 
   <?php if (empty($feeds)): ?>
     <div class="empty-feed">
-        <span class="material-symbols-outlined empty-icon">forum</span>
-        <h4>No discussions found</h4>
-        <p class="text-muted">Be the first to start a conversation in this category!</p>
-        <a href="pages/forum/new-topic.php" class="btn btn-outline-primary mt-3">Start Discussion</a>
+        <span class="material-symbols-outlined empty-icon" style="font-size:48px; color:#cbd5e1; display:block; margin-bottom:16px;">forum</span>
+        <p class="text-muted">No discussions found.</p>
     </div>
   <?php else: ?>
-      <?php foreach ($feeds as $feed):
-          $avatarUrl = "https://ui-avatars.com/api/?name=" . urlencode($feed['member_name']) . "&background=f48221&color=fff";
+      <?php foreach ($feeds as $f):
+          $likes = $feedActions->getLikesCount($f['uuid']);
+          $repliesCount = $feedActions->getRepliesCount($f['uuid']);
+          $hasLiked = $currentMemberId ? $feedActions->hasMemberLiked($f['uuid'], $currentMemberId) : false;
+          $allReplies = $feedActions->getReplies($f['uuid']);
       ?>
-      <a href="pages/forum/feed-detail.php?id=<?php echo $feed['uuid']; ?>" class="discussion-card">
+      <div class="discussion-card" id="feed-<?php echo $f['uuid']; ?>">
         <div class="card-top-row">
-          <span class="category-badge">
-            <?php echo htmlspecialchars($feed['category_name']); ?>
-          </span>
+          <span class="category-badge"><?php echo htmlspecialchars($f['category_name']); ?></span>
         </div>
 
-        <h3 class="card-title"><?php echo htmlspecialchars($feed['title']); ?></h3>
-
-        <p class="card-excerpt">
-            <?php echo nl2br(htmlspecialchars($feed['content'])); ?>
-        </p>
+        <h3 class="card-title"><?php echo htmlspecialchars($f['title']); ?></h3>
+        <p class="card-excerpt"><?php echo nl2br(htmlspecialchars($f['content'])); ?></p>
 
         <div class="card-author-row">
-          <img src="<?php echo $avatarUrl; ?>" class="author-avatar-sm" alt="Avatar">
-          <span class="author-name"><?php echo htmlspecialchars($feed['member_name']); ?></span>
-          <span class="author-time"><?php echo time_ago($feed['created_at']); ?></span>
+          <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($f['member_name']); ?>&background=f48221&color=fff" class="author-avatar-sm" alt="Avatar">
+          <span class="author-name"><?php echo htmlspecialchars($f['member_name']); ?></span>
+          <span class="author-time"><?php echo time_ago($f['created_at']); ?></span>
         </div>
 
         <div class="card-interaction-bar">
-          <div class="btn-interact" title="Upvote">
-            <span class="material-symbols-outlined">thumb_up</span>
-            <span class="vote-count">0</span>
-          </div>
-          <div class="btn-interact" title="Replies">
+          <button class="btn-interact btn-like <?php echo $hasLiked ? 'active' : ''; ?>" data-uuid="<?php echo $f['uuid']; ?>">
+            <span class="material-symbols-outlined" style="<?php echo $hasLiked ? "font-variation-settings: 'FILL' 1" : ""; ?>">thumb_up</span>
+            <span class="count"><?php echo $likes; ?></span>
+          </button>
+
+          <button class="btn-interact btn-toggle-replies" data-uuid="<?php echo $f['uuid']; ?>">
             <span class="material-symbols-outlined">chat_bubble</span>
-            <span>0</span>
-          </div>
+            <span class="count"><?php echo $repliesCount; ?></span>
+          </button>
+
           <div class="interact-spacer"></div>
-          <div class="btn-interact" title="Bookmark">
+
+          <button class="btn-interact">
             <span class="material-symbols-outlined">bookmark</span>
-          </div>
+          </button>
         </div>
-      </a>
+
+        <!-- Collapsible Reply Section -->
+        <div class="reply-section" id="replies-<?php echo $f['uuid']; ?>">
+            <div class="reply-list">
+                <?php foreach ($allReplies as $r): ?>
+                    <div class="reply-item">
+                        <span class="reply-author"><?php echo htmlspecialchars($r['username']); ?></span>
+                        <span class="reply-content"><?php echo htmlspecialchars($r['content']); ?></span>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
+            <div class="reply-input-group">
+                <input type="text" class="reply-input" placeholder="Write a reply..." data-uuid="<?php echo $f['uuid']; ?>">
+                <button class="btn-post-reply" data-uuid="<?php echo $f['uuid']; ?>">
+                    <span class="material-symbols-outlined">send</span>
+                </button>
+            </div>
+        </div>
+      </div>
       <?php endforeach; ?>
   <?php endif; ?>
 
@@ -231,15 +211,78 @@ if (!function_exists('time_ago')) {
   <a href="#" class="pag-btn">
     <span class="material-symbols-outlined">chevron_left</span> Previous
   </a>
-  <span class="pag-info">Page 1 of 1</span>
+  <span class="pag-info" style="font-family:'Open Sans',sans-serif;font-size:0.85rem;color:#797979;">Page 1 of 1</span>
   <a href="#" class="pag-btn">
     Next <span class="material-symbols-outlined">chevron_right</span>
   </a>
 </div>
 
-<!-- Mobile FAB -->
-<a href="pages/forum/new-topic.php" class="member-fab-mobile d-md-none position-fixed bottom-0 end-0 m-4" style="z-index:1000;">
-  <div class="btn btn-primary rounded-circle shadow-lg d-flex align-items-center justify-content-center" style="width: 56px; height: 56px; background-color:#f48221; border:none;">
-    <span class="material-symbols-outlined text-white">edit</span>
-  </div>
-</a>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Toggle Like
+    $('.btn-like').on('click', function(e) {
+        e.preventDefault();
+        const btn = $(this);
+        const uuid = btn.data('uuid');
+
+        $.post('pages/forum/ajax-actions.php', {
+            action: 'toggle_like',
+            feed_uuid: uuid
+        }, function(res) {
+            if (res.status === 'success') {
+                btn.toggleClass('active');
+                btn.find('.count').text(res.count);
+                const icon = btn.find('.material-symbols-outlined');
+                if (res.action === 'liked') {
+                    icon.css('font-variation-settings', "'FILL' 1");
+                } else {
+                    icon.css('font-variation-settings', "'FILL' 0");
+                }
+            }
+        });
+    });
+
+    // Toggle Replies Section
+    $('.btn-toggle-replies').on('click', function() {
+        const uuid = $(this).data('uuid');
+        $(`#replies-${uuid}`).slideToggle(200);
+    });
+
+    // Post Reply
+    $('.btn-post-reply').on('click', function() {
+        const uuid = $(this).data('uuid');
+        const input = $(`.reply-input[data-uuid="${uuid}"]`);
+        const content = input.val();
+
+        if (!content.trim()) return;
+
+        $.post('pages/forum/ajax-actions.php', {
+            action: 'add_reply',
+            feed_uuid: uuid,
+            content: content
+        }, function(res) {
+            if (res.status === 'success') {
+                input.val('');
+                const list = $(`#replies-${uuid} .reply-list`);
+                list.append(`
+                    <div class="reply-item" style="display:none;">
+                        <span class="reply-author">You</span>
+                        <span class="reply-content">${res.reply.content}</span>
+                    </div>
+                `);
+                list.find('.reply-item:last').fadeIn();
+                $(`.btn-toggle-replies[data-uuid="${uuid}"] .count`).text(res.count);
+            }
+        });
+    });
+
+    // Allow Enter key to submit reply
+    $('.reply-input').on('keypress', function(e) {
+        if (e.which === 13) {
+            const uuid = $(this).data('uuid');
+            $(`.btn-post-reply[data-uuid="${uuid}"]`).click();
+        }
+    });
+});
+</script>

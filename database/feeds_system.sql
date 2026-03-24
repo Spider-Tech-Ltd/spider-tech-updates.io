@@ -77,3 +77,26 @@ INSERT INTO category_members (member_id, category_uuid, role) VALUES
 INSERT INTO feeds (uuid, category_uuid, member_id, title, content, status) VALUES
 ('f1a1b2c3-d4e5-6789-0123-abcdef00001', 'c1a1b2c3-d4e5-6789-0123-abcdef00003', 1, 'The Future of AI in Manufacturing', 'AI is transforming the industrial landscape by improving efficiency...', 'published'),
 ('f1a1b2c3-d4e5-6789-0123-abcdef00002', 'c1a1b2c3-d4e5-6789-0123-abcdef00001', 2, 'Starting Your Tech Venture', 'Key things to consider when building a tech startup from scratch...', 'published');
+
+-- 5. Feed Likes Table
+CREATE TABLE feed_likes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    feed_uuid CHAR(36) NOT NULL,
+    member_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (feed_uuid) REFERENCES feeds(uuid) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    UNIQUE KEY (feed_uuid, member_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 6. Feed Replies Table
+CREATE TABLE feed_replies (
+    uuid CHAR(36) PRIMARY KEY,
+    feed_uuid CHAR(36) NOT NULL,
+    member_id INT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (feed_uuid) REFERENCES feeds(uuid) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
