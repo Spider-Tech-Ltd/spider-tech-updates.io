@@ -10,6 +10,7 @@ _notes/
 # Agents and Skills
 .agents/
 skills-lock.json
+plans/
 
 # Development and Logging
 *.log
