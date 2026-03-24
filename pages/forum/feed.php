@@ -124,19 +124,7 @@ $member = [
     <?php require('../../javascript-section.html'); ?>
 
     <script>
-      /**
-       * Filter Bar: Active pill toggle
-       */
       document.addEventListener('DOMContentLoaded', function () {
-        const pills = document.querySelectorAll('.filter-pill');
-        pills.forEach(function (pill) {
-          pill.addEventListener('click', function (e) {
-            e.preventDefault();
-            pills.forEach(function (p) { p.classList.remove('active'); });
-            this.classList.add('active');
-          });
-        });
-
         /**
          * Discussion card: bookmark toggle
          */

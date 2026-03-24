@@ -5,7 +5,7 @@
  */
 require_once __DIR__ . '/../../../config/db.php';
 
-$categoryFilter = $_GET['category'] ?? null;
+$categoryFilter = $_GET['category'] ?? 'all';
 
 try {
     $sql = "
@@ -17,7 +17,7 @@ try {
     ";
 
     $params = [];
-    if ($categoryFilter && $categoryFilter !== 'all') {
+    if ($categoryFilter !== 'all') {
         $sql .= " AND c.slug = ?";
         $params[] = $categoryFilter;
     }
@@ -75,8 +75,6 @@ if (!function_exists('time_ago')) {
     margin-bottom: 16px;
     background: #f1f5f9; color: #64748b;
   }
-
-  /* Category specific colors can be added here if needed */
 
   .card-title {
     font-family: 'Poppins', sans-serif;
