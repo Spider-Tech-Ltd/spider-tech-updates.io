@@ -2,6 +2,7 @@
 /**
  * Authentication Helper Class
  * Handles registration, login, and secure user data storage.
+ * Updated to use 'members' table and column names.
  */
 
 class Auth {
@@ -25,11 +26,10 @@ class Auth {
     }
 
     /**
-     * Validates and registers a new user
+     * Validates and registers a new member
      */
-    public function registerUser($username, $email, $password) {
-        // Simple input validation
-        if (empty($username) || empty($email) || empty($password)) {
+    public function registerUser($name, $email, $password) {
+        if (empty($name) || empty($email) || empty($password)) {
             return ["status" => "error", "message" => "All fields are required."];
         }
 
@@ -42,22 +42,20 @@ class Auth {
         }
 
         try {
-            // Check if user or email already exists
-            $stmt = $this->db->prepare("SELECT COUNT(*) FROM users WHERE username = ? OR email = ?");
-            $stmt->execute([$username, $email]);
+            // Check if email already exists in 'members' table
+            $stmt = $this->db->prepare("SELECT COUNT(*) FROM members WHERE email = ?");
+            $stmt->execute([$email]);
             if ($stmt->fetchColumn() > 0) {
-                return ["status" => "error", "message" => "Username or Email already taken."];
+                return ["status" => "error", "message" => "Email already registered."];
             }
 
-            // Securely hash the password
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
             $uuid = $this->generateUUID();
 
-            // Insert into the database using PDO prepared statements
-            $insertStmt = $this->db->prepare("INSERT INTO users (id, username, email, password) VALUES (?, ?, ?, ?)");
-            $insertStmt->execute([$uuid, $username, $email, $hashedPassword]);
+            $insertStmt = $this->db->prepare("INSERT INTO members (uuid, name, email, password_hash) VALUES (?, ?, ?, ?)");
+            $insertStmt->execute([$uuid, $name, $email, $hashedPassword]);
 
-            return ["status" => "success", "message" => "Registration successful! You can now login."];
+            return ["status" => "success", "message" => "Registration successful! You can now sign in."];
         } catch (PDOException $e) {
             error_log("Registration Error: " . $e->getMessage());
             return ["status" => "error", "message" => "A server error occurred. Please try again later."];
@@ -65,33 +63,30 @@ class Auth {
     }
 
     /**
-     * Authenticates a user by email/username and password
+     * Authenticates a member by email and password
      */
-    public function loginUser($identifier, $password) {
-        if (empty($identifier) || empty($password)) {
+    public function loginUser($email, $password) {
+        if (empty($email) || empty($password)) {
             return ["status" => "error", "message" => "Please enter your credentials."];
         }
 
         try {
-            // Handle both email and username logins
-            $field = filter_var($identifier, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-
-            $stmt = $this->db->prepare("SELECT id, username, password FROM users WHERE $field = ?");
-            $stmt->execute([$identifier]);
+            $stmt = $this->db->prepare("SELECT id, uuid, name, password_hash FROM members WHERE email = ?");
+            $stmt->execute([$email]);
             $user = $stmt->fetch();
 
-            if ($user && password_verify($password, $user['password'])) {
-                // Set session variables securely
+            if ($user && password_verify($password, $user['password_hash'])) {
                 if (session_status() === PHP_SESSION_NONE) {
                     session_start();
                 }
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['username'] = $user['username'];
+                $_SESSION['user_id'] = $user['uuid']; // Store UUID for tracking
+                $_SESSION['username'] = $user['name'];
+                $_SESSION['member_id'] = $user['id']; // Store PK for relationships
 
                 return ["status" => "success", "redirect" => "pages/forum/feed.php"];
             }
 
-            return ["status" => "error", "message" => "Invalid username/email or password."];
+            return ["status" => "error", "message" => "Invalid email or password."];
         } catch (PDOException $e) {
             error_log("Login Error: " . $e->getMessage());
             return ["status" => "error", "message" => "A server error occurred. Please try again later."];
