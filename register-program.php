@@ -1,5 +1,6 @@
 <?php
 require('includes/connect.php');
+require('includes/form_builder.php');
 
 $program_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
@@ -7,6 +8,11 @@ $program_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $select_program = $conn->prepare("SELECT * FROM `trainings_tb` WHERE id = ? LIMIT 1");
 $select_program->execute([$program_id]);
 $program = $select_program->fetch(PDO::FETCH_ASSOC);
+
+// Fetch custom form fields for this program
+$select_fields = $conn->prepare("SELECT * FROM `training_form_fields` WHERE program_id = ? ORDER BY field_order ASC");
+$select_fields->execute([$program_id]);
+$form_fields = $select_fields->fetchAll(PDO::FETCH_ASSOC);
 
 // Fetch contact details for footer
 $contact_details = $conn->prepare("SELECT * FROM `contact_details` WHERE contact_id = 1 LIMIT 1");
@@ -49,174 +55,98 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
   <style>
     html,
     body {
-      min-height: 100%;
+      height: 100%;
       margin: 0;
       padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
     }
 
     .registration-hero {
-      background-color: #f4f4f4;
-      padding: 70px 12px 48px;
-      position: relative;
+      background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+      padding: 60px 0;
+      color: #fff;
       text-align: center;
-      min-height: 240px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .registration-hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at center, rgba(244, 130, 33, 0.1), transparent 70%);
-      pointer-events: none;
-    }
-
-    .registration-hero .registration-hero-inner {
-      position: relative;
-      z-index: 2;
     }
 
     .registration-hero-title {
-      font-size: 2.25rem;
+      font-size: 2.5rem;
       font-weight: 800;
-      color: #111;
-      margin-bottom: 0.6rem;
-      line-height: 1.15;
+      margin-bottom: 10px;
     }
 
     .registration-hero-subtitle {
-      color: #555;
-      font-size: 1rem;
-      margin-bottom: 0;
-      max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
+      font-size: 1.1rem;
+      opacity: 0.8;
     }
 
     .registration-intro {
-      margin-top: 40px;
-      padding-bottom: 60px;
-      margin-bottom: 80px;
-      width: 100%;
-      overflow: visible;
+      padding: 60px 0;
     }
 
     .registration-form-wrapper {
       background: #fff;
-      border: 1px solid #ebeff2;
-      border-radius: 14px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
       padding: 40px;
-      max-width: 700px;
-      margin: 0 auto 24px auto;
+      max-width: 800px;
+      margin: -100px auto 0;
+      position: relative;
+      z-index: 10;
     }
 
     .form-section-title {
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       font-weight: 700;
-      color: #111;
-      margin-bottom: 20px;
-      padding-bottom: 15px;
+      margin: 30px 0 20px;
+      padding-bottom: 10px;
       border-bottom: 2px solid #f48221;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
+      color: #333;
     }
 
     .form-group label {
-      display: block;
-      margin-bottom: 8px;
       font-weight: 600;
-      color: #262626;
-      font-size: 0.95rem;
+      color: #444;
+      margin-bottom: 8px;
     }
 
-    .form-group label .required {
-      color: #e74c3c;
-      margin-left: 3px;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
+    .form-control {
+      border-radius: 8px;
       padding: 12px 15px;
       border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 0.95rem;
-      font-family: 'Poppins', sans-serif;
-      transition: border-color 0.3s ease;
+      transition: all 0.3s ease;
     }
 
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      outline: none;
+    .form-control:focus {
       border-color: #f48221;
-      box-shadow: 0 0 0 3px rgba(244, 130, 33, 0.1);
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-
-    @media (max-width: 768px) {
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-
-      .registration-hero-title {
-        font-size: 1.75rem;
-      }
-
-      .registration-form-wrapper {
-        padding: 25px;
-      }
-    }
-
-    .form-group textarea {
-      min-height: 100px;
-      resize: vertical;
+      box-shadow: 0 0 0 0.2rem rgba(244, 130, 33, 0.15);
     }
 
     .program-info-box {
-      background: #f9f9f9;
+      background: #fef4ea;
       border-left: 4px solid #f48221;
       padding: 20px;
+      border-radius: 0 8px 8px 0;
       margin-bottom: 30px;
-      border-radius: 4px;
     }
 
     .program-info-box h4 {
       color: #f48221;
       font-weight: 700;
-      margin-top: 0;
-      margin-bottom: 8px;
-    }
-
-    .program-info-box p {
-      margin: 0;
-      color: #555;
-      font-size: 0.95rem;
-      line-height: 1.6;
+      margin-bottom: 5px;
     }
 
     .submit-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.4rem;
+      gap: 0.6rem;
       background: #f48221;
       color: #fff !important;
+      border: none;
       border-radius: 50px;
-      padding: 14px 40px;
+      padding: 14px 32px;
       font-weight: 700;
-      text-decoration: none !important;
-      border: 0;
       font-size: 1rem;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -345,109 +275,44 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
           </div>
 
           <!-- Registration Form -->
-          <form method="POST" action="includes/submit_program_registration.php" id="registrationForm">
+          <form method="POST" action="includes/submit_program_registration.php" id="registrationForm" enctype="multipart/form-data">
             <!-- Hidden fields -->
             <input type="hidden" name="program_id" value="<?= $program_id; ?>">
             <input type="hidden" name="program_name" value="<?= cleanText($program['training_name']); ?>">
 
-            <!-- Personal Information Section -->
-            <h3 class="form-section-title">Personal Information</h3>
+            <?php if (!empty($form_fields)) : ?>
+              <h3 class="form-section-title">Program Registration Details</h3>
 
-            <div class="form-row">
-              <div class="form-group">
-                <label for="firstname">
-                  First Name
-                  <span class="required">*</span>
-                </label>
-                <input type="text" id="firstname" name="firstname" required placeholder="Enter your first name">
+              <?php foreach ($form_fields as $field) : ?>
+                <?= render_form_field($field); ?>
+              <?php endforeach; ?>
+
+            <?php else : ?>
+              <div class="alert alert-warning">
+                No custom registration fields defined for this program. Using standard registration.
+              </div>
+
+              <!-- Fallback to static fields if no custom fields defined -->
+              <h3 class="form-section-title">Personal Information</h3>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="firstname">First Name <span class="text-danger">*</span></label>
+                  <input type="text" id="firstname" name="firstname" class="form-control" required>
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="lastname">Last Name <span class="text-danger">*</span></label>
+                  <input type="text" id="lastname" name="lastname" class="form-control" required>
+                </div>
               </div>
               <div class="form-group">
-                <label for="lastname">
-                  Last Name
-                  <span class="required">*</span>
-                </label>
-                <input type="text" id="lastname" name="lastname" required placeholder="Enter your last name">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="middlename">Middle Name (Optional)</label>
-              <input type="text" id="middlename" name="middlename" placeholder="Enter your middle name if any">
-            </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label for="email">
-                  Email Address
-                  <span class="required">*</span>
-                </label>
-                <input type="email" id="email" name="email" required placeholder="your@email.com">
+                <label for="email">Email Address <span class="text-danger">*</span></label>
+                <input type="email" id="email" name="email" class="form-control" required>
               </div>
               <div class="form-group">
-                <label for="phone_no">
-                  Phone Number
-                  <span class="required">*</span>
-                </label>
-                <input type="tel" id="phone_no" name="phone_no" required placeholder="+234 000 000 0000">
+                <label for="phone_no">Phone Number <span class="text-danger">*</span></label>
+                <input type="tel" id="phone_no" name="phone_no" class="form-control" required>
               </div>
-            </div>
-
-            <!-- Demographics Section -->
-            <h3 class="form-section-title">Demographics</h3>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label for="age">Age (Optional)</label>
-                <input type="number" id="age" name="age" min="18" max="120" placeholder="Enter your age">
-              </div>
-              <div class="form-group">
-                <label for="gender">Gender</label>
-                <select id="gender" name="gender">
-                  <option value="">-- Select Gender --</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Professional Information Section -->
-            <h3 class="form-section-title">Professional Information</h3>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label for="occupation">Occupation</label>
-                <input type="text" id="occupation" name="occupation" placeholder="e.g., Entrepreneur, Manager, Student">
-              </div>
-              <div class="form-group">
-                <label for="organization">Organization/Company</label>
-                <input type="text" id="organization" name="organization" placeholder="Your company or organization">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="experience_level">Experience Level with this subject</label>
-              <select id="experience_level" name="experience_level">
-                <option value="">-- Select Experience Level --</option>
-                <option value="Beginner">Beginner</option>
-                <option value="Intermediate">Intermediate</option>
-                <option value="Advanced">Advanced</option>
-                <option value="Expert">Expert</option>
-              </select>
-            </div>
-
-            <!-- Program-Specific Section -->
-            <h3 class="form-section-title">Learning Goals & Requirements</h3>
-
-            <div class="form-group">
-              <label for="learning_goals">What are your learning goals for this program?</label>
-              <textarea id="learning_goals" name="learning_goals" placeholder="Tell us what you hope to achieve by attending this program..."></textarea>
-            </div>
-
-            <div class="form-group">
-              <label for="special_requirements">Special Requirements or Accommodations</label>
-              <textarea id="special_requirements" name="special_requirements" placeholder="Any accessibility needs or special requests? (Optional)"></textarea>
-            </div>
+            <?php endif; ?>
 
             <!-- Submit Buttons -->
             <div class="btn-group">
@@ -469,37 +334,6 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
 
   <?php require('footer-section.php'); ?>
   <?php require('javascript-section.html'); ?>
-
-  <script>
-    // Form validation
-    document.getElementById('registrationForm')?.addEventListener('submit', function(e) {
-      const firstname = document.getElementById('firstname').value.trim();
-      const lastname = document.getElementById('lastname').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const phone = document.getElementById('phone_no').value.trim();
-
-      if (!firstname || !lastname || !email || !phone) {
-        e.preventDefault();
-        alert('Please fill in all required fields.');
-        return false;
-      }
-
-      // Simple email validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        e.preventDefault();
-        alert('Please enter a valid email address.');
-        return false;
-      }
-
-      // Phone validation (basic)
-      if (phone.length < 10) {
-        e.preventDefault();
-        alert('Please enter a valid phone number.');
-        return false;
-      }
-    });
-  </script>
 </body>
 
 </html>
