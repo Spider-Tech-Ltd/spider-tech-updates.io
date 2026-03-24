@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Dynamic Feed Filter Bar
  * Fetches categories from database and handles filtering logic.
@@ -8,28 +7,28 @@
 require_once __DIR__ . '/../../../config/db.php';
 
 try {
-  $stmtCats = $conn->query("SELECT name, slug FROM categories ORDER BY name ASC");
-  $dbCategories = $stmtCats->fetchAll();
+    $stmtCats = $conn->query("SELECT name, slug FROM categories ORDER BY name ASC");
+    $dbCategories = $stmtCats->fetchAll();
 } catch (PDOException $e) {
-  error_log("Filter Bar Categories Error: " . $e->getMessage());
-  $dbCategories = [];
+    error_log("Filter Bar Categories Error: " . $e->getMessage());
+    $dbCategories = [];
 }
 
 $currentFilter = $_GET['category'] ?? 'all';
 
 // Icon mapping for categories
 $icon_map = [
-  'tech' => 'laptop_mac',
-  'entrepreneurship' => 'lightbulb',
-  'logistics' => 'local_shipping',
-  'finance' => 'account_balance',
-  'lifestyle' => 'self_improvement',
-  'automation' => 'precision_manufacturing',
-  'energy' => 'bolt',
-  'manufacturing' => 'factory',
-  'ai' => 'psychology',
-  'infrastructure' => 'architecture',
-  'ai-robotics' => 'smart_toy'
+    'tech' => 'laptop_mac',
+    'entrepreneurship' => 'lightbulb',
+    'logistics' => 'local_shipping',
+    'finance' => 'account_balance',
+    'lifestyle' => 'self_improvement',
+    'automation' => 'precision_manufacturing',
+    'energy' => 'bolt',
+    'manufacturing' => 'factory',
+    'ai' => 'psychology',
+    'infrastructure' => 'architecture',
+    'ai-robotics' => 'smart_toy'
 ];
 ?>
 
@@ -38,8 +37,7 @@ $icon_map = [
      FEED FILTER BAR
      ============================ */
   .feed-filter-bar {
-    padding: 24px 0;
-    /* Increased vertical spacing */
+    padding: 24px 0; /* Increased vertical spacing */
     background: #ffffff;
   }
 
@@ -55,14 +53,12 @@ $icon_map = [
     align-items: center;
     gap: 12px;
     overflow-x: auto;
-    padding-block: .5rem;
+    padding-bottom: 8px;
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
 
-  .filter-pills-group::-webkit-scrollbar {
-    display: none;
-  }
+  .filter-pills-group::-webkit-scrollbar { display: none; }
 
   .filter-pill {
     padding: 10px 22px;
@@ -140,16 +136,8 @@ $icon_map = [
   }
 
   @media (max-width: 991px) {
-    .filter-bar-inner {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 16px;
-    }
-
-    .filter-sort-group {
-      width: 100%;
-      justify-content: space-between;
-    }
+    .filter-bar-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .filter-sort-group { width: 100%; justify-content: space-between; }
   }
 </style>
 
@@ -164,12 +152,12 @@ $icon_map = [
       </a>
 
       <?php foreach ($dbCategories as $cat):
-        $icon = $icon_map[$cat['slug']] ?? 'label';
+          $icon = $icon_map[$cat['slug']] ?? 'label';
       ?>
         <a href="pages/forum/feed.php?category=<?php echo urlencode($cat['slug']); ?>"
-          class="filter-pill <?php echo $currentFilter === $cat['slug'] ? 'active' : ''; ?>">
-          <span class="material-symbols-outlined"><?php echo $icon; ?></span>
-          <?php echo htmlspecialchars($cat['name']); ?>
+           class="filter-pill <?php echo $currentFilter === $cat['slug'] ? 'active' : ''; ?>">
+            <span class="material-symbols-outlined"><?php echo $icon; ?></span>
+            <?php echo htmlspecialchars($cat['name']); ?>
         </a>
       <?php endforeach; ?>
     </div>
