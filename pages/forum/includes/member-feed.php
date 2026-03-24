@@ -1,37 +1,47 @@
 <?php
 /**
  * Dynamic Forum Feed Component
- * Fetches and displays feeds from the database.
+ * Fetches and displays feeds from the database with category filtering.
  */
 require_once __DIR__ . '/../../../config/db.php';
 
+$categoryFilter = $_GET['category'] ?? null;
+
 try {
-    // Fetch published feeds with member and category info
-    $stmt = $conn->prepare("
+    $sql = "
         SELECT f.*, m.name as member_name, c.name as category_name, c.slug as category_slug
         FROM feeds f
         JOIN members m ON f.member_id = m.id
         JOIN categories c ON f.category_uuid = c.uuid
         WHERE f.status = 'published'
-        ORDER BY f.created_at DESC
-    ");
-    $stmt->execute();
+    ";
+
+    $params = [];
+    if ($categoryFilter && $categoryFilter !== 'all') {
+        $sql .= " AND c.slug = ?";
+        $params[] = $categoryFilter;
+    }
+
+    $sql .= " ORDER BY f.created_at DESC";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->execute($params);
     $feeds = $stmt->fetchAll();
 } catch (PDOException $e) {
     error_log("Feed Fetch Error: " . $e->getMessage());
     $feeds = [];
 }
 
-// Function to format time ago
-function time_ago($timestamp) {
-    $time = strtotime($timestamp);
-    $diff = time() - $time;
-
-    if ($diff < 60) return 'Just now';
-    if ($diff < 3600) return round($diff / 60) . ' mins ago';
-    if ($diff < 86400) return round($diff / 3600) . ' hours ago';
-    if ($diff < 604800) return round($diff / 86400) . ' days ago';
-    return date('M j, Y', $time);
+if (!function_exists('time_ago')) {
+    function time_ago($timestamp) {
+        $time = strtotime($timestamp);
+        $diff = time() - $time;
+        if ($diff < 60) return 'Just now';
+        if ($diff < 3600) return round($diff / 60) . ' mins ago';
+        if ($diff < 86400) return round($diff / 3600) . ' hours ago';
+        if ($diff < 604800) return round($diff / 86400) . ' days ago';
+        return date('M j, Y', $time);
+    }
 }
 ?>
 
@@ -52,7 +62,6 @@ function time_ago($timestamp) {
   }
   .discussion-card:hover { border-color: #f48221; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transform: translateY(-2px); }
 
-  /* Category Badges */
   .category-badge {
     display: inline-flex;
     align-items: center;
@@ -64,13 +73,10 @@ function time_ago($timestamp) {
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 16px;
+    background: #f1f5f9; color: #64748b;
   }
-  .cat-tech { background: #eff6ff; color: #2563eb; }
-  .cat-entrepreneurship { background: #fef3c7; color: #d97706; }
-  .cat-logistics { background: #f5f3ff; color: #7c3ae8; }
-  .cat-finance { background: #ecfdf5; color: #059669; }
-  .cat-lifestyle { background: #fff1f2; color: #e11d48; }
-  .cat-default { background: #f1f5f9; color: #64748b; }
+
+  /* Category specific colors can be added here if needed */
 
   .card-title {
     font-family: 'Poppins', sans-serif;
@@ -91,13 +97,11 @@ function time_ago($timestamp) {
     overflow: hidden;
   }
 
-  /* Author Row */
   .card-author-row { display: flex; align-items: center; gap: 12px; }
   .author-avatar-sm { width: 32px; height: 32px; border-radius: 50%; }
   .author-name { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.9rem; color: #1e293b; }
   .author-time { font-family: 'Open Sans', sans-serif; font-size: 0.8rem; color: #94a3b8; margin-left: auto; }
 
-  /* Interaction Bar */
   .card-interaction-bar {
     display: flex;
     align-items: center;
@@ -113,18 +117,55 @@ function time_ago($timestamp) {
     align-items: center;
     gap: 6px;
     color: #94a3b8;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     cursor: pointer;
-    transition: color 0.2s;
-    padding: 0;
+    transition: all 0.2s ease;
+    padding: 6px 12px;
+    border-radius: 50px;
+    text-decoration: none !important;
   }
-  .btn-interact:hover { color: #f48221; }
+  .btn-interact:hover { background-color: rgba(244, 130, 33, 0.08); color: #f48221; }
   .btn-interact .material-symbols-outlined { font-size: 18px; }
   .interact-spacer { flex: 1; }
 
-  /* Empty State */
+  /* Pagination — Styled to match Guest Feed */
+  .member-feed-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 40px;
+  }
+
+  .pag-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #f48221;
+    background: none;
+    border: 1.5px solid #f48221;
+    padding: 8px 18px;
+    border-radius: 50px;
+    transition: all 0.2s ease;
+    text-decoration: none !important;
+  }
+
+  .pag-btn:hover {
+    background-color: #f48221;
+    color: #ffffff;
+  }
+
+  .pag-info {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.85rem;
+    color: #797979;
+  }
+
   .empty-feed {
     text-align: center;
     padding: 60px 20px;
@@ -146,12 +187,11 @@ function time_ago($timestamp) {
     </div>
   <?php else: ?>
       <?php foreach ($feeds as $feed):
-          $catClass = 'cat-' . strtolower($feed['category_slug']);
-          $avatarUrl = "https://ui-avatars.com/api/?name=" . urlencode($feed['member_name']) . "&background=random&color=fff";
+          $avatarUrl = "https://ui-avatars.com/api/?name=" . urlencode($feed['member_name']) . "&background=f48221&color=fff";
       ?>
       <a href="pages/forum/feed-detail.php?id=<?php echo $feed['uuid']; ?>" class="discussion-card">
         <div class="card-top-row">
-          <span class="category-badge <?php echo $catClass; ?>">
+          <span class="category-badge">
             <?php echo htmlspecialchars($feed['category_name']); ?>
           </span>
         </div>
@@ -169,18 +209,18 @@ function time_ago($timestamp) {
         </div>
 
         <div class="card-interaction-bar">
-          <button type="button" class="btn-interact btn-upvote" title="Upvote">
+          <div class="btn-interact" title="Upvote">
             <span class="material-symbols-outlined">thumb_up</span>
             <span class="vote-count">0</span>
-          </button>
-          <button type="button" class="btn-interact btn-reply" title="Replies">
+          </div>
+          <div class="btn-interact" title="Replies">
             <span class="material-symbols-outlined">chat_bubble</span>
             <span>0</span>
-          </button>
+          </div>
           <div class="interact-spacer"></div>
-          <button type="button" class="btn-interact btn-bookmark" title="Bookmark">
+          <div class="btn-interact" title="Bookmark">
             <span class="material-symbols-outlined">bookmark</span>
-          </button>
+          </div>
         </div>
       </a>
       <?php endforeach; ?>
@@ -188,20 +228,20 @@ function time_ago($timestamp) {
 
 </div>
 
-<!-- Pagination (Static for now) -->
-<div class="member-feed-pagination mt-4 d-flex align-items-center justify-content-between">
-  <a href="#" class="pag-btn btn btn-light btn-sm rounded-pill">
-    <span class="material-symbols-outlined align-middle">chevron_left</span> Previous
+<!-- Pagination -->
+<div class="member-feed-pagination">
+  <a href="#" class="pag-btn">
+    <span class="material-symbols-outlined">chevron_left</span> Previous
   </a>
-  <span class="pag-info text-muted small">Page 1 of 1</span>
-  <a href="#" class="pag-btn btn btn-light btn-sm rounded-pill">
-    Next <span class="material-symbols-outlined align-middle">chevron_right</span>
+  <span class="pag-info">Page 1 of 1</span>
+  <a href="#" class="pag-btn">
+    Next <span class="material-symbols-outlined">chevron_right</span>
   </a>
 </div>
 
 <!-- Mobile FAB -->
-<a href="pages/forum/new-topic.php" class="member-fab-mobile d-md-none position-fixed bottom-0 end-0 m-4">
-  <div class="btn btn-primary rounded-circle shadow-lg" style="width: 56px; height: 56px; display: flex; align-items: center; justify-content: center;">
-    <span class="material-symbols-outlined">edit</span>
+<a href="pages/forum/new-topic.php" class="member-fab-mobile d-md-none position-fixed bottom-0 end-0 m-4" style="z-index:1000;">
+  <div class="btn btn-primary rounded-circle shadow-lg d-flex align-items-center justify-content-center" style="width: 56px; height: 56px; background-color:#f48221; border:none;">
+    <span class="material-symbols-outlined text-white">edit</span>
   </div>
 </a>

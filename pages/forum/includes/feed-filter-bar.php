@@ -1,44 +1,57 @@
 <?php
 /**
- * Feed Filter Bar (Phase 2)
- * Horizontally scrollable category pill filter + Sort by dropdown.
- * Sticks below the main header on scroll.
+ * Dynamic Feed Filter Bar
+ * Fetches categories from database and handles filtering logic.
  */
+require_once __DIR__ . '/../../../config/db.php';
+
+try {
+    $stmtCats = $conn->query("SELECT name, slug FROM categories ORDER BY name ASC");
+    $dbCategories = $stmtCats->fetchAll();
+} catch (PDOException $e) {
+    error_log("Filter Bar Categories Error: " . $e->getMessage());
+    $dbCategories = [];
+}
+
+$currentFilter = $_GET['category'] ?? 'all';
 ?>
 
 <style>
   /* ============================
-     FILTER BAR
+     FEED FILTER BAR
      ============================ */
+  .feed-filter-bar {
+    padding: 12px 0;
+    background: #ffffff;
+  }
+
   .filter-bar-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    padding: 12px 0;
+    gap: 20px;
   }
 
-  /* Pills group */
   .filter-pills-group {
     display: flex;
     align-items: center;
     gap: 8px;
     overflow-x: auto;
-    padding-bottom: 2px; /* space for scrollbar */
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
-    flex: 1;
+    padding-bottom: 4px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
+
   .filter-pills-group::-webkit-scrollbar { display: none; }
 
   .filter-pill {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 0.78rem;
-    padding: 7px 18px;
+    padding: 8px 18px;
     border-radius: 50px;
     border: 1.5px solid #e9ecef;
     background-color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
     color: #555555;
     white-space: nowrap;
     cursor: pointer;
@@ -60,7 +73,6 @@
     box-shadow: 0 2px 8px rgba(244, 130, 33, 0.2);
   }
 
-  /* Sort By dropdown */
   .filter-sort-group {
     display: flex;
     align-items: center;
@@ -109,15 +121,16 @@
 <div class="container">
   <div class="filter-bar-inner">
 
-    <!-- Category Pills -->
+    <!-- Dynamic Category Pills -->
     <div class="filter-pills-group" id="filterPills">
-      <a href="#" class="filter-pill active" data-filter="all">All Topics</a>
-      <a href="#" class="filter-pill" data-filter="manufacturing">⚙️ Manufacturing</a>
-      <a href="#" class="filter-pill" data-filter="automation">🤖 Automation</a>
-      <a href="#" class="filter-pill" data-filter="energy">⚡ Energy</a>
-      <a href="#" class="filter-pill" data-filter="ai">🧠 AI & Robotics</a>
-      <a href="#" class="filter-pill" data-filter="logistics">🚚 Logistics</a>
-      <a href="#" class="filter-pill" data-filter="infrastructure">🏗️ Infrastructure</a>
+      <a href="pages/forum/feed.php" class="filter-pill <?php echo $currentFilter === 'all' ? 'active' : ''; ?>">All Topics</a>
+
+      <?php foreach ($dbCategories as $cat): ?>
+        <a href="pages/forum/feed.php?category=<?php echo urlencode($cat['slug']); ?>"
+           class="filter-pill <?php echo $currentFilter === $cat['slug'] ? 'active' : ''; ?>">
+            <?php echo htmlspecialchars($cat['name']); ?>
+        </a>
+      <?php endforeach; ?>
     </div>
 
     <!-- Sort By -->

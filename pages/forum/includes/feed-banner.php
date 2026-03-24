@@ -1,9 +1,33 @@
 <?php
 /**
- * Feed Banner — Member Welcome Banner (Phase 2)
+ * Feed Banner — Member Welcome Banner
  * Compact slim banner visible only to logged-in members.
- * Replaces the large hero section from index.php.
+ * Now dynamically driven by database stats.
  */
+require_once __DIR__ . '/../../../config/db.php';
+
+try {
+    // 1. Total Members Count
+    $stmtMembers = $conn->query("SELECT COUNT(*) FROM members");
+    $totalMembers = $stmtMembers->fetchColumn();
+
+    // 2. Total Discussions (Feeds) Count
+    $stmtFeeds = $conn->query("SELECT COUNT(*) FROM feeds WHERE status = 'published'");
+    $totalDiscussions = $stmtFeeds->fetchColumn();
+
+    // 3. Current Member Post Count
+    $memberPostCount = 0;
+    if (isset($_SESSION['member_id'])) {
+        $stmtMyPosts = $conn->prepare("SELECT COUNT(*) FROM feeds WHERE member_id = ?");
+        $stmtMyPosts->execute([$_SESSION['member_id']]);
+        $memberPostCount = $stmtMyPosts->fetchColumn();
+    }
+} catch (PDOException $e) {
+    error_log("Banner Stats Error: " . $e->getMessage());
+    $totalMembers = '...';
+    $totalDiscussions = '...';
+    $memberPostCount = 0;
+}
 ?>
 
 <style>
@@ -47,8 +71,6 @@
     position: relative;
     z-index: 1;
   }
-
-  .banner-text-group {}
 
   .banner-greeting {
     font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
@@ -123,7 +145,6 @@
     font-size: 18px;
   }
 
-  /* Banner stats row */
   .banner-stats {
     display: flex;
     align-items: center;
@@ -151,7 +172,6 @@
     font-weight: 700;
   }
 
-  /* Divider dot */
   .banner-stat-divider {
     width: 4px;
     height: 4px;
@@ -178,11 +198,11 @@
       <!-- Left: Welcome Text -->
       <div class="banner-text-group">
         <h2 class="banner-greeting">
-          Welcome back, <span><?php echo htmlspecialchars($member['name']); ?></span>. 👋
+          Welcome back, <span><?php echo htmlspecialchars($_SESSION['member_name'] ?? 'Member'); ?></span>. 👋
         </h2>
         <p class="banner-subtitle">
           Stay ahead of the curve.
-          <?php if ($member['new_replies'] > 0): ?>
+          <?php if (isset($member['new_replies']) && $member['new_replies'] > 0): ?>
             <span class="notif-pill">
               <span class="material-symbols-outlined" style="font-size:12px;">chat_bubble</span>
               <?php echo $member['new_replies']; ?> new replies
@@ -194,24 +214,24 @@
         <div class="banner-stats">
           <div class="banner-stat">
             <span class="material-symbols-outlined">article</span>
-            <strong><?php echo $member['posts']; ?></strong> Posts
+            <strong><?php echo $memberPostCount; ?></strong> Posts
           </div>
           <div class="banner-stat-divider"></div>
           <div class="banner-stat">
             <span class="material-symbols-outlined">people</span>
-            <strong>5,200+</strong> Members
+            <strong><?php echo number_format($totalMembers); ?></strong> Members
           </div>
           <div class="banner-stat-divider"></div>
           <div class="banner-stat">
             <span class="material-symbols-outlined">forum</span>
-            <strong>1,430</strong> Discussions
+            <strong><?php echo number_format($totalDiscussions); ?></strong> Discussions
           </div>
         </div>
       </div>
 
       <!-- Right: CTA -->
       <div class="banner-cta-group">
-        <a href="#" class="btn-start-discussion" id="btnStartDiscussion" data-toggle="modal" data-target="#newDiscussionModal">
+        <a href="pages/forum/new-topic.php" class="btn-start-discussion">
           <span class="material-symbols-outlined">edit</span>
           Start a Discussion
         </a>
