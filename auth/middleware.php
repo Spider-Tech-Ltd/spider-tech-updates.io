@@ -20,7 +20,7 @@ function isLoggedIn() {
 /**
  * Require authentication for private routes.
  */
-function requireAuth($redirectPath = 'pages/forum/sign-in.php') {
+function requireAuth($redirectPath = 'sign-in.php') {
     if (!isLoggedIn()) {
         header("Location: $redirectPath");
         die();
