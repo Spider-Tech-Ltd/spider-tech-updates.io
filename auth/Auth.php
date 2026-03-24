@@ -2,7 +2,7 @@
 /**
  * Authentication Helper Class
  * Handles registration, login, and secure user data storage.
- * Updated to use 'members' table and column names.
+ * Updated to support username/email login and username field.
  */
 
 class Auth {
@@ -28,8 +28,8 @@ class Auth {
     /**
      * Validates and registers a new member
      */
-    public function registerUser($name, $email, $password) {
-        if (empty($name) || empty($email) || empty($password)) {
+    public function registerUser($username, $email, $password) {
+        if (empty($username) || empty($email) || empty($password)) {
             return ["status" => "error", "message" => "All fields are required."];
         }
 
@@ -42,18 +42,18 @@ class Auth {
         }
 
         try {
-            // Check if email already exists in 'members' table
-            $stmt = $this->db->prepare("SELECT COUNT(*) FROM members WHERE email = ?");
-            $stmt->execute([$email]);
+            // Check if username or email already exists
+            $stmt = $this->db->prepare("SELECT COUNT(*) FROM members WHERE username = ? OR email = ?");
+            $stmt->execute([$username, $email]);
             if ($stmt->fetchColumn() > 0) {
-                return ["status" => "error", "message" => "Email already registered."];
+                return ["status" => "error", "message" => "Username or Email already registered."];
             }
 
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
             $uuid = $this->generateUUID();
 
-            $insertStmt = $this->db->prepare("INSERT INTO members (uuid, name, email, password_hash) VALUES (?, ?, ?, ?)");
-            $insertStmt->execute([$uuid, $name, $email, $hashedPassword]);
+            $insertStmt = $this->db->prepare("INSERT INTO members (uuid, username, email, password_hash) VALUES (?, ?, ?, ?)");
+            $insertStmt->execute([$uuid, $username, $email, $hashedPassword]);
 
             return ["status" => "success", "message" => "Registration successful! You can now sign in."];
         } catch (PDOException $e) {
@@ -63,30 +63,34 @@ class Auth {
     }
 
     /**
-     * Authenticates a member by email and password
+     * Authenticates a member by email/username and password
      */
-    public function loginUser($email, $password) {
-        if (empty($email) || empty($password)) {
+    public function loginUser($identifier, $password) {
+        if (empty($identifier) || empty($password)) {
             return ["status" => "error", "message" => "Please enter your credentials."];
         }
 
         try {
-            $stmt = $this->db->prepare("SELECT id, uuid, name, password_hash FROM members WHERE email = ?");
-            $stmt->execute([$email]);
+            // Detect if identifier is email or username
+            $field = filter_var($identifier, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+            $stmt = $this->db->prepare("SELECT id, uuid, username, password_hash FROM members WHERE $field = ?");
+            $stmt->execute([$identifier]);
             $user = $stmt->fetch();
 
             if ($user && password_verify($password, $user['password_hash'])) {
                 if (session_status() === PHP_SESSION_NONE) {
                     session_start();
                 }
-                $_SESSION['user_id'] = $user['uuid']; // Store UUID for tracking
-                $_SESSION['username'] = $user['name'];
-                $_SESSION['member_id'] = $user['id']; // Store PK for relationships
+                $_SESSION['user_id'] = $user['uuid'];
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['member_id'] = $user['id'];
+                $_SESSION['member_uuid'] = $user['uuid'];
 
                 return ["status" => "success", "redirect" => "pages/forum/feed.php"];
             }
 
-            return ["status" => "error", "message" => "Invalid email or password."];
+            return ["status" => "error", "message" => "Invalid username/email or password."];
         } catch (PDOException $e) {
             error_log("Login Error: " . $e->getMessage());
             return ["status" => "error", "message" => "A server error occurred. Please try again later."];

@@ -9,7 +9,7 @@ require_once __DIR__ . '/../../../config/db.php';
 try {
   // Fetch latest published feeds with member and category info
   $stmt = $conn->prepare("
-        SELECT f.*, m.name as member_name, c.name as category_name, c.slug as category_slug
+        SELECT f.*, m.username as member_name, c.name as category_name, c.slug as category_slug
         FROM feeds f
         JOIN members m ON f.member_id = m.id
         JOIN categories c ON f.category_uuid = c.uuid

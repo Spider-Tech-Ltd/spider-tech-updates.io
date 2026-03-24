@@ -1,13 +1,12 @@
 <?php
 /**
  * Sign-In Page — Spider Tech Forum
- * Logic: Handles member login using updated Auth class.
+ * Logic: Handles member login (Email or Username).
  */
 require_once '../../config/db.php';
 require_once '../../auth/Auth.php';
 require_once '../../auth/middleware.php';
 
-// Redirect if already logged in
 if (isLoggedIn()) {
     header('Location: feed.php');
     die();
@@ -19,10 +18,10 @@ $redirect = $_GET['redirect'] ?? 'pages/forum/feed.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $auth = new Auth($conn);
-    $email = $_POST['email'] ?? '';
+    $identifier = $_POST['identifier'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    $result = $auth->loginUser($email, $password);
+    $result = $auth->loginUser($identifier, $password);
     if ($result['status'] === 'success') {
         header('Location: ' . $result['redirect']);
         die();
@@ -40,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <title>Sign In — Spider Tech</title>
     <style>
@@ -57,6 +57,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       .input-pill:focus { outline: none; border-color: var(--brand-orange); background: #fff; box-shadow: 0 0 0 4px rgba(244, 130, 33, 0.1); }
       .btn-signin { width: 100%; height: 54px; background: linear-gradient(135deg, #f48221, #e6751c); color: #fff; border: none; border-radius: 50px; font-family: 'Poppins', sans-serif; font-weight: 700; cursor: pointer; transition: all 0.3s; margin-top: 10px; }
       .btn-signin:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(244, 130, 33, 0.3); }
+      .or-divider { display: flex; align-items: center; justify-content: center; margin: 32px 0; }
+      .or-line { flex: 1; height: 1px; background: #e2e8f0; }
+      .or-text { padding: 0 16px; font-size: 0.85rem; color: var(--text-muted); }
+      .social-btn-row { display: flex; gap: 12px; }
+      .btn-social { flex: 1; height: 48px; background: #fff; border: 1.5px solid #e2e8f0; border-radius: 50px; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.85rem; color: #1e293b; transition: all 0.2s; cursor: pointer; text-decoration: none !important; }
+      .btn-social:hover { border-color: var(--brand-orange); background: #fafafa; }
       .signup-link { text-align: center; margin-top: 32px; font-size: 0.95rem; color: var(--text-muted); }
       .signup-link a { color: var(--brand-orange); font-weight: 700; text-decoration: none !important; }
     </style>
@@ -76,8 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
         <form method="POST" action="pages/forum/sign-in.php">
             <div class="input-pill-wrapper">
-                <label class="form-label-custom">Email Address</label>
-                <input type="email" name="email" class="input-pill" placeholder="you@company.tech" required value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>">
+                <label class="form-label-custom">Email or Username</label>
+                <input type="text" name="identifier" class="input-pill" placeholder="you@company.tech or username" required value="<?php echo htmlspecialchars($_POST['identifier'] ?? ''); ?>">
             </div>
             <div class="input-pill-wrapper">
                 <label class="form-label-custom">Password</label>
@@ -85,6 +91,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button type="submit" class="btn-signin">Sign In</button>
         </form>
+
+        <div class="or-divider">
+            <div class="or-line"></div>
+            <span class="or-text">or continue with</span>
+            <div class="or-line"></div>
+        </div>
+
+        <div class="social-btn-row">
+            <a href="#" class="btn-social"><i class="fab fa-google" style="color: #DB4437;"></i> Google</a>
+            <a href="#" class="btn-social"><i class="fab fa-linkedin-in" style="color: #0A66C2;"></i> LinkedIn</a>
+        </div>
+
         <p class="signup-link">New here? <a href="pages/forum/sign-up.php">Create an account</a></p>
     </div>
 </div>
