@@ -14,7 +14,7 @@ if (isLoggedIn()) {
 
 $message = '';
 $status = '';
-$redirect = $_GET['redirect'] ?? 'pages/forum/feed.php';
+$redirect = $_GET['redirect'] ?? 'feed.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $auth = new Auth($conn);

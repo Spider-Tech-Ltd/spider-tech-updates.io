@@ -112,7 +112,7 @@ class Auth {
                 $_SESSION['member_id'] = $user['id'];
                 $_SESSION['member_uuid'] = $user['uuid'];
 
-                return ["status" => "success", "redirect" => "pages/forum/feed.php"];
+                return ["status" => "success", "redirect" => "feed.php"];
             }
 
             return ["status" => "error", "message" => "Invalid username/email or password."];
