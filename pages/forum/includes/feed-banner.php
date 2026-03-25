@@ -38,7 +38,7 @@ try {
   .feed-member-banner {
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
     border-bottom: 1px solid #e9ecef;
-    padding: 28px 0;
+    padding-block: 2.5rem;
     position: relative;
     overflow: hidden;
   }
@@ -81,7 +81,7 @@ try {
   .banner-greeting {
     font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
     font-weight: 800;
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     color: #111111;
     margin-bottom: 4px;
     line-height: 1.2;
