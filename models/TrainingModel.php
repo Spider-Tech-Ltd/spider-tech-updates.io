@@ -1,0 +1,30 @@
+<?php
+class TrainingModel {
+    private $conn;
+
+    public function __construct($db) {
+        $this->conn = $db;
+    }
+
+    public function getAllTrainings() {
+        $query = "SELECT * FROM `trainings_tb`";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getTrainingById($id) {
+        $query = "SELECT * FROM `trainings_tb` WHERE id = ? LIMIT 1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getContactDetails() {
+        $query = "SELECT * FROM `contact_details` WHERE contact_id = 1 LIMIT 1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+}
+?>
