@@ -9,7 +9,7 @@
         </div>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
-             <li class="breadcrumb-item"><a href="/" title="Home">Home</a></li>
+             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/" title="Home">Home</a></li>
             <li class="breadcrumb-item active" aria-current="page">Projects</li>
           </ol>
         </nav>
@@ -30,7 +30,7 @@
             <img src="<?= substr($project['project_pic'], 3); ?>" alt="project">
             <div class="label">
               <div class="label-text">
-                <a href="/pages/projects/detail.php?id=<?= $project['project_id']; ?>" class="text-title"><?= stripslashes($project['project_name']); ?></a>
+                <a href="<?= BASE_URL ?>/projects/detail?id=<?= $project['project_id']; ?>" class="text-title"><?= stripslashes($project['project_name']); ?></a>
               </div>
               <div class="label-bg"></div>
             </div>

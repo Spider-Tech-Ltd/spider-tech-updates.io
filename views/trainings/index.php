@@ -212,7 +212,7 @@
                         <span class="px-3 py-1 bg-white-20 font-weight-bold" style="background: rgba(255,255,255,0.2); font-size: 11px; border-radius: 9999px;">TRAINING</span>
                         <span class="px-3 py-1 bg-white-20 font-weight-bold" style="background: rgba(255,255,255,0.2); font-size: 11px; border-radius: 9999px;">24 WEEKS</span>
                       </div>
-                      <a href="/pages/trainings/detail.php?id=<?= stripslashes($training['id']); ?>" class="featured-btn w-100 d-block text-center">View Program</a>
+                      <a href="<?= BASE_URL ?>/trainings/detail?id=<?= stripslashes($training['id']); ?>" class="featured-btn w-100 d-block text-center">View Program</a>
                     </div>
                   </div>
                 </div>
@@ -248,7 +248,7 @@
                           <span class="material-symbols-outlined text-orange" style="font-size: 16px;">bolt</span>
                           Intensive
                         </div>
-                        <a href="/pages/trainings/detail.php?id=<?= stripslashes($training['id']); ?>" class="register-btn">
+                        <a href="<?= BASE_URL ?>/trainings/detail?id=<?= stripslashes($training['id']); ?>" class="register-btn">
                           View Details
                           <span class="material-symbols-outlined">arrow_forward</span>
                         </a>

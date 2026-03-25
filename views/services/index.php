@@ -9,7 +9,7 @@
         </div>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
-             <li class="breadcrumb-item"><a href="/" title="Home">Home</a></li>
+             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/" title="Home">Home</a></li>
             <li class="breadcrumb-item active" aria-current="page">Services</li>
           </ol>
         </nav>
@@ -31,7 +31,7 @@
             <div class="connector"> <span></span> </div>
             <div class="service-card">
               <div class="service_detail">
-                <h5><a href="/pages/services/detail.php?id=<?= $service['id']; ?>" title="Service"><?= $service['service_name']; ?></a></h5>
+                <h5><a href="<?= BASE_URL ?>/services/detail?id=<?= $service['id']; ?>" title="Service"><?= $service['service_name']; ?></a></h5>
                 <p><?= $service['service_description']; ?></p>
               </div>
             </div>

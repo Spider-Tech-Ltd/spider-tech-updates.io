@@ -1,6 +1,14 @@
 <?php
 define('ROOT_PATH', dirname(__DIR__));
 
+// Dynamic BASE_URL calculation
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$script_name = $_SERVER['SCRIPT_NAME'] ?? '';
+$base_dir = str_replace('\\', '/', dirname($script_name));
+$base_url = rtrim($protocol . "://" . $host . $base_dir, '/');
+define('BASE_URL', $base_url);
+
 spl_autoload_register(function ($class_name) {
     $paths = [
         ROOT_PATH . '/models/',

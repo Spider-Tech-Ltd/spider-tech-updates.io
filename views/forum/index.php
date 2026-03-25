@@ -24,7 +24,7 @@
                     <div class="forum-category-card">
                         <h5><?= $category['category_name']; ?></h5>
                         <p><?= $category['category_description'] ?? 'Join the conversation.'; ?></p>
-                        <a href="/?route=forum&category=<?= $category['category_uuid']; ?>" class="forum-view-link">View Discussions</a>
+                        <a href="<?= BASE_URL ?>/forum?category=<?= $category['category_uuid']; ?>" class="forum-view-link">View Discussions</a>
                     </div>
                 </div>
                 <?php endforeach; ?>

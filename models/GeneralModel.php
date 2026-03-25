@@ -21,7 +21,15 @@ class GeneralModel {
     }
 
     public function getFaqs() {
-        // Sample query, update with real table name if known
+        try {
+            $stmt = $this->conn->query("SELECT * FROM faq_tb ORDER BY faq_id DESC");
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return [];
+        }
+    }
+
+    public function getBlogs() {
         return [];
     }
 }

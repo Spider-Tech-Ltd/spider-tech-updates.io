@@ -6,7 +6,7 @@
         <div class="separator left-align"><ul><li></li><li></li><li></li></ul></div>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
-             <li class="breadcrumb-item"><a href="/?route=home" title="Home">Home</a></li>
+             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/" title="Home">Home</a></li>
             <li class="breadcrumb-item active" aria-current="page">FAQ's</li>
           </ol>
         </nav>
@@ -22,7 +22,18 @@
       <div class="separator"><ul><li></li><li></li><li></li></ul></div>
     </div>
     <div class="col-lg-12">
-      <p>Content coming soon...</p>
+      <?php if (!empty($faqs)): ?>
+          <?php foreach ($faqs as $faq): ?>
+          <div class="faq-item mb-4">
+              <h5 class="faq-question"><?= htmlspecialchars($faq['faq_question']); ?></h5>
+              <div class="faq-answer">
+                  <?= stripslashes($faq['faq_answer']); ?>
+              </div>
+          </div>
+          <?php endforeach; ?>
+      <?php else: ?>
+          <p class="text-center">No questions found.</p>
+      <?php endif; ?>
     </div>
   </div>
 </section>

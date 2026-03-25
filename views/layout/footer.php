@@ -43,17 +43,17 @@
     <div class="container">
       <div class="navigation">
          <ul>
-          <li><a href="/?route=home" title="Homepage">Home</a></li>
+          <li><a href="<?= BASE_URL ?>/home" title="Homepage">Home</a></li>
           <li class="separator-pipesign white"></li>
-          <li><a href="/?route=about" title="About Us">About Us</a></li>
+          <li><a href="<?= BASE_URL ?>/about" title="About Us">About Us</a></li>
           <li class="separator-pipesign white"></li>
-          <li><a href="/?route=services" title="Services">Services</a></li>
+          <li><a href="<?= BASE_URL ?>/services" title="Services">Services</a></li>
           <li class="separator-pipesign white"></li>
-          <li><a href="/?route=projects" title="Projects">Project</a></li>
+          <li><a href="<?= BASE_URL ?>/projects" title="Projects">Project</a></li>
           <li class="separator-pipesign white"></li>
-          <li><a href="/?route=trainings" title="Trainings">Trainings</a></li>
+          <li><a href="<?= BASE_URL ?>/trainings" title="Trainings">Trainings</a></li>
           <li class="separator-pipesign white"></li>
-          <li><a href="/?route=contact" title="Contact Us">Contact Us</a></li>
+          <li><a href="<?= BASE_URL ?>/contact" title="Contact Us">Contact Us</a></li>
         </ul>
       </div>
     </div>
@@ -62,19 +62,19 @@
       <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 copyright">
         <div class="row">
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12"> Copyright &copy;<span id="copyright-year"></span> <span class="separator-pipesign white"></span> All Rights Reserved</div>
-          <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 text-right"> <a href="javascript:void(0)">Privacy Policy</a><span class="separator-pipesign white"></span><a href="javascript:void(0)">Terms &amp; Conditions</a><span class="separator-pipesign white"></span><a href="/?route=faq">FAQ's</a> </div>
+          <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 text-right"> <a href="javascript:void(0)">Privacy Policy</a><span class="separator-pipesign white"></span><a href="javascript:void(0)">Terms &amp; Conditions</a><span class="separator-pipesign white"></span><a href="<?= BASE_URL ?>/faq">FAQ's</a> </div>
         </div>
       </div>
     </div>
   </div>
 </footer>
-<script src="/js/jquery-2.2.4.min.js"></script>
-<script src="/js/jquery.validate.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/owl.carousel.min.js"></script>
-<script src="/js/lightbox.js"></script>
-<script src="/js/wow.min.js"></script>
-<script src="/js/custom.js"></script>
+<script src="<?= BASE_URL ?>/js/jquery-2.2.4.min.js"></script>
+<script src="<?= BASE_URL ?>/js/jquery.validate.js"></script>
+<script src="<?= BASE_URL ?>/js/bootstrap.min.js"></script>
+<script src="<?= BASE_URL ?>/js/owl.carousel.min.js"></script>
+<script src="<?= BASE_URL ?>/js/lightbox.js"></script>
+<script src="<?= BASE_URL ?>/js/wow.min.js"></script>
+<script src="<?= BASE_URL ?>/js/custom.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
         $("#footerForm").validate({
@@ -85,7 +85,7 @@
                 var msg = $('#footerMessage');
                 sendButton.prop('disabled', true).html('Submitting...');
                 $.ajax({
-                    url: '/includes/footer-form-function.php',
+                    url: '<?= BASE_URL ?>/includes/footer-form-function.php',
                     type: 'POST',
                     dataType: 'html',
                     data: $(form).serialize(),

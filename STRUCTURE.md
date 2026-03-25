@@ -23,16 +23,16 @@ The project has been refactored from vanilla PHP into a modern Model-View-Contro
 
 ## Routing
 
-The project now uses a centralized routing system. All requests are directed to `index.php` with a `route` parameter:
+The project now uses a centralized routing system with **Clean URLs** via `.htaccess`. All requests are directed to `index.php`:
 
-- Home: `/?route=home` (Default)
-- Events: `/?route=events`, `/?route=events/upcoming`, `/?route=events/past`, `/?route=events/detail&id=X`
-- Trainings: `/?route=trainings`, `/?route=trainings/detail&id=X`
-- Forum: `/?route=forum`
-- About Us: `/?route=about`
-- Contact Us: `/?route=contact`
-- FAQ: `/?route=faq`
-- Blog: `/?route=blog`
+- **Home**: `/home` (Default)
+- **Events**: `/events`, `/events/upcoming`, `/events/past`, `/events/detail?id=X`
+- **Trainings**: `/trainings`, `/trainings/detail?id=X`
+- **Forum**: `/forum`
+- **About Us**: `/about`
+- **Contact Us**: `/contact`
+- **FAQ**: `/faq`
+- **Blog**: `/blog`
 
 ## Major Changes
 

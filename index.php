@@ -5,35 +5,30 @@ require_once "utils/Router.php";
 
 $router = new Router();
 
-// Routes
-$router->addRoute('home', 'HomeController', 'index');
+// Define mapping
+$routes = [
+    'home' => ['HomeController', 'index'],
+    '' => ['HomeController', 'index'],
+    'events' => ['EventController', 'index'],
+    'events/upcoming' => ['EventController', 'upcoming'],
+    'events/past' => ['EventController', 'past'],
+    'events/detail' => ['EventController', 'detail'],
+    'trainings' => ['TrainingController', 'index'],
+    'trainings/detail' => ['TrainingController', 'detail'],
+    'services' => ['ServiceController', 'index'],
+    'services/detail' => ['ServiceController', 'detail'],
+    'projects' => ['ProjectController', 'index'],
+    'projects/detail' => ['ProjectController', 'detail'],
+    'forum' => ['ForumController', 'index'],
+    'about' => ['GeneralController', 'about'],
+    'contact' => ['GeneralController', 'contact'],
+    'faq' => ['GeneralController', 'faq'],
+    'blog' => ['GeneralController', 'blog']
+];
 
-// Events
-$router->addRoute('events', 'EventController', 'index');
-$router->addRoute('events/upcoming', 'EventController', 'upcoming');
-$router->addRoute('events/past', 'EventController', 'past');
-$router->addRoute('events/detail', 'EventController', 'detail');
-
-// Trainings
-$router->addRoute('trainings', 'TrainingController', 'index');
-$router->addRoute('trainings/detail', 'TrainingController', 'detail');
-
-// Services
-$router->addRoute('services', 'ServiceController', 'index');
-$router->addRoute('services/detail', 'ServiceController', 'detail');
-
-// Projects
-$router->addRoute('projects', 'ProjectController', 'index');
-$router->addRoute('projects/detail', 'ProjectController', 'detail');
-
-// Forum
-$router->addRoute('forum', 'ForumController', 'index');
-
-// General
-$router->addRoute('about', 'GeneralController', 'about');
-$router->addRoute('contact', 'GeneralController', 'contact');
-$router->addRoute('faq', 'GeneralController', 'faq');
-$router->addRoute('blog', 'GeneralController', 'blog');
+foreach ($routes as $path => $route) {
+    $router->addRoute($path, $route[0], $route[1]);
+}
 
 $router->handleRequest();
 ?>

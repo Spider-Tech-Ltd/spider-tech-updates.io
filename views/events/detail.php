@@ -9,8 +9,8 @@
         </div>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
-             <li class="breadcrumb-item"><a href="/" title="Home">Home</a></li>
-             <li class="breadcrumb-item"><a href="/pages/events/index.php" title="Events">Events</a></li>
+             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/" title="Home">Home</a></li>
+             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/events" title="Events">Events</a></li>
             <li class="breadcrumb-item active" aria-current="page">Event Detail</li>
           </ol>
         </nav>
@@ -51,7 +51,7 @@
                 <h4><?= stripslashes($event['event_title']); ?></h4>
                 <div><?= stripslashes($event['event_detail']); ?></div>
                 <?php if (trim(strtolower(stripslashes($event['event_status']))) === "upcoming"): ?>
-                <a style="color:#f48221; display:inline-block;" class="mt-2 mb-4" href="/pages/trainings/index.php">
+                <a style="color:#f48221; display:inline-block;" class="mt-2 mb-4" href="<?= BASE_URL ?>/trainings">
                     Register Now > #SpiderTechEmpowers</a>
                 <?php endif; ?>
             </div>
