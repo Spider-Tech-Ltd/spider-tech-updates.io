@@ -1,6 +1,6 @@
   <!-- ====== Slider Start ====== -->
   <section id="slider">
-      <div id="home-slider" class="owl-carousel owl-theme">
+      <div id="home-slider" class="owl-main owl-carousel owl-theme">
           <?php foreach ($banners as $banner): ?>
           <div class="item">
               <img src="<?= BASE_URL . '/' . ltrim($banner['banner_img'], '/'); ?>" alt="Slider">
@@ -84,9 +84,9 @@
       <div class="col-lg-12 col-md-12 col-xs-12 content_sec">
         <div class="row row-safari">
           <div class="col-lg-7 col-md-6 col-sm-12 col-xs-12 img-area"> <img class="img_sec" src="<?= BASE_URL ?>/images/timeline/<?= stripslashes($about[0]['image'] ?? ''); ?>" alt="About" /> </div>
-          <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 content-area">
+          <div class="col-lg-5 col-md-6 col-sm-12 col-xs-12 content-area">
             <h5><?= stripslashes($about[0]['title'] ?? ''); ?></h5>
-            <p>We design innovative digital solutions leveraging cutting-edge technology.</p>
+            <div class="mb-4"><?= stripslashes($about[0]['short_details'] ?? ''); ?></div>
             <a class="defualt-button view_more" href="<?= BASE_URL ?>/about">View More</a> </div>
         </div>
       </div>
@@ -103,13 +103,22 @@
       </div>
       <div class="col-lg-12 col-md-12 col-xs-12 content_sec">
         <div class="service-slider owl-one owl-carousel owl-theme">
-        <?php foreach($services as $service): ?>
-          <div class="item">
-            <div class="service_icon"><i class="<?= $service['service_icon']; ?>"></i></div>
-            <div class="connector"> <span></span> </div>
-            <div class="service-card"><div class="service_detail"><h5><a href="<?= BASE_URL ?>/services/detail?id=<?= $service['id']; ?>" title="Service"><?= $service['service_name']; ?></a></h5><p><?= $service['service_description']; ?></p></div></div>
-          </div>
-        <?php endforeach; ?>
+        <?php if(!empty($services)): ?>
+          <?php foreach($services as $service): ?>
+            <div class="item">
+              <div class="service_icon"><i class="<?= $service['service_icon']; ?>"></i></div>
+              <div class="connector"> <span></span> </div>
+              <div class="service-card">
+                <div class="service_detail">
+                  <h5><a href="<?= BASE_URL ?>/services/detail?id=<?= $service['id']; ?>" title="Service"><?= $service['service_name']; ?></a></h5>
+                  <p><?= $service['service_description']; ?></p>
+                </div>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <div class="col-12 text-center"><p>No services found in database.</p></div>
+        <?php endif; ?>
         </div>
       </div>
     </div>
