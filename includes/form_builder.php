@@ -35,7 +35,7 @@ function render_form_field($field)
     // Base style for all text-based inputs and selects
     $input_style = 'border-radius: 50px; padding: 1.5rem; border: 1px solid #ddd; transition: all 0.3s ease;';
     $select_style = 'border-radius: 50px; padding: .8rem 1.5rem; border: 1px solid #ddd; transition: all 0.3s ease;';
-    $textarea_style = 'border-radius: 20px; padding: 15px 20px; border: 1px solid #ddd; min-height: 140px; transition: all 0.3s ease;';
+    $textarea_style = 'border-radius: 20px; padding: 1.25rem 1.5rem; border: 1px solid #ddd; transition: all 0.3s ease;';
 
     switch ($type) {
         case 'text':
