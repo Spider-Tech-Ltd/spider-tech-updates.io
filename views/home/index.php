@@ -3,14 +3,14 @@
       <div id="home-slider" class="owl-main owl-carousel owl-theme">
           <?php foreach ($banners as $banner): ?>
           <div class="item">
-              <img src="<?= BASE_URL . '/' . ltrim($banner['banner_img'], '/'); ?>" alt="Slider">
+              <img src="<?= BASE_URL . '/images/banners/' . $banner['banner_image']; ?>" alt="Slider">
               <div class="slider-content">
                   <div class="container">
                       <div class="row">
                           <div class="col-lg-12">
                               <div class="content-inner">
                                   <h2 class="wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.2s"><?= $banner['banner_title']; ?></h2>
-                                  <p class="wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.4s"><?= $banner['banner_subtitle']; ?></p>
+                                  <p class="wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.4s">Offering IT solutions with a focus on excellence and dependability, making us your top choice for technology services.</p>
                                   <a href="<?= BASE_URL ?>/about" class="defualt-button wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.6s">Learn More</a>
                               </div>
                           </div>

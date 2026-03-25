@@ -27,7 +27,7 @@
         <div class="col-lg-7 col-md-6 col-sm-12 col-xs-12 img-area"> <img class="img_sec" src="<?= BASE_URL ?>/images/timeline/<?= stripslashes($about[0]['image'] ?? ''); ?>" alt="About" /> </div>
         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 content-area">
           <h5><?= stripslashes($about[0]['title'] ?? ''); ?></h5>
-          <p>We design innovative digital solutions leveraging cutting-edge technology.</p>
+          <p><?= stripslashes($about[0]['details'] ?? 'We design innovative digital solutions leveraging cutting-edge technology.'); ?></p>
         </div>
       </div>
     </div>
