@@ -30,7 +30,6 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
 <head>
   <?php require('head-section.html'); ?>
   <!-- Google Fonts & Material Symbols for modern UI -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <style>
     /* Global Overrides for modern feel */
@@ -43,9 +42,6 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
     h3,
     h4,
     h5,
-    .font-headline {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
 
     .fill-1 {
       font-variation-settings: 'FILL' 1;
@@ -128,7 +124,6 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
       border-radius: 50px;
       background-color: rgba(244, 130, 33, 0.12);
       border: 1px solid rgba(244, 130, 33, 0.25);
-      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 0.72rem;
       font-weight: 600;
       letter-spacing: 0.08em;
@@ -138,7 +133,7 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
     }
 
     .hero-title {
-      font-size: 4.5rem;
+      font-size: 3.5rem;
       font-weight: 800;
       line-height: 1.1;
       margin: 0 auto 1.5rem;
@@ -349,7 +344,7 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
     }
 
     .card-footer {
-      padding-top: 1.5rem;
+      padding-top: 1.125rem !important;
       border-top: 1px solid #f1f1f1;
       display: flex;
       justify-content: space-between;
@@ -381,7 +376,7 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
     }
 
     .register-btn {
-      color: #964900;
+      color: #f48221;
       font-weight: 700;
       font-size: 0.875rem;
       display: flex;
@@ -465,7 +460,7 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
     .featured-btn {
       background: #ffffff;
       color: #f48221;
-      padding: 1.25rem 2rem;
+      padding: 1rem 2rem;
       border-radius: 9999px;
       text-align: center;
       font-weight: 700;
@@ -476,7 +471,7 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
 
     .featured-btn:hover {
       transform: scale(1.02);
-      color: #964900;
+      color: #e6751c;
     }
 
     @media (max-width: 992px) {
@@ -486,153 +481,6 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
 
       .training-hero {
         padding: 60px 0;
-      }
-    }
-
-    /* Mobile Bottom Nav Styles */
-    .mobile-bottom-nav {
-      display: none;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background-color: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(20px);
-      border-top: 1px solid #f1f1f1;
-      padding: 12px 16px 24px;
-      z-index: 1000;
-      justify-content: space-around;
-      align-items: center;
-      border-top-left-radius: 24px;
-      border-top-right-radius: 24px;
-      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.05);
-    }
-
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      color: #aaaaaa;
-      text-decoration: none !important;
-    }
-
-    .nav-item.active {
-      color: #f48221;
-    }
-
-    .nav-item .material-symbols-outlined {
-      font-size: 24px;
-    }
-
-    .nav-item span {
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    .search-pill {
-      width: 48px;
-      height: 48px;
-      background-color: #f48221;
-      color: #ffffff;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: -24px;
-      box-shadow: 0 8px 16px rgba(244, 130, 33, 0.3);
-    }
-
-    .filters-section {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 30px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    }
-
-    .filters-wrapper {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      align-items: center;
-    }
-
-    .search-box {
-      display: flex;
-      align-items: center;
-      background: #f9f9f9;
-      border-radius: 8px;
-      padding: 8px 15px;
-      flex: 1;
-      min-width: 200px;
-    }
-
-    .search-box .material-symbols-outlined {
-      color: #999;
-      margin-right: 8px;
-    }
-
-    .search-box input {
-      border: none;
-      background: transparent;
-      width: 100%;
-      font-size: 0.9rem;
-      color: #333;
-    }
-
-    .search-box input:focus {
-      outline: none;
-    }
-
-    .search-box input::placeholder {
-      color: #999;
-    }
-
-    .filter-select {
-      padding: 10px 15px;
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      color: #555;
-      background: #fff;
-      cursor: pointer;
-      min-width: 150px;
-      transition: border-color 0.2s;
-    }
-
-    .filter-select:hover,
-    .filter-select:focus {
-      border-color: #f48221;
-      outline: none;
-    }
-
-    .no-results-message {
-      text-align: center;
-      padding: 60px 20px;
-      color: #666;
-    }
-
-    .no-results-message .material-symbols-outlined {
-      font-size: 48px;
-      color: #ccc;
-      margin-bottom: 15px;
-    }
-
-    .no-results-message h3 {
-      margin-bottom: 10px;
-      color: #333;
-    }
-
-    @media (max-width: 991px) {
-      .mobile-bottom-nav {
-        display: flex;
-      }
-
-      body {
-        padding-bottom: 80px;
       }
     }
   </style>
@@ -689,43 +537,6 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
     <!-- ====== Trainings Start ====== -->
     <section id="services" class="index-2 padding">
       <div class="container">
-
-        <!-- Search and Filters -->
-        <div class="filters-section">
-          <div class="filters-wrapper">
-            <!-- Search Box -->
-            <div class="search-box">
-              <span class="material-symbols-outlined">search</span>
-              <input type="text" id="courseSearch" placeholder="Search courses...">
-            </div>
-
-            <!-- Category Filter -->
-            <select id="categoryFilter" class="filter-select">
-              <option value="">All Categories</option>
-              <option value="Soft Skills">Soft Skills</option>
-              <option value="Entrepreneurship">Entrepreneurship</option>
-              <option value="Technical Skills">Technical Skills</option>
-              <option value="Business">Business</option>
-            </select>
-
-            <!-- Difficulty Filter -->
-            <select id="difficultyFilter" class="filter-select">
-              <option value="">All Levels</option>
-              <option value="Beginner">Beginner</option>
-              <option value="Intermediate">Intermediate</option>
-              <option value="Advanced">Advanced</option>
-            </select>
-
-            <!-- Sort -->
-            <select id="sortBy" class="filter-select">
-              <option value="popular">Most Popular</option>
-              <option value="newest">Newest First</option>
-              <option value="rating">Highest Rated</option>
-              <option value="duration-asc">Shortest First</option>
-            </select>
-          </div>
-        </div>
-
         <div class="section-header text-center mb-4">
           <h2>Fast-track your career with practical tech training</h2>
           <p class="text-muted">Build role-ready skills with curriculum vetted by Spider Technologies and partners.</p>
@@ -822,63 +633,7 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
   <?php require('includes/mini-footer.php'); ?>
   <!-- ====== Footer End ====== -->
 
-  <!-- Mobile Bottom Navigation Bar -->
-  <nav class="mobile-bottom-nav">
-    <a href="index.php" class="nav-item">
-      <span class="material-symbols-outlined">home</span>
-      <span>Home</span>
-    </a>
-    <a href="#" class="nav-item">
-      <div class="search-pill">
-        <span class="material-symbols-outlined">search</span>
-      </div>
-    </a>
-    <a href="#" class="nav-item">
-      <span class="material-symbols-outlined">bookmark</span>
-      <span>Saved</span>
-    </a>
-    <a href="#" class="nav-item">
-      <span class="material-symbols-outlined">person</span>
-      <span>Profile</span>
-    </a>
-  </nav>
   <?php require('javascript-section.html'); ?>
-
-  <script>
-    // Course Filtering Functionality
-    document.addEventListener('DOMContentLoaded', function() {
-      const searchInput = document.getElementById('courseSearch');
-      const categoryFilter = document.getElementById('categoryFilter');
-      const difficultyFilter = document.getElementById('difficultyFilter');
-      const sortBy = document.getElementById('sortBy');
-
-      function filterCourses() {
-        const searchTerm = searchInput?.value.toLowerCase() || '';
-        const category = categoryFilter?.value || '';
-        const difficulty = difficultyFilter?.value || '';
-
-        document.querySelectorAll('.training-card').forEach(card => {
-          const col = card.closest('.col-lg-4, .col-md-6, .col-md-12');
-          if (!col) return;
-
-          const title = card.querySelector('.card-title, .featured-title')?.textContent.toLowerCase() || '';
-          const desc = card.querySelector('.card-desc, .featured-desc')?.textContent.toLowerCase() || '';
-          const cardCategory = col.dataset.category || '';
-          const cardDifficulty = col.dataset.difficulty || '';
-
-          const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm);
-          const matchesCategory = !category || cardCategory === category;
-          const matchesDifficulty = !difficulty || cardDifficulty === difficulty;
-
-          col.style.display = (matchesSearch && matchesCategory && matchesDifficulty) ? '' : 'none';
-        });
-      }
-
-      searchInput?.addEventListener('input', filterCourses);
-      categoryFilter?.addEventListener('change', filterCourses);
-      difficultyFilter?.addEventListener('change', filterCourses);
-    });
-  </script>
 </body>
 
 </html>

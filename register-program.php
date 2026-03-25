@@ -72,23 +72,21 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
 
     /* Restore Light Orange Hero Section */
     .registration-hero {
-      background: linear-gradient(135deg, #fef4ea 0%, #fff7f0 100%);
       padding: 40px 0 80px 0;
       color: #333;
       text-align: center;
       position: relative;
-      border-bottom: 1px solid #fce3cc;
     }
 
     .registration-hero-title {
       font-size: 2.8rem;
       font-weight: 800;
-      margin-bottom: 15px;
+      margin-block: 1.75rem;
       color: #1a1a1a;
     }
 
     .registration-hero-subtitle {
-      font-size: 1.2rem;
+      font-size: 1rem;
       color: #666;
       max-width: 600px;
       margin: 0 auto;
@@ -110,8 +108,8 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
       background: #fff;
       border-radius: 20px;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
-      padding: 40px;
-      max-width: 950px;
+      padding: 1.25rem;
+      width: min(800px, 100%);
       margin: 0 auto 80px;
       border: 1px solid #eee;
       position: relative;
@@ -138,10 +136,10 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
 
 
     .form-section-title {
-      font-size: 1.4rem;
+      font-size: 1.125rem;
       font-weight: 700;
-      margin: 0 0 0 0;
-      padding: 15px 20px;
+      margin: 0;
+      padding: .75rem 1.25rem;
       background: #f48221;
       color: #fff !important;
       display: flex;
@@ -155,7 +153,7 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
     }
 
     .form-section {
-      margin-top: 30px;
+      margin-top: 1rem;
       border: 1px solid #eee;
       border-radius: 15px;
       background: #fafafa;
@@ -176,13 +174,23 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
       margin-bottom: 8px;
     }
 
+    .btn-container {
+      container-type: inline-size;
+    }
+
     .btn-group {
       display: flex;
       flex-direction: column;
       gap: 15px;
-      margin-top: 30px;
-      padding-top: 30px;
-      border-top: 1px solid #eee;
+      margin-block-start: 2rem;
+      padding-block-start: 2rem;
+      border-block-start: 1px solid #eee;
+    }
+
+    @container (min-width: 500px) {
+      .btn-group {
+        flex-direction: row;
+      }
     }
 
     .submit-btn {
@@ -254,7 +262,7 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
       }
 
       .registration-form-wrapper {
-        padding: 30px 20px;
+        padding: 1.25rem;
       }
 
       .registration-hero-title {
@@ -308,12 +316,12 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
       </div>
     </section>
   <?php else : ?>
+    <!-- Breadcrumb Navigation -->
+    <?php require('includes/breadcrumbs.html'); ?>
     <section class="registration-hero">
-      <!-- Breadcrumb Navigation -->
-      <?php require('includes/breadcrumbs.html'); ?>
 
       <div class="container registration-hero-inner">
-        <div class="badge px-3 py-2 mb-3" style="background: rgba(244, 130, 33, 0.1); color: #f48221; border-radius: 50px; font-weight: 700;">REGISTRATION OPEN</div>
+        <div class="badge px-3 py-2" style="background: rgba(244, 130, 33, 0.1); color: #f48221; border-radius: 50px; font-weight: 700;">REGISTRATION OPEN</div>
         <h1 class="registration-hero-title"><?= cleanText($program['training_name']); ?></h1>
         <p class="registration-hero-subtitle">Secure your spot in this industry-recognized training program. Please fill out all required details accurately.</p>
       </div>
@@ -420,14 +428,16 @@ $breadcrumb_current = 'Register' . (isset($program['training_name']) ? ' - ' . h
             <?php endif; ?>
 
             <!-- Submit Buttons -->
-            <div class="btn-group">
-              <button type="submit" name="register" class="submit-btn">
-                <span class="material-symbols-outlined">how_to_reg</span>
-                Submit Registration
-              </button>
-              <a href="program-detail.php?id=<?= $program_id; ?>" class="cancel-btn">
-                Cancel
-              </a>
+            <div class="btn-container">
+              <div class="btn-group">
+                <button type="submit" name="register" class="submit-btn">
+                  <span class="material-symbols-outlined">how_to_reg</span>
+                  Submit Registration
+                </button>
+                <a href="program-detail.php?id=<?= $program_id; ?>" class="cancel-btn">
+                  Cancel
+                </a>
+              </div>
             </div>
 
             <div class="required-note">

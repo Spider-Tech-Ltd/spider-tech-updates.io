@@ -33,8 +33,8 @@ function render_form_field($field)
     $html .= '</label>';
 
     // Base style for all text-based inputs and selects
-    $input_style = 'border-radius: 50px; padding: 15px 20px; border: 1px solid #ddd; min-height: 52px; transition: all 0.3s ease;';
-    $select_style = 'border-radius: 50px; padding: 15px 20px; border: 1px solid #ddd; min-height: 52px; transition: all 0.3s ease;';
+    $input_style = 'border-radius: 50px; padding: 1.5rem; border: 1px solid #ddd; transition: all 0.3s ease;';
+    $select_style = 'border-radius: 50px; padding: .8rem 1.5rem; border: 1px solid #ddd; transition: all 0.3s ease;';
     $textarea_style = 'border-radius: 20px; padding: 15px 20px; border: 1px solid #ddd; min-height: 140px; transition: all 0.3s ease;';
 
     switch ($type) {
@@ -50,7 +50,7 @@ function render_form_field($field)
 
         case 'select':
             $html .= '<select id="' . $name . '" name="' . $name . '" class="form-control custom-select" style="' . $select_style . ' height: auto; -webkit-appearance: none;" ' . $required . '>';
-            $html .= '<option value="">-- Select ' . htmlspecialchars($label) . ' --</option>';
+            $html .= '<option value="">Select ' . htmlspecialchars($label) . '</option>';
             foreach ($options as $option) {
                 $html .= '<option value="' . htmlspecialchars($option) . '">' . htmlspecialchars($option) . '</option>';
             }
