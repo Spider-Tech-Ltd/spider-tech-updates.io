@@ -1,6 +1,6 @@
 <?php
 
-require('includes/connect.php');
+require('../../includes/connect.php');
 $contact_details = $conn->prepare("SELECT * FROM `contact_details` WHERE contact_id = 1 LIMIT 1");
 $contact_details->execute();
 $fetch_contact = $contact_details->fetch(PDO::FETCH_ASSOC);
@@ -28,13 +28,13 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
 <html lang="en">
 
 <head>
-  <?php require('head-section.html'); ?>
+  <?php require('../../head-section.html'); ?>
   <!-- Google Fonts & Material Symbols for modern UI -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
   <style>
     /* Global Overrides for modern feel */
-    body {
-      font-family: 'Work Sans', sans-serif;
+    html {
+      scroll-behavior: smooth;
     }
 
     h1,
@@ -205,6 +205,10 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
       align-items: center;
       gap: 0.5rem;
       margin-bottom: 0.5rem;
+    }
+
+    section#trainings {
+      padding: 80px 0 !important;
     }
 
     /* Training Card Styles */
@@ -488,11 +492,11 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
 
 <body>
   <!-- ====== Preloader ====== -->
-  <?php require('includes/preloader.html'); ?>
+  <?php require('../../includes/preloader.html'); ?>
 
   <div class="wraper-v2-inner">
     <!-- ====== Header Starts ====== -->
-    <?php require('header-section.php'); ?>
+    <?php require('../../header-section.php'); ?>
     <!-- ====== Header End ====== -->
 
     <!-- ====== Hero Section Start ====== -->
@@ -513,7 +517,7 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
 
             <div class="row justify-content-center mt-4">
               <div class="col-md-8 col-lg-6 text-center">
-                <a href="#services" class="hero-btn-primary w-100">Browse Programs</a>
+                <a href="#trainings" class="hero-btn-primary w-100">Browse Programs</a>
               </div>
             </div>
 
@@ -535,7 +539,7 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
     <!-- ====== Hero Section End ====== -->
 
     <!-- ====== Trainings Start ====== -->
-    <section id="services" class="index-2 padding">
+    <section id="trainings" class="index-2 padding">
       <div class="container">
         <div class="section-header text-center mb-4">
           <h2>Fast-track your career with practical tech training</h2>
@@ -565,7 +569,7 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
                         <span class="px-3 py-1 bg-white-20 font-weight-bold" style="background: rgba(255,255,255,0.2); font-size: 11px; border-radius: 9999px;">TRAINING</span>
                         <span class="px-3 py-1 bg-white-20 font-weight-bold" style="background: rgba(255,255,255,0.2); font-size: 11px; border-radius: 9999px;">24 WEEKS</span>
                       </div>
-                      <a href="program-detail.php?id=<?php echo stripslashes($fetch_training['id']); ?>" class="featured-btn w-100 d-block text-center">View Program</a>
+                      <a href="/pages/trainings/program-detail.php?id=<?= htmlspecialchars(stripslashes($fetch_training['id'])); ?>" class="featured-btn w-100 d-block text-center">View Program</a>
                     </div>
                   </div>
                 </div>
@@ -601,7 +605,7 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
                           <span class="material-symbols-outlined text-orange" style="font-size: 16px;">bolt</span>
                           Intensive
                         </div>
-                        <a href="program-detail.php?id=<?php echo stripslashes($fetch_training['id']); ?>" class="register-btn">
+                        <a href="/pages/trainings/program-detail.php?id=<?= htmlspecialchars(stripslashes($fetch_training['id'])); ?>" class="register-btn">
                           View Details
                           <span class="material-symbols-outlined">arrow_forward</span>
                         </a>
@@ -622,7 +626,7 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
     <!-- ====== Trainings End ====== -->
 
     <!-- ====== Work Status Start ====== -->
-    <?php require('includes/work-status.html'); ?>
+    <?php require('../../includes/work-status.html'); ?>
     <!-- ====== Work Status End ====== -->
 
 
@@ -630,10 +634,10 @@ $fetch_misc2 = $misc_image2->fetch(PDO::FETCH_ASSOC);
 
   </div>
   <!-- ====== Footer Start ====== -->
-  <?php require('includes/mini-footer.php'); ?>
+  <?php require('../../includes/mini-footer.php'); ?>
   <!-- ====== Footer End ====== -->
 
-  <?php require('javascript-section.html'); ?>
+  <?php require('../../javascript-section.html'); ?>
 </body>
 
 </html>
