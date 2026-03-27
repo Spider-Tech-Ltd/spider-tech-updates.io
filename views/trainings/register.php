@@ -6,6 +6,8 @@ $breadcrumb_current = 'Register' . (isset($training['training_name']) ? ' - ' . 
 
 $success_msg = "";
 $error_msg = "";
+$errors = $_SESSION['registration_errors'] ?? [];
+$old_input = $_SESSION['old_input'] ?? [];
 
 if (isset($_SESSION['registration_success'])) {
     $success_msg = $_SESSION['registration_success'];
@@ -15,6 +17,8 @@ if (isset($_SESSION['registration_error'])) {
     $error_msg = $_SESSION['registration_error'];
     unset($_SESSION['registration_error']);
 }
+unset($_SESSION['registration_errors']);
+unset($_SESSION['old_input']);
 ?>
 
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
@@ -249,7 +253,7 @@ if (isset($_SESSION['registration_error'])) {
 
                   <div class="row" style="padding: 20px;">
                     <?php foreach ($fields as $field) : ?>
-                      <?= FormBuilder::render_form_field($field); ?>
+                      <?= FormBuilder::render_form_field($field, $errors, $old_input); ?>
                     <?php endforeach; ?>
                   </div>
                 </div>
@@ -265,25 +269,29 @@ if (isset($_SESSION['registration_error'])) {
                 <div class="col-md-6 mb-3">
                   <div class="form-group">
                     <label class="font-weight-bold">First Name <span class="text-danger">*</span></label>
-                    <input type="text" name="firstname" class="form-control" style="border-radius: 50px; padding: 12px 20px;" required>
+                    <input type="text" name="firstname" class="form-control <?= isset($errors['firstname']) ? 'is-invalid' : '' ?>" style="border-radius: 50px; padding: 12px 20px; border: 1px solid <?= isset($errors['firstname']) ? '#dc3545' : '#ddd' ?>;" value="<?= htmlspecialchars($old_input['firstname'] ?? '') ?>" required>
+                    <?php if(isset($errors['firstname'])): ?><div class="invalid-feedback d-block ml-3 mt-1"><?= $errors['firstname'] ?></div><?php endif; ?>
                   </div>
                 </div>
                 <div class="col-md-6 mb-3">
                   <div class="form-group">
                     <label class="font-weight-bold">Last Name <span class="text-danger">*</span></label>
-                    <input type="text" name="lastname" class="form-control" style="border-radius: 50px; padding: 12px 20px;" required>
+                    <input type="text" name="lastname" class="form-control <?= isset($errors['lastname']) ? 'is-invalid' : '' ?>" style="border-radius: 50px; padding: 12px 20px; border: 1px solid <?= isset($errors['lastname']) ? '#dc3545' : '#ddd' ?>;" value="<?= htmlspecialchars($old_input['lastname'] ?? '') ?>" required>
+                    <?php if(isset($errors['lastname'])): ?><div class="invalid-feedback d-block ml-3 mt-1"><?= $errors['lastname'] ?></div><?php endif; ?>
                   </div>
                 </div>
                 <div class="col-12 mb-3">
                   <div class="form-group">
                     <label class="font-weight-bold">Email Address <span class="text-danger">*</span></label>
-                    <input type="email" name="email" class="form-control" style="border-radius: 50px; padding: 12px 20px;" required>
+                    <input type="email" name="email" class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>" style="border-radius: 50px; padding: 12px 20px; border: 1px solid <?= isset($errors['email']) ? '#dc3545' : '#ddd' ?>;" value="<?= htmlspecialchars($old_input['email'] ?? '') ?>" required>
+                    <?php if(isset($errors['email'])): ?><div class="invalid-feedback d-block ml-3 mt-1"><?= $errors['email'] ?></div><?php endif; ?>
                   </div>
                 </div>
                 <div class="col-12 mb-3">
                   <div class="form-group">
                     <label class="font-weight-bold">Phone Number <span class="text-danger">*</span></label>
-                    <input type="tel" name="phone_no" class="form-control" style="border-radius: 50px; padding: 12px 20px;" required>
+                    <input type="tel" name="phone_no" class="form-control <?= isset($errors['phone']) ? 'is-invalid' : '' ?>" style="border-radius: 50px; padding: 12px 20px; border: 1px solid <?= isset($errors['phone']) ? '#dc3545' : '#ddd' ?>;" value="<?= htmlspecialchars($old_input['phone_no'] ?? '') ?>" required>
+                    <?php if(isset($errors['phone'])): ?><div class="invalid-feedback d-block ml-3 mt-1"><?= $errors['phone'] ?></div><?php endif; ?>
                   </div>
                 </div>
               </div>

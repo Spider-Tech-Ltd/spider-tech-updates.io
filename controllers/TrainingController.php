@@ -58,6 +58,14 @@ class TrainingController extends BaseController {
             $errors = $validation['errors'];
             $user_data = $validation['data'];
 
+            // Strict check for email and phone duplication
+            if (isset($user_data['email']) && $model->isEmailRegistered($user_data['email'], $program_id)) {
+                $errors['email'] = "This email address is already registered for this program.";
+            }
+            if (isset($user_data['phone']) && $model->isPhoneRegistered($user_data['phone'], $program_id)) {
+                $errors['phone'] = "This phone number is already registered for this program.";
+            }
+
             // Handle file uploads
             foreach ($form_fields as $field) {
                 if ($field['field_type'] === 'file' && isset($_FILES[$field['field_name']]) && $_FILES[$field['field_name']]['error'] === UPLOAD_ERR_OK) {
@@ -83,17 +91,27 @@ class TrainingController extends BaseController {
             $email = $_POST['email'] ?? '';
             $phone = $_POST['phone_no'] ?? '';
 
-            if (empty($firstname)) $errors[] = "First name is required.";
-            if (empty($lastname)) $errors[] = "Last name is required.";
-            if (empty($email)) $errors[] = "Email is required.";
-            if (empty($phone)) $errors[] = "Phone is required.";
+            if (empty($firstname)) $errors['firstname'] = "First name is required.";
+            if (empty($lastname)) $errors['lastname'] = "Last name is required.";
+
+            if (empty($email)) {
+                $errors['email'] = "Email is required.";
+            } elseif ($model->isEmailRegistered($email, $program_id)) {
+                $errors['email'] = "This email is already registered.";
+            }
+
+            if (empty($phone)) {
+                $errors['phone'] = "Phone number is required.";
+            } elseif ($model->isPhoneRegistered($phone, $program_id)) {
+                $errors['phone'] = "This phone number is already registered.";
+            }
 
             $user_data = ['firstname' => $firstname, 'lastname' => $lastname, 'email' => $email, 'phone' => $phone];
         }
 
-        session_start();
         if (!empty($errors)) {
-            $_SESSION['registration_error'] = implode("<br>", $errors);
+            $_SESSION['registration_errors'] = $errors;
+            $_SESSION['old_input'] = $_POST;
             header("Location: " . BASE_URL . "/trainings/register?id=" . $program_id);
             exit();
         }

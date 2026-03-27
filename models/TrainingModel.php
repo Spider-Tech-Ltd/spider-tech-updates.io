@@ -33,6 +33,28 @@ class TrainingModel {
         return $stmt->execute([$program_id, $user_data_json]);
     }
 
+    public function isEmailRegistered($email, $program_id) {
+        // We use JSON_UNQUOTE(JSON_EXTRACT()) to ensure we compare raw strings, and handle both 'email' and 'email_address' common keys
+        $query = "SELECT id FROM `training_registrations` WHERE program_id = ? AND (
+                    JSON_UNQUOTE(JSON_EXTRACT(user_data, '$.email')) = ? OR
+                    JSON_UNQUOTE(JSON_EXTRACT(user_data, '$.email_address')) = ?
+                  ) LIMIT 1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$program_id, $email, $email]);
+        return $stmt->fetch() !== false;
+    }
+
+    public function isPhoneRegistered($phone, $program_id) {
+        $query = "SELECT id FROM `training_registrations` WHERE program_id = ? AND (
+                    JSON_UNQUOTE(JSON_EXTRACT(user_data, '$.phone')) = ? OR
+                    JSON_UNQUOTE(JSON_EXTRACT(user_data, '$.phone_no')) = ? OR
+                    JSON_UNQUOTE(JSON_EXTRACT(user_data, '$.phone_number')) = ?
+                  ) LIMIT 1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$program_id, $phone, $phone, $phone]);
+        return $stmt->fetch() !== false;
+    }
+
     public function getContactDetails() {
         $query = "SELECT * FROM `contact_details` WHERE contact_id = 1 LIMIT 1";
         $stmt = $this->conn->prepare($query);

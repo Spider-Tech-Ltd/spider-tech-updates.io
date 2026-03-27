@@ -10,7 +10,7 @@ class FormBuilder
     /**
      * Renders an individual form field based on its configuration
      */
-    public static function render_form_field($field)
+    public static function render_form_field($field, $errors = [], $old_input = [])
     {
         $name = $field['field_name'];
         $label = $field['field_label'];
@@ -43,19 +43,23 @@ class FormBuilder
         $html .= '</label>';
 
         // Base style for all text-based inputs and selects
-        $input_style = 'border-radius: 50px; padding: 15px 20px; border: 1px solid #ddd; min-height: 52px; transition: all 0.3s ease;';
-        $select_style = 'border-radius: 50px; padding: 15px 20px; border: 1px solid #ddd; min-height: 52px; transition: all 0.3s ease;';
-        $textarea_style = 'border-radius: 20px; padding: 15px 20px; border: 1px solid #ddd; min-height: 140px; transition: all 0.3s ease;';
+        $has_error = isset($errors[$name]);
+        $border_color = $has_error ? '#dc3545' : '#ddd';
+        $input_style = "border-radius: 50px; padding: 15px 20px; border: 1px solid $border_color; min-height: 52px; transition: all 0.3s ease;";
+        $select_style = "border-radius: 50px; padding: 15px 20px; border: 1px solid $border_color; min-height: 52px; transition: all 0.3s ease;";
+        $textarea_style = "border-radius: 20px; padding: 15px 20px; border: 1px solid $border_color; min-height: 140px; transition: all 0.3s ease;";
+
+        $value = $old_input[$name] ?? '';
 
         switch ($type) {
             case 'text':
             case 'email':
             case 'number':
-                $html .= '<input type="' . $type . '" id="' . $name . '" name="' . $name . '" class="form-control" style="' . $input_style . '" placeholder="Enter ' . strtolower(htmlspecialchars($label)) . '" ' . $required . '>';
+                $html .= '<input type="' . $type . '" id="' . $name . '" name="' . $name . '" class="form-control ' . ($has_error ? 'is-invalid' : '') . '" style="' . $input_style . '" placeholder="Enter ' . strtolower(htmlspecialchars($label)) . '" value="' . htmlspecialchars($value) . '" ' . $required . '>';
                 break;
 
             case 'textarea':
-                $html .= '<textarea id="' . $name . '" name="' . $name . '" class="form-control" rows="4" style="' . $textarea_style . '" placeholder="Enter ' . strtolower(htmlspecialchars($label)) . '" ' . $required . '></textarea>';
+                $html .= '<textarea id="' . $name . '" name="' . $name . '" class="form-control ' . ($has_error ? 'is-invalid' : '') . '" rows="4" style="' . $textarea_style . '" placeholder="Enter ' . strtolower(htmlspecialchars($label)) . '" ' . $required . '>' . htmlspecialchars($value) . '</textarea>';
                 break;
 
             case 'select':
@@ -63,11 +67,12 @@ class FormBuilder
                 if ($name === 'local_government' && empty($options)) {
                     $options = ['Kano Municipal', 'Tarauni', 'Nassarawa', 'Gwale', 'Fagge'];
                 }
-                $html .= '<select id="' . $name . '" name="' . $name . '" class="form-control custom-select" style="' . $select_style . ' height: auto; -webkit-appearance: none;" ' . $required . '>';
+                $html .= '<select id="' . $name . '" name="' . $name . '" class="form-control custom-select ' . ($has_error ? 'is-invalid' : '') . '" style="' . $select_style . ' height: auto; -webkit-appearance: none;" ' . $required . '>';
                 $html .= '<option value="">-- Select ' . htmlspecialchars($label) . ' --</option>';
                 if (!empty($options)) {
                     foreach ($options as $option) {
-                        $html .= '<option value="' . htmlspecialchars($option) . '">' . htmlspecialchars($option) . '</option>';
+                        $selected = ($value == $option) ? 'selected' : '';
+                        $html .= '<option value="' . htmlspecialchars($option) . '" ' . $selected . '>' . htmlspecialchars($option) . '</option>';
                     }
                 }
                 $html .= '</select>';
@@ -107,6 +112,10 @@ class FormBuilder
                 break;
         }
 
+        if ($has_error) {
+            $html .= '<div class="invalid-feedback d-block ml-3 mt-1" style="font-size: 0.85rem; font-weight: 500;">' . $errors[$name] . '</div>';
+        }
+
         $html .= '</div>';
         $html .= '</div>';
         return $html;
@@ -135,14 +144,17 @@ class FormBuilder
                         'tmp_name' => $files_data[$name]['tmp_name']
                     ];
                 } elseif ($required) {
-                    $errors[] = $label . " is required.";
+                    $errors[$name] = $label . " is required.";
                 }
             } else {
                 $value = isset($post_data[$name]) ? $post_data[$name] : null;
 
                 if ($required && (empty($value) && $value !== '0')) {
-                    $errors[] = $label . " is required.";
+                    $errors[$name] = $label . " is required.";
                 } else {
+                    if ($type === 'email' && !empty($value) && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                        $errors[$name] = "Please enter a valid email address.";
+                    }
                     $valid_data[$name] = is_array($value) ? array_map('htmlspecialchars', $value) : htmlspecialchars($value);
                 }
             }
