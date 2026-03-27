@@ -16,7 +16,15 @@ class FormBuilder
         $label = $field['field_label'];
         $type = $field['field_type'];
         $required = $field['is_required'] ? 'required' : '';
-        $options = !empty($field['options']) ? json_decode($field['options'], true) : [];
+
+        $options = [];
+        if (!empty($field['options'])) {
+            if (is_array($field['options'])) {
+                $options = $field['options'];
+            } else {
+                $options = json_decode($field['options'], true) ?: [];
+            }
+        }
 
         // Clean column control based on field semantic set; phone always full width
         $half_width_fields = ['first_name', 'last_name', 'lastname', 'middle_name', 'email'];
@@ -51,6 +59,10 @@ class FormBuilder
                 break;
 
             case 'select':
+                // Special handling for local_government examples if options are null
+                if ($name === 'local_government' && empty($options)) {
+                    $options = ['Kano Municipal', 'Tarauni', 'Nassarawa', 'Gwale', 'Fagge'];
+                }
                 $html .= '<select id="' . $name . '" name="' . $name . '" class="form-control custom-select" style="' . $select_style . ' height: auto; -webkit-appearance: none;" ' . $required . '>';
                 $html .= '<option value="">-- Select ' . htmlspecialchars($label) . ' --</option>';
                 if (!empty($options)) {
