@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once "config/config.php";
 require_once "config/database.php";
 require_once "utils/Router.php";
@@ -15,6 +16,8 @@ $routes = [
     'events/detail' => ['EventController', 'detail'],
     'trainings' => ['TrainingController', 'index'],
     'trainings/detail' => ['TrainingController', 'detail'],
+    'trainings/register' => ['TrainingController', 'register'],
+    'trainings/submit' => ['TrainingController', 'submit'],
     'services' => ['ServiceController', 'index'],
     'services/detail' => ['ServiceController', 'detail'],
     'projects' => ['ProjectController', 'index'],

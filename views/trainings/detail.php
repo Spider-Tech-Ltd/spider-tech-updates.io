@@ -39,7 +39,7 @@
                     <div class="mb-4">
                         <?= $training['training_details']; ?>
                     </div>
-                    <a href="<?= BASE_URL ?>/contact" class="btn btn-primary" style="background-color: #f48221; border: none;">Register Now</a>
+                    <a href="<?= BASE_URL ?>/trainings/register?id=<?= $training['id']; ?>" class="btn btn-primary" style="background-color: #f48221; border: none;">Register Now</a>
                 </div>
             </div>
             <div class="col-lg-4">

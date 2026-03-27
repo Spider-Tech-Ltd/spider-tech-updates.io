@@ -21,6 +21,13 @@ class BaseController {
                                     'banner_image' => '1426021047.jpg'
                                 ];
                             }
+                            if (strpos($this->sql, 'training_form_fields') !== false) {
+                                return [
+                                    ['id' => 1, 'program_id' => 1, 'field_name' => 'full_name', 'field_label' => 'Full Name', 'field_type' => 'text', 'is_required' => 1, 'options' => null, 'field_order' => 1, 'field_section' => 'Basic Information', 'field_width' => 'half'],
+                                    ['id' => 2, 'program_id' => 1, 'field_name' => 'email', 'field_label' => 'Email Address', 'field_type' => 'email', 'is_required' => 1, 'options' => null, 'field_order' => 2, 'field_section' => 'Basic Information', 'field_width' => 'half'],
+                                    ['id' => 3, 'program_id' => 1, 'field_name' => 'experience', 'field_label' => 'Experience Level', 'field_type' => 'select', 'is_required' => 1, 'options' => json_encode(['Beginner', 'Intermediate', 'Expert']), 'field_order' => 3, 'field_section' => 'Professional Information', 'field_width' => 'full']
+                                ];
+                            }
                             if (strpos($this->sql, 'contact_details') !== false) {
                                 return [
                                     'contact_id' => 1,
@@ -74,6 +81,13 @@ class BaseController {
                                 return [
                                     ['banner_id' => 1, 'banner_title' => 'Innovative Solutions', 'banner_image' => '1426021047.jpg'],
                                     ['banner_id' => 2, 'banner_title' => 'Digital Excellence', 'banner_image' => '1460642200.jpg']
+                                ];
+                            }
+                            if (strpos($this->sql, 'training_form_fields') !== false) {
+                                return [
+                                    ['id' => 1, 'program_id' => 1, 'field_name' => 'full_name', 'field_label' => 'Full Name', 'field_type' => 'text', 'is_required' => 1, 'options' => null, 'field_order' => 1, 'field_section' => 'Basic Information', 'field_width' => 'half'],
+                                    ['id' => 2, 'program_id' => 1, 'field_name' => 'email', 'field_label' => 'Email Address', 'field_type' => 'email', 'is_required' => 1, 'options' => null, 'field_order' => 2, 'field_section' => 'Basic Information', 'field_width' => 'half'],
+                                    ['id' => 3, 'program_id' => 1, 'field_name' => 'experience', 'field_label' => 'Experience Level', 'field_type' => 'select', 'is_required' => 1, 'options' => json_encode(['Beginner', 'Intermediate', 'Expert']), 'field_order' => 3, 'field_section' => 'Professional Information', 'field_width' => 'full']
                                 ];
                             }
                             if (strpos($this->sql, 'categories') !== false) {

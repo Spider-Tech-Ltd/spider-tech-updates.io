@@ -93,6 +93,84 @@
     </div>
   </section>
 
+  <!-- ====== Testimonials Start ====== -->
+  <section id="testimonials" class="index-2 padding gray-bg">
+    <div class="container">
+      <div class="section_heading">
+        <h2>What Our <span>Clients Say</span></h2>
+        <div class="separator"><ul><li></li><li></li><li></li></ul></div>
+      </div>
+      <div class="col-lg-12">
+        <div class="testimonial-slider owl-two owl-carousel owl-theme">
+          <?php if(!empty($testimonials)): ?>
+            <?php foreach($testimonials as $testimonial): ?>
+            <div class="item">
+              <div class="testimonial_content">
+                <p><?= stripslashes($testimonial['testimonial']); ?></p>
+                <div class="client_info">
+                  <div class="img"><img src="<?= BASE_URL . '/' . ltrim(substr($testimonial['image'], 3), '/'); ?>" alt="Client" /></div>
+                  <div class="detail">
+                    <h5><?= stripslashes($testimonial['name']); ?></h5>
+                    <span><?= stripslashes($testimonial['title']); ?>, <?= stripslashes($testimonial['organization']); ?></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Newsletter Start ====== -->
+  <section id="newsletter" class="index-2 padding">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          <div class="section_heading left-align">
+            <h2>Subscribe to Our <span>Newsletter</span></h2>
+            <div class="separator left-align"><ul><li></li><li></li><li></li></ul></div>
+            <div class="heading_content">Stay updated with the latest news, projects, and tech trends.</div>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          <div class="newsletter_form">
+            <form id="subscribeForm" action="" method="post">
+              <div id="subscribeMessage"></div>
+              <div class="form-group">
+                <input type="email" name="email" placeholder="Your Email Address" required />
+                <button type="submit" name="subscribe" id="subscribeBtn">Subscribe</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script type="text/javascript">
+    $(document).ready(function() {
+        $("#subscribeForm").submit(function(e) {
+            e.preventDefault();
+            var btn = $("#subscribeBtn");
+            var msg = $("#subscribeMessage");
+            btn.prop('disabled', true).text('Submitting...');
+            $.ajax({
+                url: '<?= BASE_URL ?>/includes/subscribe_function.php',
+                type: 'POST',
+                data: $(this).serialize() + '&subscribe=1',
+                success: function(data) {
+                    btn.prop('disabled', false).text('Subscribe');
+                    msg.html(data).fadeIn().delay(3000).fadeOut();
+                    if(data.indexOf('alert-success') !== -1) {
+                        $("#subscribeForm")[0].reset();
+                    }
+                }
+            });
+        });
+    });
+  </script>
+
   <!-- ====== Services Start ====== -->
   <section id="services" class="gray-bg index-2">
     <div class="container">
