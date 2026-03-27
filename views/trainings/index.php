@@ -220,7 +220,7 @@
                 <div class="col-lg-4 col-md-6 mb-4">
                   <div class="training-card">
                     <div class="card-img-wrap">
-                      <img src="<?= htmlspecialchars($training['training_image']); ?>" alt="<?= htmlspecialchars(strip_tags($training['training_name'])); ?>">
+                      <img src="<?= (strpos($training['training_image'], 'http') === 0) ? htmlspecialchars($training['training_image']) : BASE_URL . '/' . ltrim(substr($training['training_image'], 3), '/'); ?>" alt="<?= htmlspecialchars(strip_tags($training['training_name'])); ?>">
                     </div>
                     <div class="card-content">
                       <div class="d-flex justify-content-between align-items-center mb-3">

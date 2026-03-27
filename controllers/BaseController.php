@@ -11,8 +11,9 @@ class BaseController {
                     $sql_lower = strtolower($sql);
                     return new class($sql_lower) {
                         private $sql;
+                        private $params = [];
                         public function __construct($sql) { $this->sql = $sql; }
-                        public function execute($params = []) { return true; }
+                        public function execute($params = []) { $this->params = $params; return true; }
                         public function fetch($mode = null) {
                             if (strpos($this->sql, 'banners_tb') !== false) {
                                 return [
@@ -22,6 +23,12 @@ class BaseController {
                                 ];
                             }
                             if (strpos($this->sql, 'training_form_fields') !== false) {
+                                if (strpos($this->sql, 'program_id = 3') !== false || (isset($this->params[0]) && $this->params[0] == 3)) {
+                                    return [
+                                        ['id' => 10, 'program_id' => 3, 'field_name' => 'full_name', 'field_label' => 'Full Name', 'field_type' => 'text', 'is_required' => 1, 'options' => null, 'field_order' => 1, 'field_section' => 'Basic Information', 'field_width' => 'half'],
+                                        ['id' => 11, 'program_id' => 3, 'field_name' => 'local_government', 'field_label' => 'Local Government', 'field_type' => 'select', 'is_required' => 1, 'options' => json_encode(['Kano Municipal', 'Tarauni', 'Nassarawa', 'Gwale', 'Fagge']), 'field_order' => 2, 'field_section' => 'Demographics', 'field_width' => 'full']
+                                    ];
+                                }
                                 return [
                                     ['id' => 1, 'program_id' => 1, 'field_name' => 'full_name', 'field_label' => 'Full Name', 'field_type' => 'text', 'is_required' => 1, 'options' => null, 'field_order' => 1, 'field_section' => 'Basic Information', 'field_width' => 'half'],
                                     ['id' => 2, 'program_id' => 1, 'field_name' => 'email', 'field_label' => 'Email Address', 'field_type' => 'email', 'is_required' => 1, 'options' => null, 'field_order' => 2, 'field_section' => 'Basic Information', 'field_width' => 'half'],
@@ -51,12 +58,21 @@ class BaseController {
                                 ];
                             }
                             if (strpos($this->sql, 'trainings') !== false) {
+                                if (strpos($this->sql, 'id = 3') !== false || (isset($this->params[0]) && $this->params[0] == 3)) {
+                                    return [
+                                        'id' => 3,
+                                        'training_name' => 'Cybersecurity Essentials',
+                                        'training_description' => 'Protect your digital assets with advanced security training.',
+                                        'training_details' => '<p>Learn about network security, cryptography, and ethical hacking.</p>',
+                                        'training_image' => 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80'
+                                    ];
+                                }
                                 return [
                                     'id' => 1,
                                     'training_name' => 'Full Stack Web Development',
                                     'training_description' => 'Comprehensive course on modern web technologies.',
                                     'training_details' => '<p>This is the detailed content for Full Stack Web Development course. It includes HTML, CSS, JS, Node, and more.</p>',
-                                    'training_image' => 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80'
+                                    'training_image' => '../images/pictures/338527298.png'
                                 ];
                             }
                             if (strpos($this->sql, 'services_tb') !== false) {
@@ -84,6 +100,12 @@ class BaseController {
                                 ];
                             }
                             if (strpos($this->sql, 'training_form_fields') !== false) {
+                                if (strpos($this->sql, 'program_id = 3') !== false || (isset($this->params[0]) && $this->params[0] == 3)) {
+                                    return [
+                                        ['id' => 10, 'program_id' => 3, 'field_name' => 'full_name', 'field_label' => 'Full Name', 'field_type' => 'text', 'is_required' => 1, 'options' => null, 'field_order' => 1, 'field_section' => 'Basic Information', 'field_width' => 'half'],
+                                        ['id' => 11, 'program_id' => 3, 'field_name' => 'local_government', 'field_label' => 'Local Government', 'field_type' => 'select', 'is_required' => 1, 'options' => json_encode(['Kano Municipal', 'Tarauni', 'Nassarawa', 'Gwale', 'Fagge']), 'field_order' => 2, 'field_section' => 'Demographics', 'field_width' => 'full']
+                                    ];
+                                }
                                 return [
                                     ['id' => 1, 'program_id' => 1, 'field_name' => 'full_name', 'field_label' => 'Full Name', 'field_type' => 'text', 'is_required' => 1, 'options' => null, 'field_order' => 1, 'field_section' => 'Basic Information', 'field_width' => 'half'],
                                     ['id' => 2, 'program_id' => 1, 'field_name' => 'email', 'field_label' => 'Email Address', 'field_type' => 'email', 'is_required' => 1, 'options' => null, 'field_order' => 2, 'field_section' => 'Basic Information', 'field_width' => 'half'],
@@ -119,6 +141,20 @@ class BaseController {
                                 ];
                             }
                             if (strpos($this->sql, 'upcoming_events') !== false || strpos($this->sql, 'events') !== false) {
+                                if (strpos($this->sql, 'event_id = 3') !== false || (isset($this->params[0]) && $this->params[0] == 3)) {
+                                    return [
+                                        'event_id' => 3,
+                                        'event_title' => 'MVC Workshop',
+                                        'event_detail' => 'Master the MVC pattern in PHP.',
+                                        'event_content' => 'Hands-on workshop for modern PHP development.',
+                                        'event_status' => 'Upcoming',
+                                        'event_time' => '9:00am',
+                                        'event_date' => '2024-12-10',
+                                        'event_date2' => '2024-12-11',
+                                        'event_address' => 'Tech Hub',
+                                        'event_img' => '../images/pictures/1079035004.jpg'
+                                    ];
+                                }
                                 return [
                                     [
                                         'event_id' => 1,
@@ -136,8 +172,9 @@ class BaseController {
                             }
                             if (strpos($this->sql, 'trainings') !== false) {
                                 return [
-                                    ['id' => 1, 'training_name' => 'Full Stack Web Development', 'training_description' => 'Comprehensive course on modern web technologies.', 'training_details' => '<p>Detailed content 1</p>', 'training_image' => 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80'],
-                                    ['id' => 2, 'training_name' => 'Data Science Essentials', 'training_description' => 'Learn the basics of data analysis and machine learning.', 'training_details' => '<p>Detailed content 2</p>', 'training_image' => 'https://images.unsplash.com/photo-1551288049-bbbda536ad41?auto=format&fit=crop&w=600&q=80']
+                                    ['id' => 1, 'training_name' => 'Full Stack Web Development', 'training_description' => 'Comprehensive course on modern web technologies.', 'training_details' => '<p>Detailed content 1</p>', 'training_image' => '../images/pictures/338527298.png'],
+                                    ['id' => 2, 'training_name' => 'Data Science Essentials', 'training_description' => 'Learn the basics of data analysis and machine learning.', 'training_details' => '<p>Detailed content 2</p>', 'training_image' => '../images/pictures/338527298.png'],
+                                    ['id' => 3, 'training_name' => 'Cybersecurity Essentials', 'training_description' => 'Protect your digital assets with advanced security training.', 'training_details' => '<p>Detailed content 3</p>', 'training_image' => '../images/pictures/338527298.png']
                                 ];
                             }
                             return [];

@@ -31,7 +31,7 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="project_screen mb-4">
-                    <img src="<?= htmlspecialchars($training['training_image']); ?>" alt="Training" class="img-fluid rounded" />
+                    <img src="<?= (strpos($training['training_image'], 'http') === 0) ? htmlspecialchars($training['training_image']) : BASE_URL . '/' . ltrim(substr($training['training_image'], 3), '/'); ?>" alt="Training" class="img-fluid rounded" />
                 </div>
                 <div class="project_description">
                     <h3 class="mb-3"><?= htmlspecialchars($training['training_name']); ?></h3>

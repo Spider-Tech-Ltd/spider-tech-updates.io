@@ -12,7 +12,7 @@
 
 <?php
 // Include the hero section
-include ROOT_PATH . '/pages/forum/includes/hero.php';
+include ROOT_PATH . '/views/forum/includes/hero.php';
 ?>
 
 <style>
