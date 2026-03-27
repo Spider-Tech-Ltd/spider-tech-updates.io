@@ -48,6 +48,7 @@ class BaseController {
                                     'id' => 1,
                                     'training_name' => 'Full Stack Web Development',
                                     'training_description' => 'Comprehensive course on modern web technologies.',
+                                    'training_details' => '<p>This is the detailed content for Full Stack Web Development course. It includes HTML, CSS, JS, Node, and more.</p>',
                                     'training_image' => 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80'
                                 ];
                             }
@@ -121,8 +122,8 @@ class BaseController {
                             }
                             if (strpos($this->sql, 'trainings') !== false) {
                                 return [
-                                    ['id' => 1, 'training_name' => 'Full Stack Web Development', 'training_description' => 'Comprehensive course on modern web technologies.', 'training_image' => 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80'],
-                                    ['id' => 2, 'training_name' => 'Data Science Essentials', 'training_description' => 'Learn the basics of data analysis and machine learning.', 'training_image' => 'https://images.unsplash.com/photo-1551288049-bbbda536ad41?auto=format&fit=crop&w=600&q=80']
+                                    ['id' => 1, 'training_name' => 'Full Stack Web Development', 'training_description' => 'Comprehensive course on modern web technologies.', 'training_details' => '<p>Detailed content 1</p>', 'training_image' => 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80'],
+                                    ['id' => 2, 'training_name' => 'Data Science Essentials', 'training_description' => 'Learn the basics of data analysis and machine learning.', 'training_details' => '<p>Detailed content 2</p>', 'training_image' => 'https://images.unsplash.com/photo-1551288049-bbbda536ad41?auto=format&fit=crop&w=600&q=80']
                                 ];
                             }
                             return [];

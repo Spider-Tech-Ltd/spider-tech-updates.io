@@ -36,6 +36,9 @@
                 <div class="project_description">
                     <h3 class="mb-3"><?= htmlspecialchars($training['training_name']); ?></h3>
                     <div class="mb-4"><?= nl2br(htmlspecialchars($training['training_description'])); ?></div>
+                    <div class="mb-4">
+                        <?= $training['training_details']; ?>
+                    </div>
                     <a href="<?= BASE_URL ?>/contact" class="btn btn-primary" style="background-color: #f48221; border: none;">Register Now</a>
                 </div>
             </div>
