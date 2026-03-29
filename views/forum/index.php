@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Forum View
  */
@@ -184,33 +185,33 @@ include ROOT_PATH . '/views/forum/includes/hero.php';
 
     <!-- Categories Grid -->
     <div class="row">
-      <?php if(!empty($categories)): ?>
-        <?php foreach($categories as $category): ?>
+      <?php if (!empty($categories)): ?>
+        <?php foreach ($categories as $category): ?>
           <?php
-            // Simple icon map based on memory or defaults
-            $icon_map = [
-              'startup' => 'rocket_launch',
-              'developer' => 'terminal',
-              'general' => 'dynamic_feed',
-              'introductions' => 'waving_hand',
-              'hardware' => 'memory',
-              'news' => 'newspaper'
-            ];
-            $icon = 'chat_bubble';
-            foreach($icon_map as $key => $val) {
-              if(stripos($category['category_name'], $key) !== false) {
-                $icon = $val;
-                break;
-              }
+          // Simple icon map based on memory or defaults
+          $icon_map = [
+            'startup' => 'rocket_launch',
+            'developer' => 'terminal',
+            'general' => 'dynamic_feed',
+            'introductions' => 'waving_hand',
+            'hardware' => 'memory',
+            'news' => 'newspaper'
+          ];
+          $icon = '';
+          foreach ($icon_map as $key => $val) {
+            if (stripos($category['name'], $key) !== false) {
+              $icon = $val;
+              break;
             }
+          }
           ?>
           <div class="col-lg-4 col-md-6 mb-4">
-            <a href="<?= BASE_URL ?>/forum?category=<?= $category['category_uuid']; ?>" class="category-card">
+            <a href="<?= BASE_URL ?>/forum?category=<?= $category['uuid']; ?>" class="category-card">
               <div class="category-icon-wrap">
                 <span class="material-symbols-outlined"><?= $icon; ?></span>
               </div>
-              <h3 class="category-name"><?= htmlspecialchars($category['category_name']); ?></h3>
-              <p class="category-desc"><?= htmlspecialchars($category['category_description'] ?? 'Join the conversation.'); ?></p>
+              <h3 class="category-name"><?= htmlspecialchars($category['name']); ?></h3>
+              <p class="category-desc"><?= htmlspecialchars($category['description'] ?? 'Join the conversation.'); ?></p>
               <div class="category-card-footer">
                 <span class="topic-count-badge">Topics</span>
                 <span class="view-topics-btn">View Topics →</span>
@@ -219,7 +220,9 @@ include ROOT_PATH . '/views/forum/includes/hero.php';
           </div>
         <?php endforeach; ?>
       <?php else: ?>
-        <div class="col-12 text-center"><p>No categories found.</p></div>
+        <div class="col-12 text-center">
+          <p>No categories found.</p>
+        </div>
       <?php endif; ?>
     </div>
   </div>
