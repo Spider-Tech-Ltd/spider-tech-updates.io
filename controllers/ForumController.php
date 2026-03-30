@@ -5,7 +5,7 @@ class ForumController extends BaseController {
     public function index() {
         $forumModel = new ForumModel($this->db);
         $categories = $forumModel->getCategories();
-        $feeds = $forumModel->getFeeds();
+        $feeds = $forumModel->getFeeds(10, $_SESSION['member_uuid'] ?? null);
 
         $this->render('forum/index', [
             'title' => 'Spider Tech Community Forum',
@@ -20,7 +20,7 @@ class ForumController extends BaseController {
         }
 
         $forumModel = new ForumModel($this->db);
-        $feeds = $forumModel->getFeeds();
+        $feeds = $forumModel->getFeeds(10, $_SESSION['member_uuid']);
 
         // Mock member data for UI fidelity
         $member = [

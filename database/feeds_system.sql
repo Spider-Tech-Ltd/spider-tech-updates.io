@@ -25,11 +25,39 @@ CREATE TABLE IF NOT EXISTS `categories` (
 CREATE TABLE IF NOT EXISTS `feeds` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `uuid` CHAR(36) NOT NULL UNIQUE,
-  `member_uuid` CHAR(36) NOT NULL,
+  `member_id` CHAR(36) NOT NULL, -- Storing member UUID
   `category_uuid` CHAR(36) NOT NULL,
   `title` VARCHAR(255) NOT NULL,
   `content` TEXT NOT NULL,
+  `status` VARCHAR(20) DEFAULT 'active',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (member_id) REFERENCES members(uuid),
+  FOREIGN KEY (category_uuid) REFERENCES categories(uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Create feed_likes table
+CREATE TABLE IF NOT EXISTS `feed_likes` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `feed_uuid` CHAR(36) NOT NULL,
+  `member_id` CHAR(36) NOT NULL, -- Storing member UUID
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (feed_uuid) REFERENCES feeds(uuid),
+  FOREIGN KEY (member_id) REFERENCES members(uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Create feed_replies table
+CREATE TABLE IF NOT EXISTS `feed_replies` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `uuid` CHAR(36) NOT NULL UNIQUE,
+  `feed_uuid` CHAR(36) NOT NULL,
+  `member_id` CHAR(36) NOT NULL, -- Storing member UUID
+  `category_uuid` CHAR(36) NOT NULL,
+  `content` TEXT NOT NULL,
+  `status` VARCHAR(20) DEFAULT 'active',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (feed_uuid) REFERENCES feeds(uuid),
   FOREIGN KEY (member_uuid) REFERENCES members(uuid),
   FOREIGN KEY (category_uuid) REFERENCES categories(uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

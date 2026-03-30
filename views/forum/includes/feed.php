@@ -356,16 +356,16 @@
   <div class="discussion-card-list">
     <?php if (!empty($feeds)): ?>
       <?php foreach ($feeds as $feed): ?>
-        <a href="<?= BASE_URL ?>/forum/sign-in" class="discussion-card <?= $feed['is_pinned'] ? 'is-pinned' : ''; ?> <?= $feed['is_hot'] ? 'is-hot' : ''; ?>">
+        <a href="<?= BASE_URL ?>/forum/sign-in" class="discussion-card <?= ($feed['is_pinned'] ?? false) ? 'is-pinned' : ''; ?> <?= ($feed['is_hot'] ?? false) ? 'is-hot' : ''; ?>">
           <div class="card-top-row">
             <span class="category-badge"><?= htmlspecialchars($feed['category_name'] ?? 'General'); ?></span>
-            <?php if ($feed['is_pinned']): ?>
+            <?php if ($feed['is_pinned'] ?? false): ?>
               <span class="badge-pinned-label">
                 <span class="material-symbols-outlined" style="font-size:13px; font-variation-settings:'FILL' 1;">push_pin</span>
                 Pinned
               </span>
             <?php endif; ?>
-            <?php if ($feed['is_hot']): ?>
+            <?php if ($feed['is_hot'] ?? false): ?>
               <span class="badge-hot-label">
                 <span class="material-symbols-outlined" style="font-size: 13px; font-variation-settings:'FILL' 1;">local_fire_department</span> HOT
               </span>
@@ -375,16 +375,16 @@
           <div class="card-author-row">
             <img src="https://ui-avatars.com/api/?name=<?= urlencode($feed['author_name']); ?>&background=f48221&color=fff&size=32" class="author-avatar-sm" alt="Author">
             <span class="author-name"><?= htmlspecialchars($feed['author_name']); ?></span>
-            <span class="author-time"><?= htmlspecialchars($feed['created_at']); ?></span>
+            <span class="author-time"><?= date('M j, Y', strtotime($feed['created_at'])); ?></span>
           </div>
           <div class="card-interaction-bar">
             <div class="btn-interact" title="Upvote">
               <span class="material-symbols-outlined">thumb_up</span>
-              <span class="vote-count"><?= $feed['upvotes']; ?></span>
+              <span class="vote-count"><?= $feed['upvotes'] ?? 0; ?></span>
             </div>
             <div class="btn-interact" title="Replies">
               <span class="material-symbols-outlined">chat_bubble</span>
-              <span><?= $feed['replies']; ?></span>
+              <span class="reply-count"><?= count($feed['replies'] ?? []); ?></span>
             </div>
             <div class="interact-spacer"></div>
             <div class="btn-interact" title="Bookmark">
@@ -432,7 +432,7 @@
     <a href="<?= BASE_URL ?>/forum/sign-in" class="pag-btn">
       <span class="material-symbols-outlined">chevron_left</span> Previous
     </a>
-    <span class="pag-info">Page 1 of 8</span>
+    <span class="pag-info">Page 1 of 1</span>
     <a href="<?= BASE_URL ?>/forum/sign-in" class="pag-btn">
       Next <span class="material-symbols-outlined">chevron_right</span>
     </a>

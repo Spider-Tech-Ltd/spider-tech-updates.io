@@ -547,84 +547,85 @@
         <!-- Feed Header -->
         <div class="member-feed-header">
           <h2 class="member-feed-title">Latest Discussions</h2>
-          <span class="feed-count-badge">1,430 threads</span>
+          <span class="feed-count-badge"><?= count($feeds ?? []); ?> threads</span>
         </div>
 
         <!-- Discussion Cards -->
         <div class="discussion-card-list" id="discussionFeed">
           <?php if (!empty($feeds)): ?>
             <?php foreach ($feeds as $feed): ?>
-              <a href="#" class="discussion-card <?= $feed['is_pinned'] ? 'is-pinned' : ''; ?> <?= $feed['is_hot'] ? 'is-hot' : ''; ?>">
+              <div class="discussion-card <?= ($feed['is_pinned'] ?? false) ? 'is-pinned' : ''; ?> <?= ($feed['is_hot'] ?? false) ? 'is-hot' : ''; ?>" data-uuid="<?= $feed['uuid']; ?>">
                 <div class="card-top-row">
                   <span class="category-badge"><?= htmlspecialchars($feed['category_name'] ?? 'General'); ?></span>
-                  <?php if ($feed['is_pinned']): ?>
+                  <?php if ($feed['is_pinned'] ?? false): ?>
                     <span class="badge-pinned-label">
                       <span class="material-symbols-outlined" style="font-size:13px; font-variation-settings:'FILL' 1;">push_pin</span>
                       Pinned
                     </span>
                   <?php endif; ?>
-                  <?php if ($feed['is_hot']): ?>
+                  <?php if ($feed['is_hot'] ?? false): ?>
                     <span class="badge-hot-label">
                       <span class="material-symbols-outlined">local_fire_department</span> HOT
                     </span>
                   <?php endif; ?>
                 </div>
                 <h3 class="card-title"><?= htmlspecialchars($feed['title']); ?></h3>
-                <p class="card-excerpt"><?= htmlspecialchars($feed['excerpt'] ?? 'Click to read more about this discussion.'); ?></p>
+                <p class="card-excerpt"><?= htmlspecialchars($feed['content']); ?></p>
                 <div class="card-author-row">
                   <img src="https://ui-avatars.com/api/?name=<?= urlencode($feed['author_name']); ?>&background=f48221&color=fff&size=32" class="author-avatar-sm" alt="Author">
                   <span class="author-name"><?= htmlspecialchars($feed['author_name']); ?></span>
-                  <span class="author-time"><?= htmlspecialchars($feed['created_at']); ?></span>
+                  <span class="author-time"><?= date('M j, Y', strtotime($feed['created_at'])); ?></span>
                 </div>
                 <div class="card-interaction-bar">
-                  <button class="btn-interact btn-upvote" title="Upvote">
+                  <button class="btn-interact btn-upvote <?= ($feed['is_liked'] ?? false) ? 'active' : ''; ?>" title="Upvote" onclick="toggleUpvote('<?= $feed['uuid']; ?>', this)">
                     <span class="material-symbols-outlined">thumb_up</span>
-                    <span class="vote-count"><?= $feed['upvotes']; ?></span>
+                    <span class="vote-count"><?= $feed['upvotes'] ?? 0; ?></span>
                   </button>
-                  <button class="btn-interact btn-reply" title="Replies">
+                  <button class="btn-interact btn-reply" title="Replies" onclick="toggleReplies(this)">
                     <span class="material-symbols-outlined">chat_bubble</span>
-                    <span><?= $feed['replies']; ?></span>
+                    <span class="reply-count"><?= count($feed['replies'] ?? []); ?></span>
                   </button>
                   <div class="interact-spacer"></div>
                   <button class="btn-interact btn-bookmark" title="Bookmark">
                     <span class="material-symbols-outlined">bookmark</span>
                   </button>
                 </div>
-              </a>
+
+                <!-- PHASE 6: COLLAPSIBLE REPLY THREAD -->
+                <div class="reply-thread-wrapper">
+                  <div class="replies-container">
+                    <?php if (!empty($feed['replies'])): ?>
+                      <?php foreach ($feed['replies'] as $reply): ?>
+                        <div class="reply-card">
+                          <div class="reply-header">
+                            <img src="https://ui-avatars.com/api/?name=<?= urlencode($reply['author_name']); ?>&background=f48221&color=fff&size=24" class="reply-avatar" alt="Avatar">
+                            <span class="reply-author"><?= htmlspecialchars($reply['author_name']); ?></span>
+                            <span class="reply-time"><?= date('H:i', strtotime($reply['created_at'])); ?></span>
+                          </div>
+                          <div class="reply-body">
+                            <?= htmlspecialchars($reply['content']); ?>
+                          </div>
+                          <div class="reply-actions">
+                            <button class="btn-mini-interact"><span class="material-symbols-outlined">thumb_up</span> 0</button>
+                            <button class="btn-mini-interact"><span class="material-symbols-outlined">reply</span> Reply</button>
+                          </div>
+                        </div>
+                      <?php endforeach; ?>
+                    <?php endif; ?>
+                  </div>
+                  <!-- Inline Reply Input -->
+                  <div class="reply-input-row">
+                    <img src="https://ui-avatars.com/api/?name=<?= urlencode($_SESSION['member_name'] ?? 'You'); ?>&background=f48221&color=fff&size=32" alt="Me">
+                    <input type="text" class="reply-input-field" placeholder="Write a reply...">
+                    <button class="btn-submit-reply" title="Post Reply" onclick="submitReply('<?= $feed['uuid']; ?>', this)">
+                      <span class="material-symbols-outlined">arrow_upward</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             <?php endforeach; ?>
           <?php else: ?>
-            <!-- Card 1: Manufacturing (Pinned) -->
-            <a href="#" class="discussion-card is-pinned">
-              <div class="card-top-row">
-                <span class="category-badge">⚙️ Manufacturing</span>
-                <span class="badge-pinned-label">
-                  <span class="material-symbols-outlined" style="font-size:13px; font-variation-settings:'FILL' 1;">push_pin</span>
-                  Pinned
-                </span>
-              </div>
-              <h3 class="card-title">Community Guidelines &amp; Industrial Discussion Standards — Please Read Before Posting</h3>
-              <p class="card-excerpt">Welcome to the Spider Tech Forum. This thread covers the ground rules for professional discussions, quality standards, and how to get the best out of our community of 5,200+ industry professionals.</p>
-              <div class="card-author-row">
-                <img src="https://ui-avatars.com/api/?name=Spider+Admin&background=f48221&color=fff&size=32" class="author-avatar-sm" alt="Admin">
-                <span class="author-name">Spider Tech Admin</span>
-                <span class="material-symbols-outlined" style="font-size:14px; color:#f48221; font-variation-settings:'FILL' 1;">verified</span>
-                <span class="author-time">Always pinned</span>
-              </div>
-              <div class="card-interaction-bar">
-                <button class="btn-interact btn-upvote" title="Upvote">
-                  <span class="material-symbols-outlined">thumb_up</span>
-                  <span class="vote-count">204</span>
-                </button>
-                <button class="btn-interact btn-reply" title="Replies">
-                  <span class="material-symbols-outlined">chat_bubble</span>
-                  <span>58</span>
-                </button>
-                <div class="interact-spacer"></div>
-                <button class="btn-interact btn-bookmark" title="Bookmark">
-                  <span class="material-symbols-outlined">bookmark</span>
-                </button>
-              </div>
-            </a>
+            <p class="text-center py-5 text-muted">No discussions found.</p>
           <?php endif; ?>
         </div>
 
@@ -633,7 +634,7 @@
           <a href="#" class="pag-btn">
             <span class="material-symbols-outlined">chevron_left</span> Previous
           </a>
-          <span class="pag-info">Page 1 of 12</span>
+          <span class="pag-info">Page 1 of 1</span>
           <a href="#" class="pag-btn">
             Next <span class="material-symbols-outlined">chevron_right</span>
           </a>
@@ -653,3 +654,64 @@
   <span class="member-fab-pulse-ring"></span>
   <span class="material-symbols-outlined">edit</span>
 </a>
+
+<script>
+function toggleReplies(btn) {
+    const card = btn.closest('.discussion-card');
+    card.classList.toggle('expanded');
+}
+
+function toggleUpvote(uuid, btn) {
+    $.ajax({
+        url: '<?= BASE_URL ?>/forum/feed/like',
+        type: 'POST',
+        data: { feed_uuid: uuid },
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                const countSpan = btn.querySelector('.vote-count');
+                countSpan.innerText = response.upvotes;
+                if (response.is_liked) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            } else {
+                alert(response.message);
+                if (response.message.includes('sign in')) {
+                    window.location.href = '<?= BASE_URL ?>/forum/sign-in';
+                }
+            }
+        }
+    });
+}
+
+function submitReply(uuid, btn) {
+    const input = btn.previousElementSibling;
+    const content = input.value.trim();
+    if (!content) return;
+
+    btn.disabled = true;
+    $.ajax({
+        url: '<?= BASE_URL ?>/forum/feed/reply',
+        type: 'POST',
+        data: { feed_uuid: uuid, content: content },
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                input.value = '';
+                // Simple way: reload to see new reply or append it manually
+                location.reload();
+            } else {
+                alert(response.message);
+                if (response.message.includes('sign in')) {
+                    window.location.href = '<?= BASE_URL ?>/forum/sign-in';
+                }
+            }
+        },
+        complete: function() {
+            btn.disabled = false;
+        }
+    });
+}
+</script>

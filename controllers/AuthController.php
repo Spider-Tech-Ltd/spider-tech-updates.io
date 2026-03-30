@@ -1,17 +1,14 @@
 <?php
 
-class AuthController extends BaseController
-{
+class AuthController extends BaseController {
     private $authModel;
 
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
         $this->authModel = new AuthModel($this->db);
     }
 
-    public function signIn()
-    {
+    public function signIn() {
         if ($this->isLoggedIn()) {
             $this->redirect('forum/feed');
         }
@@ -27,7 +24,7 @@ class AuthController extends BaseController
                 $member = $this->authModel->findByEmailOrUsername($login);
                 if ($member && password_verify($password, $member['password_hash'])) {
                     $_SESSION['member_uuid'] = $member['uuid'];
-                    $_SESSION['username'] = $member['username'];
+                    $_SESSION['member_name'] = $member['name'];
                     $this->redirect('forum/feed');
                 } else {
                     $error = "Invalid username/email or password.";
@@ -42,8 +39,7 @@ class AuthController extends BaseController
         ], false);
     }
 
-    public function signUp()
-    {
+    public function signUp() {
         if ($this->isLoggedIn()) {
             $this->redirect('forum/feed');
         }
@@ -68,7 +64,7 @@ class AuthController extends BaseController
                     $uuid = $this->authModel->register($username, $email, $password, $name);
                     if ($uuid) {
                         $_SESSION['member_uuid'] = $uuid;
-                        $_SESSION['username'] = $username;
+                        $_SESSION['member_name'] = $name;
                         $this->redirect('forum/feed');
                     } else {
                         $error = "Registration failed. Please try again.";
@@ -85,8 +81,7 @@ class AuthController extends BaseController
         ], false);
     }
 
-    public function logout()
-    {
+    public function logout() {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
