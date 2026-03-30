@@ -345,12 +345,6 @@
     </a>
   </div>
 
-  <!-- Tabs -->
-  <div class="feed-tabs">
-    <a href="#" class="tab-link active">Latest</a>
-    <a href="#" class="tab-link">Top</a>
-    <a href="#" class="tab-link">Unanswered</a>
-  </div>
 
   <!-- Discussion List -->
   <div class="discussion-card-list">
