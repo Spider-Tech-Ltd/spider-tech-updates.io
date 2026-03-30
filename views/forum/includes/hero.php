@@ -11,7 +11,7 @@
   .forum-hero-section {
     position: relative;
     background-color: #f4f4f4;
-    padding: 80px 16px;
+    padding: 160px 16px 80px 16px; /* Increased top padding for fixed header */
     overflow: hidden;
     text-align: center;
   }
@@ -56,7 +56,10 @@
     color: #f48221;
     margin-bottom: 28px;
   }
-  .hero-eyebrow-pill .material-symbols-outlined { font-size: 16px; }
+  .hero-eyebrow-pill .material-symbols-outlined {
+    font-size: 16px;
+    text-transform: none; /* Prevent uppercase from breaking ligatures */
+  }
 
   /* Main heading */
   .hero-heading {
@@ -77,7 +80,7 @@
 
   @media (max-width: 768px) {
     .hero-heading { font-size: 2.2rem; }
-    .forum-hero-section { padding: 56px 16px; }
+    .forum-hero-section { padding: 120px 16px 56px 16px; } /* Increased top padding for mobile */
   }
 
   /* Subheading */
@@ -93,65 +96,21 @@
   /* Action row container */
   .hero-action-row {
     display: flex;
-    flex-direction: row;
+    justify-content: center;
     align-items: center;
-    gap: 12px;
-    max-width: 760px;
     margin: 0 auto 56px;
-    background: rgba(255,255,255,0.6);
-    border: 1px solid rgba(255,255,255,0.5);
-    border-radius: 50px;
-    padding: 8px;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-  }
-
-  /* Search input */
-  .hero-search-wrap {
-    position: relative;
-    flex: 1;
-    min-width: 0;
-  }
-  .hero-search-icon {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #aaaaaa;
-    font-size: 20px;
-    pointer-events: none;
-  }
-  .hero-search-input {
-    width: 100%;
-    height: 48px;
-    padding-left: 48px;
-    padding-right: 16px;
-    background-color: #f0f0f0;
-    border: 2px solid transparent;
-    border-radius: 50px;
-    font-family: 'Open Sans', sans-serif;
-    font-size: 0.95rem;
-    color: #111111;
-    outline: none;
-    transition: border-color 0.25s ease, background-color 0.25s ease;
-  }
-  .hero-search-input::placeholder { color: #aaaaaa; }
-  .hero-search-input:focus {
-    background-color: #ffffff;
-    border-color: #f48221;
-    box-shadow: 0 0 0 3px rgba(244, 130, 33, 0.12);
   }
 
   /* Buttons */
   .hero-btn-group {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 16px;
     flex-shrink: 0;
   }
   .hero-btn-primary {
     height: 48px;
-    padding: 0 28px;
+    padding: 0 16px;
     background-color: #f48221;
     color: #ffffff;
     font-family: 'Poppins', sans-serif;
@@ -164,14 +123,17 @@
     box-shadow: 0 4px 20px rgba(244, 130, 33, 0.35);
     transition: background-color 0.2s ease, transform 0.1s ease;
     text-decoration: none;
-    display: inline-flex; align-items: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 220px;
   }
   .hero-btn-primary:hover  { background-color: #e6751c; color: #fff; text-decoration: none; }
   .hero-btn-primary:active { transform: scale(0.97); }
 
   .hero-btn-secondary {
     height: 48px;
-    padding: 0 24px;
+    padding: 0 16px;
     background-color: transparent;
     color: #f48221;
     font-family: 'Poppins', sans-serif;
@@ -183,16 +145,17 @@
     cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease;
     text-decoration: none;
-    display: inline-flex; align-items: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 220px;
   }
   .hero-btn-secondary:hover { background-color: rgba(244,130,33,0.07); color: #f48221; text-decoration: none; }
 
   @media (max-width: 767px) {
-    .hero-action-row { flex-direction: column; border-radius: 20px; }
-    .hero-search-wrap { width: 100%; }
-    .hero-search-input { border-radius: 12px; }
-    .hero-btn-group { width: 100%; }
-    .hero-btn-primary, .hero-btn-secondary { flex: 1; justify-content: center; border-radius: 12px; }
+    .hero-action-row { flex-direction: column; }
+    .hero-btn-group { width: 100%; flex-direction: column; }
+    .hero-btn-primary, .hero-btn-secondary { width: 100%; justify-content: center; }
   }
 
   /* Stats row */
@@ -254,26 +217,21 @@
     </div>
 
     <!-- Heading -->
-    <h1 class="hero-heading">Welcome to the Spider Tech Ecosystem</h1>
+    <h1 class="hero-heading">Master the Industrial Tech of Tomorrow</h1>
 
     <!-- Subtext -->
     <p class="hero-subtext">
-      A collaborative hub for entrepreneurs, developers, and tech enthusiasts.
+      Join 12,000+ experts to share insights, solve complex engineering challenges, and accelerate your technical career.
     </p>
 
-    <!-- Search + CTA Row -->
+    <!-- Buttons Row -->
     <div class="hero-action-row">
-      <div class="hero-search-wrap">
-        <span class="hero-search-icon material-symbols-outlined">search</span>
-        <input
-          type="text"
-          class="hero-search-input"
-          placeholder="Search discussions, topics, or members..."
-        />
-      </div>
       <div class="hero-btn-group">
-        <a href="#" class="hero-btn-primary">Start a Discussion</a>
-        <a href="#" class="hero-btn-secondary">Sign In</a>
+        <?php if (isset($_SESSION['member_uuid'])): ?>
+          <a href="<?= BASE_URL ?>/forum/feed" class="hero-btn-primary">Start a Discussion</a>
+        <?php else: ?>
+          <a href="<?= BASE_URL ?>/forum/sign-in" class="hero-btn-secondary">Sign In</a>
+        <?php endif; ?>
       </div>
     </div>
 

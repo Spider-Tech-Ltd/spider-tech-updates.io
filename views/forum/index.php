@@ -1,229 +1,157 @@
 <?php
-
 /**
- * Forum View
+ * Forum Index View
  */
 ?>
+<!-- Google Fonts for Forum styling & Material Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
 <style>
-  /* Global Overrides for modern feel */
-  body {
-    font-family: 'Work Sans', sans-serif;
+  /* Hide top header for the forum */
+  .header-top {
+      display: none !important;
+  }
+
+  /* Hero Section Styles */
+  .forum-hero-heading {
+      font-family: 'Poppins', sans-serif;
+      color: #111111;
+      font-size: 3.5rem;
+      line-height: 1.2;
+      font-weight: 800;
+  }
+  .forum-hero-subtext {
+      font-family: 'Open Sans', sans-serif;
+      color: #555555;
+      font-size: 1.25rem;
+  }
+  @media (max-width: 768px) {
+      .forum-hero-heading { font-size: 2.5rem; }
+      .forum-hero-subtext { font-size: 1rem; }
+  }
+  .forum-search-container {
+     background-color: #ffffff;
+     border: 1px solid #e9ecef;
+     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+     border-radius: 50px;
+     padding: 8px;
+  }
+  .forum-input-group {
+     background-color: #f4f4f4;
+     border-radius: 50px;
+     border: 2px solid transparent;
+     transition: all 0.3s ease;
+  }
+  .forum-input-group:focus-within {
+     background-color: #ffffff;
+     border-color: #f48221;
+     box-shadow: 0 0 0 4px rgba(244, 130, 33, 0.15);
+  }
+  .forum-search-input {
+     height: 56px;
+     font-size: 1.1rem;
+     color: #262626;
+     border-radius: 50px;
+     outline: none;
+  }
+  .forum-search-input:focus {
+     background-color: transparent;
+     box-shadow: none;
+     outline: none;
+  }
+  .forum-btn-primary {
+     background-color: #f48221;
+     color: #ffffff;
+     height: 56px;
+     padding: 0 24px; /* Reduced width */
+     border-radius: 50px;
+     font-size: 1.05rem; /* Shrunk slightly */
+     white-space: nowrap;
+     border: none;
+     transition: background-color 0.3s;
+  }
+  .forum-btn-primary:hover {
+     background-color: #e6751c;
+     color: #ffffff;
+  }
+
+  /* Category Grid Styles */
+  .forum-category-card {
+     background-color: #f8f9fa; /* slate-50 */
+     border: 1px solid transparent;
+     border-radius: 20px;
+     transition: all 0.3s ease;
+     text-decoration: none !important;
+     display: block;
+  }
+  .forum-category-card:hover {
+     border-color: rgba(244, 130, 33, 0.3);
+     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+     transform: translateY(-5px);
+  }
+  .forum-icon-wrapper {
+     width: 56px;
+     height: 56px;
+     background-color: rgba(244, 130, 33, 0.1);
+     color: #f48221;
+     border-radius: 12px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     margin-bottom: 20px;
+  }
+  .forum-icon-wrapper .material-symbols-outlined {
+     font-size: 32px;
+  }
+  .forum-topic-badge {
+     background-color: #ffffff;
+     color: #797979;
+     padding: 6px 16px;
+     border-radius: 50px;
+     font-size: 0.85rem;
+     font-weight: 600;
+     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .forum-view-link {
+     color: #f48221;
+     text-decoration: none;
+     transition: all 0.3s;
+     font-weight: 600;
+  }
+  .forum-view-link:hover {
+     color: #e6751c;
+     text-decoration: none;
+  }
+  .forum-view-link .material-symbols-outlined {
+     font-size: 18px;
+     vertical-align: middle;
+     transition: margin-left 0.3s;
+  }
+  .forum-category-card:hover .forum-view-link .material-symbols-outlined {
+     margin-left: 5px;
   }
 </style>
 
-<?php
-// Include the hero section
-include ROOT_PATH . '/views/forum/includes/hero.php';
-?>
+<!-- Inject Forum Hero Component -->
+<?php include ROOT_PATH . '/views/forum/includes/hero.php'; ?>
 
-<style>
-  /* ====== Explore Categories Styles ====== */
-  .forum-categories-section {
-    background-color: #f8f9fa;
-    padding: 80px 0;
-  }
+<!-- Inject Forum Categories Grid Component -->
+<?php include ROOT_PATH . '/views/forum/includes/categories.php'; ?>
 
-  .section-header-row {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-bottom: 40px;
-    gap: 16px;
-  }
+<!-- Main Content Section: Feed + Sidebar -->
+<section class="forum-main-content py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Left Column: Discussion Feed -->
+            <div class="col-lg-8">
+                <?php include ROOT_PATH . '/views/forum/includes/feed.php'; ?>
+            </div>
 
-  .section-title-group {
-    flex: 1;
-  }
-
-  .section-heading {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 1.8rem;
-    color: #111111;
-    margin-bottom: 8px;
-    line-height: 1.2;
-  }
-
-  .section-subtitle {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 1rem;
-    color: #555555;
-    margin-bottom: 0;
-  }
-
-  .view-all-link {
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 600;
-    color: #f48221;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    transition: opacity 0.2s ease;
-    white-space: nowrap;
-    margin-bottom: 6px;
-  }
-
-  .view-all-link:hover {
-    opacity: 0.8;
-    color: #f48221;
-    text-decoration: none;
-  }
-
-  /* Category Card */
-  .category-card {
-    background-color: #ffffff;
-    border: 1px solid #e9ecef;
-    border-radius: 20px;
-    padding: 30px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-    text-decoration: none !important;
-  }
-
-  .category-card:hover {
-    transform: translateY(-5px);
-    border-color: #f48221;
-    box-shadow: 0 10px 20px rgba(244, 130, 33, 0.1);
-  }
-
-  /* Icon Wrapper */
-  .category-icon-wrap {
-    width: 56px;
-    height: 56px;
-    border-radius: 12px;
-    background-color: rgba(244, 130, 33, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 24px;
-    transition: background-color 0.3s ease;
-  }
-
-  .category-icon-wrap .material-symbols-outlined {
-    color: #f48221;
-    font-size: 24px;
-    transition: color 0.3s ease;
-  }
-
-  .category-card:hover .category-icon-wrap {
-    background-color: #f48221;
-  }
-
-  .category-card:hover .category-icon-wrap .material-symbols-outlined {
-    color: #ffffff;
-  }
-
-  .category-name {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: #111111;
-    margin-bottom: 12px;
-  }
-
-  .category-desc {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 0.9rem;
-    color: #555555;
-    line-height: 1.6;
-    margin-bottom: 24px;
-    flex-grow: 1;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  /* Card Footer */
-  .category-card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 16px;
-    border-top: 1px solid #f1f1f1;
-  }
-
-  .topic-count-badge {
-    background-color: #f1f1f1;
-    color: #555555;
-    font-family: 'Open Sans', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 4px 12px;
-    border-radius: 50px;
-  }
-
-  .view-topics-btn {
-    color: #f48221;
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 600;
-    font-size: 0.85rem;
-    transition: text-decoration 0.2s;
-  }
-
-  .category-card:hover .view-topics-btn {
-    text-decoration: underline;
-  }
-</style>
-
-<section class="forum-categories-section">
-  <div class="container">
-
-    <!-- Section Header -->
-    <div class="section-header-row">
-      <div class="section-title-group">
-        <h2 class="section-heading">Explore Categories</h2>
-        <p class="section-subtitle">Browse discussions by topic and find your community.</p>
-      </div>
-      <a href="#" class="view-all-link">
-        View All <span class="material-symbols-outlined">arrow_forward</span>
-      </a>
-    </div>
-
-    <!-- Categories Grid -->
-    <div class="row">
-      <?php if (!empty($categories)): ?>
-        <?php foreach ($categories as $category): ?>
-          <?php
-          // Simple icon map based on memory or defaults
-          $icon_map = [
-            'startup' => 'rocket_launch',
-            'developer' => 'terminal',
-            'general' => 'dynamic_feed',
-            'introductions' => 'waving_hand',
-            'hardware' => 'memory',
-            'news' => 'newspaper'
-          ];
-          $icon = '';
-          foreach ($icon_map as $key => $val) {
-            if (stripos($category['name'], $key) !== false) {
-              $icon = $val;
-              break;
-            }
-          }
-          ?>
-          <div class="col-lg-4 col-md-6 mb-4">
-            <a href="<?= BASE_URL ?>/forum?category=<?= $category['uuid']; ?>" class="category-card">
-              <div class="category-icon-wrap">
-                <span class="material-symbols-outlined"><?= $icon; ?></span>
-              </div>
-              <h3 class="category-name"><?= htmlspecialchars($category['name']); ?></h3>
-              <p class="category-desc"><?= htmlspecialchars($category['description'] ?? 'Join the conversation.'); ?></p>
-              <div class="category-card-footer">
-                <span class="topic-count-badge">Topics</span>
-                <span class="view-topics-btn">View Topics →</span>
-              </div>
-            </a>
-          </div>
-        <?php endforeach; ?>
-      <?php else: ?>
-        <div class="col-12 text-center">
-          <p>No categories found.</p>
+            <!-- Right Column: Sidebar Widgets -->
+            <div class="col-lg-4">
+                <?php include ROOT_PATH . '/views/forum/includes/sidebar.php'; ?>
+            </div>
         </div>
-      <?php endif; ?>
     </div>
-  </div>
 </section>

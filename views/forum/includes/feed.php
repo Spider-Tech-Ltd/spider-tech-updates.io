@@ -7,19 +7,21 @@
 ?>
 
 <style>
-  /* ====== Discussion Feed Styles ====== */
+  /* ============================
+     GUEST FEED (SYNCED WITH MEMBER FEED)
+     ============================ */
   .feed-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
     gap: 16px;
   }
 
   .feed-title {
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
-    font-size: 1.85rem;
+    font-size: 1.4rem;
     color: #111111;
     margin-bottom: 0;
   }
@@ -39,6 +41,7 @@
     transition: transform 0.2s, background-color 0.2s;
     text-decoration: none !important;
   }
+
   .btn-new-topic:hover {
     background-color: #e6751c;
     color: #ffffff;
@@ -50,11 +53,12 @@
     display: flex;
     gap: 32px;
     border-bottom: 1px solid #e9ecef;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
   }
+
   .tab-link {
     font-family: 'Poppins', sans-serif;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -64,10 +68,15 @@
     position: relative;
     transition: color 0.2s;
   }
-  .tab-link:hover { color: #f48221; }
+
+  .tab-link:hover {
+    color: #f48221;
+  }
+
   .tab-link.active {
     color: #f48221;
   }
+
   .tab-link.active::after {
     content: '';
     position: absolute;
@@ -78,174 +87,259 @@
     background-color: #f48221;
   }
 
-  /* Thread Items */
-  .thread-list {
+  /* Discussion Cards */
+  .discussion-card-list {
     display: flex;
     flex-direction: column;
     gap: 16px;
   }
 
-  /* Pinned Card */
-  .thread-card-pinned {
-    background-color: #fffbf2;
-    border: 1px solid rgba(244, 130, 33, 0.1);
-    border-left: 4px solid #f48221 !important;
-    border-radius: 12px;
-    padding: 24px;
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-  }
-  .pinned-icon-box {
-    width: 48px;
-    height: 48px;
+  .discussion-card {
     background-color: #ffffff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #f48221;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    flex-shrink: 0;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(17, 17, 17, 0.05);
+    border: 1px solid transparent;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+    text-decoration: none !important;
+    color: inherit;
+    display: block;
   }
 
-  .thread-card {
-    background-color: #ffffff;
-    border: 1px solid #e9ecef;
-    border-radius: 12px;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    transition: border-color 0.2s, box-shadow 0.2s;
+  .discussion-card:hover {
+    border-color: rgba(244, 130, 33, 0.25);
+    box-shadow: 0 8px 24px rgba(244, 130, 33, 0.08);
+    transform: translateY(-3px);
+    color: inherit;
     text-decoration: none !important;
   }
-  .thread-card:hover {
-    border-color: rgba(244, 130, 33, 0.4);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+
+  .discussion-card.is-pinned {
+    border-left: 3px solid #f48221;
+    background-color: #fffbf7;
   }
 
-  .author-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-  }
-
-  .thread-main { flex: 1; }
-  
-  .thread-meta-top {
+  .card-top-row {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 4px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
   }
-  .category-pill {
-    font-family: 'Open Sans', sans-serif;
+
+  .category-badge {
+    font-family: 'Poppins', sans-serif;
     font-weight: 700;
     font-size: 0.65rem;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #797979;
+    letter-spacing: 0.06em;
+    background-color: #f48221;
+    color: #ffffff;
+    padding: 3px 12px;
+    border-radius: 50px;
+    white-space: nowrap;
   }
-  .badge-hot {
-    background-color: #fff0f0;
+
+  .badge-hot-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background-color: #fff0f3;
     color: #e11d48;
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
     font-size: 0.65rem;
-    padding: 2px 8px;
-    border-radius: 4px;
+    padding: 3px 10px;
+    border-radius: 50px;
+  }
+
+  .badge-pinned-label {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-  }
-  .badge-pinned-label {
     color: #f48221;
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
     font-size: 0.65rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
   }
 
-  .thread-title {
+  .card-title {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #111111;
+    line-height: 1.45;
+    margin-bottom: 8px;
+    transition: color 0.2s;
+  }
+
+  .discussion-card:hover .card-title {
+    color: #f48221;
+  }
+
+  .card-author-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .author-avatar-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .author-name {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 0.85rem;
     color: #111111;
-    margin-bottom: 4px;
-    line-height: 1.4;
   }
-  .thread-card:hover .thread-title { color: #f48221; }
 
-  .thread-last-reply {
+  .author-time {
     font-family: 'Open Sans', sans-serif;
-    font-size: 0.8rem;
-    color: #555555;
-  }
-  .thread-last-reply strong { color: #111111; }
-
-  /* Stats Column */
-  .thread-stats {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 4px;
-    min-width: 100px;
+    font-size: 0.78rem;
     color: #797979;
+    margin-left: auto;
   }
-  .stat-item {
+
+  .card-interaction-bar {
     display: flex;
+    align-items: center;
+    gap: 4px;
+    padding-top: 16px;
+    border-top: 1px solid #f1f3f5;
+  }
+
+  .btn-interact {
+    display: inline-flex;
     align-items: center;
     gap: 6px;
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.78rem;
+    color: #797979;
+    background: none;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none !important;
+  }
+
+  .btn-interact:hover {
+    background-color: rgba(244, 130, 33, 0.08);
+    color: #f48221;
+  }
+
+  .interact-spacer {
+    flex: 1;
   }
 
   /* Pagination */
   .feed-pagination {
-    margin-top: 48px;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 24px;
+    gap: 20px;
+    margin-top: 40px;
   }
+
   .pag-btn {
-    color: #f48221;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 4px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #f48221;
+    background: none;
+    border: 1.5px solid #f48221;
+    padding: 8px 18px;
+    border-radius: 50px;
+    transition: all 0.2s ease;
     text-decoration: none !important;
-    transition: opacity 0.2s;
   }
-  .pag-btn:hover { opacity: 0.7; }
+
+  .pag-btn:hover {
+    background-color: #f48221;
+    color: #ffffff;
+  }
+
   .pag-info {
     font-family: 'Open Sans', sans-serif;
     font-size: 0.85rem;
     color: #797979;
   }
 
+  /* FAB Floating Button */
+  .fab-mobile {
+    display: none;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    background-color: #f48221;
+    color: #ffffff;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(244, 130, 33, 0.4);
+    z-index: 1000;
+  }
+
+  .fab-pulse-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid #f48221;
+    animation: fabPulse 5s infinite cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  @keyframes fabPulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.8;
+    }
+
+    20%,
+    100% {
+      transform: scale(1.6);
+      opacity: 0;
+    }
+  }
+
   @media (max-width: 768px) {
-    .thread-card, .thread-card-pinned { flex-direction: column; align-items: flex-start; padding: 20px; }
-    .thread-stats { align-items: flex-start; margin-top: 16px; min-width: auto; padding-top: 12px; border-top: 1px solid #f1f1f1; width: 100%; }
-    .feed-header { flex-direction: column; align-items: flex-start; gap: 20px; }
-    .btn-new-topic { width: 100%; justify-content: center; }
-    .feed-tabs { gap: 20px; overflow-x: auto; padding-bottom: 4px; }
-    .tab-link { white-space: nowrap; }
+    .btn-new-topic {
+      display: none;
+    }
+
+    .fab-mobile {
+      display: flex;
+    }
+
+    .author-time {
+      display: none;
+    }
+
+    .card-interaction-bar {
+      gap: 16px;
+    }
   }
 </style>
 
 <div class="forum-feed-container">
-  
+
   <!-- Feed Header -->
   <div class="feed-header">
     <h2 class="feed-title">Latest Discussions</h2>
-    <a href="#" class="btn-new-topic">
+    <a href="<?= BASE_URL ?>/forum/sign-in" class="btn-new-topic">
       <span class="material-symbols-outlined">add</span>
       New Topic
     </a>
@@ -259,117 +353,95 @@
   </div>
 
   <!-- Discussion List -->
-  <div class="thread-list">
-    
-    <!-- PINNED THREAD -->
-    <div class="thread-card-pinned">
-      <div class="pinned-icon-box">
-        <span class="material-symbols-outlined fill-1">push_pin</span>
-      </div>
-      <div class="thread-main">
-        <div class="thread-meta-top">
-          <span class="badge-pinned-label">Pinned by Moderator</span>
-        </div>
-        <h3 class="thread-title">Community Guidelines & Forum Rules — Please Read First</h3>
-        <div class="thread-last-reply">
-          By <strong>Spider Tech Admin</strong> <span class="material-symbols-outlined text-primary" style="font-size: 14px; vertical-align: middle;">verified</span>
-        </div>
-      </div>
-      <div class="thread-stats">
-        <span class="badge-pinned-label">Pinned</span>
-      </div>
-    </div>
-
-    <!-- Regular Thread 1 -->
-    <a href="#" class="thread-card">
-      <img src="https://ui-avatars.com/api/?name=James+K&background=f48221&color=fff" class="author-avatar" alt="JK">
-      <div class="thread-main">
-        <div class="thread-meta-top">
-          <span class="category-pill">Developer Hub</span>
-        </div>
-        <h3 class="thread-title">The Future of AI in African Tech Startups</h3>
-        <div class="thread-last-reply">
-          Last by <strong>James K.</strong> • 3h ago
-        </div>
-      </div>
-      <div class="thread-stats">
-        <div class="stat-item">
-          <span class="material-symbols-outlined">chat_bubble</span> 42
-        </div>
-      </div>
-    </a>
-
-    <!-- Regular Thread 2 -->
-    <a href="#" class="thread-card">
-      <img src="https://ui-avatars.com/api/?name=Alice+M&background=0284c7&color=fff" class="author-avatar" alt="AM">
-      <div class="thread-main">
-        <div class="thread-meta-top">
-          <span class="category-pill">Startup Advice</span>
-        </div>
-        <h3 class="thread-title">Best Practices for Remote Team Management</h3>
-        <div class="thread-last-reply">
-          Last by <strong>Alice M.</strong> • Yesterday
-        </div>
-      </div>
-      <div class="thread-stats">
-        <div class="stat-item">
-          <span class="material-symbols-outlined">chat_bubble</span> 28
-        </div>
-      </div>
-    </a>
-
-    <!-- Regular Thread 3 -->
-    <a href="#" class="thread-card">
-      <img src="https://ui-avatars.com/api/?name=Chris+O&background=059669&color=fff" class="author-avatar" alt="CO">
-      <div class="thread-main">
-        <div class="thread-meta-top">
-          <span class="category-pill">Hardware Review</span>
-        </div>
-        <h3 class="thread-title">Reviewing the New MacBook Pro M4: Worth It?</h3>
-        <div class="thread-last-reply">
-          Last by <strong>Chris O.</strong> • 2 days ago
-        </div>
-      </div>
-      <div class="thread-stats">
-        <div class="stat-item">
-          <span class="material-symbols-outlined">chat_bubble</span> 15
-        </div>
-      </div>
-    </a>
-
-    <!-- Regular Thread 4 (HOT) -->
-    <a href="#" class="thread-card">
-      <img src="https://ui-avatars.com/api/?name=Sarah+B&background=7c3aed&color=fff" class="author-avatar" alt="SB">
-      <div class="thread-main">
-        <div class="thread-meta-top">
-          <span class="category-pill">Industry News</span>
-          <span class="badge-hot">
-            <span class="material-symbols-outlined fill-1" style="font-size: 14px;">local_fire_department</span> HOT
+  <div class="discussion-card-list">
+    <?php if (!empty($feeds)): ?>
+      <?php foreach ($feeds as $feed): ?>
+        <a href="<?= BASE_URL ?>/forum/sign-in" class="discussion-card <?= $feed['is_pinned'] ? 'is-pinned' : ''; ?> <?= $feed['is_hot'] ? 'is-hot' : ''; ?>">
+          <div class="card-top-row">
+            <span class="category-badge"><?= htmlspecialchars($feed['category_name'] ?? 'General'); ?></span>
+            <?php if ($feed['is_pinned']): ?>
+              <span class="badge-pinned-label">
+                <span class="material-symbols-outlined" style="font-size:13px; font-variation-settings:'FILL' 1;">push_pin</span>
+                Pinned
+              </span>
+            <?php endif; ?>
+            <?php if ($feed['is_hot']): ?>
+              <span class="badge-hot-label">
+                <span class="material-symbols-outlined" style="font-size: 13px; font-variation-settings:'FILL' 1;">local_fire_department</span> HOT
+              </span>
+            <?php endif; ?>
+          </div>
+          <h3 class="card-title"><?= htmlspecialchars($feed['title']); ?></h3>
+          <div class="card-author-row">
+            <img src="https://ui-avatars.com/api/?name=<?= urlencode($feed['author_name']); ?>&background=f48221&color=fff&size=32" class="author-avatar-sm" alt="Author">
+            <span class="author-name"><?= htmlspecialchars($feed['author_name']); ?></span>
+            <span class="author-time"><?= htmlspecialchars($feed['created_at']); ?></span>
+          </div>
+          <div class="card-interaction-bar">
+            <div class="btn-interact" title="Upvote">
+              <span class="material-symbols-outlined">thumb_up</span>
+              <span class="vote-count"><?= $feed['upvotes']; ?></span>
+            </div>
+            <div class="btn-interact" title="Replies">
+              <span class="material-symbols-outlined">chat_bubble</span>
+              <span><?= $feed['replies']; ?></span>
+            </div>
+            <div class="interact-spacer"></div>
+            <div class="btn-interact" title="Bookmark">
+              <span class="material-symbols-outlined">bookmark</span>
+            </div>
+          </div>
+        </a>
+      <?php endforeach; ?>
+    <?php else: ?>
+      <!-- PINNED THREAD FALLBACK -->
+      <a href="<?= BASE_URL ?>/forum/sign-in" class="discussion-card is-pinned">
+        <div class="card-top-row">
+          <span class="category-badge">⚙️ Community</span>
+          <span class="badge-pinned-label">
+            <span class="material-symbols-outlined" style="font-size:13px; font-variation-settings:'FILL' 1;">push_pin</span>
+            Pinned
           </span>
         </div>
-        <h3 class="thread-title">What Tech Trends Are Shaping 2026?</h3>
-        <div class="thread-last-reply">
-          Last by <strong>Sarah B.</strong> • 3 days ago
+        <h3 class="card-title">Community Guidelines & Forum Rules — Please Read Before Posting</h3>
+        <div class="card-author-row">
+          <img src="https://ui-avatars.com/api/?name=Spider+Admin&background=f48221&color=fff&size=32" class="author-avatar-sm" alt="Admin">
+          <span class="author-name">Spider Tech Admin</span>
+          <span class="author-time">Always pinned</span>
         </div>
-      </div>
-      <div class="thread-stats">
-        <div class="stat-item">
-          <span class="material-symbols-outlined">chat_bubble</span> 63
+        <div class="card-interaction-bar">
+          <div class="btn-interact" title="Upvote">
+            <span class="material-symbols-outlined">thumb_up</span>
+            <span class="vote-count">204</span>
+          </div>
+          <div class="btn-interact" title="Replies">
+            <span class="material-symbols-outlined">chat_bubble</span>
+            <span>58</span>
+          </div>
+          <div class="interact-spacer"></div>
+          <div class="btn-interact" title="Bookmark">
+            <span class="material-symbols-outlined">bookmark</span>
+          </div>
         </div>
-      </div>
-    </a>
-
+      </a>
+    <?php endif; ?>
   </div>
 
   <!-- Pagination -->
   <div class="feed-pagination">
-    <a href="#" class="pag-btn">
+    <a href="<?= BASE_URL ?>/forum/sign-in" class="pag-btn">
       <span class="material-symbols-outlined">chevron_left</span> Previous
     </a>
     <span class="pag-info">Page 1 of 8</span>
-    <a href="#" class="pag-btn">
+    <a href="<?= BASE_URL ?>/forum/sign-in" class="pag-btn">
       Next <span class="material-symbols-outlined">chevron_right</span>
     </a>
   </div>
+
+  <!-- Mobile Floating Action Button (FAB) -->
+  <a href="<?= BASE_URL ?>/forum/sign-in" class="fab-mobile">
+    <span class="fab-pulse-ring"></span>
+    <span class="material-symbols-outlined">edit</span>
+  </a>
 
 </div>

@@ -112,16 +112,6 @@ class BaseController {
                                     ['id' => 3, 'program_id' => 1, 'field_name' => 'experience', 'field_label' => 'Experience Level', 'field_type' => 'select', 'is_required' => 1, 'options' => json_encode(['Beginner', 'Intermediate', 'Expert']), 'field_order' => 3, 'field_section' => 'Professional Information', 'field_width' => 'full']
                                 ];
                             }
-                            if (strpos($this->sql, 'categories') !== false) {
-                                return [
-                                    ['category_uuid' => 'uuid-1', 'category_name' => 'Startup Advice', 'category_description' => 'Expert tips for scaling your business.'],
-                                    ['category_uuid' => 'uuid-2', 'category_name' => 'Developer Hub', 'category_description' => 'Coding, system architecture, and modern frameworks.'],
-                                    ['category_uuid' => 'uuid-3', 'category_name' => 'General Tech', 'category_description' => 'Latest tech trends and global innovations.'],
-                                    ['category_uuid' => 'uuid-4', 'category_name' => 'Introductions', 'category_description' => 'Meet and greet the community.'],
-                                    ['category_uuid' => 'uuid-5', 'category_name' => 'Hardware Review', 'category_description' => 'Deep dives into the latest gadgets.'],
-                                    ['category_uuid' => 'uuid-6', 'category_name' => 'Industry News', 'category_description' => 'Global industry movements and policy changes.']
-                                ];
-                            }
                             if (strpos($this->sql, 'about_info') !== false) {
                                 return [
                                     ['id' => 1, 'title' => 'Who We Are', 'details' => 'Leading IT company providing cutting-edge solutions.', 'image' => '1027161136.jpg']
@@ -177,9 +167,45 @@ class BaseController {
                                     ['id' => 3, 'training_name' => 'Cybersecurity Essentials', 'training_description' => 'Protect your digital assets with advanced security training.', 'training_details' => '<p>Detailed content 3</p>', 'training_image' => '../images/pictures/338527298.png']
                                 ];
                             }
+                            if (strpos($this->sql, 'categories') !== false) {
+                                return [
+                                    ['id' => 1, 'name' => 'Manufacturing', 'slug' => 'manufacturing', 'icon' => 'settings', 'topic_count' => '1.2k', 'description' => 'Discuss industrial processes, production efficiency, and factory automation.'],
+                                    ['id' => 2, 'name' => 'Energy & Utilities', 'slug' => 'energy', 'icon' => 'bolt', 'topic_count' => '850', 'description' => 'Power generation, distribution, and sustainable energy solutions.'],
+                                    ['id' => 3, 'name' => 'AI & Robotics', 'slug' => 'ai', 'icon' => 'smart_toy', 'topic_count' => '610', 'description' => 'Machine learning, autonomous systems, and advanced robotics in industry.'],
+                                    ['id' => 4, 'name' => 'Logistics', 'slug' => 'logistics', 'icon' => 'local_shipping', 'topic_count' => '430', 'description' => 'Supply chain management, transport, and warehousing.'],
+                                    ['id' => 5, 'name' => 'Infrastructure', 'slug' => 'infra', 'icon' => 'construction', 'topic_count' => '320', 'description' => 'Smart cities, construction tech, and large-scale engineering.']
+                                ];
+                            }
+                            if (strpos($this->sql, 'feeds') !== false) {
+                                return [
+                                    [
+                                        'id' => 1,
+                                        'title' => 'The Future of AI in African Tech Startups',
+                                        'author_name' => 'James K.',
+                                        'category_name' => 'Startups',
+                                        'created_at' => '3h ago',
+                                        'upvotes' => 34,
+                                        'replies' => 42,
+                                        'is_pinned' => 0,
+                                        'is_hot' => 0
+                                    ],
+                                    [
+                                        'id' => 2,
+                                        'title' => 'Best Practices for Remote Team Management',
+                                        'author_name' => 'Alice M.',
+                                        'category_name' => 'Management',
+                                        'created_at' => 'Yesterday',
+                                        'upvotes' => 18,
+                                        'replies' => 28,
+                                        'is_pinned' => 0,
+                                        'is_hot' => 0
+                                    ]
+                                ];
+                            }
                             return [];
                         }
-                        public function bindValue($name, $value, $type = null) {}
+                        public function bindValue($name, $value, $type = null) { return true; }
+                        public function bindParam($name, &$var, $type = PDO::PARAM_STR, $length = null, $driver_options = null) { return true; }
                         public function rowCount() { return 1; }
                     };
                 }
@@ -188,6 +214,18 @@ class BaseController {
                 }
             };
         }
+    }
+
+    protected function isLoggedIn() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        return isset($_SESSION['member_uuid']);
+    }
+
+    protected function redirect($path) {
+        header("Location: " . BASE_URL . "/" . ltrim($path, '/'));
+        exit();
     }
 
     protected function render($view, $data = []) {
@@ -201,4 +239,3 @@ class BaseController {
         if (file_exists($footer)) include $footer;
     }
 }
-?>

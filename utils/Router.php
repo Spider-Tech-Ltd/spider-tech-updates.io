@@ -10,6 +10,11 @@ class Router {
         $url = $_GET['url'] ?? 'home';
         $url = rtrim($url, '/');
 
+        // Remove query string if present
+        if (strpos($url, '?') !== false) {
+            $url = substr($url, 0, strpos($url, '?'));
+        }
+
         if (isset($this->routes[$url])) {
             $route = $this->routes[$url];
             $controllerName = $route['controller'];
