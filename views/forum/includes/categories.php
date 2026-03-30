@@ -40,10 +40,21 @@
       <?php if (!empty($categories)): ?>
         <?php foreach ($categories as $cat): ?>
           <div class="col-lg-4 col-md-6 mb-4">
-            <a href="<?= BASE_URL ?>/forum?category=<?= urlencode($cat['slug'] ?? $cat['id']); ?>" class="forum-category-card p-4">
+            <a href="<?= BASE_URL ?>/forum?category=<?= urlencode($cat['category'] ?? $cat['uuid']); ?>" class="forum-category-card p-4">
               <div class="d-flex justify-content-between align-items-start mb-3">
                 <div class="forum-icon-wrapper">
-                  <span class="material-symbols-outlined"><?= $cat['icon'] ?? 'forum'; ?></span>
+                  <?php
+                    $icon_map = [
+                        'manufacturing' => 'settings',
+                        'automation'    => 'smart_toy',
+                        'energy'        => 'bolt',
+                        'ai'            => 'psychology',
+                        'logistics'     => 'local_shipping',
+                        'infrastructure'=> 'architecture'
+                    ];
+                    $icon = $icon_map[$cat['category']] ?? 'forum';
+                  ?>
+                  <span class="material-symbols-outlined"><?= $icon ?></span>
                 </div>
                 <span class="forum-topic-badge"><?= $cat['topic_count'] ?? '0'; ?> Topics</span>
               </div>

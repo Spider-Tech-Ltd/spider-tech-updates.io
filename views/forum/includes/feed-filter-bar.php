@@ -113,14 +113,23 @@
     <div class="filter-pills-group" id="filterPills">
       <?php
       $current_cat = $_GET['category'] ?? 'all';
+      $icon_map = [
+          'manufacturing' => '⚙️',
+          'automation'    => '🤖',
+          'energy'        => '⚡',
+          'ai'            => '🧠',
+          'logistics'     => '🚚',
+          'infrastructure'=> '🏗️'
+      ];
       ?>
       <a href="<?= BASE_URL ?>/forum/feed" class="filter-pill <?= $current_cat == 'all' ? 'active' : '' ?>">All Topics</a>
-      <a href="<?= BASE_URL ?>/forum/feed?category=manufacturing" class="filter-pill <?= $current_cat == 'manufacturing' ? 'active' : '' ?>">⚙️ Manufacturing</a>
-      <a href="<?= BASE_URL ?>/forum/feed?category=automation" class="filter-pill <?= $current_cat == 'automation' ? 'active' : '' ?>">🤖 Automation</a>
-      <a href="<?= BASE_URL ?>/forum/feed?category=energy" class="filter-pill <?= $current_cat == 'energy' ? 'active' : '' ?>">⚡ Energy</a>
-      <a href="<?= BASE_URL ?>/forum/feed?category=ai" class="filter-pill <?= $current_cat == 'ai' ? 'active' : '' ?>">🧠 AI & Robotics</a>
-      <a href="<?= BASE_URL ?>/forum/feed?category=logistics" class="filter-pill <?= $current_cat == 'logistics' ? 'active' : '' ?>">🚚 Logistics</a>
-      <a href="<?= BASE_URL ?>/forum/feed?category=infrastructure" class="filter-pill <?= $current_cat == 'infrastructure' ? 'active' : '' ?>">🏗️ Infrastructure</a>
+      <?php if (!empty($categories)): ?>
+        <?php foreach ($categories as $cat): ?>
+          <a href="<?= BASE_URL ?>/forum/feed?category=<?= urlencode($cat['category']) ?>" class="filter-pill <?= $current_cat == $cat['category'] ? 'active' : '' ?>">
+            <?= $icon_map[$cat['category']] ?? '📁' ?> <?= htmlspecialchars($cat['name']) ?>
+          </a>
+        <?php endforeach; ?>
+      <?php endif; ?>
     </div>
 
     <!-- Sort By -->

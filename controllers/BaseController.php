@@ -90,7 +90,14 @@ class BaseController {
                                 return [['id' => 1, 'training_name' => 'Full Stack Web Development', 'training_description' => 'Comprehensive course on modern web technologies.', 'training_details' => '<p>Detailed content 1</p>', 'training_image' => '../images/pictures/338527298.png']];
                             }
                             if (strpos($this->sql, 'categories') !== false) {
-                                return [['id' => 1, 'uuid' => 'cat-uuid-1', 'name' => 'Manufacturing', 'slug' => 'manufacturing', 'icon' => 'settings', 'topic_count' => '1.2k', 'description' => 'Discuss industrial processes, production efficiency, and factory automation.']];
+                                return [
+                                    ['id' => 1, 'uuid' => 'cat-1', 'name' => 'Manufacturing', 'category' => 'manufacturing', 'icon' => 'settings', 'topic_count' => '14k', 'description' => 'Discuss industrial processes and efficiency.'],
+                                    ['id' => 2, 'uuid' => 'cat-2', 'name' => 'Automation', 'category' => 'automation', 'icon' => 'smart_toy', 'topic_count' => '9.2k', 'description' => 'PLC systems and industrial robotics.'],
+                                    ['id' => 3, 'uuid' => 'cat-3', 'name' => 'Energy', 'category' => 'energy', 'icon' => 'bolt', 'topic_count' => '8.5k', 'description' => 'Renewable energy and power systems.'],
+                                    ['id' => 4, 'uuid' => 'cat-4', 'name' => 'AI & Robotics', 'category' => 'ai', 'icon' => 'psychology', 'topic_count' => '6.1k', 'description' => 'ML and autonomous systems.'],
+                                    ['id' => 5, 'uuid' => 'cat-5', 'name' => 'Logistics', 'category' => 'logistics', 'icon' => 'local_shipping', 'topic_count' => '4.8k', 'description' => 'Supply chain and transport.'],
+                                    ['id' => 6, 'uuid' => 'cat-6', 'name' => 'Infrastructure', 'category' => 'infrastructure', 'icon' => 'architecture', 'topic_count' => '3.2k', 'description' => 'Industrial buildings and large projects.']
+                                ];
                             }
                             if (strpos($this->sql, 'feeds') !== false) {
                                 $mock_feeds = [

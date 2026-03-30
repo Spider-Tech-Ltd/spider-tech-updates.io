@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Forum Hero Section — Phase 1 Redesign
  * Generated via Stitch MCP (screen: 1d17ebcda4f3407c9ccdb8d27d248948)
@@ -12,8 +11,7 @@
   .forum-hero-section {
     position: relative;
     background-color: #f4f4f4;
-    padding: 160px 16px 80px 16px;
-    /* Increased top padding for fixed header */
+    padding: 160px 16px 80px 16px; /* Increased top padding for fixed header */
     overflow: hidden;
     text-align: center;
   }
@@ -36,25 +34,10 @@
     filter: blur(60px);
     pointer-events: none;
   }
+  .forum-hero-blob-left  { width: 280px; height: 280px; top: 20%; left: -80px; }
+  .forum-hero-blob-right { width: 320px; height: 320px; bottom: 15%; right: -80px; }
 
-  .forum-hero-blob-left {
-    width: 280px;
-    height: 280px;
-    top: 20%;
-    left: -80px;
-  }
-
-  .forum-hero-blob-right {
-    width: 320px;
-    height: 320px;
-    bottom: 15%;
-    right: -80px;
-  }
-
-  .forum-hero-inner {
-    position: relative;
-    z-index: 1;
-  }
+  .forum-hero-inner { position: relative; z-index: 1; }
 
   /* Eyebrow pill */
   .hero-eyebrow-pill {
@@ -73,11 +56,9 @@
     color: #f48221;
     margin-bottom: 28px;
   }
-
   .hero-eyebrow-pill .material-symbols-outlined {
     font-size: 16px;
-    text-transform: none;
-    /* Prevent uppercase from breaking ligatures */
+    text-transform: none; /* Prevent uppercase from breaking ligatures */
   }
 
   /* Main heading */
@@ -93,27 +74,13 @@
   }
 
   @keyframes heroFadeUp {
-    from {
-      opacity: 0;
-      transform: translateY(18px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
   @media (max-width: 768px) {
-    .hero-heading {
-      font-size: 2.2rem;
-    }
-
-    .forum-hero-section {
-      padding: 120px 16px 56px 16px;
-    }
-
-    /* Increased top padding for mobile */
+    .hero-heading { font-size: 2.2rem; }
+    .forum-hero-section { padding: 120px 16px 56px 16px; } /* Increased top padding for mobile */
   }
 
   /* Subheading */
@@ -141,7 +108,6 @@
     gap: 16px;
     flex-shrink: 0;
   }
-
   .hero-btn-primary {
     height: 48px;
     padding: 0 16px;
@@ -162,16 +128,8 @@
     justify-content: center;
     width: 220px;
   }
-
-  .hero-btn-primary:hover {
-    background-color: #e6751c;
-    color: #fff;
-    text-decoration: none;
-  }
-
-  .hero-btn-primary:active {
-    transform: scale(0.97);
-  }
+  .hero-btn-primary:hover  { background-color: #e6751c; color: #fff; text-decoration: none; }
+  .hero-btn-primary:active { transform: scale(0.97); }
 
   .hero-btn-secondary {
     height: 48px;
@@ -192,28 +150,12 @@
     justify-content: center;
     width: 220px;
   }
-
-  .hero-btn-secondary:hover {
-    background-color: rgba(244, 130, 33, 0.07);
-    color: #f48221;
-    text-decoration: none;
-  }
+  .hero-btn-secondary:hover { background-color: rgba(244,130,33,0.07); color: #f48221; text-decoration: none; }
 
   @media (max-width: 767px) {
-    .hero-action-row {
-      flex-direction: column;
-    }
-
-    .hero-btn-group {
-      width: 100%;
-      flex-direction: column;
-    }
-
-    .hero-btn-primary,
-    .hero-btn-secondary {
-      width: 100%;
-      justify-content: center;
-    }
+    .hero-action-row { flex-direction: column; }
+    .hero-btn-group { width: 100%; flex-direction: column; }
+    .hero-btn-primary, .hero-btn-secondary { width: 100%; justify-content: center; }
   }
 
   /* Stats row */
@@ -224,18 +166,15 @@
     gap: 0;
     flex-wrap: wrap;
   }
-
   .hero-stat-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 0 40px;
   }
-
   .hero-stat-item:not(:last-child) {
     border-right: 1px solid #e0e0e0;
   }
-
   .hero-stat-number {
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
@@ -243,7 +182,6 @@
     color: #111111;
     line-height: 1.1;
   }
-
   .hero-stat-label {
     font-family: 'Open Sans', sans-serif;
     font-size: 0.82rem;
@@ -254,28 +192,11 @@
   }
 
   @media (max-width: 576px) {
-    .hero-stats-row {
-      flex-direction: column;
-    }
-
-    .hero-stat-item {
-      padding: 16px 20px;
-      border-right: none !important;
-      width: 100%;
-    }
-
-    .hero-stat-item:not(:last-child) {
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .hero-heading {
-      font-size: 1.8rem;
-    }
-
-    .hero-subtext {
-      font-size: 1rem;
-      margin-bottom: 32px;
-    }
+    .hero-stats-row { flex-direction: column; }
+    .hero-stat-item { padding: 16px 20px; border-right: none !important; width: 100%; }
+    .hero-stat-item:not(:last-child) { border-bottom: 1px solid rgba(0,0,0,0.05); }
+    .hero-heading { font-size: 1.8rem; }
+    .hero-subtext { font-size: 1rem; margin-bottom: 32px; }
   }
 </style>
 
@@ -309,7 +230,6 @@
         <?php if (isset($_SESSION['member_uuid'])): ?>
           <a href="<?= BASE_URL ?>/forum/feed" class="hero-btn-primary">Start a Discussion</a>
         <?php else: ?>
-          <a href="<?= BASE_URL ?>/forum/feed" class="hero-btn-primary">Start a Discussion</a>
           <a href="<?= BASE_URL ?>/forum/sign-in" class="hero-btn-secondary">Sign In</a>
         <?php endif; ?>
       </div>

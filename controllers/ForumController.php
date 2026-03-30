@@ -21,6 +21,7 @@ class ForumController extends BaseController {
         }
 
         $forumModel = new ForumModel($this->db);
+        $categories = $forumModel->getCategories();
         $category_filter = $_GET['category'] ?? null;
         $feeds = $forumModel->getFeeds(10, $_SESSION['member_uuid'], $category_filter);
 
@@ -35,7 +36,8 @@ class ForumController extends BaseController {
         $this->render('forum/feed', [
             'title' => 'Member Feed',
             'member' => $member,
-            'feeds' => $feeds
+            'feeds' => $feeds,
+            'categories' => $categories
         ]);
     }
 }
