@@ -665,7 +665,10 @@ function toggleUpvote(uuid, btn) {
     $.ajax({
         url: '<?= BASE_URL ?>/forum/feed/like',
         type: 'POST',
-        data: { feed_uuid: uuid },
+        data: {
+            feed_uuid: uuid,
+            csrf_token: '<?= CSRF::generateToken() ?>'
+        },
         dataType: 'json',
         success: function(response) {
             if (response.success) {
@@ -695,7 +698,11 @@ function submitReply(uuid, btn) {
     $.ajax({
         url: '<?= BASE_URL ?>/forum/feed/reply',
         type: 'POST',
-        data: { feed_uuid: uuid, content: content },
+        data: {
+            feed_uuid: uuid,
+            content: content,
+            csrf_token: '<?= CSRF::generateToken() ?>'
+        },
         dataType: 'json',
         success: function(response) {
             if (response.success) {

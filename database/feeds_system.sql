@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `feed_replies` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (feed_uuid) REFERENCES feeds(uuid),
-  FOREIGN KEY (member_uuid) REFERENCES members(uuid),
+  FOREIGN KEY (member_id) REFERENCES members(uuid),
   FOREIGN KEY (category_uuid) REFERENCES categories(uuid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

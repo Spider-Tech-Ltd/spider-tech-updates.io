@@ -13,7 +13,15 @@ class ForumModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getFeeds($limit = 10, $member_uuid = null) {
+    public function getFeeds($limit = 10, $member_uuid = null, $category_filter = null) {
+        $where = "WHERE f.status = 'active'";
+        $params = [':member_uuid' => $member_uuid];
+
+        if ($category_filter && $category_filter !== 'all') {
+            $where .= " AND (c.category = :cat OR c.uuid = :cat)";
+            $params[':cat'] = $category_filter;
+        }
+
         $sql = "SELECT f.*, m.name as author_name, m.username as author_username, c.name as category_name,
                 (SELECT COUNT(*) FROM feed_likes WHERE feed_uuid = f.uuid) as upvotes,
                 (SELECT COUNT(*) FROM feed_replies WHERE feed_uuid = f.uuid) as replies_count,
@@ -21,12 +29,14 @@ class ForumModel {
                 FROM feeds f
                 JOIN members m ON f.member_id = m.uuid
                 JOIN categories c ON f.category_uuid = c.uuid
-                WHERE f.status = 'active'
+                $where
                 ORDER BY f.created_at DESC LIMIT :limit";
 
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
-        $stmt->bindValue(':member_uuid', $member_uuid);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val);
+        }
         $stmt->execute();
         $feeds = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -70,7 +80,7 @@ class ForumModel {
         $feed = $stmt->fetch();
         if (!$feed) return false;
 
-        $uuid = $this->generateUUID();
+        $uuid = Utils::generateUUID();
         $sql = "INSERT INTO feed_replies (uuid, feed_uuid, member_id, category_uuid, content)
                 VALUES (:uuid, :feed_uuid, :member_uuid, :category_uuid, :content)";
         $stmt = $this->db->prepare($sql);
@@ -83,13 +93,4 @@ class ForumModel {
         ]);
     }
 
-    private function generateUUID() {
-        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0x0fff) | 0x4000,
-            mt_rand(0, 0x3fff) | 0x8000,
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
-        );
-    }
 }

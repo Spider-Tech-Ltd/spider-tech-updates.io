@@ -10,7 +10,7 @@ class AuthModel
 
     public function register($username, $email, $password, $name = null)
     {
-        $uuid = $this->generateUUID();
+        $uuid = Utils::generateUUID();
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
         $query = "INSERT INTO `members` (uuid, username, email, password_hash, name) VALUES (:uuid, :username, :email, :password_hash, :name)";
@@ -43,16 +43,5 @@ class AuthModel
         $stmt->bindParam(':uuid', $uuid);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    private function generateUUID()
-    {
-        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0x0fff) | 0x4000,
-            mt_rand(0, 0x3fff) | 0x8000,
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
-        );
     }
 }

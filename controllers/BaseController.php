@@ -57,7 +57,7 @@ class BaseController {
                             }
                             if (strpos($this->sql, 'feed_likes') !== false) {
                                 if (strpos($this->sql, 'count(*)') !== false) return ['upvotes' => 35];
-                                return ['id' => 1];
+                                return ['id' => 1, 'member_id' => 'test-uuid'];
                             }
                             if (strpos($this->sql, 'feed_replies') !== false) {
                                 return ['uuid' => 'reply-uuid-1', 'content' => 'Mock reply content', 'author_name' => 'Sarah B.', 'created_at' => date('Y-m-d H:i:s')];
@@ -93,7 +93,16 @@ class BaseController {
                                 return [['id' => 1, 'uuid' => 'cat-uuid-1', 'name' => 'Manufacturing', 'slug' => 'manufacturing', 'icon' => 'settings', 'topic_count' => '1.2k', 'description' => 'Discuss industrial processes, production efficiency, and factory automation.']];
                             }
                             if (strpos($this->sql, 'feeds') !== false) {
-                                return [['id' => 1, 'uuid' => 'feed-uuid-1', 'title' => 'The Future of AI in African Tech Startups', 'content' => 'Content for AI in Africa...', 'author_name' => 'James K.', 'category_name' => 'Startups', 'created_at' => date('Y-m-d H:i:s'), 'upvotes' => 34, 'replies_count' => 1, 'is_pinned' => 0, 'is_hot' => 0, 'is_liked' => 0]];
+                                $mock_feeds = [
+                                    ['id' => 1, 'uuid' => 'feed-uuid-1', 'title' => 'The Future of AI in African Tech Startups', 'content' => 'Content for AI in Africa...', 'author_name' => 'James K.', 'category_name' => 'Startups', 'created_at' => date('Y-m-d H:i:s'), 'upvotes' => 34, 'replies_count' => 1, 'is_pinned' => 0, 'is_hot' => 0, 'is_liked' => 0, 'cat_slug' => 'ai'],
+                                    ['id' => 2, 'uuid' => 'feed-uuid-2', 'title' => 'Industrial Robotics Evolution', 'content' => 'Content for robotics...', 'author_name' => 'Alice M.', 'category_name' => 'Manufacturing', 'created_at' => date('Y-m-d H:i:s'), 'upvotes' => 12, 'replies_count' => 0, 'is_pinned' => 0, 'is_hot' => 0, 'is_liked' => 0, 'cat_slug' => 'manufacturing']
+                                ];
+                                if (isset($this->params[':cat'])) {
+                                    return array_values(array_filter($mock_feeds, function($f) {
+                                        return $f['cat_slug'] === $this->params[':cat'];
+                                    }));
+                                }
+                                return $mock_feeds;
                             }
                             return [];
                         }

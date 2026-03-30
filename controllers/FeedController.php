@@ -14,6 +14,11 @@ class FeedController extends BaseController {
             return;
         }
 
+        if (!CSRF::validateToken($_POST['csrf_token'] ?? '')) {
+            echo json_encode(['success' => false, 'message' => 'Invalid CSRF token.']);
+            return;
+        }
+
         $feed_uuid = $_POST['feed_uuid'] ?? '';
         $member_uuid = $_SESSION['member_uuid'];
 
@@ -41,6 +46,11 @@ class FeedController extends BaseController {
     public function reply() {
         if (!$this->isLoggedIn()) {
             echo json_encode(['success' => false, 'message' => 'Please sign in to reply.']);
+            return;
+        }
+
+        if (!CSRF::validateToken($_POST['csrf_token'] ?? '')) {
+            echo json_encode(['success' => false, 'message' => 'Invalid CSRF token.']);
             return;
         }
 
