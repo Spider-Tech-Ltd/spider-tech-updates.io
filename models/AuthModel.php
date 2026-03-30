@@ -13,12 +13,12 @@ class AuthModel
         $uuid = $this->generateUUID();
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        $query = "INSERT INTO `members` (uuid, username, email, password, name) VALUES (:uuid, :username, :email, :password, :name)";
+        $query = "INSERT INTO `members` (uuid, username, email, password_hash, name) VALUES (:uuid, :username, :email, :password_hash, :name)";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':uuid', $uuid);
         $stmt->bindParam(':username', $username);
         $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':password', $hashedPassword);
+        $stmt->bindParam(':password_hash', $hashedPassword);
         $stmt->bindParam(':name', $name);
 
         if ($stmt->execute()) {

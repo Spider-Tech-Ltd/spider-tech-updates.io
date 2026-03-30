@@ -12,6 +12,8 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
+    position: sticky;
+    top: 90px;
   }
 
   /* Widget Card */
@@ -34,44 +36,48 @@
     gap: 10px;
   }
 
-  /* Trending Topics */
-  .trending-list {
+  /* Ranked List */
+  .ranked-list {
     display: flex;
     flex-direction: column;
     gap: 16px;
   }
-  .trending-item {
+  .ranked-item {
     display: flex;
-    align-items: flex-start;
-    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
     text-decoration: none !important;
   }
-  .trending-rank {
+  .ranked-item-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .ranked-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background-color: rgba(245, 158, 11, 0.15); /* Warm Amber tint */
+    color: #f59e0b; /* Warm Amber */
+    border-radius: 50%;
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
-    font-size: 1.1rem;
-    color: #f48221;
-    width: 20px;
-    flex-shrink: 0;
-    line-height: 1.2;
+    font-size: 0.85rem;
   }
-  .trending-content { flex: 1; }
-  .trending-link {
+  .ranked-name {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
     font-size: 0.95rem;
     color: #111111;
-    display: block;
-    line-height: 1.3;
     transition: color 0.2s;
   }
-  .trending-item:hover .trending-link { color: #f48221; }
-  .trending-replies {
+  .ranked-item:hover .ranked-name { color: #3b82f6; } /* Electric Blue */
+  .ranked-count {
     font-family: 'Open Sans', sans-serif;
-    font-size: 0.8rem;
-    color: #797979;
-    margin-top: 2px;
-    display: block;
+    font-size: 0.85rem;
+    color: #94a3b8; /* Cool Gray */
   }
 
   /* Top Contributors */
@@ -117,7 +123,7 @@
     color: #797979;
   }
 
-  /* Join CTA Card */
+  /* Join CTA Card - Guest */
   .sidebar-join-card {
     background-color: rgba(244, 130, 33, 0.06);
     border: none;
@@ -177,44 +183,44 @@
 
 <aside class="forum-sidebar">
 
-  <!-- WIDGET 1: Trending Topics -->
+  <!-- WIDGET 1: Top Categories -->
   <section class="sidebar-widget">
-    <h3 class="widget-title">🔥 Trending Topics</h3>
-    <div class="trending-list">
-      <a href="#" class="trending-item">
-        <span class="trending-rank">1</span>
-        <div class="trending-content">
-          <span class="trending-link">AI Tools Roundup 2026</span>
-          <span class="trending-replies">142 replies</span>
+    <h3 class="widget-title">Top Categories</h3>
+    <div class="ranked-list">
+      <a href="#" class="ranked-item">
+        <div class="ranked-item-left">
+          <span class="ranked-badge">1</span>
+          <span class="ranked-name">Manufacturing</span>
         </div>
+        <span class="ranked-count">14k</span>
       </a>
-      <a href="#" class="trending-item">
-        <span class="trending-rank">2</span>
-        <div class="trending-content">
-          <span class="trending-link">Web3 in Africa</span>
-          <span class="trending-replies">98 replies</span>
+      <a href="#" class="ranked-item">
+        <div class="ranked-item-left">
+          <span class="ranked-badge">2</span>
+          <span class="ranked-name">Automation</span>
         </div>
+        <span class="ranked-count">9.2k</span>
       </a>
-      <a href="#" class="trending-item">
-        <span class="trending-rank">3</span>
-        <div class="trending-content">
-          <span class="trending-link">Python vs Go: The 2026 Verdict</span>
-          <span class="trending-replies">76 replies</span>
+      <a href="#" class="ranked-item">
+        <div class="ranked-item-left">
+          <span class="ranked-badge">3</span>
+          <span class="ranked-name">Energy & Utilities</span>
         </div>
+        <span class="ranked-count">8.5k</span>
       </a>
-      <a href="#" class="trending-item">
-        <span class="trending-rank">4</span>
-        <div class="trending-content">
-          <span class="trending-link">Best Laptops for Devs</span>
-          <span class="trending-replies">54 replies</span>
+      <a href="#" class="ranked-item">
+        <div class="ranked-item-left">
+          <span class="ranked-badge">4</span>
+          <span class="ranked-name">AI & Robotics</span>
         </div>
+        <span class="ranked-count">6.1k</span>
       </a>
-      <a href="#" class="trending-item">
-        <span class="trending-rank">5</span>
-        <div class="trending-content">
-          <span class="trending-link">Open Source Alternatives</span>
-          <span class="trending-replies">43 replies</span>
+      <a href="#" class="ranked-item">
+        <div class="ranked-item-left">
+          <span class="ranked-badge">5</span>
+          <span class="ranked-name">Logistics</span>
         </div>
+        <span class="ranked-count">4.8k</span>
       </a>
     </div>
   </section>
@@ -244,20 +250,6 @@
           <span class="contributor-posts">15 posts this week</span>
         </div>
       </div>
-      <div class="contributor-item">
-        <div class="contributor-avatar avatar-purple">S</div>
-        <div class="contributor-info">
-          <span class="contributor-name">Sarah B.</span>
-          <span class="contributor-posts">12 posts this week</span>
-        </div>
-      </div>
-      <div class="contributor-item">
-        <div class="contributor-avatar avatar-rose">D</div>
-        <div class="contributor-info">
-          <span class="contributor-name">David A.</span>
-          <span class="contributor-posts">9 posts this week</span>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -268,8 +260,8 @@
       Join the Spider Tech Community to start posting, ask questions, and connect with thousands of tech professionals.
     </p>
     <div class="join-btn-group">
-      <a href="#" class="join-btn-primary">Register Free</a>
-      <a href="#" class="join-btn-secondary">Sign In</a>
+      <a href="<?= BASE_URL ?>/forum/sign-up" class="join-btn-primary">Register Free</a>
+      <a href="<?= BASE_URL ?>/forum/sign-in" class="join-btn-secondary">Sign In</a>
     </div>
   </section>
 

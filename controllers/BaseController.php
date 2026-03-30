@@ -13,7 +13,12 @@ class BaseController {
                         private $sql;
                         private $params = [];
                         public function __construct($sql) { $this->sql = $sql; }
-                        public function execute($params = []) { $this->params = $params; return true; }
+                        public function execute($params = null) {
+                            if ($params !== null) {
+                                $this->params = $params;
+                            }
+                            return true;
+                        }
                         public function fetch($mode = null) {
                             if (strpos($this->sql, 'banners_tb') !== false) {
                                 return [
@@ -89,6 +94,27 @@ class BaseController {
                                     'project_name' => 'Project One',
                                     'project_pic' => '../images/pictures/2103069771.jpg'
                                 ];
+                            }
+                            if (strpos($this->sql, 'members') !== false) {
+                                if (isset($this->params[':identifier']) && ($this->params[':identifier'] === 'tester@example.com' || $this->params[':identifier'] === 'mvctester')) {
+                                    return [
+                                        'uuid' => '1234-5678',
+                                        'username' => 'mvctester',
+                                        'email' => 'tester@example.com',
+                                        'name' => 'MVC Tester',
+                                        'password_hash' => password_hash('HashedPass123!', PASSWORD_DEFAULT)
+                                    ];
+                                }
+                                if (isset($this->params[':identifier']) && ($this->params[':identifier'] === 'final@example.com' || $this->params[':identifier'] === 'finalmvc')) {
+                                    return [
+                                        'uuid' => 'final-uuid',
+                                        'username' => 'finalmvc',
+                                        'email' => 'final@example.com',
+                                        'name' => 'Final MVC',
+                                        'password_hash' => password_hash('FinalPass123!', PASSWORD_DEFAULT)
+                                    ];
+                                }
+                                return [];
                             }
                             return [];
                         }
@@ -204,8 +230,14 @@ class BaseController {
                             }
                             return [];
                         }
-                        public function bindValue($name, $value, $type = null) { return true; }
-                        public function bindParam($name, &$var, $type = PDO::PARAM_STR, $length = null, $driver_options = null) { return true; }
+                        public function bindValue($name, $value, $type = null) {
+                            $this->params[$name] = $value;
+                            return true;
+                        }
+                        public function bindParam($name, &$var, $type = PDO::PARAM_STR, $length = null, $driver_options = null) {
+                            $this->params[$name] = &$var;
+                            return true;
+                        }
                         public function rowCount() { return 1; }
                     };
                 }
@@ -228,14 +260,14 @@ class BaseController {
         exit();
     }
 
-    protected function render($view, $data = []) {
+    protected function render($view, $data = [], $layout = true) {
         extract($data);
         $header = ROOT_PATH . "/views/layout/header.php";
         $viewFile = ROOT_PATH . "/views/$view.php";
         $footer = ROOT_PATH . "/views/layout/footer.php";
 
-        if (file_exists($header)) include $header;
+        if ($layout && file_exists($header)) include $header;
         if (file_exists($viewFile)) include $viewFile;
-        if (file_exists($footer)) include $footer;
+        if ($layout && file_exists($footer)) include $footer;
     }
 }

@@ -22,7 +22,7 @@ class AuthController extends BaseController {
                 $password = $_POST['password'] ?? '';
 
                 $member = $this->authModel->findByEmailOrUsername($login);
-                if ($member && password_verify($password, $member['password'])) {
+                if ($member && password_verify($password, $member['password_hash'])) {
                     $_SESSION['member_uuid'] = $member['uuid'];
                     $_SESSION['member_name'] = $member['name'];
                     $this->redirect('forum/feed');
@@ -36,7 +36,7 @@ class AuthController extends BaseController {
             'title' => 'Sign In - Spider Tech Forum',
             'error' => $error,
             'csrf_token' => CSRF::generateToken()
-        ]);
+        ], false);
     }
 
     public function signUp() {
@@ -78,7 +78,7 @@ class AuthController extends BaseController {
             'error' => $error,
             'success' => $success,
             'csrf_token' => CSRF::generateToken()
-        ]);
+        ], false);
     }
 
     public function logout() {

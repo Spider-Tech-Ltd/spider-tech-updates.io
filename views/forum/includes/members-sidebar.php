@@ -361,7 +361,7 @@
           <small>Upvotes</small>
         </div>
       </div>
-      <a href="pages/forum/logout.php" class="profile-link">
+      <a href="<?= BASE_URL ?>/forum/logout" class="profile-link">
         Sign Out <span class="material-symbols-outlined">logout</span>
       </a>
     </div>
