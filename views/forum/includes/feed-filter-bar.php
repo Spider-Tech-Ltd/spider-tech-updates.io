@@ -124,29 +124,13 @@
     <div class="filter-pills-group" id="filterPills">
       <?php
       $current_cat = $_GET['category'] ?? 'all';
-<<<<<<< HEAD
-      $icon_map = [
-        'manufacturing' => '⚙️',
-        'automation'    => '🤖',
-        'energy'        => '⚡',
-        'ai'            => '🧠',
-        'logistics'     => '🚚',
-        'infrastructure' => '🏗️'
-      ];
-=======
       $base_route = isset($_SESSION['member_uuid']) ? '/forum/feed' : '/forum';
->>>>>>> 60f8372668cbbc4cd8ecedeb99846fece4ab34ef
       ?>
       <a href="<?= BASE_URL . $base_route ?>" class="filter-pill <?= $current_cat == 'all' ? 'active' : '' ?>">All Topics</a>
       <?php if (!empty($categories)): ?>
         <?php foreach ($categories as $cat): ?>
-<<<<<<< HEAD
-          <a href="<?= BASE_URL ?>/forum/feed?category=<?= urlencode($cat['name']) ?>" class="filter-pill <?= $current_cat == $cat['name'] ? 'active' : '' ?>">
-            <?= $icon_map[$cat['name']] ?? '📁' ?> <?= htmlspecialchars($cat['name']) ?>
-=======
-          <a href="<?= BASE_URL . $base_route ?>?category=<?= urlencode($cat['category']) ?>" class="filter-pill <?= $current_cat == $cat['category'] ? 'active' : '' ?>">
+          <a href="<?= BASE_URL . $base_route ?>?category=<?= urlencode($cat['name']) ?>" class="filter-pill <?= $current_cat == $cat['name'] ? 'active' : '' ?>">
             <?= htmlspecialchars($cat['name']) ?>
->>>>>>> 60f8372668cbbc4cd8ecedeb99846fece4ab34ef
           </a>
         <?php endforeach; ?>
       <?php endif; ?>
