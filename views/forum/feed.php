@@ -297,92 +297,122 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  .reply-card {
-    background: #f8f9fa;
-    border-radius: 12px;
-    padding: 12px 16px;
-    margin-bottom: 8px;
-    border: 1px solid transparent;
-  }
+/* ============================
+     PREMIUM THREADED REPLIES
+     ============================ */
+.replies-container {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f1f3f5;
+}
 
-  .reply-nested .reply-card {
-    background: #ffffff;
-    border: 1px solid #e9ecef;
-    box-shadow: none !important;
-  }
+.reply-card-wrapper {
+  position: relative;
+  margin-bottom: 4px;
+  transition: all 0.2s ease;
+}
 
-  .reply-card:hover {
-    border-color: #f48221;
-  }
+/* Vertical Thread Line */
+.reply-nested::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: -12px; /* Connects to previous */
+  bottom: 12px;
+  width: 2px;
+  background: #e9ecef;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
 
-  .reply-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
-  }
+.reply-card-wrapper:hover > .reply-nested::before {
+  background: #f48221; /* Highlight current branch */
+}
 
-  .reply-avatar {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
+.reply-card {
+  padding: 10px 0 10px 12px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+  background: transparent;
+}
 
-  .reply-author {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 0.8rem;
-    color: #111111;
-  }
+.reply-card:hover {
+  background: rgba(244, 130, 33, 0.02);
+}
 
-  .reply-time {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 0.7rem;
-    color: #797979;
-  }
+.reply-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
 
-  .reply-body {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 0.85rem;
-    color: #555555;
-    line-height: 1.5;
-    padding-left: 32px; /* indent past avatar */
-  }
+.reply-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
 
-  .reply-actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding-left: 32px;
-    margin-top: 8px;
-  }
+.reply-author {
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: #2d3436;
+}
 
-  .btn-mini-interact {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 0.7rem;
-    color: #797979;
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: color 0.2s;
-    padding: 0;
-  }
-  .btn-mini-interact:hover { color: #f48221; }
-  .btn-mini-interact .material-symbols-outlined { font-size: 15px; }
+.reply-time {
+  font-size: 0.75rem;
+  color: #a0a0a0;
+  font-weight: 400;
+}
 
-  /* Write Reply Input (Restored) */
-  .reply-input-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 12px;
-    position: relative;
-  }
+.reply-body {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #4a4a4a;
+  margin-left: 36px;
+  margin-bottom: 6px;
+}
+
+.reply-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: 36px;
+}
+
+.btn-mini-interact {
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #8c8c8c;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.btn-mini-interact:hover {
+  color: #f48221;
+}
+
+.btn-mini-interact .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.reply-input-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed #f1f3f5;
+  position: relative;
+}
 
   .reply-input-row img {
     width: 32px;
@@ -626,16 +656,16 @@
                 <div class="reply-thread-wrapper" x-show="expanded" x-collapse>
                   <div class="replies-container">
                     <template x-for="reply in threadedReplies" :key="reply.uuid">
-                      <div class="reply-card-wrapper" :style="`margin-left: ${Math.min(reply.depth * 24, 120)}px`" :class="reply.depth > 0 ? 'reply-nested' : ''">
+                      <div class="reply-card-wrapper" :style="`margin-left: ${Math.min(reply.depth * 32, 160)}px`" :class="reply.depth > 0 ? 'reply-nested' : ''">
                         <div class="reply-card">
                           <div class="reply-header">
-                            <img :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(reply.author_name)}&background=f48221&color=fff&size=24`" class="reply-avatar" alt="Avatar">
+                            <img :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(reply.author_name)}&background=f48221&color=fff&size=26`" class="reply-avatar" alt="Avatar">
                             <span class="reply-author" x-text="reply.author_name"></span>
                             <span class="reply-time" x-text="reply.created_at.includes(' ') ? reply.created_at.split(' ')[1].substring(0, 5) : reply.created_at"></span>
                           </div>
                           <div class="reply-body" x-text="reply.content"></div>
                           <div class="reply-actions">
-                            <button class="btn-mini-interact"><span class="material-symbols-outlined">thumb_up</span> 0</button>
+                            <button class="btn-mini-interact" title="Upvote"><span class="material-symbols-outlined">thumb_up</span> 0</button>
                             <button class="btn-mini-interact" @click="setReplyTo(reply.uuid, reply.author_name)">
                               <span class="material-symbols-outlined">reply</span> Reply
                             </button>
