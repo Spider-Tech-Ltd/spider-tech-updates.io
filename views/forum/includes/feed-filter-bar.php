@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Feed Filter Bar (Phase 2)
  * Horizontally scrollable category pill filter + Sort by dropdown.
@@ -25,17 +24,12 @@
     align-items: center;
     gap: 8px;
     overflow-x: auto;
-    padding-bottom: 2px;
-    /* space for scrollbar */
+    padding-bottom: 2px; /* space for scrollbar */
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    /* Firefox */
+    scrollbar-width: none; /* Firefox */
     flex: 1;
   }
-
-  .filter-pills-group::-webkit-scrollbar {
-    display: none;
-  }
+  .filter-pills-group::-webkit-scrollbar { display: none; }
 
   .filter-pill {
     font-family: 'Poppins', sans-serif;
@@ -107,13 +101,8 @@
   }
 
   @media (max-width: 767px) {
-    .filter-sort-label {
-      display: none;
-    }
-
-    .filter-bar-inner {
-      gap: 10px;
-    }
+    .filter-sort-label { display: none; }
+    .filter-bar-inner { gap: 10px; }
   }
 </style>
 
@@ -129,7 +118,7 @@
       <a href="<?= BASE_URL . $base_route ?>" class="filter-pill <?= $current_cat == 'all' ? 'active' : '' ?>">All Topics</a>
       <?php if (!empty($categories)): ?>
         <?php foreach ($categories as $cat): ?>
-          <a href="<?= BASE_URL . $base_route ?>?category=<?= urlencode($cat['name']) ?>" class="filter-pill <?= $current_cat == $cat['name'] ? 'active' : '' ?>">
+          <a href="<?= BASE_URL . $base_route ?>?category=<?= urlencode($cat['category']) ?>" class="filter-pill <?= $current_cat == $cat['category'] ? 'active' : '' ?>">
             <?= htmlspecialchars($cat['name']) ?>
           </a>
         <?php endforeach; ?>

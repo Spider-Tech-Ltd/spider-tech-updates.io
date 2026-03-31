@@ -3,6 +3,9 @@ class BaseController {
     protected $db;
 
     public function __construct() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         $database = new Database();
         $this->db = $database->getConnection();
         if ($this->db === null) {
@@ -65,6 +68,18 @@ class BaseController {
                             return [];
                         }
                         public function fetchAll($mode = null) {
+                            if (strpos($this->sql, 'feeds') !== false) {
+                                $mock_feeds = [
+                                    ['id' => 1, 'uuid' => 'feed-uuid-1', 'title' => 'The Future of AI in African Tech Startups', 'content' => 'Content for AI in Africa...', 'author_name' => 'James K.', 'category_name' => 'AI & Robotics', 'created_at' => date('Y-m-d H:i:s'), 'upvotes' => 34, 'replies_count' => 1, 'is_pinned' => 0, 'is_hot' => 0, 'is_liked' => 0, 'cat_slug' => 'ai'],
+                                    ['id' => 2, 'uuid' => 'feed-uuid-2', 'title' => 'Industrial Robotics Evolution', 'content' => 'Content for robotics...', 'author_name' => 'Alice M.', 'category_name' => 'Manufacturing', 'created_at' => date('Y-m-d H:i:s'), 'upvotes' => 12, 'replies_count' => 0, 'is_pinned' => 0, 'is_hot' => 0, 'is_liked' => 0, 'cat_slug' => 'manufacturing']
+                                ];
+                                if (isset($this->params[':cat'])) {
+                                    return array_values(array_filter($mock_feeds, function($f) {
+                                        return $f['cat_slug'] === $this->params[':cat'] || $f['uuid'] === $this->params[':cat'];
+                                    }));
+                                }
+                                return $mock_feeds;
+                            }
                             if (strpos($this->sql, 'feed_replies') !== false) {
                                 return [['uuid' => 'reply-uuid-1', 'content' => 'Mock reply content', 'author_name' => 'Sarah B.', 'created_at' => date('Y-m-d H:i:s')]];
                             }
@@ -99,18 +114,6 @@ class BaseController {
                                     ['id' => 6, 'uuid' => 'cat-6', 'name' => 'Infrastructure', 'category' => 'infrastructure', 'icon' => 'architecture', 'topic_count' => '3.2k', 'description' => 'Industrial buildings and large projects.']
                                 ];
                             }
-                            if (strpos($this->sql, 'feeds') !== false) {
-                                $mock_feeds = [
-                                    ['id' => 1, 'uuid' => 'feed-uuid-1', 'title' => 'The Future of AI in African Tech Startups', 'content' => 'Content for AI in Africa...', 'author_name' => 'James K.', 'category_name' => 'Startups', 'created_at' => date('Y-m-d H:i:s'), 'upvotes' => 34, 'replies_count' => 1, 'is_pinned' => 0, 'is_hot' => 0, 'is_liked' => 0, 'cat_slug' => 'ai'],
-                                    ['id' => 2, 'uuid' => 'feed-uuid-2', 'title' => 'Industrial Robotics Evolution', 'content' => 'Content for robotics...', 'author_name' => 'Alice M.', 'category_name' => 'Manufacturing', 'created_at' => date('Y-m-d H:i:s'), 'upvotes' => 12, 'replies_count' => 0, 'is_pinned' => 0, 'is_hot' => 0, 'is_liked' => 0, 'cat_slug' => 'manufacturing']
-                                ];
-                                if (isset($this->params[':cat'])) {
-                                    return array_values(array_filter($mock_feeds, function($f) {
-                                        return $f['cat_slug'] === $this->params[':cat'];
-                                    }));
-                                }
-                                return $mock_feeds;
-                            }
                             return [];
                         }
                         public function bindValue($name, $value, $type = null) {
@@ -132,9 +135,6 @@ class BaseController {
     }
 
     protected function isLoggedIn() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
         return isset($_SESSION['member_uuid']);
     }
 
