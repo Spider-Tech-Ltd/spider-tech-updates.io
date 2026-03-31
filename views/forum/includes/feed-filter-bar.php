@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Feed Filter Bar (Phase 2)
  * Horizontally scrollable category pill filter + Sort by dropdown.
@@ -24,12 +25,17 @@
     align-items: center;
     gap: 8px;
     overflow-x: auto;
-    padding-bottom: 2px; /* space for scrollbar */
+    padding-bottom: 2px;
+    /* space for scrollbar */
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: none;
+    /* Firefox */
     flex: 1;
   }
-  .filter-pills-group::-webkit-scrollbar { display: none; }
+
+  .filter-pills-group::-webkit-scrollbar {
+    display: none;
+  }
 
   .filter-pill {
     font-family: 'Poppins', sans-serif;
@@ -101,8 +107,13 @@
   }
 
   @media (max-width: 767px) {
-    .filter-sort-label { display: none; }
-    .filter-bar-inner { gap: 10px; }
+    .filter-sort-label {
+      display: none;
+    }
+
+    .filter-bar-inner {
+      gap: 10px;
+    }
   }
 </style>
 
@@ -114,19 +125,19 @@
       <?php
       $current_cat = $_GET['category'] ?? 'all';
       $icon_map = [
-          'manufacturing' => '⚙️',
-          'automation'    => '🤖',
-          'energy'        => '⚡',
-          'ai'            => '🧠',
-          'logistics'     => '🚚',
-          'infrastructure'=> '🏗️'
+        'manufacturing' => '⚙️',
+        'automation'    => '🤖',
+        'energy'        => '⚡',
+        'ai'            => '🧠',
+        'logistics'     => '🚚',
+        'infrastructure' => '🏗️'
       ];
       ?>
       <a href="<?= BASE_URL ?>/forum/feed" class="filter-pill <?= $current_cat == 'all' ? 'active' : '' ?>">All Topics</a>
       <?php if (!empty($categories)): ?>
         <?php foreach ($categories as $cat): ?>
-          <a href="<?= BASE_URL ?>/forum/feed?category=<?= urlencode($cat['category']) ?>" class="filter-pill <?= $current_cat == $cat['category'] ? 'active' : '' ?>">
-            <?= $icon_map[$cat['category']] ?? '📁' ?> <?= htmlspecialchars($cat['name']) ?>
+          <a href="<?= BASE_URL ?>/forum/feed?category=<?= urlencode($cat['name']) ?>" class="filter-pill <?= $current_cat == $cat['name'] ? 'active' : '' ?>">
+            <?= $icon_map[$cat['name']] ?? '📁' ?> <?= htmlspecialchars($cat['name']) ?>
           </a>
         <?php endforeach; ?>
       <?php endif; ?>
