@@ -1,14 +1,17 @@
 <?php
 
-class FeedController extends BaseController {
+class FeedController extends BaseController
+{
     private $forumModel;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->forumModel = new ForumModel($this->db);
     }
 
-    public function like() {
+    public function like()
+    {
         if (!$this->isLoggedIn()) {
             echo json_encode(['success' => false, 'message' => 'Please sign in to upvote.']);
             return;
@@ -43,7 +46,8 @@ class FeedController extends BaseController {
         }
     }
 
-    public function reply() {
+    public function reply()
+    {
         if (!$this->isLoggedIn()) {
             echo json_encode(['success' => false, 'message' => 'Please sign in to reply.']);
             return;
@@ -54,7 +58,7 @@ class FeedController extends BaseController {
             return;
         }
 
-        $feed_uuid = $_POST['feed_uuid'] ?? '';
+        $feed_uuid = $_POST['uuid'] ?? '';
         $content = $_POST['content'] ?? '';
         $member_uuid = $_SESSION['member_uuid'];
 

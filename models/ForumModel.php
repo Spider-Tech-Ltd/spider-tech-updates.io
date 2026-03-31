@@ -14,21 +14,24 @@ class ForumModel {
     }
 
     public function getFeeds($limit = 10, $member_uuid = null, $category_filter = null) {
-        $where = "WHERE f.status = 'active'";
+        $where = "WHERE f.status IN ('active', 'published')";
         $params = [':member_uuid' => $member_uuid];
 
         if ($category_filter && $category_filter !== 'all') {
-            $where .= " AND (c.category = :cat OR c.uuid = :cat)";
+            $where .= " AND (c.slug = :cat OR c.uuid = :cat)";
             $params[':cat'] = $category_filter;
         }
 
-        $sql = "SELECT f.*, m.name as author_name, m.username as author_username, c.name as category_name,
+        $sql = "SELECT f.*, 
+                COALESCE(m.name, 'Anonymous') as author_name, 
+                COALESCE(m.username, 'anonymous') as author_username, 
+                COALESCE(c.name, 'General') as category_name,
                 (SELECT COUNT(*) FROM feed_likes WHERE feed_uuid = f.uuid) as upvotes,
                 (SELECT COUNT(*) FROM feed_replies WHERE feed_uuid = f.uuid) as replies_count,
                 (SELECT COUNT(*) FROM feed_likes WHERE feed_uuid = f.uuid AND member_id = :member_uuid) as is_liked
                 FROM feeds f
-                JOIN members m ON f.member_id = m.uuid
-                JOIN categories c ON f.category_uuid = c.uuid
+                LEFT JOIN members m ON f.member_id = m.id
+                LEFT JOIN categories c ON f.category_uuid = c.uuid
                 $where
                 ORDER BY f.created_at DESC LIMIT :limit";
 
@@ -48,10 +51,12 @@ class ForumModel {
     }
 
     public function getReplies($feed_uuid) {
-        $sql = "SELECT r.*, m.name as author_name, m.username as author_username
+        $sql = "SELECT r.*, 
+                COALESCE(m.name, 'Anonymous') as author_name, 
+                COALESCE(m.username, 'anonymous') as author_username
                 FROM feed_replies r
-                JOIN members m ON r.member_id = m.uuid
-                WHERE r.feed_uuid = :feed_uuid AND r.status = 'active'
+                LEFT JOIN members m ON r.member_id = m.id
+                WHERE r.feed_uuid = :feed_uuid
                 ORDER BY r.created_at ASC";
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':feed_uuid', $feed_uuid);

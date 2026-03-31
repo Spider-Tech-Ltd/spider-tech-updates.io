@@ -41,7 +41,7 @@
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
     font-size: 0.78rem;
-    padding: 7px 18px;
+    padding: 8px 22px;
     border-radius: 50px;
     border: 1.5px solid #e9ecef;
     background-color: #ffffff;
@@ -50,7 +50,14 @@
     cursor: pointer;
     transition: all 0.2s ease;
     text-decoration: none !important;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .filter-pill .material-symbols-outlined {
+    font-size: 1.05rem;
+    font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 20;
   }
 
   .filter-pill:hover {
@@ -126,11 +133,16 @@
       $current_cat = $_GET['category'] ?? 'all';
       $base_route = isset($_SESSION['member_uuid']) ? '/forum/feed' : '/forum';
       ?>
-      <a href="<?= BASE_URL . $base_route ?>" class="filter-pill <?= $current_cat == 'all' ? 'active' : '' ?>">All Topics</a>
+      <a href="<?= BASE_URL . $base_route ?>" class="filter-pill <?= $current_cat == 'all' ? 'active' : '' ?>">
+        <span class="material-symbols-outlined">grid_view</span>
+        All Topics
+      </a>
       <?php if (!empty($categories)): ?>
         <?php foreach ($categories as $cat): ?>
-          <a href="<?= BASE_URL . $base_route ?>?category=<?= urlencode($cat['name']) ?>" class="filter-pill <?= $current_cat == $cat['name'] ? 'active' : '' ?>">
-            <?= htmlspecialchars($cat['name']) ?>
+          <?php $cat_name = $cat['name']; ?>
+          <a href="<?= BASE_URL . $base_route ?>?category=<?= urlencode($cat_name) ?>" class="filter-pill <?= $current_cat == $cat_name ? 'active' : '' ?>">
+            <span class="material-symbols-outlined"><?= htmlspecialchars($cat['icon'] ?? 'label') ?></span>
+            <?= htmlspecialchars($cat_name) ?>
           </a>
         <?php endforeach; ?>
       <?php endif; ?>
