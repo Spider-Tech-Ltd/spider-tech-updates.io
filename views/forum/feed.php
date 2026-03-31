@@ -1,12 +1,11 @@
 <?php
-
 /**
  * Member Feed View
  */
 ?>
 <!-- Google Fonts for Forum styling & Material Icons -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 
 <style>
   /* ============================
@@ -98,25 +97,11 @@
     white-space: nowrap;
   }
 
-  .category-badge.cat-energy {
-    background-color: #ca8a04;
-  }
-
-  .category-badge.cat-automation {
-    background-color: #0284c7;
-  }
-
-  .category-badge.cat-ai {
-    background-color: #7c3aed;
-  }
-
-  .category-badge.cat-logistics {
-    background-color: #059669;
-  }
-
-  .category-badge.cat-infra {
-    background-color: #374151;
-  }
+  .category-badge.cat-energy     { background-color: #ca8a04; }
+  .category-badge.cat-automation { background-color: #0284c7; }
+  .category-badge.cat-ai         { background-color: #7c3aed; }
+  .category-badge.cat-logistics  { background-color: #059669; }
+  .category-badge.cat-infra      { background-color: #374151; }
 
   .badge-hot-label {
     display: inline-flex;
@@ -251,12 +236,10 @@
     color: #f48221;
     background-color: rgba(244, 130, 33, 0.08);
   }
-
   .btn-upvote.active {
     color: #f48221;
     background-color: rgba(244, 130, 33, 0.1);
   }
-
   .btn-upvote.active .material-symbols-outlined {
     font-variation-settings: 'FILL' 1;
     transform: scale(1.2);
@@ -268,7 +251,6 @@
     color: #f48221;
     background-color: rgba(244, 130, 33, 0.08);
   }
-
   .btn-reply:hover span:not(.material-symbols-outlined) {
     text-decoration: underline;
     text-decoration-color: #f48221;
@@ -279,11 +261,9 @@
     color: #f59e0b;
     background-color: rgba(245, 158, 11, 0.08);
   }
-
   .btn-bookmark.bookmarked {
     color: #f59e0b;
   }
-
   .btn-bookmark.bookmarked .material-symbols-outlined {
     font-variation-settings: 'FILL' 1;
     transform: scale(1.1);
@@ -291,9 +271,7 @@
   }
 
   /* spacer pushes bookmark to far right */
-  .interact-spacer {
-    flex: 1;
-  }
+  .interact-spacer { flex: 1; }
 
   /* ============================
      PHASE 6: INLINE REPLY THREADS
@@ -302,8 +280,7 @@
     display: none;
     margin-top: 16px;
     padding: 16px 20px;
-    background-color: #f3f4f5;
-    /* surface-container-low */
+    background-color: #f3f4f5; /* surface-container-low */
     border-radius: 12px;
     border-left: 2px solid #e9ecef;
     animation: fadeIn 0.3s ease;
@@ -314,15 +291,8 @@
   }
 
   @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-5px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   .reply-card {
@@ -369,8 +339,7 @@
     font-size: 0.85rem;
     color: #555555;
     line-height: 1.5;
-    padding-left: 32px;
-    /* indent past avatar */
+    padding-left: 32px; /* indent past avatar */
   }
 
   .reply-actions {
@@ -395,14 +364,8 @@
     transition: color 0.2s;
     padding: 0;
   }
-
-  .btn-mini-interact:hover {
-    color: #f48221;
-  }
-
-  .btn-mini-interact .material-symbols-outlined {
-    font-size: 15px;
-  }
+  .btn-mini-interact:hover { color: #f48221; }
+  .btn-mini-interact .material-symbols-outlined { font-size: 15px; }
 
   /* Write Reply Input */
   .reply-input-row {
@@ -429,7 +392,7 @@
     font-family: 'Open Sans', sans-serif;
     font-size: 0.85rem;
     color: #111111;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
     transition: border-color 0.2s, box-shadow 0.2s;
   }
 
@@ -456,32 +419,21 @@
     cursor: pointer;
     transition: background-color 0.2s, transform 0.1s;
   }
-
-  .btn-submit-reply:hover {
-    background-color: #db7015;
-  }
-
-  .btn-submit-reply:active {
-    transform: translateY(-50%) scale(0.95);
-  }
-
-  .btn-submit-reply .material-symbols-outlined {
-    font-size: 16px;
-  }
+  .btn-submit-reply:hover { background-color: #db7015; }
+  .btn-submit-reply:active { transform: translateY(-50%) scale(0.95); }
+  .btn-submit-reply .material-symbols-outlined { font-size: 16px; }
 
   /* ============================
      MOBILE FAB
      ============================ */
   .member-fab-mobile {
-    display: none;
-    /* hidden on desktop */
+    display: none; /* hidden on desktop */
     position: fixed;
     bottom: 24px;
     right: 24px;
     width: 56px;
     height: 56px;
-    background-color: #f48221;
-    /* Primary Orange */
+    background-color: #f48221; /* Primary Orange */
     color: #ffffff;
     border-radius: 50%;
     align-items: center;
@@ -489,10 +441,7 @@
     box-shadow: 0 4px 14px rgba(244, 130, 33, 0.4);
     z-index: 1000;
   }
-
-  .member-fab-mobile .material-symbols-outlined {
-    font-size: 24px;
-  }
+  .member-fab-mobile .material-symbols-outlined { font-size: 24px; }
 
   .member-fab-pulse-ring {
     position: absolute;
@@ -503,16 +452,8 @@
   }
 
   @keyframes fabPulse {
-    0% {
-      transform: scale(1);
-      opacity: 0.8;
-    }
-
-    20%,
-    100% {
-      transform: scale(1.6);
-      opacity: 0;
-    }
+    0% { transform: scale(1); opacity: 0.8; }
+    20%, 100% { transform: scale(1.6); opacity: 0; }
   }
 
   /* ============================
@@ -554,18 +495,11 @@
   }
 
   @media (max-width: 576px) {
-    .discussion-card {
-      padding: 18px;
-    }
-
-    .card-title {
-      font-size: 0.95rem;
-    }
+    .discussion-card { padding: 18px; }
+    .card-title { font-size: 0.95rem; }
 
     /* Give buttons more breathing room on mobile */
-    .card-interaction-bar {
-      gap: 16px;
-    }
+    .card-interaction-bar { gap: 16px; }
 
     /* Convert stat counts to badges on mobile */
     .btn-interact {
@@ -573,14 +507,12 @@
       padding: 6px;
       margin-right: 12px;
     }
-
     .btn-interact span:not(.material-symbols-outlined) {
       display: flex;
       position: absolute;
       top: -4px;
       right: -14px;
-      background-color: #f48221;
-      /* primary orange */
+      background-color: #f48221; /* primary orange */
       color: #ffffff;
       font-size: 0.6rem;
       padding: 2px 5px;
@@ -594,17 +526,11 @@
     }
 
     .btn-interact:hover span:not(.material-symbols-outlined) {
-      background-color: #db7015;
-      /* darker orange for active/hover */
+      background-color: #db7015; /* darker orange for active/hover */
     }
 
-    .author-time {
-      display: none;
-    }
-
-    .member-fab-mobile {
-      display: flex;
-    }
+    .author-time { display: none; }
+    .member-fab-mobile { display: flex; }
   }
 </style>
 
@@ -730,69 +656,69 @@
 </a>
 
 <script>
-  function toggleReplies(btn) {
+function toggleReplies(btn) {
     const card = btn.closest('.discussion-card');
     card.classList.toggle('expanded');
-  }
+}
 
-  function toggleUpvote(uuid, btn) {
+function toggleUpvote(uuid, btn) {
     $.ajax({
-      url: '<?= BASE_URL ?>/forum/feed/like',
-      type: 'POST',
-      data: {
-        feed_uuid: uuid,
-        csrf_token: '<?= CSRF::generateToken() ?>'
-      },
-      dataType: 'json',
-      success: function(response) {
-        if (response.success) {
-          const countSpan = btn.querySelector('.vote-count');
-          countSpan.innerText = response.upvotes;
-          if (response.is_liked) {
-            btn.classList.add('active');
-          } else {
-            btn.classList.remove('active');
-          }
-        } else {
-          alert(response.message);
-          if (response.message.includes('sign in')) {
-            window.location.href = '<?= BASE_URL ?>/forum/sign-in';
-          }
+        url: '<?= BASE_URL ?>/forum/feed/like',
+        type: 'POST',
+        data: {
+            feed_uuid: uuid,
+            csrf_token: '<?= CSRF::generateToken() ?>'
+        },
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                const countSpan = btn.querySelector('.vote-count');
+                countSpan.innerText = response.upvotes;
+                if (response.is_liked) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            } else {
+                alert(response.message);
+                if (response.message.includes('sign in')) {
+                    window.location.href = '<?= BASE_URL ?>/forum/sign-in';
+                }
+            }
         }
-      }
     });
-  }
+}
 
-  function submitReply(uuid, btn) {
+function submitReply(uuid, btn) {
     const input = btn.previousElementSibling;
     const content = input.value.trim();
     if (!content) return;
 
     btn.disabled = true;
     $.ajax({
-      url: '<?= BASE_URL ?>/forum/feed/reply',
-      type: 'POST',
-      data: {
-        feed_uuid: uuid,
-        content: content,
-        csrf_token: '<?= CSRF::generateToken() ?>'
-      },
-      dataType: 'json',
-      success: function(response) {
-        if (response.success) {
-          input.value = '';
-          // Simple way: reload to see new reply or append it manually
-          location.reload();
-        } else {
-          alert(response.message);
-          if (response.message.includes('sign in')) {
-            window.location.href = '<?= BASE_URL ?>/forum/sign-in';
-          }
+        url: '<?= BASE_URL ?>/forum/feed/reply',
+        type: 'POST',
+        data: {
+            feed_uuid: uuid,
+            content: content,
+            csrf_token: '<?= CSRF::generateToken() ?>'
+        },
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                input.value = '';
+                // Simple way: reload to see new reply or append it manually
+                location.reload();
+            } else {
+                alert(response.message);
+                if (response.message.includes('sign in')) {
+                    window.location.href = '<?= BASE_URL ?>/forum/sign-in';
+                }
+            }
+        },
+        complete: function() {
+            btn.disabled = false;
         }
-      },
-      complete: function() {
-        btn.disabled = false;
-      }
     });
-  }
+}
 </script>
