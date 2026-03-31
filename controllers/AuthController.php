@@ -23,6 +23,7 @@ class AuthController extends BaseController {
 
                 $member = $this->authModel->findByEmailOrUsername($login);
                 if ($member && password_verify($password, $member['password_hash'])) {
+                    $_SESSION['member_id'] = $member['id'];
                     $_SESSION['member_uuid'] = $member['uuid'];
                     $_SESSION['member_name'] = $member['name'];
                     $this->redirect('forum/feed');
@@ -63,9 +64,15 @@ class AuthController extends BaseController {
                 } else {
                     $uuid = $this->authModel->register($username, $email, $password, $name);
                     if ($uuid) {
-                        $_SESSION['member_uuid'] = $uuid;
-                        $_SESSION['member_name'] = $name;
-                        $this->redirect('forum/feed');
+                        $member = $this->authModel->getMemberByUUID($uuid);
+                        if ($member) {
+                            $_SESSION['member_id'] = $member['id'];
+                            $_SESSION['member_uuid'] = $uuid;
+                            $_SESSION['member_name'] = $name;
+                            $this->redirect('forum/feed');
+                        } else {
+                            $error = "Registration succeeded but session could not be established.";
+                        }
                     } else {
                         $error = "Registration failed. Please try again.";
                     }

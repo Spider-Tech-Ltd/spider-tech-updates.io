@@ -128,7 +128,8 @@
       </a>
       <?php if (!empty($categories)): ?>
         <?php foreach ($categories as $cat): ?>
-          <a href="<?= BASE_URL . $base_route ?>?category=<?= urlencode($cat['category']) ?>" class="filter-pill <?= $current_cat == $cat['category'] ? 'active' : '' ?>">
+          <a href="<?= BASE_URL . $base_route ?>?category=<?= urlencode($cat['slug']) ?>" class="filter-pill <?= $current_cat == $cat['slug'] ? 'active' : '' ?>">
+            <span class="material-symbols-outlined"><?= htmlspecialchars($cat['icon'] ?? 'label') ?></span>
             <?= htmlspecialchars($cat['name']) ?>
           </a>
         <?php endforeach; ?>

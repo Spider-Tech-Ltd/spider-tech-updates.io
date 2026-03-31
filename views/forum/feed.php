@@ -5,6 +5,8 @@
 ?>
 <!-- Google Fonts for Forum styling & Material Icons -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet"/>
+<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 
 <style>
@@ -296,15 +298,21 @@
   }
 
   .reply-card {
-    padding-bottom: 12px;
-    margin-bottom: 12px;
-    border-bottom: 1px solid #e1e3e4;
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    border: 1px solid transparent;
   }
 
-  .reply-card:last-of-type {
-    border-bottom: none;
-    margin-bottom: 16px;
-    padding-bottom: 0;
+  .reply-nested .reply-card {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    box-shadow: none !important;
+  }
+
+  .reply-card:hover {
+    border-color: #f48221;
   }
 
   .reply-header {
@@ -367,7 +375,7 @@
   .btn-mini-interact:hover { color: #f48221; }
   .btn-mini-interact .material-symbols-outlined { font-size: 15px; }
 
-  /* Write Reply Input */
+  /* Write Reply Input (Restored) */
   .reply-input-row {
     display: flex;
     align-items: center;
@@ -402,26 +410,42 @@
     box-shadow: 0 0 0 3px rgba(244, 130, 33, 0.1);
   }
 
+  .reply-to-tag {
+    position: absolute;
+    top: -20px;
+    left: 44px;
+    background-color: #fff7ed;
+    color: #f48221;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    z-index: 5;
+  }
+
   .btn-submit-reply {
     position: absolute;
-    right: 6px;
+    right: 8px;
     top: 50%;
     transform: translateY(-50%);
     background-color: #f48221;
     color: #ffffff;
     border: none;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
+    transition: all 0.2s;
   }
-  .btn-submit-reply:hover { background-color: #db7015; }
-  .btn-submit-reply:active { transform: translateY(-50%) scale(0.95); }
-  .btn-submit-reply .material-symbols-outlined { font-size: 16px; }
+  .btn-submit-reply:hover { background-color: #db7015; transform: translateY(-50%) scale(1.05); }
+  .btn-submit-reply:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-submit-reply .material-symbols-outlined { font-size: 18px; }
 
   /* ============================
      MOBILE FAB
@@ -554,7 +578,9 @@
         <div class="discussion-card-list" id="discussionFeed">
           <?php if (!empty($feeds)): ?>
             <?php foreach ($feeds as $feed): ?>
-              <div class="discussion-card <?= ($feed['is_pinned'] ?? false) ? 'is-pinned' : ''; ?> <?= ($feed['is_hot'] ?? false) ? 'is-hot' : ''; ?>" data-uuid="<?= $feed['uuid']; ?>">
+              <div class="discussion-card <?= ($feed['is_pinned'] ?? false) ? 'is-pinned' : ''; ?> <?= ($feed['is_hot'] ?? false) ? 'is-hot' : ''; ?>" 
+                   x-data='feedCard("<?= $feed['uuid']; ?>", <?= (int)($feed['upvotes'] ?? 0); ?>, <?= ($feed['is_liked'] ?? false) ? "true" : "false"; ?>, <?= htmlspecialchars(json_encode($feed['replies'] ?? []), ENT_QUOTES, "UTF-8"); ?>)'
+                   :class="{ 'expanded': expanded }">
                 <div class="card-top-row">
                   <span class="category-badge"><?= htmlspecialchars($feed['category_name'] ?? 'General'); ?></span>
                   <?php if ($feed['is_pinned'] ?? false): ?>
@@ -577,13 +603,18 @@
                   <span class="author-time"><?= date('M j, Y', strtotime($feed['created_at'])); ?></span>
                 </div>
                 <div class="card-interaction-bar">
-                  <button class="btn-interact btn-upvote <?= ($feed['is_liked'] ?? false) ? 'active' : ''; ?>" title="Upvote" onclick="toggleUpvote('<?= $feed['uuid']; ?>', this)">
-                    <span class="material-symbols-outlined">thumb_up</span>
-                    <span class="vote-count"><?= $feed['upvotes'] ?? 0; ?></span>
+                  <button class="btn-interact btn-upvote" 
+                          :class="{ 'active': isLiked }" 
+                          title="Upvote" 
+                          @click="toggleUpvote()">
+                    <span class="material-symbols-outlined" :style="isLiked ? 'font-variation-settings: \'FILL\' 1;' : ''">thumb_up</span>
+                    <span class="vote-count" x-text="upvotes"></span>
                   </button>
-                  <button class="btn-interact btn-reply" title="Replies" onclick="toggleReplies(this)">
-                    <span class="material-symbols-outlined">chat_bubble</span>
-                    <span class="reply-count"><?= count($feed['replies'] ?? []); ?></span>
+                  <button class="btn-interact btn-reply" 
+                          title="Replies" 
+                          @click="expanded = !expanded">
+                    <span class="material-symbols-outlined" :style="expanded ? 'font-variation-settings: \'FILL\' 1;' : ''">chat_bubble</span>
+                    <span class="reply-count" x-text="replies.length"></span>
                   </button>
                   <div class="interact-spacer"></div>
                   <button class="btn-interact btn-bookmark" title="Bookmark">
@@ -591,34 +622,46 @@
                   </button>
                 </div>
 
-                <!-- PHASE 6: COLLAPSIBLE REPLY THREAD -->
-                <div class="reply-thread-wrapper">
+                <!-- COLLAPSIBLE REPLY THREAD -->
+                <div class="reply-thread-wrapper" x-show="expanded" x-collapse>
                   <div class="replies-container">
-                    <?php if (!empty($feed['replies'])): ?>
-                      <?php foreach ($feed['replies'] as $reply): ?>
+                    <template x-for="reply in threadedReplies" :key="reply.uuid">
+                      <div class="reply-card-wrapper" :style="`margin-left: ${Math.min(reply.depth * 24, 120)}px`" :class="reply.depth > 0 ? 'reply-nested' : ''">
                         <div class="reply-card">
                           <div class="reply-header">
-                            <img src="https://ui-avatars.com/api/?name=<?= urlencode($reply['author_name']); ?>&background=f48221&color=fff&size=24" class="reply-avatar" alt="Avatar">
-                            <span class="reply-author"><?= htmlspecialchars($reply['author_name']); ?></span>
-                            <span class="reply-time"><?= date('H:i', strtotime($reply['created_at'])); ?></span>
+                            <img :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(reply.author_name)}&background=f48221&color=fff&size=24`" class="reply-avatar" alt="Avatar">
+                            <span class="reply-author" x-text="reply.author_name"></span>
+                            <span class="reply-time" x-text="reply.created_at.includes(' ') ? reply.created_at.split(' ')[1].substring(0, 5) : reply.created_at"></span>
                           </div>
-                          <div class="reply-body">
-                            <?= htmlspecialchars($reply['content']); ?>
-                          </div>
+                          <div class="reply-body" x-text="reply.content"></div>
                           <div class="reply-actions">
                             <button class="btn-mini-interact"><span class="material-symbols-outlined">thumb_up</span> 0</button>
-                            <button class="btn-mini-interact"><span class="material-symbols-outlined">reply</span> Reply</button>
+                            <button class="btn-mini-interact" @click="setReplyTo(reply.uuid, reply.author_name)">
+                              <span class="material-symbols-outlined">reply</span> Reply
+                            </button>
                           </div>
                         </div>
-                      <?php endforeach; ?>
-                    <?php endif; ?>
+                      </div>
+                    </template>
                   </div>
-                  <!-- Inline Reply Input -->
+                  <!-- Inline Reply Input (Restored) -->
                   <div class="reply-input-row">
+                    <div class="reply-to-tag" x-show="parent_uuid" x-transition>
+                      <span>Replying to <em x-text="replyingToName"></em></span>
+                      <span class="material-symbols-outlined" style="font-size:12px; cursor:pointer" @click="cancelReplyTo()">close</span>
+                    </div>
                     <img src="https://ui-avatars.com/api/?name=<?= urlencode($_SESSION['member_name'] ?? 'You'); ?>&background=f48221&color=fff&size=32" alt="Me">
-                    <input type="text" class="reply-input-field" placeholder="Write a reply...">
-                    <button class="btn-submit-reply" title="Post Reply" onclick="submitReply('<?= $feed['uuid']; ?>', this)">
-                      <span class="material-symbols-outlined">arrow_upward</span>
+                    <input type="text" 
+                           class="reply-input-field" 
+                           :placeholder="parent_uuid ? `Reply to ${replyingToName}...` : 'Write a reply...'" 
+                           x-model="newReplyContent" 
+                           @keydown.enter="submitReply()">
+                    <button class="btn-submit-reply" 
+                            title="Post Reply" 
+                            @click="submitReply()" 
+                            :disabled="submitting">
+                      <span class="material-symbols-outlined" x-show="!submitting">arrow_upward</span>
+                      <div class="spinner-border spinner-border-sm" x-show="submitting"></div>
                     </button>
                   </div>
                 </div>
@@ -656,69 +699,107 @@
 </a>
 
 <script>
-function toggleReplies(btn) {
-    const card = btn.closest('.discussion-card');
-    card.classList.toggle('expanded');
-}
+document.addEventListener('alpine:init', () => {
+    Alpine.data('feedCard', (uuid, initialUpvotes, initialIsLiked, initialReplies) => ({
+        uuid: uuid,
+        upvotes: initialUpvotes,
+        isLiked: initialIsLiked,
+        replies: initialReplies,
+        expanded: false,
+        newReplyContent: '',
+        parent_uuid: null,
+        replyingToName: '',
+        submitting: false,
 
-function toggleUpvote(uuid, btn) {
-    $.ajax({
-        url: '<?= BASE_URL ?>/forum/feed/like',
-        type: 'POST',
-        data: {
-            feed_uuid: uuid,
-            csrf_token: '<?= CSRF::generateToken() ?>'
+        get threadedReplies() {
+            const list = [];
+            const map = {};
+            
+            // 1. Group by parent
+            this.replies.forEach(r => {
+                const pid = r.parent_uuid || 'root';
+                if (!map[pid]) map[pid] = [];
+                map[pid].push(r);
+            });
+
+            // 2. Recursive flattener
+            const flatten = (pid, depth) => {
+                if (!map[pid]) return;
+                map[pid].forEach(child => {
+                    list.push({ ...child, depth: depth });
+                    flatten(child.uuid, depth + 1);
+                });
+            };
+
+            flatten('root', 0);
+            return list;
         },
-        dataType: 'json',
-        success: function(response) {
-            if (response.success) {
-                const countSpan = btn.querySelector('.vote-count');
-                countSpan.innerText = response.upvotes;
-                if (response.is_liked) {
-                    btn.classList.add('active');
+
+        setReplyTo(replyUuid, authorName) {
+            this.parent_uuid = replyUuid;
+            this.replyingToName = authorName;
+            this.expanded = true;
+            // Scroll to input would be nice
+        },
+
+        cancelReplyTo() {
+            this.parent_uuid = null;
+            this.replyingToName = '';
+        },
+
+        async toggleUpvote() {
+            try {
+                const response = await fetch('<?= BASE_URL ?>/forum/feed/like', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        feed_uuid: this.uuid,
+                        csrf_token: '<?= CSRF::generateToken() ?>'
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    this.upvotes = data.upvotes;
+                    this.isLiked = data.is_liked;
                 } else {
-                    btn.classList.remove('active');
+                    alert(data.message);
+                    if (data.message.includes('sign in')) window.location.href = '<?= BASE_URL ?>/forum/sign-in';
                 }
-            } else {
-                alert(response.message);
-                if (response.message.includes('sign in')) {
-                    window.location.href = '<?= BASE_URL ?>/forum/sign-in';
-                }
-            }
-        }
-    });
-}
-
-function submitReply(uuid, btn) {
-    const input = btn.previousElementSibling;
-    const content = input.value.trim();
-    if (!content) return;
-
-    btn.disabled = true;
-    $.ajax({
-        url: '<?= BASE_URL ?>/forum/feed/reply',
-        type: 'POST',
-        data: {
-            feed_uuid: uuid,
-            content: content,
-            csrf_token: '<?= CSRF::generateToken() ?>'
-        },
-        dataType: 'json',
-        success: function(response) {
-            if (response.success) {
-                input.value = '';
-                // Simple way: reload to see new reply or append it manually
-                location.reload();
-            } else {
-                alert(response.message);
-                if (response.message.includes('sign in')) {
-                    window.location.href = '<?= BASE_URL ?>/forum/sign-in';
-                }
+            } catch (error) {
+                console.error('Error toggling upvote:', error);
             }
         },
-        complete: function() {
-            btn.disabled = false;
+
+        async submitReply() {
+            if (!this.newReplyContent.trim() || this.submitting) return;
+            this.submitting = true;
+            try {
+                const response = await fetch('<?= BASE_URL ?>/forum/feed/reply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        feed_uuid: this.uuid,
+                        content: this.newReplyContent,
+                        parent_uuid: this.parent_uuid || '',
+                        csrf_token: '<?= CSRF::generateToken() ?>'
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    this.replies.push(data.reply);
+                    this.newReplyContent = '';
+                    this.cancelReplyTo();
+                } else {
+                    alert(data.message);
+                    if (data.message.includes('sign in')) window.location.href = '<?= BASE_URL ?>/forum/sign-in';
+                }
+            } catch (error) {
+                console.error('Error submitting reply:', error);
+                alert('Connection error. Please try again.');
+            } finally {
+                this.submitting = false;
+            }
         }
-    });
-}
+    }));
+});
 </script>

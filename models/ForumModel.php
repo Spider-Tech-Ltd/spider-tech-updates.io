@@ -13,9 +13,9 @@ class ForumModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getFeeds($limit = 10, $member_uuid = null, $category_filter = null) {
+    public function getFeeds($limit = 10, $member_id = null, $category_filter = null) {
         $where = "WHERE f.status IN ('active', 'published')";
-        $params = [':member_uuid' => $member_uuid];
+        $params = [':member_id' => $member_id];
 
         if ($category_filter && $category_filter !== 'all') {
             $where .= " AND (c.slug = :cat OR c.uuid = :cat)";
@@ -28,9 +28,9 @@ class ForumModel {
                 COALESCE(c.name, 'General') as category_name,
                 (SELECT COUNT(*) FROM feed_likes WHERE feed_uuid = f.uuid) as upvotes,
                 (SELECT COUNT(*) FROM feed_replies WHERE feed_uuid = f.uuid) as replies_count,
-                (SELECT COUNT(*) FROM feed_likes WHERE feed_uuid = f.uuid AND member_id = :member_uuid) as is_liked
+                (SELECT COUNT(*) FROM feed_likes WHERE feed_uuid = f.uuid AND member_id = :member_id) as is_liked
                 FROM feeds f
-                LEFT JOIN members m ON f.member_id = m.id
+                LEFT JOIN members m ON f.member_id = m.uuid
                 LEFT JOIN categories c ON f.category_uuid = c.uuid
                 $where
                 ORDER BY f.created_at DESC LIMIT :limit";
@@ -64,21 +64,21 @@ class ForumModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function toggleLike($feed_uuid, $member_uuid) {
-        $stmt = $this->db->prepare("SELECT id FROM feed_likes WHERE feed_uuid = :feed_uuid AND member_id = :member_uuid");
-        $stmt->execute([':feed_uuid' => $feed_uuid, ':member_uuid' => $member_uuid]);
+    public function toggleLike($feed_uuid, $member_id) {
+        $stmt = $this->db->prepare("SELECT id FROM feed_likes WHERE feed_uuid = :feed_uuid AND member_id = :member_id");
+        $stmt->execute([':feed_uuid' => $feed_uuid, ':member_id' => $member_id]);
         $like = $stmt->fetch();
 
         if ($like) {
             $stmt = $this->db->prepare("DELETE FROM feed_likes WHERE id = :id");
             return $stmt->execute([':id' => $like['id']]);
         } else {
-            $stmt = $this->db->prepare("INSERT INTO feed_likes (feed_uuid, member_id) VALUES (:feed_uuid, :member_uuid)");
-            return $stmt->execute([':feed_uuid' => $feed_uuid, ':member_uuid' => $member_uuid]);
+            $stmt = $this->db->prepare("INSERT INTO feed_likes (feed_uuid, member_id) VALUES (:feed_uuid, :member_id)");
+            return $stmt->execute([':feed_uuid' => $feed_uuid, ':member_id' => $member_id]);
         }
     }
 
-    public function addReply($feed_uuid, $member_uuid, $content) {
+    public function addReply($feed_uuid, $member_id, $content, $parent_uuid = null) {
         // Get category_uuid from feed
         $stmt = $this->db->prepare("SELECT category_uuid FROM feeds WHERE uuid = :uuid");
         $stmt->execute([':uuid' => $feed_uuid]);
@@ -86,15 +86,16 @@ class ForumModel {
         if (!$feed) return false;
 
         $uuid = Utils::generateUUID();
-        $sql = "INSERT INTO feed_replies (uuid, feed_uuid, member_id, category_uuid, content)
-                VALUES (:uuid, :feed_uuid, :member_uuid, :category_uuid, :content)";
+        $sql = "INSERT INTO feed_replies (uuid, feed_uuid, member_id, category_uuid, content, parent_uuid)
+                VALUES (:uuid, :feed_uuid, :member_id, :category_uuid, :content, :parent_uuid)";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             ':uuid' => $uuid,
             ':feed_uuid' => $feed_uuid,
-            ':member_uuid' => $member_uuid,
+            ':member_id' => $member_id,
             ':category_uuid' => $feed['category_uuid'],
-            ':content' => $content
+            ':content' => $content,
+            ':parent_uuid' => $parent_uuid
         ]);
     }
 

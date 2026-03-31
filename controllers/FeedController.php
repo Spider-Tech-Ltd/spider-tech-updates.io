@@ -23,17 +23,22 @@ class FeedController extends BaseController
         }
 
         $feed_uuid = $_POST['feed_uuid'] ?? '';
-        $member_uuid = $_SESSION['member_uuid'];
+        $member_id = $_SESSION['member_id'] ?? null;
 
-        if ($this->forumModel->toggleLike($feed_uuid, $member_uuid)) {
+        if (!$member_id) {
+            echo json_encode(['success' => false, 'message' => 'Please sign in to upvote.']);
+            return;
+        }
+
+        if ($this->forumModel->toggleLike($feed_uuid, $member_id)) {
             // Fetch updated count
             $stmt = $this->db->prepare("SELECT COUNT(*) as upvotes FROM feed_likes WHERE feed_uuid = :uuid");
             $stmt->execute([':uuid' => $feed_uuid]);
             $result = $stmt->fetch();
 
             // Check if now liked
-            $stmt = $this->db->prepare("SELECT id FROM feed_likes WHERE feed_uuid = :uuid AND member_uuid = :member");
-            $stmt->execute([':uuid' => $feed_uuid, ':member' => $member_uuid]);
+            $stmt = $this->db->prepare("SELECT id FROM feed_likes WHERE feed_uuid = :uuid AND member_id = :member");
+            $stmt->execute([':uuid' => $feed_uuid, ':member' => $member_id]);
             $is_liked = $stmt->fetch() ? true : false;
 
             echo json_encode([
@@ -58,17 +63,32 @@ class FeedController extends BaseController
             return;
         }
 
-        $feed_uuid = $_POST['uuid'] ?? '';
+        $feed_uuid = $_POST['feed_uuid'] ?? '';
         $content = $_POST['content'] ?? '';
-        $member_uuid = $_SESSION['member_uuid'];
+        $parent_uuid = $_POST['parent_uuid'] ?? null;
+        $member_id = $_SESSION['member_id'] ?? null;
+
+        if (!$member_id) {
+            echo json_encode(['success' => false, 'message' => 'Please sign in to reply.']);
+            return;
+        }
 
         if (empty($content)) {
             echo json_encode(['success' => false, 'message' => 'Reply cannot be empty.']);
             return;
         }
 
-        if ($this->forumModel->addReply($feed_uuid, $member_uuid, $content)) {
-            echo json_encode(['success' => true]);
+        if ($this->forumModel->addReply($feed_uuid, $member_id, $content, $parent_uuid)) {
+            echo json_encode([
+                'success' => true,
+                'reply' => [
+                    'uuid' => Utils::generateUUID(), // Temporary for UI key
+                    'author_name' => $_SESSION['member_name'],
+                    'content' => htmlspecialchars($content),
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'parent_uuid' => $parent_uuid
+                ]
+            ]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to post reply.']);
         }
