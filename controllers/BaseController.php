@@ -52,8 +52,8 @@ class BaseController {
                                         'password_hash' => password_hash('Pass123!', PASSWORD_DEFAULT)
                                     ];
                                 }
-                                // Sign-up check case (should return empty to allow new user)
-                                return [];
+                                // Sign-up check case (should return false to allow new user)
+                                return false;
                             }
                             if (strpos($this->sql, 'feed_likes') !== false) {
                                 if (strpos($this->sql, 'count(*)') !== false) return ['upvotes' => 35];

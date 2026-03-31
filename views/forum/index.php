@@ -139,6 +139,9 @@
 <!-- Inject Forum Categories Grid Component -->
 <?php include ROOT_PATH . '/views/forum/includes/categories.php'; ?>
 
+<!-- Filter Bar -->
+<?php include ROOT_PATH . '/views/forum/includes/feed-filter-bar.php'; ?>
+
 <!-- Main Content Section: Feed + Sidebar -->
 <section class="forum-main-content py-5">
     <div class="container">
