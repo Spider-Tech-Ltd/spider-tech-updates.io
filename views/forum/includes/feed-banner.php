@@ -211,7 +211,7 @@
 
       <!-- Right: CTA -->
       <div class="banner-cta-group">
-        <a href="#" class="btn-start-discussion" id="btnStartDiscussion" data-toggle="modal" data-target="#newDiscussionModal">
+        <a href="<?= BASE_URL ?>/forum/new-topic" class="btn-start-discussion" id="btnStartDiscussion">
           <span class="material-symbols-outlined">edit</span>
           Start a Discussion
         </a>

@@ -593,7 +593,7 @@
 <!-- Filter Bar -->
 <?php include ROOT_PATH . '/views/forum/includes/feed-filter-bar.php'; ?>
 
-<section class="member-feed-section py-5">
+<section class="member-feed-section py-5" x-data="forumFeed()">
   <div class="container">
     <div class="row">
       <!-- Left Column: Discussion Feed -->
@@ -601,105 +601,106 @@
         <!-- Feed Header -->
         <div class="member-feed-header">
           <h2 class="member-feed-title">Latest Discussions</h2>
-          <span class="feed-count-badge"><?= count($feeds ?? []); ?> threads</span>
+          <span class="feed-count-badge" x-text="`${discussions.length} threads`"><?= count($feeds ?? []); ?> threads</span>
         </div>
 
         <!-- Discussion Cards -->
         <div class="discussion-card-list" id="discussionFeed">
-          <?php if (!empty($feeds)): ?>
-            <?php foreach ($feeds as $feed): ?>
-              <div class="discussion-card <?= ($feed['is_pinned'] ?? false) ? 'is-pinned' : ''; ?> <?= ($feed['is_hot'] ?? false) ? 'is-hot' : ''; ?>" 
-                   x-data='feedCard("<?= $feed['uuid']; ?>", <?= (int)($feed['upvotes'] ?? 0); ?>, <?= ($feed['is_liked'] ?? false) ? "true" : "false"; ?>, <?= htmlspecialchars(json_encode($feed['replies'] ?? []), ENT_QUOTES, "UTF-8"); ?>)'
-                   :class="{ 'expanded': expanded }">
-                <div class="card-top-row">
-                  <span class="category-badge"><?= htmlspecialchars($feed['category_name'] ?? 'General'); ?></span>
-                  <?php if ($feed['is_pinned'] ?? false): ?>
-                    <span class="badge-pinned-label">
-                      <span class="material-symbols-outlined" style="font-size:13px; font-variation-settings:'FILL' 1;">push_pin</span>
-                      Pinned
-                    </span>
-                  <?php endif; ?>
-                  <?php if ($feed['is_hot'] ?? false): ?>
-                    <span class="badge-hot-label">
-                      <span class="material-symbols-outlined">local_fire_department</span> HOT
-                    </span>
-                  <?php endif; ?>
-                </div>
-                <h3 class="card-title"><?= htmlspecialchars($feed['title']); ?></h3>
-                <p class="card-excerpt"><?= htmlspecialchars($feed['content']); ?></p>
-                <div class="card-author-row">
-                  <img src="https://ui-avatars.com/api/?name=<?= urlencode($feed['author_name']); ?>&background=f48221&color=fff&size=32" class="author-avatar-sm" alt="Author">
-                  <span class="author-name"><?= htmlspecialchars($feed['author_name']); ?></span>
-                  <span class="author-time"><?= date('M j, Y', strtotime($feed['created_at'])); ?></span>
-                </div>
-                <div class="card-interaction-bar">
-                  <button class="btn-interact btn-upvote" 
-                          :class="{ 'active': isLiked }" 
-                          title="Upvote" 
-                          @click="toggleUpvote()">
-                    <span class="material-symbols-outlined" :style="isLiked ? 'font-variation-settings: \'FILL\' 1;' : ''">thumb_up</span>
-                    <span class="vote-count" x-text="upvotes"></span>
-                  </button>
-                  <button class="btn-interact btn-reply" 
-                          title="Replies" 
-                          @click="expanded = !expanded">
-                    <span class="material-symbols-outlined" :style="expanded ? 'font-variation-settings: \'FILL\' 1;' : ''">chat_bubble</span>
-                    <span class="reply-count" x-text="replies.length"></span>
-                  </button>
-                  <div class="interact-spacer"></div>
-                  <button class="btn-interact btn-bookmark" title="Bookmark">
-                    <span class="material-symbols-outlined">bookmark</span>
-                  </button>
-                </div>
+          <div x-show="loading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Loading discussions...</p>
+          </div>
+          
+          <template x-if="!loading && discussions.length === 0">
+            <p class="text-center py-5 text-muted">No discussions found.</p>
+          </template>
 
-                <!-- COLLAPSIBLE REPLY THREAD -->
-                <div class="reply-thread-wrapper" x-show="expanded" x-collapse>
-                  <div class="replies-container">
-                    <template x-for="reply in threadedReplies" :key="reply.uuid">
-                      <div class="reply-card-wrapper" :style="`margin-left: ${Math.min(reply.depth * 32, 160)}px`" :class="reply.depth > 0 ? 'reply-nested' : ''">
-                        <div class="reply-card">
-                          <div class="reply-header">
-                            <img :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(reply.author_name)}&background=f48221&color=fff&size=26`" class="reply-avatar" alt="Avatar">
-                            <span class="reply-author" x-text="reply.author_name"></span>
-                            <span class="reply-time" x-text="reply.created_at.includes(' ') ? reply.created_at.split(' ')[1].substring(0, 5) : reply.created_at"></span>
-                          </div>
-                          <div class="reply-body" x-text="reply.content"></div>
-                          <div class="reply-actions">
-                            <button class="btn-mini-interact" title="Upvote"><span class="material-symbols-outlined">thumb_up</span> 0</button>
-                            <button class="btn-mini-interact" @click="setReplyTo(reply.uuid, reply.author_name)">
-                              <span class="material-symbols-outlined">reply</span> Reply
-                            </button>
-                          </div>
+          <template x-for="feed in discussions" :key="feed.uuid">
+            <div class="discussion-card" 
+                 :class="{ 'is-pinned': feed.is_pinned, 'is-hot': feed.is_hot, 'expanded': expanded }"
+                 x-data="feedCard(feed.uuid, feed.upvotes, feed.is_liked, feed.replies)">
+              <div class="card-top-row">
+                <span class="category-badge" x-text="feed.category_name"></span>
+                <span class="badge-pinned-label" x-show="feed.is_pinned">
+                  <span class="material-symbols-outlined" style="font-size:13px; font-variation-settings:'FILL' 1;">push_pin</span>
+                  Pinned
+                </span>
+                <span class="badge-hot-label" x-show="feed.is_hot">
+                  <span class="material-symbols-outlined">local_fire_department</span> HOT
+                </span>
+              </div>
+              <h3 class="card-title" x-text="feed.title"></h3>
+              <p class="card-excerpt" x-text="feed.content"></p>
+              <div class="card-author-row">
+                <img :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(feed.author_name)}&background=f48221&color=fff&size=32`" class="author-avatar-sm" alt="Author">
+                <span class="author-name" x-text="feed.author_name"></span>
+                <span class="author-time" x-text="formatDate(feed.created_at)"></span>
+              </div>
+              <div class="card-interaction-bar">
+                <button class="btn-interact btn-upvote" 
+                        :class="{ 'active': isLiked }" 
+                        title="Upvote" 
+                        @click="toggleUpvote()">
+                  <span class="material-symbols-outlined" :style="isLiked ? 'font-variation-settings: \'FILL\' 1;' : ''">thumb_up</span>
+                  <span class="vote-count" x-text="upvotes"></span>
+                </button>
+                <button class="btn-interact btn-reply" 
+                        title="Replies" 
+                        @click="expanded = !expanded">
+                  <span class="material-symbols-outlined" :style="expanded ? 'font-variation-settings: \'FILL\' 1;' : ''">chat_bubble</span>
+                  <span class="reply-count" x-text="replies.length"></span>
+                </button>
+                <div class="interact-spacer"></div>
+                <button class="btn-interact btn-bookmark" title="Bookmark">
+                  <span class="material-symbols-outlined">bookmark</span>
+                </button>
+              </div>
+
+              <!-- COLLAPSIBLE REPLY THREAD -->
+              <div class="reply-thread-wrapper" x-show="expanded" x-collapse>
+                <div class="replies-container">
+                  <template x-for="reply in threadedReplies" :key="reply.uuid">
+                    <div class="reply-card-wrapper" :style="`margin-left: ${Math.min(reply.depth * 32, 160)}px`" :class="reply.depth > 0 ? 'reply-nested' : ''">
+                      <div class="reply-card">
+                        <div class="reply-header">
+                          <img :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(reply.author_name)}&background=f48221&color=fff&size=26`" class="reply-avatar" alt="Avatar">
+                          <span class="reply-author" x-text="reply.author_name"></span>
+                          <span class="reply-time" x-text="formatTime(reply.created_at)"></span>
+                        </div>
+                        <div class="reply-body" x-text="reply.content"></div>
+                        <div class="reply-actions">
+                          <button class="btn-mini-interact" title="Upvote"><span class="material-symbols-outlined">thumb_up</span> 0</button>
+                          <button class="btn-mini-interact" @click="setReplyTo(reply.uuid, reply.author_name)">
+                            <span class="material-symbols-outlined">reply</span> Reply
+                          </button>
                         </div>
                       </div>
-                    </template>
-                  </div>
-                  <!-- Inline Reply Input (Restored) -->
-                  <div class="reply-input-row">
-                    <div class="reply-to-tag" x-show="parent_uuid" x-transition>
-                      <span>Replying to <em x-text="replyingToName"></em></span>
-                      <span class="material-symbols-outlined" style="font-size:12px; cursor:pointer" @click="cancelReplyTo()">close</span>
                     </div>
-                    <img src="https://ui-avatars.com/api/?name=<?= urlencode($_SESSION['member_name'] ?? 'You'); ?>&background=f48221&color=fff&size=32" alt="Me">
-                    <input type="text" 
-                           class="reply-input-field" 
-                           :placeholder="parent_uuid ? `Reply to ${replyingToName}...` : 'Write a reply...'" 
-                           x-model="newReplyContent" 
-                           @keydown.enter="submitReply()">
-                    <button class="btn-submit-reply" 
-                            title="Post Reply" 
-                            @click="submitReply()" 
-                            :disabled="submitting">
-                      <span class="material-symbols-outlined" x-show="!submitting">arrow_upward</span>
-                      <div class="spinner-border spinner-border-sm" x-show="submitting"></div>
-                    </button>
+                  </template>
+                </div>
+                <!-- Inline Reply Input -->
+                <div class="reply-input-row">
+                  <div class="reply-to-tag" x-show="parent_uuid" x-transition>
+                    <span>Replying to <em x-text="replyingToName"></em></span>
+                    <span class="material-symbols-outlined" style="font-size:12px; cursor:pointer" @click="cancelReplyTo()">close</span>
                   </div>
+                  <img src="https://ui-avatars.com/api/?name=<?= urlencode($_SESSION['member_name'] ?? 'You'); ?>&background=f48221&color=fff&size=32" alt="Me">
+                  <input type="text" 
+                         class="reply-input-field" 
+                         :placeholder="parent_uuid ? `Reply to ${replyingToName}...` : 'Write a reply...'" 
+                         x-model="newReplyContent" 
+                         @keydown.enter="submitReply()">
+                  <button class="btn-submit-reply" 
+                          title="Post Reply" 
+                          @click="submitReply()" 
+                          :disabled="submitting">
+                    <span class="material-symbols-outlined" x-show="!submitting">arrow_upward</span>
+                    <div class="spinner-border spinner-border-sm" x-show="submitting"></div>
+                  </button>
                 </div>
               </div>
-            <?php endforeach; ?>
-          <?php else: ?>
-            <p class="text-center py-5 text-muted">No discussions found.</p>
-          <?php endif; ?>
+            </div>
+          </template>
         </div>
 
         <!-- Pagination -->
@@ -723,13 +724,61 @@
 </section>
 
 <!-- Mobile FAB -->
-<a href="#" class="member-fab-mobile">
+<a href="<?= BASE_URL ?>/forum/new-topic" class="member-fab-mobile">
   <span class="member-fab-pulse-ring"></span>
   <span class="material-symbols-outlined">edit</span>
 </a>
 
 <script>
 document.addEventListener('alpine:init', () => {
+    Alpine.data('forumFeed', () => ({
+        discussions: [],
+        loading: false,
+        currentCategory: 'all',
+        currentSort: 'latest',
+
+        init() {
+            this.fetchDiscussions();
+            
+            // Listen for filter updates from the filter bar
+            window.addEventListener('filter-changed', (e) => {
+                if (e.detail.category !== undefined) this.currentCategory = e.detail.category;
+                if (e.detail.sort !== undefined) this.currentSort = e.detail.sort;
+                this.fetchDiscussions();
+            });
+        },
+
+        async fetchDiscussions() {
+            this.loading = true;
+            try {
+                const params = new URLSearchParams({
+                    category: this.currentCategory,
+                    sort: this.currentSort
+                });
+                const response = await fetch(`<?= BASE_URL ?>/forum/feed/fetch?${params.toString()}`);
+                const data = await response.json();
+                if (data.success) {
+                    this.discussions = data.feeds;
+                }
+            } catch (error) {
+                console.error('Error fetching discussions:', error);
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        },
+
+        formatTime(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+        }
+    }));
+
     Alpine.data('feedCard', (uuid, initialUpvotes, initialIsLiked, initialReplies) => ({
         uuid: uuid,
         upvotes: initialUpvotes,
@@ -745,16 +794,15 @@ document.addEventListener('alpine:init', () => {
             const list = [];
             const map = {};
             
-            // 1. Group by parent
             this.replies.forEach(r => {
                 const pid = r.parent_uuid || 'root';
                 if (!map[pid]) map[pid] = [];
                 map[pid].push(r);
             });
 
-            // 2. Recursive flattener
             const flatten = (pid, depth) => {
                 if (!map[pid]) return;
+                map[pid].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
                 map[pid].forEach(child => {
                     list.push({ ...child, depth: depth });
                     flatten(child.uuid, depth + 1);
@@ -769,7 +817,6 @@ document.addEventListener('alpine:init', () => {
             this.parent_uuid = replyUuid;
             this.replyingToName = authorName;
             this.expanded = true;
-            // Scroll to input would be nice
         },
 
         cancelReplyTo() {
@@ -821,14 +868,19 @@ document.addEventListener('alpine:init', () => {
                     this.cancelReplyTo();
                 } else {
                     alert(data.message);
-                    if (data.message.includes('sign in')) window.location.href = '<?= BASE_URL ?>/forum/sign-in';
                 }
             } catch (error) {
                 console.error('Error submitting reply:', error);
-                alert('Connection error. Please try again.');
             } finally {
                 this.submitting = false;
             }
+        },
+
+        formatTime(dateStr) {
+            if (!dateStr) return '';
+            const parts = dateStr.split(' ');
+            if (parts.length > 1) return parts[1].substring(0, 5);
+            return dateStr;
         }
     }));
 });

@@ -113,25 +113,27 @@
   }
 </style>
 
-<div class="container">
+<div class="container" x-data="{ currentCat: '<?= $_GET['category'] ?? 'all' ?>', currentSort: 'latest' }">
   <div class="filter-bar-inner">
 
     <!-- Category Pills -->
     <div class="filter-pills-group" id="filterPills">
-      <?php
-      $current_cat = $_GET['category'] ?? 'all';
-      $base_route = isset($_SESSION['member_uuid']) ? '/forum/feed' : '/forum';
-      ?>
-      <a href="<?= BASE_URL . $base_route ?>" class="filter-pill <?= $current_cat == 'all' ? 'active' : '' ?>">
+      <button type="button" 
+              class="filter-pill" 
+              :class="{ 'active': currentCat === 'all' }"
+              @click="currentCat = 'all'; window.dispatchEvent(new CustomEvent('filter-changed', { detail: { category: 'all' } }))">
         <span class="material-symbols-outlined">grid_view</span>
         All Topics
-      </a>
+      </button>
       <?php if (!empty($categories)): ?>
         <?php foreach ($categories as $cat): ?>
-          <a href="<?= BASE_URL . $base_route ?>?category=<?= urlencode($cat['slug']) ?>" class="filter-pill <?= $current_cat == $cat['slug'] ? 'active' : '' ?>">
+          <button type="button" 
+                  class="filter-pill" 
+                  :class="{ 'active': currentCat === '<?= $cat['slug'] ?>' }"
+                  @click="currentCat = '<?= $cat['slug'] ?>'; window.dispatchEvent(new CustomEvent('filter-changed', { detail: { category: '<?= $cat['slug'] ?>' } }))">
             <span class="material-symbols-outlined"><?= htmlspecialchars($cat['icon'] ?? 'label') ?></span>
             <?= htmlspecialchars($cat['name']) ?>
-          </a>
+          </button>
         <?php endforeach; ?>
       <?php endif; ?>
     </div>
@@ -139,8 +141,11 @@
     <!-- Sort By -->
     <div class="filter-sort-group">
       <label class="filter-sort-label" for="feedSortSelect">Sort by</label>
-      <select class="filter-sort-select" id="feedSortSelect" aria-label="Sort discussions">
-        <option value="latest" selected>Latest</option>
+      <select class="filter-sort-select" id="feedSortSelect" 
+              x-model="currentSort"
+              @change="window.dispatchEvent(new CustomEvent('filter-changed', { detail: { sort: currentSort } }))"
+              aria-label="Sort discussions">
+        <option value="latest">Latest</option>
         <option value="hottest">Hottest</option>
         <option value="my-topics">My Topics</option>
       </select>

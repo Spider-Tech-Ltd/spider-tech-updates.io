@@ -13,13 +13,18 @@ class ForumModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getFeeds($limit = 10, $member_id = null, $category_filter = null) {
+    public function getFeeds($limit = 10, $member_id = null, $category_filter = null, $sort = 'latest') {
         $where = "WHERE f.status IN ('active', 'published')";
         $params = [':member_id' => $member_id];
 
         if ($category_filter && $category_filter !== 'all') {
             $where .= " AND (c.slug = :cat OR c.uuid = :cat)";
             $params[':cat'] = $category_filter;
+        }
+
+        $orderBy = 'f.created_at DESC';
+        if ($sort === 'hottest') {
+            $orderBy = 'upvotes DESC, f.created_at DESC';
         }
 
         $sql = "SELECT f.*, 
@@ -30,10 +35,10 @@ class ForumModel {
                 (SELECT COUNT(*) FROM feed_replies WHERE feed_uuid = f.uuid) as replies_count,
                 (SELECT COUNT(*) FROM feed_likes WHERE feed_uuid = f.uuid AND member_id = :member_id) as is_liked
                 FROM feeds f
-                LEFT JOIN members m ON f.member_id = m.uuid
+                LEFT JOIN members m ON f.member_id = m.id
                 LEFT JOIN categories c ON f.category_uuid = c.uuid
                 $where
-                ORDER BY f.created_at DESC LIMIT :limit";
+                ORDER BY $orderBy LIMIT :limit";
 
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
@@ -99,4 +104,17 @@ class ForumModel {
         ]);
     }
 
+    public function createTopic($member_id, $category_uuid, $title, $content) {
+        $uuid = Utils::generateUUID();
+        $sql = "INSERT INTO feeds (uuid, member_id, category_uuid, title, content, status) 
+                VALUES (:uuid, :member_id, :category_uuid, :title, :content, 'active')";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':uuid' => $uuid,
+            ':member_id' => $member_id,
+            ':category_uuid' => $category_uuid,
+            ':title' => $title,
+            ':content' => $content
+        ]);
+    }
 }

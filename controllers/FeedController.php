@@ -93,4 +93,47 @@ class FeedController extends BaseController
             echo json_encode(['success' => false, 'message' => 'Failed to post reply.']);
         }
     }
+
+    public function store()
+    {
+        if (!$this->isLoggedIn()) {
+            echo json_encode(['success' => false, 'message' => 'Please sign in to post.']);
+            return;
+        }
+
+        if (!CSRF::validateToken($_POST['csrf_token'] ?? '')) {
+            echo json_encode(['success' => false, 'message' => 'Invalid CSRF token.']);
+            return;
+        }
+
+        $title = $_POST['title'] ?? '';
+        $content = $_POST['content'] ?? '';
+        $category_uuid = $_POST['category_uuid'] ?? '';
+        $member_uuid = $_SESSION['member_uuid'] ?? null;
+
+        if (empty($title) || empty($content) || empty($category_uuid)) {
+            echo json_encode(['success' => false, 'message' => 'All fields are required.']);
+            return;
+        }
+
+        if ($this->forumModel->createTopic($member_uuid, $category_uuid, $title, $content)) {
+            echo json_encode(['success' => true, 'message' => 'Discussion posted successfully!']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to create discussion.']);
+        }
+    }
+
+    public function fetch()
+    {
+        $category = $_GET['category'] ?? 'all';
+        $sort = $_GET['sort'] ?? 'latest';
+        $member_id = $_SESSION['member_id'] ?? null;
+
+        $feeds = $this->forumModel->getFeeds(20, $member_id, $category, $sort);
+
+        echo json_encode([
+            'success' => true,
+            'feeds' => $feeds
+        ]);
+    }
 }

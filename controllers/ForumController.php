@@ -23,7 +23,7 @@ class ForumController extends BaseController {
         $forumModel = new ForumModel($this->db);
         $categories = $forumModel->getCategories();
         $category_filter = $_GET['category'] ?? null;
-        $feeds = $forumModel->getFeeds(10, $_SESSION['member_uuid'], $category_filter);
+        $feeds = $forumModel->getFeeds(10, $_SESSION['member_id'], $category_filter);
 
         // Mock member data for UI fidelity
         $member = [
@@ -37,6 +37,27 @@ class ForumController extends BaseController {
             'title' => 'Member Feed',
             'member' => $member,
             'feeds' => $feeds,
+            'categories' => $categories
+        ]);
+    }
+
+    public function newTopic() {
+        if (!$this->isLoggedIn()) {
+            $this->redirect('forum/sign-in');
+        }
+
+        $forumModel = new ForumModel($this->db);
+        $categories = $forumModel->getCategories();
+
+        $member = [
+            'name'       => $_SESSION['member_name'] ?? 'Member',
+            'initials'   => strtoupper(substr($_SESSION['member_name'] ?? 'M', 0, 1)),
+            'role'       => 'Verified Member',
+        ];
+
+        $this->render('forum/new-topic', [
+            'title' => 'Start a New Discussion',
+            'member' => $member,
             'categories' => $categories
         ]);
     }
