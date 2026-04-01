@@ -630,7 +630,7 @@
                 </span>
               </div>
               <h3 class="card-title" x-text="feed.title"></h3>
-              <p class="card-excerpt" x-text="feed.content"></p>
+              <div class="card-excerpt shadow-none border-0 p-0" x-html="feed.content"></div>
               <div class="card-author-row">
                 <img :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(feed.author_name)}&background=f48221&color=fff&size=32`" class="author-avatar-sm" alt="Author">
                 <span class="author-name" x-text="feed.author_name"></span>

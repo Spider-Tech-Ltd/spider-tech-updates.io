@@ -3,6 +3,8 @@ session_start();
 require_once "config/config.php";
 require_once "config/database.php";
 require_once "utils/Router.php";
+require_once "utils/CSRF.php";
+require_once "utils/Utils.php";
 
 $router = new Router();
 
@@ -25,6 +27,7 @@ $routes = [
     'forum' => ['ForumController', 'index'],
     'forum/feed' => ['ForumController', 'feed'],
     'forum/new-topic' => ['ForumController', 'newTopic'],
+    'forum/discussion' => ['ForumController', 'discussion'],
     'forum/sign-in' => ['AuthController', 'signIn'],
     'forum/sign-up' => ['AuthController', 'signUp'],
     'forum/logout' => ['AuthController', 'logout'],
@@ -32,6 +35,7 @@ $routes = [
     'forum/feed/reply' => ['FeedController', 'reply'],
     'forum/feed/store' => ['FeedController', 'store'],
     'forum/feed/fetch' => ['FeedController', 'fetch'],
+    'forum/feed/upload' => ['FeedController', 'uploadImage'],
     'about' => ['GeneralController', 'about'],
     'contact' => ['GeneralController', 'contact'],
     'faq' => ['GeneralController', 'faq'],

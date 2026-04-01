@@ -109,15 +109,21 @@ class FeedController extends BaseController
         $title = $_POST['title'] ?? '';
         $content = $_POST['content'] ?? '';
         $category_uuid = $_POST['category_uuid'] ?? '';
-        $member_uuid = $_SESSION['member_uuid'] ?? null;
+        $member_id = $_SESSION['member_id'];
 
         if (empty($title) || empty($content) || empty($category_uuid)) {
             echo json_encode(['success' => false, 'message' => 'All fields are required.']);
             return;
         }
 
-        if ($this->forumModel->createTopic($member_uuid, $category_uuid, $title, $content)) {
-            echo json_encode(['success' => true, 'message' => 'Discussion posted successfully!']);
+        $uuid = $this->forumModel->createTopic($member_id, $category_uuid, $title, $content);
+        if ($uuid) {
+            echo json_encode([
+                'success' => true, 
+                'message' => 'Discussion posted successfully!',
+                'uuid' => $uuid,
+                'view_url' => BASE_URL . '/forum/discussion?uuid=' . $uuid
+            ]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to create discussion.']);
         }
@@ -135,5 +141,54 @@ class FeedController extends BaseController
             'success' => true,
             'feeds' => $feeds
         ]);
+    }
+
+    public function uploadImage()
+    {
+        // 1. Check Permissions
+        if (!$this->isLoggedIn()) {
+            echo json_encode(['success' => false, 'message' => 'Please sign in to upload images.']);
+            return;
+        }
+
+        if (!CSRF::validateToken($_POST['csrf_token'] ?? '')) {
+            echo json_encode(['success' => false, 'message' => 'Invalid security token.']);
+            return;
+        }
+
+        // 2. Check File
+        if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+            echo json_encode(['success' => false, 'message' => 'Failed to receive image.']);
+            return;
+        }
+
+        $file = $_FILES['image'];
+        $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+
+        if (!in_array($ext, $allowed)) {
+            echo json_encode(['success' => false, 'message' => 'Invalid file type. Only JPG, PNG, GIF, and WEBP are allowed.']);
+            return;
+        }
+
+        // 3. Size Limit (2MB)
+        if ($file['size'] > 2 * 1024 * 1024) {
+            echo json_encode(['success' => false, 'message' => 'File too large. Max size is 2MB.']);
+            return;
+        }
+
+        // 4. Save File
+        $uploadDir = 'uploads/forum/';
+        $fileName = Utils::generateUUID() . '.' . $ext;
+        $targetPath = $uploadDir . $fileName;
+
+        if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+            echo json_encode([
+                'success' => true,
+                'url' => BASE_URL . '/' . $targetPath
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to save file. Check directory permissions.']);
+        }
     }
 }

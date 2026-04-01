@@ -61,4 +61,30 @@ class ForumController extends BaseController {
             'categories' => $categories
         ]);
     }
+
+    public function discussion() {
+        if (!$this->isLoggedIn()) {
+            $this->redirect('forum/sign-in');
+        }
+
+        $uuid = $_GET['uuid'] ?? '';
+        if (empty($uuid)) {
+            $this->redirect('forum/feed');
+        }
+
+        $forumModel = new ForumModel($this->db);
+        $topic = $forumModel->getTopic($uuid, $_SESSION['member_id'] ?? null);
+
+        if (!$topic) {
+            $this->redirect('forum/feed');
+        }
+
+        $categories = $forumModel->getCategories();
+
+        $this->render('forum/view', [
+            'title' => $topic['title'],
+            'topic' => $topic,
+            'categories' => $categories
+        ]);
+    }
 }

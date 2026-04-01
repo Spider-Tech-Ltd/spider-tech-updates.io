@@ -14,7 +14,7 @@ class ForumModel {
     }
 
     public function getFeeds($limit = 10, $member_id = null, $category_filter = null, $sort = 'latest') {
-        $where = "WHERE f.status IN ('active', 'published')";
+        $where = "WHERE f.status IN ('published')";
         $params = [':member_id' => $member_id];
 
         if ($category_filter && $category_filter !== 'all') {
@@ -107,14 +107,42 @@ class ForumModel {
     public function createTopic($member_id, $category_uuid, $title, $content) {
         $uuid = Utils::generateUUID();
         $sql = "INSERT INTO feeds (uuid, member_id, category_uuid, title, content, status) 
-                VALUES (:uuid, :member_id, :category_uuid, :title, :content, 'active')";
+                VALUES (:uuid, :member_id, :category_uuid, :title, :content, :status)";
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute([
+        if ($stmt->execute([
             ':uuid' => $uuid,
             ':member_id' => $member_id,
             ':category_uuid' => $category_uuid,
             ':title' => $title,
-            ':content' => $content
-        ]);
+            ':content' => $content,
+            ':status' => 'published'
+        ])) {
+            return $uuid;
+        }
+        return false;
+    }
+
+    public function getTopic($uuid, $member_id = null) {
+        $sql = "SELECT f.*, 
+                COALESCE(m.name, 'Anonymous') as author_name, 
+                COALESCE(m.username, 'anonymous') as author_username, 
+                COALESCE(c.name, 'General') as category_name,
+                (SELECT COUNT(*) FROM feed_likes WHERE feed_uuid = f.uuid) as upvotes,
+                (SELECT COUNT(*) FROM feed_replies WHERE feed_uuid = f.uuid) as replies_count,
+                (SELECT COUNT(*) FROM feed_likes WHERE feed_uuid = f.uuid AND member_id = :member_id) as is_liked
+                FROM feeds f
+                LEFT JOIN members m ON f.member_id = m.id
+                LEFT JOIN categories c ON f.category_uuid = c.uuid
+                WHERE f.uuid = :uuid AND f.status IN ('published')";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':uuid' => $uuid, ':member_id' => $member_id]);
+        $topic = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($topic) {
+            $topic['replies'] = $this->getReplies($topic['uuid']);
+        }
+
+        return $topic;
     }
 }
