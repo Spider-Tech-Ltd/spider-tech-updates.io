@@ -741,65 +741,14 @@
                   <span class="material-symbols-outlined" :style="isLiked ? 'font-variation-settings: \'FILL\' 1;' : ''">thumb_up</span>
                   <span class="vote-count" x-text="likes"></span>
                 </button>
-                <button class="btn-interact btn-reply" title="Replies" @click.prevent="expanded = !expanded">
+                <a :href="`<?= BASE_URL ?>/forum/discussion?uuid=${feed.uuid}#discussion`" class="btn-interact btn-reply" title="Replies">
                   <span class="material-symbols-outlined">chat_bubble</span>
                   <span class="reply-count" x-text="replies.length"></span>
-                </button>
+                </a>
                 <div class="interact-spacer"></div>
                 <button class="btn-interact btn-bookmark" title="Bookmark">
                   <span class="material-symbols-outlined">bookmark</span>
                 </button>
-              </div>
-
-              <!-- Collapsible Replies Area -->
-              <div x-show="expanded" x-collapse class="replies-inline-container mt-3 pt-3 border-top">
-                 <div class="replies-list pb-2">
-                     <template x-for="reply in threadedReplies" :key="reply.uuid">
-                         <div class="reply-card-wrapper" 
-                              :style="`margin-left: ${Math.min(reply.depth * 32, 160)}px`"
-                              :class="reply.depth > 0 ? 'reply-nested' : ''">
-                             <div class="reply-card">
-                                 <div class="reply-header">
-                                     <img :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(reply.author_name)}&background=f48221&color=fff&size=26`" class="reply-avatar" alt="Avatar">
-                                     <span class="reply-author" x-text="reply.author_name"></span>
-                                     <span class="reply-time" x-text="formatTime(reply.created_at)"></span>
-                                 </div>
-                                 <div class="reply-body" x-text="reply.content"></div>
-                                 <div class="reply-actions">
-                                     <button class="btn-mini-interact" @click="toggleReplyLike(reply)" :class="{ 'liked': reply.is_liked }">
-                                         <span class="material-symbols-outlined">thumb_up</span>
-                                         <span x-text="reply.likes || 0"></span>
-                                     </button>
-                                     <button class="btn-mini-interact" @click="setReplyTo(reply.uuid, reply.author_name)">
-                                         <span class="material-symbols-outlined">reply</span> Reply
-                                     </button>
-                                 </div>
-                             </div>
-                         </div>
-                     </template>
-                 </div>
-                 
-                 <!-- Input Row -->
-                 <div class="reply-entry-area">
-                    <div class="reply-to-tag" x-show="replyingToName" x-transition>
-                        <span>Replying to <em x-text="replyingToName"></em></span>
-                        <span class="material-symbols-outlined" style="font-size:12px; cursor:pointer;" @click="cancelReplyTo()">close</span>
-                    </div>
-                    <div class="reply-input-row border-0 pt-0 mt-0">
-                        <img src="https://ui-avatars.com/api/?name=<?= urlencode($_SESSION['member_name'] ?? 'Me') ?>&background=f48221&color=fff&size=32" style="width:32px; height:32px; border-radius:50%;" alt="Me">
-                        <div class="reply-field-container">
-                            <input type="text" 
-                                   class="reply-field reply-input-field" 
-                                   :placeholder="replyingToName ? `Write a reply...` : 'Share your thought...'"
-                                   x-model="newReplyContent"
-                                   @keydown.enter="submitReply()">
-                            <button class="btn-submit-pill" @click="submitReply()" :disabled="submitting">
-                                <span x-show="!submitting" class="material-symbols-outlined" style="font-size:18px;">arrow_upward</span>
-                                <span x-show="submitting" class="spinner-border spinner-border-sm" role="status"></span>
-                            </button>
-                        </div>
-                    </div>
-                 </div>
               </div>
 
             </div>

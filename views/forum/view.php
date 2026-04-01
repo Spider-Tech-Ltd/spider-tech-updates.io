@@ -40,14 +40,15 @@
   }
   .back-link:hover { color: var(--spider-orange); transform: translateX(-4px); }
 
-  /* --- Article Card (Primary Discussion) --- */
-  .article-card {
-    background-color: #ffffff;
-    border-radius: 20px;
-    padding: 24px;
-    box-shadow: 0 2px 12px rgba(17, 17, 17, 0.05);
-    margin-bottom: 24px;
-    border: 1px solid transparent;
+  /* --- Article Minimal (Primary Discussion) --- */
+  .article-minimal {
+    margin-bottom: 32px;
+  }
+  .article-featured-media {
+    margin-bottom: 28px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
   }
 
   .topic-category {
@@ -185,7 +186,6 @@
   .reply-field:focus { outline: none; background-color: #ffffff; border-color: var(--spider-orange); }
   .btn-submit-pill { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; background-color: var(--spider-orange); color: #ffffff; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
   .reply-to-tag { display: inline-flex; align-items: center; gap: 6px; background-color: #fffbf7; color: var(--spider-orange); font-family: 'Poppins'; font-weight: 700; font-size: 0.7rem; padding: 4px 12px; border-radius: 50px; border: 1px solid rgba(244,130,33,0.1); margin-bottom: 8px; }
-
 </style>
 
 <div class="view-wrapper" x-data="discussionDetail()">
@@ -199,24 +199,49 @@
                     </a>
                 </nav>
 
-                <!-- Primary Discussion Card -->
-                <article class="article-card shadow-sm">
-                    <span class="topic-category"><?= htmlspecialchars($topic['category_name']) ?></span>
-                    <h1 class="topic-title"><?= htmlspecialchars($topic['title']) ?></h1>
+                <!-- Primary Discussion Minimal -->
+                <?php
+                $content = $topic['content'];
+                $featured_image_html = '';
+
+                if (preg_match('/<img[^>]+>/i', $content, $matches)) {
+                    if (preg_match('/src=["\']([^"\']+)["\']/i', $matches[0], $srcMatches)) {
+                        $featured_image_url = $srcMatches[1];
+                        $featured_image_html = '<div class="article-featured-media"><img src="' . htmlspecialchars($featured_image_url) . '" alt="Featured Media" class="img-fluid w-100" style="max-height: 500px; object-fit: cover;"></div>';
+                        
+                        // Strip the first occurrence of this image from the content body so it's not duplicated
+                        $content = preg_replace(
+                            ['/<p>\s*<img[^>]+src=["\']' . preg_quote($featured_image_url, '/') . '["\'][^>]*>\s*<\/p>/i', '/<img[^>]+src=["\']' . preg_quote($featured_image_url, '/') . '["\'][^>]*>/i'], 
+                            ['', ''], 
+                            $content, 
+                            1
+                        );
+                    }
+                }
+                ?>
+                <article class="article-minimal">
+                    <?= $featured_image_html ?>
                     
-                    <div class="author-meta-premium">
-                        <img src="https://ui-avatars.com/api/?name=<?= urlencode($topic['author_name']) ?>&background=f48221&color=fff&size=40" class="author-avatar-lg" alt="Avatar">
+                    <span class="topic-category <?= $featured_image_html ? 'mt-3' : '' ?>"><?= htmlspecialchars($topic['category_name']) ?></span>
+                    <h1 class="topic-title" style="font-size: 2.2rem; letter-spacing: -0.02em;"><?= htmlspecialchars($topic['title']) ?></h1>
+                    
+                    <?php 
+                        $view_author = trim($topic['author_name']);
+                        if (empty($view_author)) $view_author = 'Anonymous';
+                    ?>
+                    <div class="author-meta-premium border-0 pb-0 mb-4 mt-3">
+                        <img src="https://ui-avatars.com/api/?name=<?= urlencode($view_author) ?>&background=f48221&color=fff&size=48" class="author-avatar-lg" style="width:48px; height:48px;" alt="Avatar">
                         <div class="author-info-group">
-                            <span style="font-family:'Poppins'; font-weight:700; font-size:0.95rem; color:#111;"><?= htmlspecialchars($topic['author_name']) ?></span>
-                            <span style="font-size:0.75rem; color:#797979;">Published on <?= date('M j, Y', strtotime($topic['created_at'])) ?></span>
+                            <span style="font-family:'Poppins'; font-weight:700; font-size:1.1rem; color:#111;"><?= htmlspecialchars($view_author) ?></span>
+                            <span style="font-size:0.85rem; color:#797979;">Published on <?= date('F j, Y', strtotime($topic['created_at'])) ?></span>
                         </div>
                     </div>
 
-                    <div class="topic-content-rich">
-                        <?= $topic['content'] ?>
+                    <div class="topic-content-rich mt-4">
+                        <?= $content ?>
                     </div>
 
-                    <div class="card-interaction-bar mt-4 pt-3 border-top d-flex gap-2">
+                    <div class="card-interaction-bar mt-5 pt-3 border-top d-flex gap-2">
                         <button class="btn-interact" :class="{ 'liked': isLiked }" @click="toggleLike()">
                             <span class="material-symbols-outlined" :style="isLiked ? 'font-variation-settings: \'FILL\' 1;' : ''">thumb_up</span>
                             <span x-text="likes"></span>
@@ -315,35 +340,68 @@
     </div>
 </div>
 
+<?php
+// Strict Fallbacks & Security Sanitization ahead of Javascript
+$safe_uuid = $topic['uuid'] ?? '';
+$safe_likes = isset($topic['likes']) ? (int)$topic['likes'] : 0;
+$safe_isLiked = !empty($topic['is_liked']) ? 'true' : 'false';
+$safe_replies = (isset($topic['replies']) && is_array($topic['replies'])) ? $topic['replies'] : [];
+
+// JSON_HEX_* prevents Cross-Site Scripting (XSS) and parser-breaking apostrophes inside <script> blocks.
+// JSON_INVALID_UTF8_SUBSTITUTE ensures malformed database chars never output a blank string.
+$safe_replies_json = json_encode($safe_replies, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_INVALID_UTF8_SUBSTITUTE);
+// Final check: if json_encode failed entirely, fallback to empty array safely.
+if ($safe_replies_json === false) { $safe_replies_json = '[]'; }
+?>
 <script>
 function discussionDetail() {
     return {
-        uuid: '<?= $topic['uuid'] ?>',
-        likes: <?= (int)$topic['likes'] ?>,
-        isLiked: <?= $topic['is_liked'] ? 'true' : 'false' ?>,
-        replies: <?= json_encode($topic['replies']) ?>,
+        uuid: <?= json_encode($safe_uuid) ?>,
+        likes: <?= $safe_likes ?>,
+        isLiked: <?= $safe_isLiked ?>,
+        replies: <?= $safe_replies_json ?>,
         newReply: '',
         parent_uuid: null,
         replyingToName: '',
         submitting: false,
 
         get threadedReplies() {
+            if (!Array.isArray(this.replies)) return [];
+            
             const map = {};
             const roots = [];
-            this.replies.forEach(r => { map[r.uuid] = { ...r, children: [] }; });
-            this.replies.forEach(r => {
-                if (r.parent_uuid && map[r.parent_uuid]) { map[r.parent_uuid].children.push(map[r.uuid]); } 
-                else { roots.push(map[r.uuid]); }
+            
+            this.replies.forEach(r => { 
+                map[r.uuid] = { ...r, children: [] }; 
             });
+            
+            this.replies.forEach(r => {
+                if (r.parent_uuid && map[r.parent_uuid]) { 
+                    map[r.parent_uuid].children.push(map[r.uuid]); 
+                } else { 
+                    roots.push(map[r.uuid]); 
+                }
+            });
+            
+            // Sort roots DESCENDING (Latest to Oldest) as requested
+            roots.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
             const flatten = (nodes, depth = 0) => {
                 let result = [];
-                nodes.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+                // Sort children Ascending (Oldest reply first inside the thread context usually works better for readability)
                 nodes.forEach(node => {
-                    result.push({ ...node, depth });
-                    if (node.children.length > 0) { result = [...result, ...flatten(node.children, depth + 1)]; }
+                    node.children.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                    
+                    const safeAuthor = (node.author_name && node.author_name.trim() !== '') ? node.author_name : 'Anonymous';
+                    result.push({ ...node, author_name: safeAuthor, depth });
+                    
+                    if (node.children.length > 0) { 
+                        result = [...result, ...flatten(node.children, depth + 1)]; 
+                    }
                 });
                 return result;
             };
+            
             return flatten(roots);
         },
 
@@ -376,7 +434,7 @@ function discussionDetail() {
 
         setReplyTo(uuid, name) {
             this.parent_uuid = uuid;
-            this.replyingToName = name;
+            this.replyingToName = name ? name : 'Anonymous';
             this.scrollToReply();
         },
 
@@ -413,9 +471,10 @@ function discussionDetail() {
             }
         },
         formatTime(dateStr) {
+            if (!dateStr) return '';
             const date = new Date(dateStr);
             return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
-    }
+    };
 }
 </script>
