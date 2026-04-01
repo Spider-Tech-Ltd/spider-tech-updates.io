@@ -36,6 +36,7 @@ $routes = [
     'forum/feed/store' => ['FeedController', 'store'],
     'forum/feed/fetch' => ['FeedController', 'fetch'],
     'forum/feed/upload' => ['FeedController', 'uploadImage'],
+    'forum/feed/like-reply' => ['FeedController', 'likeReply'],
     'about' => ['GeneralController', 'about'],
     'contact' => ['GeneralController', 'contact'],
     'faq' => ['GeneralController', 'faq'],

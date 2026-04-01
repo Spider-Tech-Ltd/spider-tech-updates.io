@@ -19,7 +19,8 @@
     <link rel="stylesheet" href="<?= BASE_URL ?>/css/responsive.css" />
     <script src="<?= BASE_URL ?>/js/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Alpine.js for Forum Interactivity -->
+    <!-- Alpine.js for Forum Interactivity (Including Collapse Plugin) -->
+    <script defer src="https://unpkg.com/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body>

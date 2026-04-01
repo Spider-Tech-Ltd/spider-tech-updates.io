@@ -194,17 +194,17 @@
         <div class="banner-stats">
           <div class="banner-stat">
             <span class="material-symbols-outlined">article</span>
-            <strong><?php echo $member['posts'] ?? 0; ?></strong> Posts
+            <strong><?= Utils::formatNumber($member_stats['post_count'] ?? 0) ?></strong> Posts
           </div>
           <div class="banner-stat-divider"></div>
           <div class="banner-stat">
             <span class="material-symbols-outlined">people</span>
-            <strong>5,200+</strong> Members
+            <strong><?= Utils::formatNumber($global_stats['total_members'] ?? 0) ?></strong> Members
           </div>
           <div class="banner-stat-divider"></div>
           <div class="banner-stat">
             <span class="material-symbols-outlined">forum</span>
-            <strong>1,430</strong> Discussions
+            <strong><?= Utils::formatNumber($global_stats['total_discussions'] ?? 0) ?></strong> Discussions
           </div>
         </div>
       </div>

@@ -187,41 +187,19 @@
   <section class="sidebar-widget">
     <h3 class="widget-title">Top Categories</h3>
     <div class="ranked-list">
-      <a href="#" class="ranked-item">
-        <div class="ranked-item-left">
-          <span class="ranked-badge">1</span>
-          <span class="ranked-name">Manufacturing</span>
-        </div>
-        <span class="ranked-count">14k</span>
-      </a>
-      <a href="#" class="ranked-item">
-        <div class="ranked-item-left">
-          <span class="ranked-badge">2</span>
-          <span class="ranked-name">Automation</span>
-        </div>
-        <span class="ranked-count">9.2k</span>
-      </a>
-      <a href="#" class="ranked-item">
-        <div class="ranked-item-left">
-          <span class="ranked-badge">3</span>
-          <span class="ranked-name">Energy & Utilities</span>
-        </div>
-        <span class="ranked-count">8.5k</span>
-      </a>
-      <a href="#" class="ranked-item">
-        <div class="ranked-item-left">
-          <span class="ranked-badge">4</span>
-          <span class="ranked-name">AI & Robotics</span>
-        </div>
-        <span class="ranked-count">6.1k</span>
-      </a>
-      <a href="#" class="ranked-item">
-        <div class="ranked-item-left">
-          <span class="ranked-badge">5</span>
-          <span class="ranked-name">Logistics</span>
-        </div>
-        <span class="ranked-count">4.8k</span>
-      </a>
+      <?php if (empty($top_categories)): ?>
+        <p class="text-muted small">No categories found.</p>
+      <?php else: ?>
+        <?php foreach ($top_categories as $index => $cat): ?>
+          <a href="<?= BASE_URL ?>/forum?category=<?= $cat['slug'] ?>" class="ranked-item">
+            <div class="ranked-item-left">
+              <span class="ranked-badge"><?= ($index + 1) ?></span>
+              <span class="ranked-name"><?= htmlspecialchars($cat['name']) ?></span>
+            </div>
+            <span class="ranked-count"><?= Utils::formatNumber($cat['post_count']) ?></span>
+          </a>
+        <?php endforeach; ?>
+      <?php endif; ?>
     </div>
   </section>
 
@@ -229,27 +207,24 @@
   <section class="sidebar-widget">
     <h3 class="widget-title">⭐ Top Contributors</h3>
     <div class="contributor-list">
-      <div class="contributor-item">
-        <div class="contributor-avatar avatar-orange">J</div>
-        <div class="contributor-info">
-          <span class="contributor-name">James K.</span>
-          <span class="contributor-posts">24 posts this week</span>
-        </div>
-      </div>
-      <div class="contributor-item">
-        <div class="contributor-avatar avatar-blue">A</div>
-        <div class="contributor-info">
-          <span class="contributor-name">Alice M.</span>
-          <span class="contributor-posts">18 posts this week</span>
-        </div>
-      </div>
-      <div class="contributor-item">
-        <div class="contributor-avatar avatar-green">C</div>
-        <div class="contributor-info">
-          <span class="contributor-name">Chris O.</span>
-          <span class="contributor-posts">15 posts this week</span>
-        </div>
-      </div>
+      <?php if (empty($top_contributors)): ?>
+        <p class="text-muted small">No contributors yet.</p>
+      <?php else: ?>
+        <?php 
+          $avatars = ['orange', 'blue', 'green', 'purple', 'rose'];
+          foreach ($top_contributors as $index => $con): 
+            $avatar_class = $avatars[$index % count($avatars)];
+            $initial = strtoupper(substr($con['name'] ?? 'M', 0, 1));
+        ?>
+          <div class="contributor-item">
+            <div class="contributor-avatar avatar-<?= $avatar_class ?>"><?= $initial ?></div>
+            <div class="contributor-info">
+              <span class="contributor-name"><?= htmlspecialchars($con['name']) ?></span>
+              <span class="contributor-posts"><?= $con['post_count'] ?> posts total</span>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      <?php endif; ?>
     </div>
   </section>
 

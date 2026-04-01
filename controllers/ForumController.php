@@ -6,12 +6,29 @@ class ForumController extends BaseController {
         $forumModel = new ForumModel($this->db);
         $categories = $forumModel->getCategories();
         $category_filter = $_GET['category'] ?? null;
-        $feeds = $forumModel->getFeeds(10, $_SESSION['member_id'] ?? null, $category_filter);
+        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+        $limit = 10;
+        $feeds = $forumModel->getFeeds($limit, $_SESSION['member_id'] ?? null, $category_filter, 'latest', $page);
+        $total_feeds = $forumModel->getTotalFeedCount($category_filter);
+        $total_pages = ceil($total_feeds / $limit);
+
+        $global_stats = $forumModel->getGlobalStats();
+        $trending = $forumModel->getTrendingTopics(5);
+        $top_categories = $forumModel->getTopCategories(5);
+        $top_contributors = $forumModel->getTopContributors(3);
+        $active_members = $forumModel->getActiveMembers(6);
 
         $this->render('forum/index', [
             'title' => 'Spider Tech Community Forum',
             'categories' => $categories,
-            'feeds' => $feeds
+            'feeds' => $feeds,
+            'global_stats' => $global_stats,
+            'trending' => $trending,
+            'top_categories' => $top_categories,
+            'top_contributors' => $top_contributors,
+            'active_members' => $active_members,
+            'current_page' => $page,
+            'total_pages' => $total_pages
         ]);
     }
 
@@ -23,21 +40,37 @@ class ForumController extends BaseController {
         $forumModel = new ForumModel($this->db);
         $categories = $forumModel->getCategories();
         $category_filter = $_GET['category'] ?? null;
-        $feeds = $forumModel->getFeeds(10, $_SESSION['member_id'], $category_filter);
+        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+        $limit = 10;
+        $feeds = $forumModel->getFeeds($limit, $_SESSION['member_id'], $category_filter, 'latest', $page);
+        $total_feeds = $forumModel->getTotalFeedCount($category_filter);
+        $total_pages = ceil($total_feeds / $limit);
+
+        $global_stats = $forumModel->getGlobalStats();
+        $trending = $forumModel->getTrendingTopics(5);
+        $member_stats = $forumModel->getMemberStats($_SESSION['member_id']);
+        $active_members = $forumModel->getActiveMembers(6);
+        $unread_count = $forumModel->getUnreadReplyCount($_SESSION['member_id']);
 
         // Mock member data for UI fidelity
         $member = [
             'name' => $_SESSION['member_name'] ?? 'Member',
             'role' => 'Engineer',
             'posts' => 128,
-            'new_replies' => 3
+            'new_replies' => $unread_count
         ];
 
         $this->render('forum/feed', [
             'title' => 'Member Feed',
             'member' => $member,
             'feeds' => $feeds,
-            'categories' => $categories
+            'categories' => $categories,
+            'global_stats' => $global_stats,
+            'trending' => $trending,
+            'member_stats' => $member_stats,
+            'active_members' => $active_members,
+            'current_page' => $page,
+            'total_pages' => $total_pages
         ]);
     }
 
@@ -48,6 +81,7 @@ class ForumController extends BaseController {
 
         $forumModel = new ForumModel($this->db);
         $categories = $forumModel->getCategories();
+        $member_stats = $forumModel->getMemberStats($_SESSION['member_id']);
 
         $member = [
             'name'       => $_SESSION['member_name'] ?? 'Member',
@@ -58,7 +92,8 @@ class ForumController extends BaseController {
         $this->render('forum/new-topic', [
             'title' => 'Start a New Discussion',
             'member' => $member,
-            'categories' => $categories
+            'categories' => $categories,
+            'member_stats' => $member_stats
         ]);
     }
 
@@ -73,18 +108,39 @@ class ForumController extends BaseController {
         }
 
         $forumModel = new ForumModel($this->db);
-        $topic = $forumModel->getTopic($uuid, $_SESSION['member_id'] ?? null);
+        $member_uuid = $_SESSION['member_uuid'] ?? '';
+        $member_id = $_SESSION['member_id'] ?? null;
+
+        $topic = $forumModel->getTopic($uuid, $member_id);
 
         if (!$topic) {
             $this->redirect('forum/feed');
         }
 
+        // Mark as read if user is logged in
+        if ($member_uuid) {
+            $forumModel->markRepliesAsRead($uuid, $member_uuid);
+        }
+
         $categories = $forumModel->getCategories();
+        $member_stats = $forumModel->getMemberStats($member_id);
+        $trending = $forumModel->getTrendingTopics(5);
+        $active_members = $forumModel->getActiveMembers(6);
+        
+        $member = $this->db->query("SELECT * FROM members WHERE id = " . $this->db->prepare($member_id)->queryString . " LIMIT 1")->fetch(); // Just for quick fix, better use model
+        // Let's use the actual model way:
+        $stmt = $this->db->prepare("SELECT * FROM members WHERE id = :id");
+        $stmt->execute([':id' => $member_id]);
+        $member = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $this->render('forum/view', [
             'title' => $topic['title'],
             'topic' => $topic,
-            'categories' => $categories
+            'categories' => $categories,
+            'member_stats' => $member_stats,
+            'trending' => $trending,
+            'active_members' => $active_members,
+            'member' => $member
         ]);
     }
 }

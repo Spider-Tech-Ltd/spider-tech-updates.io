@@ -160,12 +160,31 @@
     font-size: 0.875rem;
     color: #555555;
     line-height: 1.6;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    position: relative;
   }
+
+  .read-full-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    color: #f48221;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    transition: color 0.2s;
+    text-decoration: none !important;
+  }
+  .read-full-link:hover { color: #db7015; }
+  .read-full-link .material-symbols-outlined { font-size: 14px; }
 
   /* --- Author Row --- */
   .card-author-row {
@@ -233,16 +252,16 @@
     color: #f48221;
   }
 
-  /* Upvote Interaction */
-  .btn-upvote:hover {
+  /* Like Interaction */
+  .btn-like:hover {
     color: #f48221;
     background-color: rgba(244, 130, 33, 0.08);
   }
-  .btn-upvote.active {
+  .btn-like.active {
     color: #f48221;
     background-color: rgba(244, 130, 33, 0.1);
   }
-  .btn-upvote.active .material-symbols-outlined {
+  .btn-like.active .material-symbols-outlined {
     font-variation-settings: 'FILL' 1;
     transform: scale(1.2);
     transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -402,6 +421,25 @@
 
 .btn-mini-interact .material-symbols-outlined {
   font-size: 16px;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Like Bump Animation */
+@keyframes like-bump {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4) translateY(-3px); }
+  100% { transform: scale(1); }
+}
+
+.btn-interact.liked .material-symbols-outlined,
+.btn-mini-interact.liked .material-symbols-outlined {
+  animation: like-bump 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  color: #f48221 !important;
+  font-variation-settings: 'FILL' 1;
+}
+
+.btn-mini-interact:hover .material-symbols-outlined {
+  transform: scale(1.1);
 }
 
 .reply-input-row {
@@ -442,24 +480,27 @@
 
   .reply-to-tag {
     position: absolute;
-    top: -20px;
+    top: -24px;
     left: 44px;
     background-color: #fff7ed;
     color: #f48221;
     font-size: 0.7rem;
     font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 4px;
+    padding: 2px 10px;
+    border-radius: 50px;
     display: flex;
     align-items: center;
     gap: 4px;
+    border: 1px solid rgba(244, 130, 33, 0.2);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     z-index: 5;
+    transition: all 0.3s ease;
   }
 
   .btn-submit-reply {
     position: absolute;
     right: 8px;
-    top: 50%;
+    top: calc(50% + 6px); /* Adjusted to account for container padding-top: 12px */
     transform: translateY(-50%);
     background-color: #f48221;
     color: #ffffff;
@@ -586,6 +627,57 @@
     .author-time { display: none; }
     .member-fab-mobile { display: flex; }
   }
+
+  /* ============================
+     INLINE REPLIES UI
+     ============================ */
+  .reply-card-wrapper {
+    position: relative;
+    margin-top: 4px;
+    margin-bottom: 4px;
+  }
+  .reply-nested::before {
+    content: '';
+    position: absolute;
+    left: -14px;
+    top: -12px;
+    bottom: 12px;
+    width: 2px;
+    background: #e9ecef;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+  }
+  .reply-card-wrapper:hover > .reply-nested::before {
+    background: var(--spider-orange);
+  }
+
+  .reply-card {
+    padding: 10px 0 10px 12px;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+    background: transparent;
+  }
+  .reply-card:hover { background: rgba(244, 130, 33, 0.02); }
+
+  .reply-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .reply-avatar { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+  .reply-author { font-weight: 700; font-size: 0.82rem; color: var(--spider-dark); }
+  .reply-time { font-size: 0.75rem; color: #a0a0a0; }
+  .reply-body { font-size: 0.9rem; line-height: 1.5; color: #4a4a4a; margin-left: 36px; margin-bottom: 6px; }
+  .reply-actions { display: flex; align-items: center; gap: 16px; margin-left: 36px; }
+  .btn-mini-interact { background: none; border: none; padding: 0; display: flex; align-items: center; gap: 4px; font-size: 0.75rem; font-weight: 600; color: #8c8c8c; cursor: pointer; transition: color 0.2s; }
+  .btn-mini-interact:hover { color: var(--spider-orange); }
+
+  /* Input Area */
+  .reply-input-row { display: flex; align-items: center; gap: 12px; margin-top: 16px; padding-top: 16px; }
+  .reply-field-container { position: relative; flex-grow: 1; }
+  .reply-field { width: 100%; background-color: #f1f3f5; border: 1px solid transparent; border-radius: 50px; padding: 10px 50px 10px 18px; font-family: 'Open Sans', sans-serif; font-size: 0.875rem; }
+  .reply-field:focus { outline: none; background-color: #ffffff; border-color: var(--spider-orange); }
+  .btn-submit-pill { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; background-color: var(--spider-orange); color: #ffffff; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .btn-submit-pill:hover { background-color: #e6751c; transform: translateY(-50%) scale(1.05); }
+  .btn-submit-pill:disabled { background-color: #d6d6d6; cursor: not-allowed; }
+  .reply-to-tag { display: inline-flex; align-items: center; gap: 6px; background-color: #fffbf7; color: var(--spider-orange); font-family: 'Poppins'; font-weight: 700; font-size: 0.7rem; padding: 4px 12px; border-radius: 50px; border: 1px solid rgba(244,130,33,0.1); margin-bottom: 8px; }
+
 </style>
 
 <?php include ROOT_PATH . '/views/forum/includes/feed-banner.php'; ?>
@@ -629,25 +721,28 @@
                   <span class="material-symbols-outlined">local_fire_department</span> HOT
                 </span>
               </div>
-              <h3 class="card-title" x-text="feed.title"></h3>
+              <a :href="`<?= BASE_URL ?>/forum/discussion?uuid=${feed.uuid}`" class="text-decoration-none">
+                <h3 class="card-title" x-text="feed.title"></h3>
+              </a>
               <div class="card-excerpt shadow-none border-0 p-0" x-html="feed.content"></div>
+              <a :href="`<?= BASE_URL ?>/forum/discussion?uuid=${feed.uuid}`" class="read-full-link">
+                Read Full Story <span class="material-symbols-outlined">arrow_forward</span>
+              </a>
               <div class="card-author-row">
                 <img :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(feed.author_name)}&background=f48221&color=fff&size=32`" class="author-avatar-sm" alt="Author">
                 <span class="author-name" x-text="feed.author_name"></span>
                 <span class="author-time" x-text="formatDate(feed.created_at)"></span>
               </div>
               <div class="card-interaction-bar">
-                <button class="btn-interact btn-upvote" 
-                        :class="{ 'active': isLiked }" 
-                        title="Upvote" 
-                        @click="toggleUpvote()">
+                <button class="btn-interact btn-like" 
+                        :class="{ 'liked': isLiked }" 
+                        title="Like" 
+                        @click="toggleLike()">
                   <span class="material-symbols-outlined" :style="isLiked ? 'font-variation-settings: \'FILL\' 1;' : ''">thumb_up</span>
-                  <span class="vote-count" x-text="upvotes"></span>
+                  <span class="vote-count" x-text="likes"></span>
                 </button>
-                <button class="btn-interact btn-reply" 
-                        title="Replies" 
-                        @click="expanded = !expanded">
-                  <span class="material-symbols-outlined" :style="expanded ? 'font-variation-settings: \'FILL\' 1;' : ''">chat_bubble</span>
+                <button class="btn-interact btn-reply" title="Replies" @click.prevent="expanded = !expanded">
+                  <span class="material-symbols-outlined">chat_bubble</span>
                   <span class="reply-count" x-text="replies.length"></span>
                 </button>
                 <div class="interact-spacer"></div>
@@ -656,62 +751,70 @@
                 </button>
               </div>
 
-              <!-- COLLAPSIBLE REPLY THREAD -->
-              <div class="reply-thread-wrapper" x-show="expanded" x-collapse>
-                <div class="replies-container">
-                  <template x-for="reply in threadedReplies" :key="reply.uuid">
-                    <div class="reply-card-wrapper" :style="`margin-left: ${Math.min(reply.depth * 32, 160)}px`" :class="reply.depth > 0 ? 'reply-nested' : ''">
-                      <div class="reply-card">
-                        <div class="reply-header">
-                          <img :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(reply.author_name)}&background=f48221&color=fff&size=26`" class="reply-avatar" alt="Avatar">
-                          <span class="reply-author" x-text="reply.author_name"></span>
-                          <span class="reply-time" x-text="formatTime(reply.created_at)"></span>
-                        </div>
-                        <div class="reply-body" x-text="reply.content"></div>
-                        <div class="reply-actions">
-                          <button class="btn-mini-interact" title="Upvote"><span class="material-symbols-outlined">thumb_up</span> 0</button>
-                          <button class="btn-mini-interact" @click="setReplyTo(reply.uuid, reply.author_name)">
-                            <span class="material-symbols-outlined">reply</span> Reply
-                          </button>
-                        </div>
-                      </div>
+              <!-- Collapsible Replies Area -->
+              <div x-show="expanded" x-collapse class="replies-inline-container mt-3 pt-3 border-top">
+                 <div class="replies-list pb-2">
+                     <template x-for="reply in threadedReplies" :key="reply.uuid">
+                         <div class="reply-card-wrapper" 
+                              :style="`margin-left: ${Math.min(reply.depth * 32, 160)}px`"
+                              :class="reply.depth > 0 ? 'reply-nested' : ''">
+                             <div class="reply-card">
+                                 <div class="reply-header">
+                                     <img :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(reply.author_name)}&background=f48221&color=fff&size=26`" class="reply-avatar" alt="Avatar">
+                                     <span class="reply-author" x-text="reply.author_name"></span>
+                                     <span class="reply-time" x-text="formatTime(reply.created_at)"></span>
+                                 </div>
+                                 <div class="reply-body" x-text="reply.content"></div>
+                                 <div class="reply-actions">
+                                     <button class="btn-mini-interact" @click="toggleReplyLike(reply)" :class="{ 'liked': reply.is_liked }">
+                                         <span class="material-symbols-outlined">thumb_up</span>
+                                         <span x-text="reply.likes || 0"></span>
+                                     </button>
+                                     <button class="btn-mini-interact" @click="setReplyTo(reply.uuid, reply.author_name)">
+                                         <span class="material-symbols-outlined">reply</span> Reply
+                                     </button>
+                                 </div>
+                             </div>
+                         </div>
+                     </template>
+                 </div>
+                 
+                 <!-- Input Row -->
+                 <div class="reply-entry-area">
+                    <div class="reply-to-tag" x-show="replyingToName" x-transition>
+                        <span>Replying to <em x-text="replyingToName"></em></span>
+                        <span class="material-symbols-outlined" style="font-size:12px; cursor:pointer;" @click="cancelReplyTo()">close</span>
                     </div>
-                  </template>
-                </div>
-                <!-- Inline Reply Input -->
-                <div class="reply-input-row">
-                  <div class="reply-to-tag" x-show="parent_uuid" x-transition>
-                    <span>Replying to <em x-text="replyingToName"></em></span>
-                    <span class="material-symbols-outlined" style="font-size:12px; cursor:pointer" @click="cancelReplyTo()">close</span>
-                  </div>
-                  <img src="https://ui-avatars.com/api/?name=<?= urlencode($_SESSION['member_name'] ?? 'You'); ?>&background=f48221&color=fff&size=32" alt="Me">
-                  <input type="text" 
-                         class="reply-input-field" 
-                         :placeholder="parent_uuid ? `Reply to ${replyingToName}...` : 'Write a reply...'" 
-                         x-model="newReplyContent" 
-                         @keydown.enter="submitReply()">
-                  <button class="btn-submit-reply" 
-                          title="Post Reply" 
-                          @click="submitReply()" 
-                          :disabled="submitting">
-                    <span class="material-symbols-outlined" x-show="!submitting">arrow_upward</span>
-                    <div class="spinner-border spinner-border-sm" x-show="submitting"></div>
-                  </button>
-                </div>
+                    <div class="reply-input-row border-0 pt-0 mt-0">
+                        <img src="https://ui-avatars.com/api/?name=<?= urlencode($_SESSION['member_name'] ?? 'Me') ?>&background=f48221&color=fff&size=32" style="width:32px; height:32px; border-radius:50%;" alt="Me">
+                        <div class="reply-field-container">
+                            <input type="text" 
+                                   class="reply-field reply-input-field" 
+                                   :placeholder="replyingToName ? `Write a reply...` : 'Share your thought...'"
+                                   x-model="newReplyContent"
+                                   @keydown.enter="submitReply()">
+                            <button class="btn-submit-pill" @click="submitReply()" :disabled="submitting">
+                                <span x-show="!submitting" class="material-symbols-outlined" style="font-size:18px;">arrow_upward</span>
+                                <span x-show="submitting" class="spinner-border spinner-border-sm" role="status"></span>
+                            </button>
+                        </div>
+                    </div>
+                 </div>
               </div>
+
             </div>
           </template>
         </div>
 
         <!-- Pagination -->
-        <div class="member-feed-pagination">
-          <a href="#" class="pag-btn">
+        <div class="member-feed-pagination" x-show="totalPages > 1">
+          <button class="pag-btn" @click="prevPage()" :disabled="currentPage <= 1" :style="currentPage <= 1 ? 'opacity:0.5; cursor:not-allowed;' : ''">
             <span class="material-symbols-outlined">chevron_left</span> Previous
-          </a>
-          <span class="pag-info">Page 1 of 1</span>
-          <a href="#" class="pag-btn">
+          </button>
+          <span class="pag-info">Page <span x-text="currentPage"></span> of <span x-text="totalPages"></span></span>
+          <button class="pag-btn" @click="nextPage()" :disabled="currentPage >= totalPages" :style="currentPage >= totalPages ? 'opacity:0.5; cursor:not-allowed;' : ''">
             Next <span class="material-symbols-outlined">chevron_right</span>
-          </a>
+          </button>
         </div>
       </div>
 
@@ -736,6 +839,8 @@ document.addEventListener('alpine:init', () => {
         loading: false,
         currentCategory: 'all',
         currentSort: 'latest',
+        currentPage: <?= $current_page ?? 1 ?>,
+        totalPages: <?= $total_pages ?? 1 ?>,
 
         init() {
             this.fetchDiscussions();
@@ -744,6 +849,7 @@ document.addEventListener('alpine:init', () => {
             window.addEventListener('filter-changed', (e) => {
                 if (e.detail.category !== undefined) this.currentCategory = e.detail.category;
                 if (e.detail.sort !== undefined) this.currentSort = e.detail.sort;
+                this.currentPage = 1; // Reset to page 1 on filter change
                 this.fetchDiscussions();
             });
         },
@@ -753,17 +859,34 @@ document.addEventListener('alpine:init', () => {
             try {
                 const params = new URLSearchParams({
                     category: this.currentCategory,
-                    sort: this.currentSort
+                    sort: this.currentSort,
+                    page: this.currentPage
                 });
                 const response = await fetch(`<?= BASE_URL ?>/forum/feed/fetch?${params.toString()}`);
                 const data = await response.json();
                 if (data.success) {
                     this.discussions = data.feeds;
+                    if (data.total_pages !== undefined) this.totalPages = data.total_pages;
                 }
             } catch (error) {
                 console.error('Error fetching discussions:', error);
             } finally {
                 this.loading = false;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        },
+
+        nextPage() {
+            if (this.currentPage < this.totalPages) {
+                this.currentPage++;
+                this.fetchDiscussions();
+            }
+        },
+
+        prevPage() {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+                this.fetchDiscussions();
             }
         },
 
@@ -779,9 +902,9 @@ document.addEventListener('alpine:init', () => {
         }
     }));
 
-    Alpine.data('feedCard', (uuid, initialUpvotes, initialIsLiked, initialReplies) => ({
+    Alpine.data('feedCard', (uuid, initialLikes, initialIsLiked, initialReplies) => ({
         uuid: uuid,
-        upvotes: initialUpvotes,
+        likes: initialLikes,
         isLiked: initialIsLiked,
         replies: initialReplies,
         expanded: false,
@@ -817,6 +940,10 @@ document.addEventListener('alpine:init', () => {
             this.parent_uuid = replyUuid;
             this.replyingToName = authorName;
             this.expanded = true;
+            this.$nextTick(() => {
+                const input = this.$el.querySelector('.reply-input-field');
+                if (input) input.focus();
+            });
         },
 
         cancelReplyTo() {
@@ -824,7 +951,30 @@ document.addEventListener('alpine:init', () => {
             this.replyingToName = '';
         },
 
-        async toggleUpvote() {
+        async toggleReplyLike(reply) {
+            try {
+                const response = await fetch('<?= BASE_URL ?>/forum/feed/like-reply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        reply_uuid: reply.uuid,
+                        csrf_token: '<?= CSRF::generateToken() ?>'
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    reply.likes = data.likes;
+                    reply.is_liked = data.is_liked;
+                } else {
+                    alert(data.message);
+                    if (data.message.includes('sign in')) window.location.href = '<?= BASE_URL ?>/forum/sign-in';
+                }
+            } catch (error) {
+                console.error('Error toggling reply like:', error);
+            }
+        },
+
+        async toggleLike() {
             try {
                 const response = await fetch('<?= BASE_URL ?>/forum/feed/like', {
                     method: 'POST',
@@ -836,14 +986,14 @@ document.addEventListener('alpine:init', () => {
                 });
                 const data = await response.json();
                 if (data.success) {
-                    this.upvotes = data.upvotes;
+                    this.likes = data.likes;
                     this.isLiked = data.is_liked;
                 } else {
                     alert(data.message);
                     if (data.message.includes('sign in')) window.location.href = '<?= BASE_URL ?>/forum/sign-in';
                 }
             } catch (error) {
-                console.error('Error toggling upvote:', error);
+                console.error('Error toggling like:', error);
             }
         },
 
@@ -863,7 +1013,13 @@ document.addEventListener('alpine:init', () => {
                 });
                 const data = await response.json();
                 if (data.success) {
-                    this.replies.push(data.reply);
+                    // Update reply list with full data
+                    const newReply = {
+                        ...data.reply,
+                        likes: 0,
+                        is_liked: false
+                    };
+                    this.replies.push(newReply);
                     this.newReplyContent = '';
                     this.cancelReplyTo();
                 } else {

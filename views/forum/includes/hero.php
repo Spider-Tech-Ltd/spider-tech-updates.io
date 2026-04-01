@@ -221,7 +221,7 @@
 
     <!-- Subtext -->
     <p class="hero-subtext">
-      Join 12,000+ experts to share insights, solve complex engineering challenges, and accelerate your technical career.
+      Join <?= Utils::formatNumber($global_stats['total_members'] ?? 0) ?>+ experts to share insights, solve complex engineering challenges, and accelerate your technical career.
     </p>
 
     <!-- Buttons Row -->
@@ -238,11 +238,11 @@
     <!-- Stats Row -->
     <div class="hero-stats-row">
       <div class="hero-stat-item">
-        <span class="hero-stat-number">12k+</span>
+        <span class="hero-stat-number"><?= Utils::formatNumber($global_stats['total_members'] ?? 0) ?>+</span>
         <span class="hero-stat-label">Members</span>
       </div>
       <div class="hero-stat-item">
-        <span class="hero-stat-number">450</span>
+        <span class="hero-stat-number"><?= Utils::formatNumber($global_stats['total_discussions'] ?? 0) ?></span>
         <span class="hero-stat-label">Active Topics</span>
       </div>
       <div class="hero-stat-item">

@@ -11,6 +11,20 @@ class BaseController {
         if ($this->db === null) {
             die("Critical Error: Database connection failed. Please check your configuration and ensure MySQL is running.");
         }
+        
+        // Track member activity if logged in
+        if ($this->isLoggedIn()) {
+            $this->trackActivity();
+        }
+    }
+
+    private function trackActivity() {
+        try {
+            $stmt = $this->db->prepare("UPDATE members SET last_active_at = CURRENT_TIMESTAMP WHERE uuid = ?");
+            $stmt->execute([$_SESSION['member_uuid'] ?? '']);
+        } catch (PDOException $e) {
+            // Silently fail to not break user experience
+        }
     }
 
     protected function isLoggedIn() {

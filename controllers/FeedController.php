@@ -13,7 +13,7 @@ class FeedController extends BaseController
     public function like()
     {
         if (!$this->isLoggedIn()) {
-            echo json_encode(['success' => false, 'message' => 'Please sign in to upvote.']);
+            echo json_encode(['success' => false, 'message' => 'Please sign in to like.']);
             return;
         }
 
@@ -26,13 +26,13 @@ class FeedController extends BaseController
         $member_id = $_SESSION['member_id'] ?? null;
 
         if (!$member_id) {
-            echo json_encode(['success' => false, 'message' => 'Please sign in to upvote.']);
+            echo json_encode(['success' => false, 'message' => 'Please sign in to like.']);
             return;
         }
 
         if ($this->forumModel->toggleLike($feed_uuid, $member_id)) {
             // Fetch updated count
-            $stmt = $this->db->prepare("SELECT COUNT(*) as upvotes FROM feed_likes WHERE feed_uuid = :uuid");
+            $stmt = $this->db->prepare("SELECT COUNT(*) as likes FROM feed_likes WHERE feed_uuid = :uuid");
             $stmt->execute([':uuid' => $feed_uuid]);
             $result = $stmt->fetch();
 
@@ -43,7 +43,7 @@ class FeedController extends BaseController
 
             echo json_encode([
                 'success' => true,
-                'upvotes' => $result['upvotes'],
+                'likes' => $result['likes'],
                 'is_liked' => $is_liked
             ]);
         } else {
@@ -133,14 +133,61 @@ class FeedController extends BaseController
     {
         $category = $_GET['category'] ?? 'all';
         $sort = $_GET['sort'] ?? 'latest';
+        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+        $limit = 10;
         $member_id = $_SESSION['member_id'] ?? null;
 
-        $feeds = $this->forumModel->getFeeds(20, $member_id, $category, $sort);
+        $feeds = $this->forumModel->getFeeds($limit, $member_id, $category, $sort, $page);
+        $total_feeds = $this->forumModel->getTotalFeedCount($category);
+        $total_pages = ceil($total_feeds / $limit);
 
         echo json_encode([
             'success' => true,
-            'feeds' => $feeds
+            'feeds' => $feeds,
+            'total_pages' => $total_pages,
+            'current_page' => $page
         ]);
+    }
+
+    public function likeReply()
+    {
+        if (!$this->isLoggedIn()) {
+            echo json_encode(['success' => false, 'message' => 'Please sign in to like replies.']);
+            return;
+        }
+
+        if (!CSRF::validateToken($_POST['csrf_token'] ?? '')) {
+            echo json_encode(['success' => false, 'message' => 'Invalid security token.']);
+            return;
+        }
+
+        $reply_uuid = $_POST['reply_uuid'] ?? '';
+        $member_uuid = $_SESSION['member_uuid'] ?? null;
+
+        if (!$member_uuid) {
+            echo json_encode(['success' => false, 'message' => 'Session error. Please sign in again.']);
+            return;
+        }
+
+        if ($this->forumModel->toggleReplyLike($reply_uuid, $member_uuid)) {
+            // Fetch updated count
+            $stmt = $this->db->prepare("SELECT COUNT(*) as likes FROM reply_likes WHERE reply_uuid = :uuid");
+            $stmt->execute([':uuid' => $reply_uuid]);
+            $likes = $stmt->fetchColumn();
+
+            // Check if now liked
+            $stmt = $this->db->prepare("SELECT id FROM reply_likes WHERE reply_uuid = :uuid AND member_id = (SELECT id FROM members WHERE uuid = :member)");
+            $stmt->execute([':uuid' => $reply_uuid, ':member' => $member_uuid]);
+            $is_liked = $stmt->fetch() ? true : false;
+
+            echo json_encode([
+                'success' => true,
+                'likes' => (int)$likes,
+                'is_liked' => $is_liked
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to toggle like.']);
+        }
     }
 
     public function uploadImage()
