@@ -169,6 +169,48 @@
             color: #2f855a;
             border: 1px solid #9ae6b4;
         }
+
+        /* Toast Notification - pill shape */
+        .pd-toast {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            padding: 11px 22px;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.84rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 9999;
+        }
+        .pd-toast.success { background: #10b981; box-shadow: 0 4px 16px rgba(16,185,129,0.3); }
+        .pd-toast.error   { background: #ef4444; box-shadow: 0 4px 16px rgba(239,68,68,0.3); }
+        .pd-toast .material-symbols-outlined { font-size: 17px; }
+
+        /* Strength Meter */
+        .strength-meter {
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+        .strength-bar {
+            height: 100%;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+        .strength-text {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 4px;
+            display: block;
+            text-align: right;
+        }
     </style>
 </head>
 <body x-data="signUpForm()">
@@ -213,17 +255,27 @@
                     </li>
                     <li class="pw-guide-item" :class="{ 'valid': /[A-Z]/.test(password) }">
                         <span class="material-symbols-outlined" x-text="/[A-Z]/.test(password) ? 'check_circle' : 'circle'"></span>
-                        Uppercase Letter
+                        Uppercase
+                    </li>
+                    <li class="pw-guide-item" :class="{ 'valid': /[a-z]/.test(password) }">
+                        <span class="material-symbols-outlined" x-text="/[a-z]/.test(password) ? 'check_circle' : 'circle'"></span>
+                        Lowercase
                     </li>
                     <li class="pw-guide-item" :class="{ 'valid': /[0-9]/.test(password) }">
                         <span class="material-symbols-outlined" x-text="/[0-9]/.test(password) ? 'check_circle' : 'circle'"></span>
-                        One Number
+                        Number
                     </li>
                     <li class="pw-guide-item" :class="{ 'valid': /[!@#$%^&*(),.?\":{}|<>]/.test(password) }">
                         <span class="material-symbols-outlined" x-text="/[!@#$%^&*(),.?\":{}|<>]/.test(password) ? 'check_circle' : 'circle'"></span>
                         Special Char
                     </li>
                 </ul>
+
+                <!-- Strength Meter -->
+                <div class="strength-meter">
+                    <div class="strength-bar" :style="`width: ${strengthPercent}%; background-color: ${strengthColor};`"></div>
+                </div>
+                <span class="strength-text" :style="`color: ${strengthColor};`" x-text="strengthLabel"></span>
             </div>
 
             <div class="form-group">
@@ -262,6 +314,13 @@
     </div>
 </div>
 
+<!-- Toast -->
+<div class="pd-toast" :class="toastSuccess ? 'success' : 'error'"
+     x-show="toastShow" x-transition.duration.300ms style="display:none;">
+  <span class="material-symbols-outlined" x-text="toastSuccess ? 'check_circle' : 'error'"></span>
+  <span x-text="toastMessage"></span>
+</div>
+
 <script>
 function signUpForm() {
     return {
@@ -273,8 +332,53 @@ function signUpForm() {
         showPw1: false,
         showPw2: false,
 
+        toastShow: false,
+        toastSuccess: true,
+        toastMessage: '',
+
+        init() {
+            const err = '<?= addslashes($error) ?>';
+            const scs = '<?= addslashes($success) ?>';
+            if (err) this.showToast(err, false);
+            if (scs) this.showToast(scs, true);
+        },
+
+        showToast(msg, success = true) {
+            this.toastMessage = msg;
+            this.toastSuccess = success;
+            this.toastShow = true;
+            setTimeout(() => this.toastShow = false, 3500);
+        },
+
+        get strength() {
+            let score = 0;
+            if (this.password.length >= 8) score++;
+            if (/[A-Z]/.test(this.password)) score++;
+            if (/[a-z]/.test(this.password)) score++;
+            if (/[0-9]/.test(this.password)) score++;
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(this.password)) score++;
+            return score;
+        },
+
+        get strengthLabel() {
+            if (this.password.length === 0) return '';
+            const labels = ['Weak', 'Weak', 'Fair', 'Medium', 'Strong', 'Very Strong'];
+            return labels[this.strength];
+        },
+
+        get strengthPercent() {
+            return (this.strength / 5) * 100;
+        },
+
+        get strengthColor() {
+            if (this.strength <= 2) return '#ef4444'; // Red
+            if (this.strength <= 4) return '#f48221'; // Orange
+            return '#10b981'; // Green
+        },
+
         get isFormValid() {
             const hasUpper = /[A-Z]/.test(this.password);
+            const hasLower = /[a-z]/.test(this.password);
             const hasNumber = /[0-9]/.test(this.password);
             const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(this.password);
             const isLongEnough = this.password.length >= 8;
@@ -282,7 +386,7 @@ function signUpForm() {
 
             return this.username.length > 0 &&
                    this.email.length > 0 &&
-                   hasUpper && hasNumber && hasSpecial && isLongEnough && isMatch;
+                   hasUpper && hasLower && hasNumber && hasSpecial && isLongEnough && isMatch;
         }
     }
 }

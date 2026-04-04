@@ -183,11 +183,11 @@ class ForumController extends BaseController {
             $forumModel   = new ForumModel($this->db);
             $passwordHash = null;
             if (!empty($new_password)) {
-                // Password Regex: 1 Uppercase, 1 Special Char, 1 Number, min 8 chars
-                $regex = '/^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[0-9]).{8,}$/';
+                // Password Regex: 1 Uppercase, 1 Lowercase, 1 Special Char, 1 Number, min 8 chars
+                $regex = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/';
 
                 if (!preg_match($regex, $new_password)) {
-                    echo json_encode(['success' => false, 'message' => 'Password must be at least 8 characters long and include an uppercase letter, a number, and a special character.']);
+                    echo json_encode(['success' => false, 'message' => 'Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.']);
                     return;
                 }
 
