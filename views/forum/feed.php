@@ -167,6 +167,11 @@
     overflow: hidden;
     position: relative;
   }
+  .card-excerpt img,
+  .card-excerpt video,
+  .card-excerpt iframe {
+    display: none !important;
+  }
 
   .read-full-link {
     display: inline-flex;
@@ -725,9 +730,6 @@
                 <h3 class="card-title" x-text="feed.title"></h3>
               </a>
               <div class="card-excerpt shadow-none border-0 p-0" x-html="feed.content"></div>
-              <a :href="`<?= BASE_URL ?>/forum/discussion?uuid=${feed.uuid}`" class="read-full-link">
-                Read Full Story <span class="material-symbols-outlined">arrow_forward</span>
-              </a>
               <div class="card-author-row">
                 <img :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(feed.author_name)}&background=f48221&color=fff&size=32`" class="author-avatar-sm" alt="Author">
                 <span class="author-name" x-text="feed.author_name"></span>
@@ -745,10 +747,6 @@
                   <span class="material-symbols-outlined">chat_bubble</span>
                   <span class="reply-count" x-text="replies.length"></span>
                 </a>
-                <div class="interact-spacer"></div>
-                <button class="btn-interact btn-bookmark" title="Bookmark">
-                  <span class="material-symbols-outlined">bookmark</span>
-                </button>
               </div>
 
             </div>

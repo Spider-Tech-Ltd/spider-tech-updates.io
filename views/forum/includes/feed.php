@@ -380,10 +380,6 @@
               <span class="material-symbols-outlined">chat_bubble</span>
               <span class="reply-count"><?= count($feed['replies'] ?? []); ?></span>
             </div>
-            <div class="interact-spacer"></div>
-            <div class="btn-interact" title="Bookmark">
-              <span class="material-symbols-outlined">bookmark</span>
-            </div>
           </div>
         </a>
       <?php endforeach; ?>
@@ -411,10 +407,6 @@
           <div class="btn-interact" title="Replies">
             <span class="material-symbols-outlined">chat_bubble</span>
             <span>58</span>
-          </div>
-          <div class="interact-spacer"></div>
-          <div class="btn-interact" title="Bookmark">
-            <span class="material-symbols-outlined">bookmark</span>
           </div>
         </div>
       </a>
