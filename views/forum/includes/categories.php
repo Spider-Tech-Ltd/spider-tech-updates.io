@@ -45,7 +45,7 @@
       <?php if (!empty($categories)): ?>
         <?php foreach ($categories as $cat): ?>
           <div class="col-lg-4 col-md-6 mb-4">
-            <a href="<?= BASE_URL ?>/forum?category=<?= urlencode($cat['slug'] ?? $cat['uuid']); ?>" class="forum-category-card p-4">
+            <a href="<?= BASE_URL ?>/forum/feed?category=<?= urlencode($cat['slug'] ?? $cat['uuid']); ?>" class="forum-category-card p-4">
               <div class="d-flex justify-content-between align-items-start mb-3">
                 <div class="forum-icon-wrapper">
                   <span class="material-symbols-outlined"><?= htmlspecialchars($cat['icon'] ?? 'forum') ?></span>

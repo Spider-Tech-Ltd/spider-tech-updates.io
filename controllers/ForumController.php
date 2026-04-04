@@ -141,4 +141,111 @@ class ForumController extends BaseController {
             'member' => $member
         ]);
     }
+
+    public function profile() {
+        if (!$this->isLoggedIn()) {
+            $this->redirect('forum/sign-in');
+        }
+
+        $forumModel = new ForumModel($this->db);
+        $member_id = $_SESSION['member_id'];
+        
+        $stmt = $this->db->prepare("SELECT * FROM members WHERE id = :id");
+        $stmt->execute([':id' => $member_id]);
+        $member = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $member_stats = $forumModel->getMemberStats($member_id);
+
+        $this->render('forum/profile', [
+            'title'        => 'Profile Settings',
+            'member'       => $member,
+            'member_stats' => $member_stats,
+            'categories'   => $forumModel->getCategories()
+        ]);
+    }
+
+    public function updateProfile() {
+        // Always respond with JSON
+        ob_clean();
+        header('Content-Type: application/json');
+
+        if (!$this->isLoggedIn() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+            return;
+        }
+
+        try {
+            $name         = trim($_POST['name'] ?? '');
+            $new_password = $_POST['new_password'] ?? '';
+            $member_id    = $_SESSION['member_id'];
+
+            if (empty($name)) {
+                echo json_encode(['success' => false, 'message' => 'Display name is required.']);
+                return;
+            }
+
+            $forumModel   = new ForumModel($this->db);
+            $passwordHash = null;
+            if (!empty($new_password)) {
+                $passwordHash = password_hash($new_password, PASSWORD_DEFAULT);
+            }
+
+            // Handle avatar upload
+            $avatarPath = null;
+            if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+                $allowed   = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                $mimeType  = null;
+
+                // Use finfo if available, else fallback to mime_content_type
+                if (function_exists('finfo_open')) {
+                    $finfo    = finfo_open(FILEINFO_MIME_TYPE);
+                    $mimeType = finfo_file($finfo, $_FILES['avatar']['tmp_name']);
+                    finfo_close($finfo);
+                } elseif (function_exists('mime_content_type')) {
+                    $mimeType = mime_content_type($_FILES['avatar']['tmp_name']);
+                }
+
+                if ($mimeType && !in_array($mimeType, $allowed)) {
+                    echo json_encode(['success' => false, 'message' => 'Invalid image type. Use JPG, PNG, GIF or WebP.']);
+                    return;
+                }
+
+                if ($_FILES['avatar']['size'] > 5 * 1024 * 1024) {
+                    echo json_encode(['success' => false, 'message' => 'Image must be under 5MB.']);
+                    return;
+                }
+
+                $ext       = strtolower(pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION));
+                $filename  = 'avatar_' . $member_id . '_' . time() . '.' . $ext;
+                $uploadDir = ROOT_PATH . '/uploads/forum/avatars/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+                $dest = $uploadDir . $filename;
+
+                if (move_uploaded_file($_FILES['avatar']['tmp_name'], $dest)) {
+                    $avatarPath = '/uploads/forum/avatars/' . $filename;
+                }
+            }
+
+            $success = $forumModel->updateMember($member_id, $name, $passwordHash, $avatarPath);
+
+            if ($success) {
+                $_SESSION['member_name'] = $name;
+                if ($avatarPath) $_SESSION['member_avatar'] = $avatarPath;
+                echo json_encode([
+                    'success'    => true,
+                    'message'    => 'Profile updated successfully',
+                    'avatarPath' => $avatarPath
+                ]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to update profile. Please try again.']);
+            }
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Server error: ' . $e->getMessage()]);
+        }
+    }
 }

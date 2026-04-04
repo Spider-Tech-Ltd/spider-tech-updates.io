@@ -228,7 +228,7 @@
     <div class="hero-action-row">
       <div class="hero-btn-group">
         <?php if (isset($_SESSION['member_uuid'])): ?>
-          <a href="<?= BASE_URL ?>/forum/new-topic" class="hero-btn-primary">Start a Discussion</a>
+          <a href="<?= BASE_URL ?>/forum/feed" class="hero-btn-primary">Start a Discussion</a>
         <?php else: ?>
           <a href="<?= BASE_URL ?>/forum/sign-in" class="hero-btn-primary">Start a Discussion</a>
           <a href="<?= BASE_URL ?>/forum/sign-in" class="hero-btn-secondary">Sign In</a>

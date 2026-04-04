@@ -311,4 +311,23 @@ class ForumModel {
             return $stmt->execute([':reply_uuid' => $reply_uuid, ':member_id' => $member_id]);
         }
     }
+
+    public function updateMember($member_id, $name, $passwordHash = null, $avatarPath = null) {
+        $setParts = ['name = :name'];
+        $params   = [':name' => $name, ':id' => $member_id];
+
+        if ($passwordHash) {
+            $setParts[]         = 'password = :password';
+            $params[':password'] = $passwordHash;
+        }
+
+        if ($avatarPath) {
+            $setParts[]          = 'avatar = :avatar';
+            $params[':avatar']   = $avatarPath;
+        }
+
+        $sql  = 'UPDATE members SET ' . implode(', ', $setParts) . ' WHERE id = :id';
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute($params);
+    }
 }

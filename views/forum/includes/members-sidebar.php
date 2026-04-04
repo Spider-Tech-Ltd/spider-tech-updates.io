@@ -187,9 +187,12 @@
         </div>
     </div>
 
-    <div class="pt-3 mt-2 border-top text-center">
-        <a href="<?= BASE_URL ?>/forum/logout" class="text-decoration-none" style="font-family:'Poppins'; font-weight:700; font-size:0.8rem; color:#e11d48; display:inline-flex; align-items:center; gap:6px;">
-            <span class="material-symbols-outlined" style="font-size:16px;">logout</span> Sign Out
+    <div class="pt-3 mt-2 border-top d-flex justify-content-around align-items-center">
+        <a href="<?= BASE_URL ?>/forum/profile" class="text-decoration-none" style="font-family:'Poppins'; font-weight:700; font-size:0.8rem; color:var(--spider-gray); display:inline-flex; align-items:center; transition: color 0.2s;" onmouseover="this.style.color='var(--spider-orange)'" onmouseout="this.style.color='var(--spider-gray)'">
+            <span class="material-symbols-outlined mr-1" style="font-size:16px;">manage_accounts</span> Edit Profile
+        </a>
+        <a href="<?= BASE_URL ?>/forum/logout" class="text-decoration-none" style="font-family:'Poppins'; font-weight:700; font-size:0.8rem; color:#e11d48; display:inline-flex; align-items:center;">
+            <span class="material-symbols-outlined mr-1" style="font-size:16px;">logout</span> Sign Out
         </a>
     </div>
   </section>
