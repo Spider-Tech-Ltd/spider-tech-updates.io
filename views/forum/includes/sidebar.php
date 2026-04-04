@@ -217,7 +217,11 @@
             $initial = strtoupper(substr($con['name'] ?? 'M', 0, 1));
         ?>
           <div class="contributor-item">
-            <div class="contributor-avatar avatar-<?= $avatar_class ?>"><?= $initial ?></div>
+            <?php if (!empty($con['avatar'])): ?>
+                <img src="<?= BASE_URL . $con['avatar'] ?>" class="contributor-avatar" style="object-fit: cover;" alt="Avatar">
+            <?php else: ?>
+                <div class="contributor-avatar avatar-<?= $avatar_class ?>"><?= $initial ?></div>
+            <?php endif; ?>
             <div class="contributor-info">
               <span class="contributor-name"><?= htmlspecialchars($con['name']) ?></span>
               <span class="contributor-posts"><?= $con['post_count'] ?> posts total</span>

@@ -257,7 +257,7 @@ if ($safe_replies_json === false) { $safe_replies_json = '[]'; }
                         if (empty($view_author)) $view_author = 'Anonymous';
                     ?>
                     <div class="author-meta-premium border-0 pb-0 mb-4 mt-3">
-                        <img src="https://ui-avatars.com/api/?name=<?= urlencode($view_author) ?>&background=f48221&color=fff&size=48" class="author-avatar-lg" style="width:48px; height:48px;" alt="Avatar">
+                        <img src="<?= !empty($topic['author_avatar']) ? BASE_URL . $topic['author_avatar'] : "https://ui-avatars.com/api/?name=" . urlencode($view_author) . "&background=f48221&color=fff&size=48" ?>" class="author-avatar-lg" style="width:48px; height:48px;" alt="Avatar">
                         <div class="author-info-group">
                             <span style="font-family:'Poppins'; font-weight:700; font-size:1.1rem; color:#111;"><?= htmlspecialchars($view_author) ?></span><br>
                             <span style="font-size:0.85rem; color:#797979;">Published on <?= date('F j, Y', strtotime($topic['created_at'])) ?></span>
@@ -296,7 +296,7 @@ if ($safe_replies_json === false) { $safe_replies_json = '[]'; }
                                  :class="reply.depth > 0 ? 'reply-nested' : ''">
                                 <div class="reply-card">
                                     <div class="reply-header">
-                                        <img :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(reply.author_name)}&background=f48221&color=fff&size=26`" class="reply-avatar" alt="Avatar">
+                                        <img :src="reply.author_avatar ? '<?= BASE_URL ?>' + reply.author_avatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(reply.author_name)}&background=f48221&color=fff&size=26`" class="reply-avatar" alt="Avatar">
                                         <span class="reply-author" x-text="reply.author_name"></span>
                                         <span class="reply-time" x-text="formatTime(reply.created_at)"></span>
                                     </div>
@@ -321,7 +321,7 @@ if ($safe_replies_json === false) { $safe_replies_json = '[]'; }
                            <span class="material-symbols-outlined" style="font-size:12px; cursor:pointer;" @click="cancelReply()">close</span>
                        </div>
                        <div class="reply-input-row border-0 pt-0 mt-0">
-                           <img src="https://ui-avatars.com/api/?name=<?= urlencode($_SESSION['member_name'] ?? 'Me') ?>&background=f48221&color=fff&size=32" style="width:32px; height:32px; border-radius:50%;" alt="Me">
+                           <img src="<?= !empty($_SESSION['member_avatar']) ? BASE_URL . $_SESSION['member_avatar'] : "https://ui-avatars.com/api/?name=" . urlencode($_SESSION['member_name'] ?? 'Me') . "&background=f48221&color=fff&size=32" ?>" style="width:32px; height:32px; border-radius:50%;" alt="Me">
                            <div class="reply-field-container">
                                <input type="text" id="reply-input"
                                       class="reply-field" 

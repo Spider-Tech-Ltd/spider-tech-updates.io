@@ -52,13 +52,10 @@ class ForumController extends BaseController {
         $active_members = $forumModel->getActiveMembers(6);
         $unread_count = $forumModel->getUnreadReplyCount($_SESSION['member_id']);
 
-        // Mock member data for UI fidelity
-        $member = [
-            'name' => $_SESSION['member_name'] ?? 'Member',
-            'role' => 'Engineer',
-            'posts' => 128,
-            'new_replies' => $unread_count
-        ];
+        // Get member data
+        $stmt = $this->db->prepare("SELECT * FROM members WHERE id = :id");
+        $stmt->execute([':id' => $_SESSION['member_id']]);
+        $member = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $this->render('forum/feed', [
             'title' => 'Member Feed',
@@ -83,11 +80,9 @@ class ForumController extends BaseController {
         $categories = $forumModel->getCategories();
         $member_stats = $forumModel->getMemberStats($_SESSION['member_id']);
 
-        $member = [
-            'name'       => $_SESSION['member_name'] ?? 'Member',
-            'initials'   => strtoupper(substr($_SESSION['member_name'] ?? 'M', 0, 1)),
-            'role'       => 'Verified Member',
-        ];
+        $stmt = $this->db->prepare("SELECT * FROM members WHERE id = :id");
+        $stmt->execute([':id' => $_SESSION['member_id']]);
+        $member = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $this->render('forum/new-topic', [
             'title' => 'Start a New Discussion',

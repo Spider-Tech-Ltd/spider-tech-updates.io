@@ -479,6 +479,9 @@
           <div class="pd-pw-wrapper">
             <input :type="showPw ? 'text' : 'password'" class="pd-input" x-model="confirmPassword"
                    placeholder="Repeat new password" style="padding-right:44px;">
+            <button type="button" class="pd-pw-toggle" @click="showPw = !showPw" tabindex="-1">
+              <span class="material-symbols-outlined" x-text="showPw ? 'visibility_off' : 'visibility'"></span>
+            </button>
           </div>
         </div>
 

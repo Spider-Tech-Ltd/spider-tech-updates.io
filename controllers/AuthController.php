@@ -26,6 +26,7 @@ class AuthController extends BaseController {
                     $_SESSION['member_id'] = $member['id'];
                     $_SESSION['member_uuid'] = $member['uuid'];
                     $_SESSION['member_name'] = $member['name'];
+                    $_SESSION['member_avatar'] = $member['avatar'];
                     $this->redirect('forum/feed');
                 } else {
                     $error = "Invalid username/email or password.";
@@ -69,6 +70,7 @@ class AuthController extends BaseController {
                             $_SESSION['member_id'] = $member['id'];
                             $_SESSION['member_uuid'] = $uuid;
                             $_SESSION['member_name'] = $name;
+                            $_SESSION['member_avatar'] = $member['avatar'];
                             $this->redirect('forum/feed');
                         } else {
                             $error = "Registration succeeded but session could not be established.";

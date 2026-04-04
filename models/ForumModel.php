@@ -34,6 +34,7 @@ class ForumModel {
         $sql = "SELECT f.*, 
                 COALESCE(m.name, 'Anonymous') as author_name, 
                 COALESCE(m.username, 'anonymous') as author_username, 
+                m.avatar as author_avatar,
                 COALESCE(c.name, 'General') as category_name,
                 (SELECT COUNT(*) FROM feed_likes WHERE feed_uuid = f.uuid) as likes,
                 (SELECT COUNT(*) FROM feed_replies WHERE feed_uuid = f.uuid) as replies_count,
@@ -79,6 +80,7 @@ class ForumModel {
         $sql = "SELECT r.*, 
                 COALESCE(m.name, 'Anonymous') as author_name, 
                 COALESCE(m.username, 'anonymous') as author_username,
+                m.avatar as author_avatar,
                 (SELECT COUNT(*) FROM reply_likes WHERE reply_uuid = r.uuid) as likes,
                 (SELECT COUNT(*) FROM reply_likes WHERE reply_uuid = r.uuid AND member_id = :member_id) as is_liked
                 FROM feed_replies r
@@ -151,6 +153,7 @@ class ForumModel {
         $sql = "SELECT f.*, 
                 COALESCE(m.name, 'Anonymous') as author_name, 
                 COALESCE(m.username, 'anonymous') as author_username, 
+                m.avatar as author_avatar,
                 COALESCE(c.name, 'General') as category_name,
                 (SELECT COUNT(*) FROM feed_likes WHERE feed_uuid = f.uuid) as likes,
                 (SELECT COUNT(*) FROM feed_replies WHERE feed_uuid = f.uuid) as replies_count,
@@ -234,7 +237,7 @@ class ForumModel {
     }
 
     public function getTopContributors($limit = 3) {
-        $sql = "SELECT m.name, COUNT(f.uuid) as post_count
+        $sql = "SELECT m.name, m.avatar, COUNT(f.uuid) as post_count
                 FROM members m
                 JOIN feeds f ON m.id = f.member_id
                 WHERE f.status = 'published'
@@ -253,7 +256,7 @@ class ForumModel {
 
     public function getActiveMembers($limit = 5) {
         // Defined as active in the last 5 minutes
-        $sql = "SELECT name, uuid, role, last_active_at 
+        $sql = "SELECT name, uuid, role, avatar, last_active_at
                 FROM members 
                 WHERE last_active_at > (NOW() - INTERVAL 5 MINUTE)
                 ORDER BY last_active_at DESC
