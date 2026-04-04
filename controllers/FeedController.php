@@ -78,11 +78,12 @@ class FeedController extends BaseController
             return;
         }
 
-        if ($this->forumModel->addReply($feed_uuid, $member_id, $content, $parent_uuid)) {
+        $reply_uuid = $this->forumModel->addReply($feed_uuid, $member_id, $content, $parent_uuid);
+        if ($reply_uuid) {
             echo json_encode([
                 'success' => true,
                 'reply' => [
-                    'uuid' => Utils::generateUUID(), // Temporary for UI key
+                    'uuid' => $reply_uuid,
                     'author_name' => $_SESSION['member_name'],
                     'content' => htmlspecialchars($content),
                     'created_at' => date('Y-m-d H:i:s'),

@@ -34,9 +34,9 @@ class ForumModel {
                 COALESCE(c.name, 'General') as category_name,
                 (SELECT COUNT(*) FROM feed_likes WHERE feed_uuid = f.uuid) as likes,
                 (SELECT COUNT(*) FROM feed_replies WHERE feed_uuid = f.uuid) as replies_count,
-                (SELECT COUNT(*) FROM feed_likes WHERE feed_uuid = f.uuid AND member_id = :member_id) as is_liked
+                (SELECT COUNT(*) FROM feed_likes WHERE feed_uuid = f.uuid AND member_id = (SELECT uuid FROM members WHERE id = :member_id)) as is_liked
                 FROM feeds f
-                LEFT JOIN members m ON f.member_id = m.id
+                LEFT JOIN members m ON f.member_id = m.uuid
                 LEFT JOIN categories c ON f.category_uuid = c.uuid
                 $where
                 ORDER BY $orderBy LIMIT :limit OFFSET :offset";
@@ -77,9 +77,9 @@ class ForumModel {
                 COALESCE(m.name, 'Anonymous') as author_name, 
                 COALESCE(m.username, 'anonymous') as author_username,
                 (SELECT COUNT(*) FROM reply_likes WHERE reply_uuid = r.uuid) as likes,
-                (SELECT COUNT(*) FROM reply_likes WHERE reply_uuid = r.uuid AND member_id = :member_id) as is_liked
+                (SELECT COUNT(*) FROM reply_likes WHERE reply_uuid = r.uuid AND member_id = (SELECT uuid FROM members WHERE id = :member_id)) as is_liked
                 FROM feed_replies r
-                LEFT JOIN members m ON r.member_id = m.id
+                LEFT JOIN members m ON r.member_id = m.uuid
                 WHERE r.feed_uuid = :feed_uuid
                 ORDER BY r.created_at ASC";
         $stmt = $this->db->prepare($sql);
@@ -90,7 +90,7 @@ class ForumModel {
     }
 
     public function toggleLike($feed_uuid, $member_id) {
-        $stmt = $this->db->prepare("SELECT id FROM feed_likes WHERE feed_uuid = :feed_uuid AND member_id = :member_id");
+        $stmt = $this->db->prepare("SELECT id FROM feed_likes WHERE feed_uuid = :feed_uuid AND member_id = (SELECT uuid FROM members WHERE id = :member_id)");
         $stmt->execute([':feed_uuid' => $feed_uuid, ':member_id' => $member_id]);
         $like = $stmt->fetch();
 
@@ -98,7 +98,7 @@ class ForumModel {
             $stmt = $this->db->prepare("DELETE FROM feed_likes WHERE id = :id");
             return $stmt->execute([':id' => $like['id']]);
         } else {
-            $stmt = $this->db->prepare("INSERT INTO feed_likes (feed_uuid, member_id) VALUES (:feed_uuid, :member_id)");
+            $stmt = $this->db->prepare("INSERT INTO feed_likes (feed_uuid, member_id) VALUES (:feed_uuid, (SELECT uuid FROM members WHERE id = :member_id))");
             return $stmt->execute([':feed_uuid' => $feed_uuid, ':member_id' => $member_id]);
         }
     }
@@ -112,22 +112,25 @@ class ForumModel {
 
         $uuid = Utils::generateUUID();
         $sql = "INSERT INTO feed_replies (uuid, feed_uuid, member_id, category_uuid, content, parent_uuid)
-                VALUES (:uuid, :feed_uuid, :member_id, :category_uuid, :content, :parent_uuid)";
+                VALUES (:uuid, :feed_uuid, (SELECT uuid FROM members WHERE id = :member_id), :category_uuid, :content, :parent_uuid)";
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute([
+        if ($stmt->execute([
             ':uuid' => $uuid,
             ':feed_uuid' => $feed_uuid,
             ':member_id' => $member_id,
             ':category_uuid' => $feed['category_uuid'],
             ':content' => $content,
             ':parent_uuid' => $parent_uuid
-        ]);
+        ])) {
+            return $uuid;
+        }
+        return false;
     }
 
     public function createTopic($member_id, $category_uuid, $title, $content) {
         $uuid = Utils::generateUUID();
         $sql = "INSERT INTO feeds (uuid, member_id, category_uuid, title, content, status) 
-                VALUES (:uuid, :member_id, :category_uuid, :title, :content, :status)";
+                VALUES (:uuid, (SELECT uuid FROM members WHERE id = :member_id), :category_uuid, :title, :content, :status)";
         $stmt = $this->db->prepare($sql);
         if ($stmt->execute([
             ':uuid' => $uuid,
@@ -149,9 +152,9 @@ class ForumModel {
                 COALESCE(c.name, 'General') as category_name,
                 (SELECT COUNT(*) FROM feed_likes WHERE feed_uuid = f.uuid) as likes,
                 (SELECT COUNT(*) FROM feed_replies WHERE feed_uuid = f.uuid) as replies_count,
-                (SELECT COUNT(*) FROM feed_likes WHERE feed_uuid = f.uuid AND member_id = :member_id) as is_liked
+                (SELECT COUNT(*) FROM feed_likes WHERE feed_uuid = f.uuid AND member_id = (SELECT uuid FROM members WHERE id = :member_id)) as is_liked
                 FROM feeds f
-                LEFT JOIN members m ON f.member_id = m.id
+                LEFT JOIN members m ON f.member_id = m.uuid
                 LEFT JOIN categories c ON f.category_uuid = c.uuid
                 WHERE f.uuid = :uuid AND f.status IN ('published')";
         
@@ -197,20 +200,20 @@ class ForumModel {
         $stats = [];
         
         // 1. Posts made by user
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM feeds WHERE member_id = :mid AND status = 'published'");
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM feeds WHERE member_id = (SELECT uuid FROM members WHERE id = :mid) AND status = 'published'");
         $stmt->execute([':mid' => $member_id]);
         $stats['post_count'] = $stmt->fetchColumn();
 
         // 2. Upvotes received (on their posts)
         $sql = "SELECT COUNT(*) FROM feed_likes l 
                 JOIN feeds f ON l.feed_uuid = f.uuid 
-                WHERE f.member_id = :mid";
+                WHERE f.member_id = (SELECT uuid FROM members WHERE id = :mid)";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':mid' => $member_id]);
         $stats['likes_received'] = $stmt->fetchColumn();
         
         // 3. Replies made by user
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM feed_replies WHERE member_id = :mid");
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM feed_replies WHERE member_id = (SELECT uuid FROM members WHERE id = :mid)");
         $stmt->execute([':mid' => $member_id]);
         $stats['reply_count'] = $stmt->fetchColumn();
 
@@ -259,16 +262,16 @@ class ForumModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getUnreadReplyCount($member_uuid) {
+    public function getUnreadReplyCount($member_id) {
         // Count replies on the user's topics that are unread
         $sql = "SELECT COUNT(*) 
                 FROM feed_replies r
                 JOIN feeds f ON r.feed_uuid = f.uuid
-                WHERE f.member_id = (SELECT id FROM members WHERE uuid = :uuid)
-                AND r.member_id != (SELECT id FROM members WHERE uuid = :uuid)
+                WHERE f.member_id = (SELECT uuid FROM members WHERE id = :id)
+                AND r.member_id != (SELECT uuid FROM members WHERE id = :id)
                 AND r.is_read = 0";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([':uuid' => $member_uuid]);
+        $stmt->execute([':id' => $member_id]);
         return $stmt->fetchColumn();
     }
 
@@ -278,7 +281,7 @@ class ForumModel {
                 JOIN feeds f ON r.feed_uuid = f.uuid
                 SET r.is_read = 1
                 WHERE f.uuid = :feed_uuid 
-                AND f.member_id = (SELECT id FROM members WHERE uuid = :uuid)";
+                AND f.member_id = :uuid";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             ':feed_uuid' => $feed_uuid,
@@ -287,23 +290,16 @@ class ForumModel {
     }
 
     public function toggleReplyLike($reply_uuid, $member_uuid) {
-        // Get internal member ID from UUID
-        $stmt = $this->db->prepare("SELECT id FROM members WHERE uuid = :uuid");
-        $stmt->execute([':uuid' => $member_uuid]);
-        $member = $stmt->fetch();
-        if (!$member) return false;
-        $member_id = $member['id'];
-
-        $stmt = $this->db->prepare("SELECT id FROM reply_likes WHERE reply_uuid = :reply_uuid AND member_id = :member_id");
-        $stmt->execute([':reply_uuid' => $reply_uuid, ':member_id' => $member_id]);
+        $stmt = $this->db->prepare("SELECT id FROM reply_likes WHERE reply_uuid = :reply_uuid AND member_id = :member_uuid");
+        $stmt->execute([':reply_uuid' => $reply_uuid, ':member_uuid' => $member_uuid]);
         $like = $stmt->fetch();
 
         if ($like) {
             $stmt = $this->db->prepare("DELETE FROM reply_likes WHERE id = :id");
             return $stmt->execute([':id' => $like['id']]);
         } else {
-            $stmt = $this->db->prepare("INSERT INTO reply_likes (reply_uuid, member_id) VALUES (:reply_uuid, :member_id)");
-            return $stmt->execute([':reply_uuid' => $reply_uuid, ':member_id' => $member_id]);
+            $stmt = $this->db->prepare("INSERT INTO reply_likes (reply_uuid, member_id) VALUES (:reply_uuid, :member_uuid)");
+            return $stmt->execute([':reply_uuid' => $reply_uuid, ':member_uuid' => $member_uuid]);
         }
     }
 }
