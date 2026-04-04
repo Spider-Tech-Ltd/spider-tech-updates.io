@@ -1,0 +1,4 @@
+[Sat Apr  4 16:22:35 2026] PHP 8.3.6 Development Server (http://0.0.0.0:3000) started
+[Sat Apr  4 16:23:19 2026] 127.0.0.1:33750 Accepted
+[Sat Apr  4 16:23:19 2026] Connection error: SQLSTATE[HY000] [2002] Connection refused
+[Sat Apr  4 16:23:19 2026] 127.0.0.1:33750 Closing

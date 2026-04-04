@@ -466,10 +466,10 @@
             <span style="color:var(--sp-gray); font-weight:400; font-size:0.75rem;">&nbsp;— leave blank to keep current</span>
           </label>
           <div class="pd-pw-wrapper">
-            <input :type="showPw ? 'text' : 'password'" class="pd-input" x-model="newPassword"
+            <input :type="showPw1 ? 'text' : 'password'" class="pd-input" x-model="newPassword"
                    placeholder="Enter new password" style="padding-right:44px;">
-            <button type="button" class="pd-pw-toggle" @click="showPw = !showPw" tabindex="-1">
-              <span class="material-symbols-outlined" x-text="showPw ? 'visibility_off' : 'visibility'"></span>
+            <button type="button" class="pd-pw-toggle" @click="showPw1 = !showPw1" tabindex="-1">
+              <span class="material-symbols-outlined" x-text="showPw1 ? 'visibility_off' : 'visibility'"></span>
             </button>
           </div>
         </div>
@@ -477,10 +477,10 @@
         <div class="mb-3">
           <label class="pd-label">Confirm New Password</label>
           <div class="pd-pw-wrapper">
-            <input :type="showPw ? 'text' : 'password'" class="pd-input" x-model="confirmPassword"
+            <input :type="showPw2 ? 'text' : 'password'" class="pd-input" x-model="confirmPassword"
                    placeholder="Repeat new password" style="padding-right:44px;">
-            <button type="button" class="pd-pw-toggle" @click="showPw = !showPw" tabindex="-1">
-              <span class="material-symbols-outlined" x-text="showPw ? 'visibility_off' : 'visibility'"></span>
+            <button type="button" class="pd-pw-toggle" @click="showPw2 = !showPw2" tabindex="-1">
+              <span class="material-symbols-outlined" x-text="showPw2 ? 'visibility_off' : 'visibility'"></span>
             </button>
           </div>
         </div>
@@ -518,7 +518,8 @@ document.addEventListener('alpine:init', () => {
     name:            '<?= $member_name ?>',
     newPassword:     '',
     confirmPassword: '',
-    showPw:          false,
+    showPw1:         false,
+    showPw2:         false,
     avatarPreview:   <?= $avatar_db ? "'" . BASE_URL . $avatar_db . "'" : 'null' ?>,
     avatarFile:      null,
     loading:         false,
