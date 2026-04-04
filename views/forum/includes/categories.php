@@ -9,6 +9,11 @@
     background-color: #ffffff;
     padding: 80px 0;
   }
+  .forum-category-card:hover {
+     border-color: #f48221;
+     box-shadow: 0 12px 28px rgba(244, 130, 33, 0.12);
+     transform: translateY(-5px);
+  }
   .category-grid-header {
     margin-bottom: 48px;
     text-align: center;
@@ -40,21 +45,10 @@
       <?php if (!empty($categories)): ?>
         <?php foreach ($categories as $cat): ?>
           <div class="col-lg-4 col-md-6 mb-4">
-            <a href="<?= BASE_URL ?>/forum?category=<?= urlencode($cat['category'] ?? $cat['uuid']); ?>" class="forum-category-card p-4">
+            <a href="<?= BASE_URL ?>/forum?category=<?= urlencode($cat['slug'] ?? $cat['uuid']); ?>" class="forum-category-card p-4">
               <div class="d-flex justify-content-between align-items-start mb-3">
                 <div class="forum-icon-wrapper">
-                  <?php
-                    $icon_map = [
-                        'manufacturing' => 'settings',
-                        'automation'    => 'smart_toy',
-                        'energy'        => 'bolt',
-                        'ai'            => 'psychology',
-                        'logistics'     => 'local_shipping',
-                        'infrastructure'=> 'architecture'
-                    ];
-                    $icon = $icon_map[$cat['category']] ?? 'forum';
-                  ?>
-                  <span class="material-symbols-outlined"><?= $icon ?></span>
+                  <span class="material-symbols-outlined"><?= htmlspecialchars($cat['icon'] ?? 'forum') ?></span>
                 </div>
                 <span class="forum-topic-badge"><?= $cat['topic_count'] ?? '0'; ?> Topics</span>
               </div>

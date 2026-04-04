@@ -11,7 +11,7 @@
   .forum-hero-section {
     position: relative;
     background-color: #f4f4f4;
-    padding: 160px 16px 80px 16px; /* Increased top padding for fixed header */
+    padding: 100px 16px 80px 16px; /* Balanced top padding for fixed header */
     overflow: hidden;
     text-align: center;
   }
@@ -80,7 +80,7 @@
 
   @media (max-width: 768px) {
     .hero-heading { font-size: 2.2rem; }
-    .forum-hero-section { padding: 120px 16px 56px 16px; } /* Increased top padding for mobile */
+    .forum-hero-section { padding: 80px 16px 56px 16px; } /* Balanced top padding for mobile */
   }
 
   /* Subheading */
@@ -228,8 +228,9 @@
     <div class="hero-action-row">
       <div class="hero-btn-group">
         <?php if (isset($_SESSION['member_uuid'])): ?>
-          <a href="<?= BASE_URL ?>/forum/feed" class="hero-btn-primary">Start a Discussion</a>
+          <a href="<?= BASE_URL ?>/forum/new-topic" class="hero-btn-primary">Start a Discussion</a>
         <?php else: ?>
+          <a href="<?= BASE_URL ?>/forum/sign-in" class="hero-btn-primary">Start a Discussion</a>
           <a href="<?= BASE_URL ?>/forum/sign-in" class="hero-btn-secondary">Sign In</a>
         <?php endif; ?>
       </div>

@@ -366,6 +366,9 @@
             <?php endif; ?>
           </div>
           <h3 class="card-title"><?= htmlspecialchars($feed['title']); ?></h3>
+          <div class="card-excerpt" style="font-family: 'Open Sans', sans-serif; font-size: 0.875rem; color: #555555; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 12px; line-height: 1.6;">
+            <?= htmlspecialchars(mb_substr(strip_tags($feed['content'] ?? ''), 0, 300)) ?>...
+          </div>
           <div class="card-author-row">
             <img src="https://ui-avatars.com/api/?name=<?= urlencode($feed['author_name']); ?>&background=f48221&color=fff&size=32" class="author-avatar-sm" alt="Author">
             <span class="author-name"><?= htmlspecialchars($feed['author_name']); ?></span>

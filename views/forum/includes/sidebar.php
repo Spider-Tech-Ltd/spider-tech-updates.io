@@ -229,6 +229,7 @@
   </section>
 
   <!-- WIDGET 3: Join CTA -->
+  <?php if (!isset($_SESSION['member_uuid'])): ?>
   <section class="sidebar-join-card">
     <h3 class="join-title">New Here?</h3>
     <p class="join-body">
@@ -239,5 +240,6 @@
       <a href="<?= BASE_URL ?>/forum/sign-in" class="join-btn-secondary">Sign In</a>
     </div>
   </section>
+  <?php endif; ?>
 
 </aside>

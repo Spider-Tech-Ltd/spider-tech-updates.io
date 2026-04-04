@@ -8,7 +8,10 @@ class ForumModel {
     }
 
     public function getCategories() {
-        $stmt = $this->db->prepare("SELECT * FROM categories ORDER BY name ASC");
+        $sql = "SELECT c.*, (SELECT COUNT(*) FROM feeds WHERE category_uuid = c.uuid AND status = 'published') as topic_count 
+                FROM categories c 
+                ORDER BY c.name ASC";
+        $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
