@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="<?= BASE_URL ?>/css/bootstrap.min.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         body {
             background-color: #f8f9fa;
@@ -23,8 +24,8 @@
             border-radius: 20px;
             padding: 40px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            max-width: 450px;
-            margin: 80px auto;
+            max-width: 480px;
+            margin: 40px auto;
         }
         .auth-heading {
             font-family: 'Poppins', sans-serif;
@@ -73,7 +74,43 @@
             cursor: pointer;
             color: #797979;
             user-select: none;
+            z-index: 5;
         }
+
+        /* Password Guide */
+        .pw-guide {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+        }
+        .pw-guide-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #111;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .pw-guide-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .pw-guide-item {
+            font-size: 0.75rem;
+            color: #797979;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .pw-guide-item.valid { color: #2f855a; }
+        .pw-guide-item.valid .material-symbols-outlined { color: #2f855a; font-variation-settings: 'FILL' 1; }
+        .pw-guide-item .material-symbols-outlined { font-size: 14px; }
         .auth-btn {
             background-color: #f48221;
             color: #ffffff;
@@ -134,7 +171,7 @@
         }
     </style>
 </head>
-<body>
+<body x-data="signUpForm()">
 <div class="container">
     <div class="auth-card">
         <h1 class="auth-heading">Join Community</h1>
@@ -150,24 +187,66 @@
 
         <form action="<?= BASE_URL ?>/forum/sign-up" method="POST">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+
             <div class="form-group">
                 <label>Full Name</label>
-                <input type="text" name="name" class="auth-input" placeholder="Enter your full name">
+                <input type="text" name="name" class="auth-input" placeholder="Enter your full name" x-model="name">
             </div>
+
             <div class="form-group">
                 <label>Username</label>
-                <input type="text" name="username" class="auth-input" placeholder="Choose a username" required>
+                <input type="text" name="username" class="auth-input" placeholder="Choose a username" required x-model="username">
             </div>
+
             <div class="form-group">
                 <label>Email Address</label>
-                <input type="email" name="email" class="auth-input" placeholder="Enter your email" required>
+                <input type="email" name="email" class="auth-input" placeholder="Enter your email" required x-model="email">
             </div>
+
+            <!-- Password Guide -->
+            <div class="pw-guide" x-show="password.length > 0" x-transition>
+                <span class="pw-guide-title">Password Security Checklist:</span>
+                <ul class="pw-guide-list">
+                    <li class="pw-guide-item" :class="{ 'valid': password.length >= 8 }">
+                        <span class="material-symbols-outlined" x-text="password.length >= 8 ? 'check_circle' : 'circle'"></span>
+                        8+ Characters
+                    </li>
+                    <li class="pw-guide-item" :class="{ 'valid': /[A-Z]/.test(password) }">
+                        <span class="material-symbols-outlined" x-text="/[A-Z]/.test(password) ? 'check_circle' : 'circle'"></span>
+                        Uppercase Letter
+                    </li>
+                    <li class="pw-guide-item" :class="{ 'valid': /[0-9]/.test(password) }">
+                        <span class="material-symbols-outlined" x-text="/[0-9]/.test(password) ? 'check_circle' : 'circle'"></span>
+                        One Number
+                    </li>
+                    <li class="pw-guide-item" :class="{ 'valid': /[!@#$%^&*(),.?\":{}|<>]/.test(password) }">
+                        <span class="material-symbols-outlined" x-text="/[!@#$%^&*(),.?\":{}|<>]/.test(password) ? 'check_circle' : 'circle'"></span>
+                        Special Char
+                    </li>
+                </ul>
+            </div>
+
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" name="password" id="passwordInput" class="auth-input" placeholder="Choose a password" required>
-                <span class="material-symbols-outlined password-toggle" onclick="togglePassword()">visibility</span>
+                <input :type="showPw1 ? 'text' : 'password'" name="password" class="auth-input"
+                       placeholder="Choose a password" required x-model="password" style="padding-right: 56px;">
+                <span class="material-symbols-outlined password-toggle" @click="showPw1 = !showPw1"
+                      x-text="showPw1 ? 'visibility_off' : 'visibility'"></span>
             </div>
-            <button type="submit" class="auth-btn">Sign Up</button>
+
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input :type="showPw2 ? 'text' : 'password'" name="confirm_password" class="auth-input"
+                       placeholder="Repeat password" required x-model="confirmPassword" style="padding-right: 56px;">
+                <span class="material-symbols-outlined password-toggle" @click="showPw2 = !showPw2"
+                      x-text="showPw2 ? 'visibility_off' : 'visibility'"></span>
+            </div>
+
+            <p class="text-danger small text-center mb-3" x-show="confirmPassword && password !== confirmPassword" x-transition>
+                Passwords do not match.
+            </p>
+
+            <button type="submit" class="auth-btn" :disabled="!isFormValid">Sign Up</button>
         </form>
 
         <div class="auth-footer">
@@ -184,18 +263,29 @@
 </div>
 
 <script>
-    function togglePassword() {
-        const passwordInput = document.getElementById('passwordInput');
-        const toggleIcon = document.querySelector('.password-toggle');
+function signUpForm() {
+    return {
+        name: '',
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        showPw1: false,
+        showPw2: false,
 
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            toggleIcon.textContent = 'visibility_off';
-        } else {
-            passwordInput.type = 'password';
-            toggleIcon.textContent = 'visibility';
+        get isFormValid() {
+            const hasUpper = /[A-Z]/.test(this.password);
+            const hasNumber = /[0-9]/.test(this.password);
+            const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(this.password);
+            const isLongEnough = this.password.length >= 8;
+            const isMatch = this.password === this.confirmPassword;
+
+            return this.username.length > 0 &&
+                   this.email.length > 0 &&
+                   hasUpper && hasNumber && hasSpecial && isLongEnough && isMatch;
         }
     }
+}
 </script>
 </body>
 </html>

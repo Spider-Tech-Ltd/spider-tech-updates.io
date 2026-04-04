@@ -320,7 +320,7 @@ class ForumModel {
         $params   = [':name' => $name, ':id' => $member_id];
 
         if ($passwordHash) {
-            $setParts[]         = 'password = :password';
+            $setParts[]         = 'password_hash = :password';
             $params[':password'] = $passwordHash;
         }
 

@@ -56,10 +56,18 @@ class AuthController extends BaseController {
                 $username = $_POST['username'] ?? '';
                 $email = $_POST['email'] ?? '';
                 $password = $_POST['password'] ?? '';
+                $confirm_password = $_POST['confirm_password'] ?? '';
 
-                // Simple validation
+                // Password Regex: 1 Uppercase, 1 Special Char, 1 Number, min 8 chars
+                $regex = '/^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[0-9]).{8,}$/';
+
+                // Validation
                 if (empty($name) || empty($username) || empty($email) || empty($password)) {
                     $error = "All fields are required.";
+                } elseif ($password !== $confirm_password) {
+                    $error = "Passwords do not match.";
+                } elseif (!preg_match($regex, $password)) {
+                    $error = "Password must be at least 8 characters long and include an uppercase letter, a number, and a special character.";
                 } elseif ($this->authModel->findByEmailOrUsername($email) || $this->authModel->findByEmailOrUsername($username)) {
                     $error = "Username or Email already exists.";
                 } else {
