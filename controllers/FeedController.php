@@ -78,15 +78,19 @@ class FeedController extends BaseController
             return;
         }
 
-        if ($this->forumModel->addReply($feed_uuid, $member_id, $content, $parent_uuid)) {
+        $reply_uuid = $this->forumModel->addReply($feed_uuid, $member_id, $content, $parent_uuid ?: null);
+        if ($reply_uuid) {
             echo json_encode([
                 'success' => true,
                 'reply' => [
-                    'uuid' => Utils::generateUUID(), // Temporary for UI key
-                    'author_name' => $_SESSION['member_name'],
-                    'content' => htmlspecialchars($content),
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'parent_uuid' => $parent_uuid
+                    'uuid'        => $reply_uuid,
+                    'feed_uuid'   => $feed_uuid,
+                    'author_name' => $_SESSION['member_name'] ?? 'Anonymous',
+                    'content'     => htmlspecialchars($content),
+                    'created_at'  => date('Y-m-d H:i:s'),
+                    'parent_uuid' => $parent_uuid ?: null,
+                    'likes'       => 0,
+                    'is_liked'    => false
                 ]
             ]);
         } else {

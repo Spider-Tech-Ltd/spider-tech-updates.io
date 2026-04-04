@@ -127,8 +127,6 @@ class ForumController extends BaseController {
         $trending = $forumModel->getTrendingTopics(5);
         $active_members = $forumModel->getActiveMembers(6);
         
-        $member = $this->db->query("SELECT * FROM members WHERE id = " . $this->db->prepare($member_id)->queryString . " LIMIT 1")->fetch(); // Just for quick fix, better use model
-        // Let's use the actual model way:
         $stmt = $this->db->prepare("SELECT * FROM members WHERE id = :id");
         $stmt->execute([':id' => $member_id]);
         $member = $stmt->fetch(PDO::FETCH_ASSOC);

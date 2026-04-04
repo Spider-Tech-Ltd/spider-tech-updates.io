@@ -114,14 +114,16 @@ class ForumModel {
         $sql = "INSERT INTO feed_replies (uuid, feed_uuid, member_id, category_uuid, content, parent_uuid)
                 VALUES (:uuid, :feed_uuid, :member_id, :category_uuid, :content, :parent_uuid)";
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute([
+        $result = $stmt->execute([
             ':uuid' => $uuid,
             ':feed_uuid' => $feed_uuid,
             ':member_id' => $member_id,
             ':category_uuid' => $feed['category_uuid'],
             ':content' => $content,
-            ':parent_uuid' => $parent_uuid
+            ':parent_uuid' => $parent_uuid ?: null
         ]);
+        // Return the actual UUID on success so callers can use the real DB key
+        return $result ? $uuid : false;
     }
 
     public function createTopic($member_id, $category_uuid, $title, $content) {

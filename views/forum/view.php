@@ -3,10 +3,9 @@
  * Single Discussion View - High Fidelity Detail Alignment & Sidebar Polish
  */
 ?>
-<!-- Google Fonts for Forum styling & Material Icons -->
+<!-- Google Fonts for Forum styling -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet"/>
-<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<!-- Material Symbols for icons -->
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 
 <style>
@@ -347,9 +346,10 @@ $safe_likes = isset($topic['likes']) ? (int)$topic['likes'] : 0;
 $safe_isLiked = !empty($topic['is_liked']) ? 'true' : 'false';
 $safe_replies = (isset($topic['replies']) && is_array($topic['replies'])) ? $topic['replies'] : [];
 
-// JSON_HEX_* prevents Cross-Site Scripting (XSS) and parser-breaking apostrophes inside <script> blocks.
-// JSON_INVALID_UTF8_SUBSTITUTE ensures malformed database chars never output a blank string.
-$safe_replies_json = json_encode($safe_replies, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_INVALID_UTF8_SUBSTITUTE);
+// JSON_HEX_TAG prevents </script> injection. JSON_INVALID_UTF8_SUBSTITUTE prevents silent empty output.
+// NOTE: JSON_HEX_QUOT/APOS are intentionally EXCLUDED — they encode structural JSON quotes as \u0022
+// which breaks JavaScript object literal parsing in <script> blocks (SyntaxError on \u0022 in identifier position).
+$safe_replies_json = json_encode($safe_replies, JSON_HEX_TAG | JSON_INVALID_UTF8_SUBSTITUTE);
 // Final check: if json_encode failed entirely, fallback to empty array safely.
 if ($safe_replies_json === false) { $safe_replies_json = '[]'; }
 ?>
