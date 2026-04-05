@@ -21,11 +21,12 @@ class AuthController extends BaseController {
                 $login = $_POST['login'] ?? '';
                 $password = $_POST['password'] ?? '';
 
-                $member = $this->authModel->findByEmailOrUsername($login);
+                $member = $this->authModel->findByEmailOrUsername($login); // Currently handles both, but we'll focus UI on email
                 if ($member && password_verify($password, $member['password_hash'])) {
                     $_SESSION['member_id'] = $member['id'];
                     $_SESSION['member_uuid'] = $member['uuid'];
                     $_SESSION['member_name'] = $member['name'];
+                    $_SESSION['member_avatar'] = $member['avatar'];
                     $this->redirect('forum/feed');
                 } else {
                     $error = "Invalid username/email or password.";
@@ -42,6 +43,10 @@ class AuthController extends BaseController {
 
     public function signUp() {
         if ($this->isLoggedIn()) {
+            if ($this->isAjax()) {
+                echo json_encode(['success' => true, 'redirect' => BASE_URL . '/forum/feed']);
+                return;
+            }
             $this->redirect('forum/feed');
         }
 
@@ -52,23 +57,33 @@ class AuthController extends BaseController {
                 $error = "Invalid CSRF token.";
             } else {
                 $name = $_POST['name'] ?? '';
-                $username = $_POST['username'] ?? '';
                 $email = $_POST['email'] ?? '';
                 $password = $_POST['password'] ?? '';
 
-                // Simple validation
-                if (empty($name) || empty($username) || empty($email) || empty($password)) {
+                // Password Regex: 1 Uppercase, 1 Lowercase, 1 Special Char, 1 Number, min 8 chars
+                $regex = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/';
+
+                // Validation
+                if (empty($name) || empty($email) || empty($password)) {
                     $error = "All fields are required.";
-                } elseif ($this->authModel->findByEmailOrUsername($email) || $this->authModel->findByEmailOrUsername($username)) {
-                    $error = "Username or Email already exists.";
+                } elseif (!preg_match($regex, $password)) {
+                    $error = "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.";
+                } elseif ($this->authModel->findByEmailOrUsername($email)) {
+                    $error = "Email address already exists.";
                 } else {
-                    $uuid = $this->authModel->register($username, $email, $password, $name);
+                    $uuid = $this->authModel->register($email, $email, $password, $name); // Use email as username as well to maintain integrity
                     if ($uuid) {
                         $member = $this->authModel->getMemberByUUID($uuid);
                         if ($member) {
                             $_SESSION['member_id'] = $member['id'];
                             $_SESSION['member_uuid'] = $uuid;
                             $_SESSION['member_name'] = $name;
+                            $_SESSION['member_avatar'] = $member['avatar'];
+
+                            if ($this->isAjax()) {
+                                echo json_encode(['success' => true, 'message' => 'Account created! Redirecting...', 'redirect' => BASE_URL . '/forum/feed']);
+                                return;
+                            }
                             $this->redirect('forum/feed');
                         } else {
                             $error = "Registration succeeded but session could not be established.";
@@ -78,6 +93,11 @@ class AuthController extends BaseController {
                     }
                 }
             }
+
+            if ($this->isAjax()) {
+                echo json_encode(['success' => false, 'message' => $error]);
+                return;
+            }
         }
 
         $this->render('forum/sign-up', [
@@ -86,6 +106,10 @@ class AuthController extends BaseController {
             'success' => $success,
             'csrf_token' => CSRF::generateToken()
         ], false);
+    }
+
+    protected function isAjax() {
+        return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
     }
 
     public function logout() {

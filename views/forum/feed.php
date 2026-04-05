@@ -731,7 +731,7 @@
               </a>
               <div class="card-excerpt shadow-none border-0 p-0" x-html="feed.content"></div>
               <div class="card-author-row">
-                <img :src="`https://ui-avatars.com/api/?name=${encodeURIComponent(feed.author_name)}&background=f48221&color=fff&size=32`" class="author-avatar-sm" alt="Author">
+                <img :src="feed.author_avatar ? '<?= BASE_URL ?>' + feed.author_avatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(feed.author_name)}&background=f48221&color=fff&size=32`" class="author-avatar-sm" alt="Author">
                 <span class="author-name" x-text="feed.author_name"></span>
                 <span class="author-time" x-text="formatDate(feed.created_at)"></span>
               </div>
