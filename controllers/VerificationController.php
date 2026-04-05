@@ -1,16 +1,20 @@
 <?php
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-class VerificationController extends BaseController {
+class VerificationController extends BaseController
+{
     private $authModel;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->authModel = new AuthModel($this->db);
     }
 
-    public function sendVerificationEmail($email, $name, $token) {
+    public function sendVerificationEmail($email, $name, $token)
+    {
         $mail = new PHPMailer(true);
 
         try {
@@ -63,7 +67,8 @@ class VerificationController extends BaseController {
         }
     }
 
-    public function verify() {
+    public function verify()
+    {
         $token = $_GET['token'] ?? '';
         $message = '';
         $success = false;

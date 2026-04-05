@@ -1,14 +1,17 @@
 <?php
 
-class AuthController extends BaseController {
+class AuthController extends BaseController
+{
     private $authModel;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->authModel = new AuthModel($this->db);
     }
 
-    public function signIn() {
+    public function signIn()
+    {
         if ($this->isLoggedIn()) {
             $this->redirect('forum/feed');
         }
@@ -44,7 +47,8 @@ class AuthController extends BaseController {
         ], false);
     }
 
-    public function signUp() {
+    public function signUp()
+    {
         if ($this->isLoggedIn()) {
             $this->redirect('forum/feed');
         }
@@ -98,7 +102,8 @@ class AuthController extends BaseController {
         ], false);
     }
 
-    public function logout() {
+    public function logout()
+    {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
