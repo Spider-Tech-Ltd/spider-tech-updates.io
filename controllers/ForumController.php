@@ -52,13 +52,10 @@ class ForumController extends BaseController {
         $active_members = $forumModel->getActiveMembers(6);
         $unread_count = $forumModel->getUnreadReplyCount($_SESSION['member_id']);
 
-        // Mock member data for UI fidelity
-        $member = [
-            'name' => $_SESSION['member_name'] ?? 'Member',
-            'role' => 'Engineer',
-            'posts' => 128,
-            'new_replies' => $unread_count
-        ];
+        // Get member data
+        $stmt = $this->db->prepare("SELECT * FROM members WHERE id = :id");
+        $stmt->execute([':id' => $_SESSION['member_id']]);
+        $member = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $this->render('forum/feed', [
             'title' => 'Member Feed',
@@ -83,11 +80,9 @@ class ForumController extends BaseController {
         $categories = $forumModel->getCategories();
         $member_stats = $forumModel->getMemberStats($_SESSION['member_id']);
 
-        $member = [
-            'name'       => $_SESSION['member_name'] ?? 'Member',
-            'initials'   => strtoupper(substr($_SESSION['member_name'] ?? 'M', 0, 1)),
-            'role'       => 'Verified Member',
-        ];
+        $stmt = $this->db->prepare("SELECT * FROM members WHERE id = :id");
+        $stmt->execute([':id' => $_SESSION['member_id']]);
+        $member = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $this->render('forum/new-topic', [
             'title' => 'Start a New Discussion',
@@ -188,6 +183,14 @@ class ForumController extends BaseController {
             $forumModel   = new ForumModel($this->db);
             $passwordHash = null;
             if (!empty($new_password)) {
+                // Password Regex: 1 Uppercase, 1 Lowercase, 1 Special Char, 1 Number, min 8 chars
+                $regex = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/';
+
+                if (!preg_match($regex, $new_password)) {
+                    echo json_encode(['success' => false, 'message' => 'Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.']);
+                    return;
+                }
+
                 $passwordHash = password_hash($new_password, PASSWORD_DEFAULT);
             }
 

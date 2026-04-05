@@ -86,6 +86,7 @@ class FeedController extends BaseController
                     'uuid'        => $reply_uuid,
                     'feed_uuid'   => $feed_uuid,
                     'author_name' => $_SESSION['member_name'] ?? 'Anonymous',
+                    'author_avatar' => $_SESSION['member_avatar'] ?? null,
                     'content'     => $content,
                     'created_at'  => date('Y-m-d H:i:s'),
                     'parent_uuid' => $parent_uuid ?: null,

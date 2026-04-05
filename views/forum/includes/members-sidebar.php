@@ -154,7 +154,7 @@
 
     <div class="d-flex align-items-center gap-3 mb-4 p-2">
       <div class="position-relative">
-        <img src="https://ui-avatars.com/api/?name=<?= urlencode($member['name']) ?>&background=f48221&color=fff&size=56" class="profile-avatar-premium" alt="Avatar">
+        <img src="<?= !empty($member['avatar']) ? BASE_URL . $member['avatar'] : "https://ui-avatars.com/api/?name=" . urlencode($member['name']) . "&background=f48221&color=fff&size=56" ?>" class="profile-avatar-premium" alt="Avatar">
         <span class="position-absolute" style="width:14px; height:14px; background:#2ecc71; border:2.5px solid #fff; border-radius:50%; right:2px; bottom:2px;"></span>
       </div>
       <div class="d-flex flex-column">
@@ -212,8 +212,8 @@
       <?php else: ?>
         <?php foreach (array_slice($active_members, 0, 8) as $con): ?>
           <div class="position-relative" title="<?= htmlspecialchars($con['name']) ?>">
-            <img src="https://ui-avatars.com/api/?name=<?= urlencode($con['name']) ?>&background=f48221&color=fff&size=36" 
-                 style="width:36px; height:36px; border-radius:50%; border:1.5px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,0.06);" alt="Member">
+            <img src="<?= !empty($con['avatar']) ? BASE_URL . $con['avatar'] : "https://ui-avatars.com/api/?name=" . urlencode($con['name']) . "&background=f48221&color=fff&size=36" ?>"
+                 style="width:36px; height:36px; border-radius:50%; border:1.5px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,0.06); object-fit: cover;" alt="Member">
             <span class="position-absolute" style="width:10px; height:10px; background:#2ecc71; border:2.2px solid #fff; border-radius:50%; right:-1px; bottom:-1px;"></span>
           </div>
         <?php endforeach; ?>

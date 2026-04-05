@@ -142,8 +142,8 @@
         <form action="<?= BASE_URL ?>/forum/sign-in" method="POST">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
             <div class="form-group">
-                <label>Username or Email Address</label>
-                <input type="text" name="login" class="auth-input" placeholder="Enter username or email" required>
+                <label>Email Address</label>
+                <input type="email" name="login" class="auth-input" placeholder="Enter your email address" required>
             </div>
             <div class="form-group">
                 <label>Password</label>
