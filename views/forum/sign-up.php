@@ -236,11 +236,6 @@
             </div>
 
             <div class="form-group">
-                <label>Username</label>
-                <input type="text" name="username" class="auth-input" placeholder="Choose a username" required x-model="username">
-            </div>
-
-            <div class="form-group">
                 <label>Email Address</label>
                 <input type="email" name="email" class="auth-input" placeholder="Enter your email" required x-model="email">
             </div>
@@ -286,17 +281,6 @@
                       x-text="showPw1 ? 'visibility_off' : 'visibility'"></span>
             </div>
 
-            <div class="form-group">
-                <label>Confirm Password</label>
-                <input :type="showPw2 ? 'text' : 'password'" name="confirm_password" class="auth-input"
-                       placeholder="Repeat password" required x-model="confirmPassword" style="padding-right: 56px;">
-                <span class="material-symbols-outlined password-toggle" @click="showPw2 = !showPw2"
-                      x-text="showPw2 ? 'visibility_off' : 'visibility'"></span>
-            </div>
-
-            <p class="text-danger small text-center mb-3" x-show="confirmPassword && password !== confirmPassword" x-transition>
-                Passwords do not match.
-            </p>
 
             <button type="submit" class="auth-btn" :disabled="!isFormValid">Sign Up</button>
         </form>
@@ -325,12 +309,9 @@
 function signUpForm() {
     return {
         name: '',
-        username: '',
         email: '',
         password: '',
-        confirmPassword: '',
         showPw1: false,
-        showPw2: false,
 
         toastShow: false,
         toastSuccess: true,
@@ -382,11 +363,10 @@ function signUpForm() {
             const hasNumber = /[0-9]/.test(this.password);
             const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(this.password);
             const isLongEnough = this.password.length >= 8;
-            const isMatch = this.password === this.confirmPassword;
 
-            return this.username.length > 0 &&
+            return this.name.length > 0 &&
                    this.email.length > 0 &&
-                   hasUpper && hasLower && hasNumber && hasSpecial && isLongEnough && isMatch;
+                   hasUpper && hasLower && hasNumber && hasSpecial && isLongEnough;
         }
     }
 }

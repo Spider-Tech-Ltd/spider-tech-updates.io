@@ -21,7 +21,7 @@ class AuthController extends BaseController {
                 $login = $_POST['login'] ?? '';
                 $password = $_POST['password'] ?? '';
 
-                $member = $this->authModel->findByEmailOrUsername($login);
+                $member = $this->authModel->findByEmailOrUsername($login); // Currently handles both, but we'll focus UI on email
                 if ($member && password_verify($password, $member['password_hash'])) {
                     $_SESSION['member_id'] = $member['id'];
                     $_SESSION['member_uuid'] = $member['uuid'];
@@ -53,7 +53,6 @@ class AuthController extends BaseController {
                 $error = "Invalid CSRF token.";
             } else {
                 $name = $_POST['name'] ?? '';
-                $username = $_POST['username'] ?? '';
                 $email = $_POST['email'] ?? '';
                 $password = $_POST['password'] ?? '';
                 $confirm_password = $_POST['confirm_password'] ?? '';
@@ -62,16 +61,16 @@ class AuthController extends BaseController {
                 $regex = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/';
 
                 // Validation
-                if (empty($name) || empty($username) || empty($email) || empty($password)) {
+                if (empty($name) || empty($email) || empty($password)) {
                     $error = "All fields are required.";
                 } elseif ($password !== $confirm_password) {
                     $error = "Passwords do not match.";
                 } elseif (!preg_match($regex, $password)) {
                     $error = "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.";
-                } elseif ($this->authModel->findByEmailOrUsername($email) || $this->authModel->findByEmailOrUsername($username)) {
-                    $error = "Username or Email already exists.";
+                } elseif ($this->authModel->findByEmailOrUsername($email)) {
+                    $error = "Email address already exists.";
                 } else {
-                    $uuid = $this->authModel->register($username, $email, $password, $name);
+                    $uuid = $this->authModel->register($email, $email, $password, $name); // Use email as username as well to maintain integrity
                     if ($uuid) {
                         $member = $this->authModel->getMemberByUUID($uuid);
                         if ($member) {
