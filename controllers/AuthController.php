@@ -36,10 +36,10 @@ class AuthController extends BaseController
                             $this->redirect('forum/feed');
                         }
                     } else {
-                        $error = "Incorrect email or password.";
+                        $error = "Invalid login credentials. Please check your email and password.";
                     }
                 } else {
-                    $error = "Incorrect email or password.";
+                    $error = "Invalid login credentials. Please check your email and password.";
                 }
             }
         }
