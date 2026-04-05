@@ -127,6 +127,11 @@
             color: #e53e3e;
             border: 1px solid #feb2b2;
         }
+        .alert-success {
+            background-color: #f0fff4;
+            color: #2f855a;
+            border: 1px solid #9ae6b4;
+        }
     </style>
 </head>
 <body>
@@ -137,6 +142,10 @@
 
         <?php if ($error): ?>
             <div class="alert alert-danger text-center"><?= htmlspecialchars($error); ?></div>
+        <?php endif; ?>
+
+        <?php if (isset($success) && $success): ?>
+            <div class="alert alert-success text-center"><?= htmlspecialchars($success); ?></div>
         <?php endif; ?>
 
         <form action="<?= BASE_URL ?>/forum/sign-in" method="POST">

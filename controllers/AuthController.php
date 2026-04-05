@@ -40,9 +40,13 @@ class AuthController extends BaseController
             }
         }
 
+        $success = $_SESSION['success_message'] ?? '';
+        unset($_SESSION['success_message']);
+
         $this->render('forum/sign-in', [
             'title' => 'Sign In - Spider Tech Forum',
             'error' => $error,
+            'success' => $success,
             'csrf_token' => CSRF::generateToken()
         ], false);
     }
@@ -106,9 +110,20 @@ class AuthController extends BaseController
                     'success' => !empty($success),
                     'message' => $success ?: $error
                 ];
+
+                if (!empty($success)) {
+                    $response['redirect'] = BASE_URL . '/forum/sign-in';
+                    $_SESSION['success_message'] = $success;
+                }
+
                 header('Content-Type: application/json');
                 echo json_encode($response);
                 return;
+            }
+
+            if (!empty($success)) {
+                $_SESSION['success_message'] = $success;
+                $this->redirect('forum/sign-in');
             }
         }
 
