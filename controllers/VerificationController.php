@@ -14,17 +14,22 @@ class VerificationController extends BaseController {
         $mail = new PHPMailer(true);
 
         try {
-            // Server settings - Replace with actual SMTP config if available
             $mail->isSMTP();
-            $mail->Host       = 'smtp.example.com';
-            $mail->SMTPAuth   = true;
-            $mail->Username   = 'your_email@example.com';
-            $mail->Password   = 'your_password';
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = 587;
+            $mail->Host       = MAIL_HOST;
+            $mail->SMTPAuth   = MAIL_AUTH;
+            $mail->Username   = MAIL_USER;
+            $mail->Password   = MAIL_PASS;
+
+            if (defined('MAIL_ENCRYPTION') && strtolower(MAIL_ENCRYPTION) === 'ssl') {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            } else {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            }
+
+            $mail->Port = MAIL_PORT;
 
             // Recipients
-            $mail->setFrom('noreply@spidertech.com', 'Spider Tech Forum');
+            $mail->setFrom(MAIL_FROM_ADDRESS, MAIL_FROM_NAME);
             $mail->addAddress($email, $name);
 
             // Content

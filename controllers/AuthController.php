@@ -73,8 +73,7 @@ class AuthController extends BaseController {
                         $expiry = date('Y-m-d H:i:s', strtotime('+24 hours'));
 
                         if ($this->authModel->storeVerificationToken($uuid, $token, $expiry)) {
-                            $verificationController = new VerificationController();
-                            $emailSent = $verificationController->sendVerificationEmail($email, $name, $token);
+                            $emailSent = $this->authModel->sendVerificationEmail($email, $name, $token);
 
                             if ($emailSent) {
                                 $success = "Registration successful! Please check your email to verify your account.";
