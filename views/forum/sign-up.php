@@ -110,7 +110,9 @@
         }
         .pw-guide-item.valid { color: #2f855a; }
         .pw-guide-item.valid .material-symbols-outlined { color: #2f855a; font-variation-settings: 'FILL' 1; }
-        .pw-guide-item .material-symbols-outlined { font-size: 14px; }
+        .pw-guide-item.invalid { color: #ef4444; }
+        .pw-guide-item.invalid .material-symbols-outlined { color: #ef4444; }
+        .pw-guide-item .material-symbols-outlined { font-size: 14px; transition: all 0.2s ease; }
         .auth-btn {
             background-color: #f48221;
             color: #ffffff;
@@ -227,7 +229,7 @@
             <div class="alert alert-success text-center"><?= htmlspecialchars($success); ?></div>
         <?php endif; ?>
 
-        <form action="<?= BASE_URL ?>/forum/sign-up" method="POST">
+        <form @submit.prevent="submitRegistration()">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
 
             <div class="form-group">
@@ -240,28 +242,36 @@
                 <input type="email" name="email" class="auth-input" placeholder="Enter your email" required x-model="email">
             </div>
 
+            <div class="form-group">
+                <label>Password</label>
+                <input :type="showPw1 ? 'text' : 'password'" name="password" class="auth-input"
+                       placeholder="Choose a password" required x-model="password" style="padding-right: 56px;">
+                <span class="material-symbols-outlined password-toggle" @click="showPw1 = !showPw1"
+                      x-text="showPw1 ? 'visibility_off' : 'visibility'"></span>
+            </div>
+
             <!-- Password Guide -->
             <div class="pw-guide" x-show="password.length > 0" x-transition>
                 <span class="pw-guide-title">Password Security Checklist:</span>
                 <ul class="pw-guide-list">
-                    <li class="pw-guide-item" :class="{ 'valid': password.length >= 8 }">
-                        <span class="material-symbols-outlined" x-text="password.length >= 8 ? 'check_circle' : 'circle'"></span>
+                    <li class="pw-guide-item" :class="rules.min8 ? 'valid' : 'invalid'">
+                        <span class="material-symbols-outlined" x-text="rules.min8 ? 'check_circle' : 'cancel'"></span>
                         8+ Characters
                     </li>
-                    <li class="pw-guide-item" :class="{ 'valid': /[A-Z]/.test(password) }">
-                        <span class="material-symbols-outlined" x-text="/[A-Z]/.test(password) ? 'check_circle' : 'circle'"></span>
+                    <li class="pw-guide-item" :class="rules.upper ? 'valid' : 'invalid'">
+                        <span class="material-symbols-outlined" x-text="rules.upper ? 'check_circle' : 'cancel'"></span>
                         Uppercase
                     </li>
-                    <li class="pw-guide-item" :class="{ 'valid': /[a-z]/.test(password) }">
-                        <span class="material-symbols-outlined" x-text="/[a-z]/.test(password) ? 'check_circle' : 'circle'"></span>
+                    <li class="pw-guide-item" :class="rules.lower ? 'valid' : 'invalid'">
+                        <span class="material-symbols-outlined" x-text="rules.lower ? 'check_circle' : 'cancel'"></span>
                         Lowercase
                     </li>
-                    <li class="pw-guide-item" :class="{ 'valid': /[0-9]/.test(password) }">
-                        <span class="material-symbols-outlined" x-text="/[0-9]/.test(password) ? 'check_circle' : 'circle'"></span>
+                    <li class="pw-guide-item" :class="rules.number ? 'valid' : 'invalid'">
+                        <span class="material-symbols-outlined" x-text="rules.number ? 'check_circle' : 'cancel'"></span>
                         Number
                     </li>
-                    <li class="pw-guide-item" :class="{ 'valid': /[!@#$%^&*(),.?\":{}|<>]/.test(password) }">
-                        <span class="material-symbols-outlined" x-text="/[!@#$%^&*(),.?\":{}|<>]/.test(password) ? 'check_circle' : 'circle'"></span>
+                    <li class="pw-guide-item" :class="rules.special ? 'valid' : 'invalid'">
+                        <span class="material-symbols-outlined" x-text="rules.special ? 'check_circle' : 'cancel'"></span>
                         Special Char
                     </li>
                 </ul>
@@ -273,16 +283,10 @@
                 <span class="strength-text" :style="`color: ${strengthColor};`" x-text="strengthLabel"></span>
             </div>
 
-            <div class="form-group">
-                <label>Password</label>
-                <input :type="showPw1 ? 'text' : 'password'" name="password" class="auth-input"
-                       placeholder="Choose a password" required x-model="password" style="padding-right: 56px;">
-                <span class="material-symbols-outlined password-toggle" @click="showPw1 = !showPw1"
-                      x-text="showPw1 ? 'visibility_off' : 'visibility'"></span>
-            </div>
-
-
-            <button type="submit" class="auth-btn" :disabled="!isFormValid">Sign Up</button>
+            <button type="submit" class="auth-btn" :disabled="!isFormValid || loading">
+                <span x-show="!loading">Sign Up</span>
+                <span x-show="loading" class="spinner-border spinner-border-sm" role="status"></span>
+            </button>
         </form>
 
         <div class="auth-footer">
@@ -312,6 +316,7 @@ function signUpForm() {
         email: '',
         password: '',
         showPw1: false,
+        loading: false,
 
         toastShow: false,
         toastSuccess: true,
@@ -331,13 +336,24 @@ function signUpForm() {
             setTimeout(() => this.toastShow = false, 3500);
         },
 
+        get rules() {
+            return {
+                min8:   this.password.length >= 8,
+                upper:  /[A-Z]/.test(this.password),
+                lower:  /[a-z]/.test(this.password),
+                number: /[0-9]/.test(this.password),
+                special:/[!@#$%^&*(),.?":{}|<>]/.test(this.password)
+            };
+        },
+
         get strength() {
+            const r = this.rules;
             let score = 0;
-            if (this.password.length >= 8) score++;
-            if (/[A-Z]/.test(this.password)) score++;
-            if (/[a-z]/.test(this.password)) score++;
-            if (/[0-9]/.test(this.password)) score++;
-            if (/[!@#$%^&*(),.?":{}|<>]/.test(this.password)) score++;
+            if (r.min8)   score++;
+            if (r.upper)  score++;
+            if (r.lower)  score++;
+            if (r.number) score++;
+            if (r.special)score++;
             return score;
         },
 
@@ -358,15 +374,43 @@ function signUpForm() {
         },
 
         get isFormValid() {
-            const hasUpper = /[A-Z]/.test(this.password);
-            const hasLower = /[a-z]/.test(this.password);
-            const hasNumber = /[0-9]/.test(this.password);
-            const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(this.password);
-            const isLongEnough = this.password.length >= 8;
-
+            const r = this.rules;
             return this.name.length > 0 &&
                    this.email.length > 0 &&
-                   hasUpper && hasLower && hasNumber && hasSpecial && isLongEnough;
+                   r.upper && r.lower && r.number && r.special && r.min8;
+        },
+
+        async submitRegistration() {
+            if (!this.isFormValid || this.loading) return;
+
+            this.loading = true;
+            try {
+                const formData = new FormData();
+                formData.append('name', this.name);
+                formData.append('email', this.email);
+                formData.append('password', this.password);
+                formData.append('csrf_token', '<?= $csrf_token ?>');
+
+                const response = await fetch('<?= BASE_URL ?>/forum/sign-up', {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    this.showToast(data.message || 'Account created!', true);
+                    if (data.redirect) {
+                        setTimeout(() => window.location.href = data.redirect, 1500);
+                    }
+                } else {
+                    this.showToast(data.message || 'Registration failed.', false);
+                }
+            } catch (error) {
+                this.showToast('Network error. Please try again.', false);
+            } finally {
+                this.loading = false;
+            }
         }
     }
 }

@@ -43,6 +43,10 @@ class AuthController extends BaseController {
 
     public function signUp() {
         if ($this->isLoggedIn()) {
+            if ($this->isAjax()) {
+                echo json_encode(['success' => true, 'redirect' => BASE_URL . '/forum/feed']);
+                return;
+            }
             $this->redirect('forum/feed');
         }
 
@@ -55,7 +59,6 @@ class AuthController extends BaseController {
                 $name = $_POST['name'] ?? '';
                 $email = $_POST['email'] ?? '';
                 $password = $_POST['password'] ?? '';
-                $confirm_password = $_POST['confirm_password'] ?? '';
 
                 // Password Regex: 1 Uppercase, 1 Lowercase, 1 Special Char, 1 Number, min 8 chars
                 $regex = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/';
@@ -63,8 +66,6 @@ class AuthController extends BaseController {
                 // Validation
                 if (empty($name) || empty($email) || empty($password)) {
                     $error = "All fields are required.";
-                } elseif ($password !== $confirm_password) {
-                    $error = "Passwords do not match.";
                 } elseif (!preg_match($regex, $password)) {
                     $error = "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.";
                 } elseif ($this->authModel->findByEmailOrUsername($email)) {
@@ -78,6 +79,11 @@ class AuthController extends BaseController {
                             $_SESSION['member_uuid'] = $uuid;
                             $_SESSION['member_name'] = $name;
                             $_SESSION['member_avatar'] = $member['avatar'];
+
+                            if ($this->isAjax()) {
+                                echo json_encode(['success' => true, 'message' => 'Account created! Redirecting...', 'redirect' => BASE_URL . '/forum/feed']);
+                                return;
+                            }
                             $this->redirect('forum/feed');
                         } else {
                             $error = "Registration succeeded but session could not be established.";
@@ -87,6 +93,11 @@ class AuthController extends BaseController {
                     }
                 }
             }
+
+            if ($this->isAjax()) {
+                echo json_encode(['success' => false, 'message' => $error]);
+                return;
+            }
         }
 
         $this->render('forum/sign-up', [
@@ -95,6 +106,10 @@ class AuthController extends BaseController {
             'success' => $success,
             'csrf_token' => CSRF::generateToken()
         ], false);
+    }
+
+    protected function isAjax() {
+        return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
     }
 
     public function logout() {
