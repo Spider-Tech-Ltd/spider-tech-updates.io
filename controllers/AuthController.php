@@ -36,10 +36,10 @@ class AuthController extends BaseController
                             $this->redirect('forum/feed');
                         }
                     } else {
-                        $error = "Invalid login credentials. Please check your email and password.";
+                        $error = "Incorrect email or password.";
                     }
                 } else {
-                    $error = "Invalid login credentials. Please check your email and password.";
+                    $error = "Incorrect email or password.";
                 }
             }
         }
@@ -93,7 +93,8 @@ class AuthController extends BaseController
                         $expiry = date('Y-m-d H:i:s', strtotime('+24 hours'));
 
                         if ($this->authModel->storeVerificationToken($uuid, $token, $expiry)) {
-                            $emailSent = $this->authModel->sendVerificationEmail($email, $name, $token);
+                            $verificationController = new VerificationController();
+                            $emailSent = $verificationController->sendVerificationEmail($email, $name, $token);
 
                             if ($emailSent) {
                                 $success = "Registration successful! Please check your email to verify your account.";
