@@ -32,4 +32,7 @@ spl_autoload_register(function ($class_name) {
 });
 
 require_once ROOT_PATH . '/utils/helpers.php';
+if (file_exists(ROOT_PATH . '/vendor/autoload.php')) {
+    require_once ROOT_PATH . '/vendor/autoload.php';
+}
 ?>

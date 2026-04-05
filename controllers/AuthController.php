@@ -23,10 +23,14 @@ class AuthController extends BaseController {
 
                 $member = $this->authModel->findByEmailOrUsername($login);
                 if ($member && password_verify($password, $member['password_hash'])) {
-                    $_SESSION['member_id'] = $member['id'];
-                    $_SESSION['member_uuid'] = $member['uuid'];
-                    $_SESSION['member_name'] = $member['name'];
-                    $this->redirect('forum/feed');
+                    if ($member['is_verified'] == 0) {
+                        $error = "Please verify your email address before signing in.";
+                    } else {
+                        $_SESSION['member_id'] = $member['id'];
+                        $_SESSION['member_uuid'] = $member['uuid'];
+                        $_SESSION['member_name'] = $member['name'];
+                        $this->redirect('forum/feed');
+                    }
                 } else {
                     $error = "Invalid username/email or password.";
                 }
@@ -64,14 +68,21 @@ class AuthController extends BaseController {
                 } else {
                     $uuid = $this->authModel->register($username, $email, $password, $name);
                     if ($uuid) {
-                        $member = $this->authModel->getMemberByUUID($uuid);
-                        if ($member) {
-                            $_SESSION['member_id'] = $member['id'];
-                            $_SESSION['member_uuid'] = $uuid;
-                            $_SESSION['member_name'] = $name;
-                            $this->redirect('forum/feed');
+                        // Email Verification Flow
+                        $token = bin2hex(random_bytes(32)); // 64-char hex
+                        $expiry = date('Y-m-d H:i:s', strtotime('+24 hours'));
+
+                        if ($this->authModel->storeVerificationToken($uuid, $token, $expiry)) {
+                            $verificationController = new VerificationController();
+                            $emailSent = $verificationController->sendVerificationEmail($email, $name, $token);
+
+                            if ($emailSent) {
+                                $success = "Registration successful! Please check your email to verify your account.";
+                            } else {
+                                $success = "Registration successful, but we couldn't send the verification email. Please contact support.";
+                            }
                         } else {
-                            $error = "Registration succeeded but session could not be established.";
+                            $error = "An error occurred while setting up verification. Please try again.";
                         }
                     } else {
                         $error = "Registration failed. Please try again.";
