@@ -102,7 +102,12 @@ class AuthController extends BaseController
             }
 
             if ($this->isAjax()) {
-                echo json_encode(['success' => false, 'message' => $error]);
+                $response = [
+                    'success' => !empty($success),
+                    'message' => $success ?: $error
+                ];
+                header('Content-Type: application/json');
+                echo json_encode($response);
                 return;
             }
         }
