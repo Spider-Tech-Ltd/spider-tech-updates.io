@@ -159,6 +159,9 @@
                 <input type="password" name="password" id="passwordInput" class="auth-input" placeholder="Enter password" required>
                 <span class="material-symbols-outlined password-toggle" onclick="togglePassword()">visibility</span>
             </div>
+            <div style="text-align: right; margin-bottom: 20px;">
+                <a href="<?= BASE_URL ?>/forum/forgot-password" style="font-size: 0.85rem; color: #f48221; font-weight: 600; text-decoration: none;">Forgot Password?</a>
+            </div>
             <button type="submit" class="auth-btn">Sign In</button>
         </form>
 
