@@ -1,14 +1,17 @@
 <?php
 
-class AuthController extends BaseController {
+class AuthController extends BaseController
+{
     private $authModel;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->authModel = new AuthModel($this->db);
     }
 
-    public function signIn() {
+    public function signIn()
+    {
         if ($this->isLoggedIn()) {
             $this->redirect('forum/feed');
         }
@@ -23,11 +26,14 @@ class AuthController extends BaseController {
 
                 $member = $this->authModel->findByEmailOrUsername($login); // Currently handles both, but we'll focus UI on email
                 if ($member && password_verify($password, $member['password_hash'])) {
-                    $_SESSION['member_id'] = $member['id'];
-                    $_SESSION['member_uuid'] = $member['uuid'];
-                    $_SESSION['member_name'] = $member['name'];
-                    $_SESSION['member_avatar'] = $member['avatar'];
-                    $this->redirect('forum/feed');
+                    if ($member['is_verified'] == 0) {
+                        $error = "Please verify your email address before signing in.";
+                    } else {
+                        $_SESSION['member_id'] = $member['id'];
+                        $_SESSION['member_uuid'] = $member['uuid'];
+                        $_SESSION['member_name'] = $member['name'];
+                        $this->redirect('forum/feed');
+                    }
                 } else {
                     $error = "Invalid username/email or password.";
                 }
@@ -41,7 +47,8 @@ class AuthController extends BaseController {
         ], false);
     }
 
-    public function signUp() {
+    public function signUp()
+    {
         if ($this->isLoggedIn()) {
             if ($this->isAjax()) {
                 echo json_encode(['success' => true, 'redirect' => BASE_URL . '/forum/feed']);
@@ -73,20 +80,20 @@ class AuthController extends BaseController {
                 } else {
                     $uuid = $this->authModel->register($email, $email, $password, $name); // Use email as username as well to maintain integrity
                     if ($uuid) {
-                        $member = $this->authModel->getMemberByUUID($uuid);
-                        if ($member) {
-                            $_SESSION['member_id'] = $member['id'];
-                            $_SESSION['member_uuid'] = $uuid;
-                            $_SESSION['member_name'] = $name;
-                            $_SESSION['member_avatar'] = $member['avatar'];
+                        // Email Verification Flow
+                        $token = bin2hex(random_bytes(32)); // 64-char hex
+                        $expiry = date('Y-m-d H:i:s', strtotime('+24 hours'));
 
-                            if ($this->isAjax()) {
-                                echo json_encode(['success' => true, 'message' => 'Account created! Redirecting...', 'redirect' => BASE_URL . '/forum/feed']);
-                                return;
+                        if ($this->authModel->storeVerificationToken($uuid, $token, $expiry)) {
+                            $emailSent = $this->authModel->sendVerificationEmail($email, $name, $token);
+
+                            if ($emailSent) {
+                                $success = "Registration successful! Please check your email to verify your account.";
+                            } else {
+                                $success = "Registration successful, but we couldn't send the verification email. Please contact support.";
                             }
-                            $this->redirect('forum/feed');
                         } else {
-                            $error = "Registration succeeded but session could not be established.";
+                            $error = "An error occurred while setting up verification. Please try again.";
                         }
                     } else {
                         $error = "Registration failed. Please try again.";
@@ -108,11 +115,8 @@ class AuthController extends BaseController {
         ], false);
     }
 
-    protected function isAjax() {
-        return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
-    }
-
-    public function logout() {
+    public function logout()
+    {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }

@@ -33,6 +33,7 @@ $routes = [
     'forum/sign-in' => ['AuthController', 'signIn'],
     'forum/sign-up' => ['AuthController', 'signUp'],
     'forum/logout' => ['AuthController', 'logout'],
+    'forum/verify' => ['VerificationController', 'verify'],
     'forum/feed/like' => ['FeedController', 'like'],
     'forum/feed/reply' => ['FeedController', 'reply'],
     'forum/feed/store' => ['FeedController', 'store'],
