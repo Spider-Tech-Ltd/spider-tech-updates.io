@@ -31,6 +31,15 @@ class AuthModel
         return false;
     }
 
+    public function findByEmail($email)
+    {
+        $query = "SELECT * FROM `members` WHERE email = :email LIMIT 1";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function findByEmailOrUsername($identifier)
     {
         $query = "SELECT * FROM `members` WHERE email = :identifier OR username = :identifier LIMIT 1";

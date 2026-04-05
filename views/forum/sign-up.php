@@ -401,7 +401,7 @@ function signUpForm() {
                 if (data.success) {
                     this.showToast(data.message || 'Account created!', true);
                     if (data.redirect) {
-                        setTimeout(() => window.location.href = data.redirect, 1500);
+                        setTimeout(() => window.location.href = data.redirect, 2500);
                     }
                 } else {
                     this.showToast(data.message || 'Registration failed.', false);

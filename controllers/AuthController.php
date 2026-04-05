@@ -24,18 +24,22 @@ class AuthController extends BaseController
                 $login = $_POST['login'] ?? '';
                 $password = $_POST['password'] ?? '';
 
-                $member = $this->authModel->findByEmailOrUsername($login); // Currently handles both, but we'll focus UI on email
-                if ($member && password_verify($password, $member['password_hash'])) {
-                    if ($member['is_verified'] == 0) {
-                        $error = "Please verify your email address before signing in.";
+                $member = $this->authModel->findByEmail($login);
+                if ($member) {
+                    if (password_verify($password, $member['password_hash'])) {
+                        if ($member['is_verified'] == 0) {
+                            $error = "Please verify your email address before signing in.";
+                        } else {
+                            $_SESSION['member_id'] = $member['id'];
+                            $_SESSION['member_uuid'] = $member['uuid'];
+                            $_SESSION['member_name'] = $member['name'];
+                            $this->redirect('forum/feed');
+                        }
                     } else {
-                        $_SESSION['member_id'] = $member['id'];
-                        $_SESSION['member_uuid'] = $member['uuid'];
-                        $_SESSION['member_name'] = $member['name'];
-                        $this->redirect('forum/feed');
+                        $error = "Incorrect email or password.";
                     }
                 } else {
-                    $error = "Invalid username/email or password.";
+                    $error = "Incorrect email or password.";
                 }
             }
         }
@@ -79,7 +83,7 @@ class AuthController extends BaseController
                     $error = "All fields are required.";
                 } elseif (!preg_match($regex, $password)) {
                     $error = "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.";
-                } elseif ($this->authModel->findByEmailOrUsername($email)) {
+                } elseif ($this->authModel->findByEmail($email)) {
                     $error = "Email address already exists.";
                 } else {
                     $uuid = $this->authModel->register($email, $email, $password, $name); // Use email as username as well to maintain integrity
