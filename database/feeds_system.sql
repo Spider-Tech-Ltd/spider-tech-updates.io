@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS `members` (
   `posts` INT DEFAULT 0,
   `verification_token` VARCHAR(255) DEFAULT NULL,
   `is_verified` TINYINT(1) DEFAULT 0,
+  `terms_accepted` TINYINT(1) DEFAULT 0,
   `token_expiry` DATETIME DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
