@@ -17,7 +17,7 @@
     .training-hero {
       position: relative;
       background-color: #f4f4f4;
-      padding: 100px 16px 80px;
+      padding: 140px 16px 80px;
       overflow: hidden;
       text-align: center;
     }

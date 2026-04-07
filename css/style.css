@@ -766,6 +766,9 @@ header.sticky {
   }
 }
 /*---- Slider ----*/
+#slider {
+  padding-top: 140px;
+}
 #slider .rev_slider {
   min-height: 80vh;
 }
@@ -3157,6 +3160,7 @@ section#inner-banner {
   background: url(../images/background.jpg) no-repeat fixed 50% center;
   margin: 0 auto;
   background-size: cover;
+  padding-top: 140px;
 }
 section#inner-banner .inner-heading {
   text-align: center;

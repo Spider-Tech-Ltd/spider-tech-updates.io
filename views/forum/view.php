@@ -19,7 +19,7 @@
   body { background-color: var(--spider-bg); }
   
   .view-wrapper { 
-    padding-top: 40px; 
+    padding-top: 140px; /* Push content below fixed header */
     padding-bottom: 80px; 
     min-height: 100vh;
   }

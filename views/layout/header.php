@@ -38,12 +38,12 @@
     right: 0;
     z-index: 1000;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    padding: 24px 0;
+    padding: 28px 0;
   }
 
   /* Scrolled State: Glassmorphism */
   .site-header.is-scrolled {
-    padding: 12px 0;
+    padding: 14px 0;
     background: rgba(255, 255, 255, 0.75);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -166,7 +166,7 @@
     }
 
     .site-header {
-      padding: 16px 0;
+      padding: 20px 0;
     }
   }
 </style>

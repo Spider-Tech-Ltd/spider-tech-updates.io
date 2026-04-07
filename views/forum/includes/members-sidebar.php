@@ -21,8 +21,14 @@
     flex-direction: column;
     gap: 24px;
     position: sticky;
-    top: 136px;
+    top: 160px; /* Keeps the sidebar below the fixed header */
     margin-top: 6px;
+  }
+
+  @media (max-width: 768px) {
+    .member-sidebar {
+      top: 110px;
+    }
   }
 
   .sidebar-widget {

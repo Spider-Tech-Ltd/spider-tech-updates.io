@@ -11,7 +11,7 @@
   .forum-hero-section {
     position: relative;
     background-color: #f4f4f4;
-    padding: 100px 16px 80px 16px; /* Balanced top padding for fixed header */
+    padding: 140px 16px 80px 16px; /* Balanced top padding for fixed header */
     overflow: hidden;
     text-align: center;
   }

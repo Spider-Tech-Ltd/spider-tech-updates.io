@@ -13,7 +13,7 @@
   .feed-member-banner {
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
     border-bottom: 1px solid #e9ecef;
-    padding: 28px 0;
+    padding: 140px 0 28px 0; /* Increased top padding to match hero section and push below fixed header */
     position: relative;
     overflow: hidden;
   }
@@ -160,14 +160,7 @@
   }
 
   @media (max-width: 768px) {
-    .banner-inner {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    .banner-greeting { font-size: 1.3rem; }
-    .btn-start-discussion { width: 100%; justify-content: center; }
-    .banner-cta-group { width: 100%; }
-    .banner-stats { flex-wrap: wrap; gap: 12px; }
+    .feed-member-banner { padding: 80px 0 28px 0; } /* Reduced top padding for mobile to match hero section */
   }
 </style>
 
