@@ -37,6 +37,10 @@ class ForumController extends BaseController {
             $this->redirect('forum/sign-in');
         }
 
+        if (empty($_SESSION['terms_accepted'])) {
+            $this->redirect('forum/terms');
+        }
+
         $forumModel = new ForumModel($this->db);
         $categories = $forumModel->getCategories();
         $category_filter = $_GET['category'] ?? null;
@@ -76,6 +80,10 @@ class ForumController extends BaseController {
             $this->redirect('forum/sign-in');
         }
 
+        if (empty($_SESSION['terms_accepted'])) {
+            $this->redirect('forum/terms');
+        }
+
         $forumModel = new ForumModel($this->db);
         $categories = $forumModel->getCategories();
         $member_stats = $forumModel->getMemberStats($_SESSION['member_id']);
@@ -95,6 +103,10 @@ class ForumController extends BaseController {
     public function discussion() {
         if (!$this->isLoggedIn()) {
             $this->redirect('forum/sign-in');
+        }
+
+        if (empty($_SESSION['terms_accepted'])) {
+            $this->redirect('forum/terms');
         }
 
         $uuid = $_GET['uuid'] ?? '';
@@ -140,6 +152,10 @@ class ForumController extends BaseController {
     public function profile() {
         if (!$this->isLoggedIn()) {
             $this->redirect('forum/sign-in');
+        }
+
+        if (empty($_SESSION['terms_accepted'])) {
+            $this->redirect('forum/terms');
         }
 
         $forumModel = new ForumModel($this->db);

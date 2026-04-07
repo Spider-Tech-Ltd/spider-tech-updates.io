@@ -36,7 +36,15 @@ class AuthController extends BaseController
                             $this->redirect('forum/feed');
                         }
                     } else {
-                        $error = "Incorrect email or password.";
+                        $_SESSION['member_id'] = $member['id'];
+                        $_SESSION['member_uuid'] = $member['uuid'];
+                        $_SESSION['member_name'] = $member['name'];
+                        $_SESSION['terms_accepted'] = $member['terms_accepted'];
+
+                        if ($member['terms_accepted'] == 0) {
+                            $this->redirect('forum/terms');
+                        }
+                        $this->redirect('forum/feed');
                     }
                 } else {
                     $error = "Incorrect email or password.";
