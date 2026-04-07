@@ -127,6 +127,11 @@
             color: #e53e3e;
             border: 1px solid #feb2b2;
         }
+        .alert-success {
+            background-color: #f0fff4;
+            color: #2f855a;
+            border: 1px solid #9ae6b4;
+        }
     </style>
 </head>
 <body>
@@ -139,6 +144,10 @@
             <div class="alert alert-danger text-center"><?= htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
+        <?php if (isset($success) && $success): ?>
+            <div class="alert alert-success text-center"><?= htmlspecialchars($success); ?></div>
+        <?php endif; ?>
+
         <form action="<?= BASE_URL ?>/forum/sign-in" method="POST">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
             <div class="form-group">
@@ -149,6 +158,9 @@
                 <label>Password</label>
                 <input type="password" name="password" id="passwordInput" class="auth-input" placeholder="Enter password" required>
                 <span class="material-symbols-outlined password-toggle" onclick="togglePassword()">visibility</span>
+            </div>
+            <div style="text-align: right; margin-bottom: 20px;">
+                <a href="<?= BASE_URL ?>/forum/forgot-password" style="font-size: 0.85rem; color: #f48221; font-weight: 600; text-decoration: none;">Forgot Password?</a>
             </div>
             <button type="submit" class="auth-btn">Sign In</button>
         </form>

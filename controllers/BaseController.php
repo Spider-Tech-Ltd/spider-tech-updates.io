@@ -31,6 +31,10 @@ class BaseController {
         return isset($_SESSION['member_id']);
     }
 
+    protected function isAjax() {
+        return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+    }
+
     protected function redirect($path) {
         header("Location: " . BASE_URL . "/" . ltrim($path, '/'));
         exit();

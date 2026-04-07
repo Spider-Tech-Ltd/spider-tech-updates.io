@@ -31,6 +31,15 @@ class AuthModel
         return false;
     }
 
+    public function findByEmail($email)
+    {
+        $query = "SELECT * FROM `members` WHERE email = :email LIMIT 1";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function findByEmailOrUsername($identifier)
     {
         $query = "SELECT * FROM `members` WHERE email = :identifier OR username = :identifier LIMIT 1";
@@ -49,50 +58,6 @@ class AuthModel
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function sendVerificationEmail($email, $name, $token)
-    {
-        $mail = new PHPMailer(true);
-
-        try {
-            $mail->isSMTP();
-            $mail->Host       = MAIL_HOST;
-            $mail->SMTPAuth   = MAIL_AUTH;
-            $mail->Username   = MAIL_USER;
-            $mail->Password   = MAIL_PASS;
-
-            if (defined('MAIL_ENCRYPTION') && strtolower(MAIL_ENCRYPTION) === 'ssl') {
-                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-            } else {
-                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            }
-
-            $mail->Port = MAIL_PORT;
-            $mail->setFrom(MAIL_FROM_ADDRESS, MAIL_FROM_NAME);
-            $mail->addAddress($email, $name);
-
-            $verificationLink = BASE_URL . '/forum/verify?token=' . urlencode($token);
-
-            $mail->isHTML(true);
-            $mail->Subject = 'Verify Your Email - Spider Tech Forum';
-            $mail->Body = "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f9f9f9; border-radius: 8px;'>
-                    <h2 style='color: #333;'>Welcome to Spider Tech Forum</h2>
-                    <p>Hello {$name},</p>
-                    <p>Thank you for joining our community. Please verify your email address by clicking the button below:</p>
-                    <p style='text-align: center;'>
-                        <a href='{$verificationLink}' style='background:#007bff;color:#fff;padding:12px 22px;text-decoration:none;border-radius:5px;display:inline-block;'>Verify Email</a>
-                    </p>
-                    <p>If the button does not work, paste this link into your browser:</p>
-                    <p><a href='{$verificationLink}'>{$verificationLink}</a></p>
-                    <p>This link expires in 24 hours.</p>
-                </div>";
-            $mail->AltBody = "Please verify your email by visiting: {$verificationLink}";
-
-            return $mail->send();
-        } catch (Exception $e) {
-            error_log("Verification email failed: {$e->getMessage()}");
-            return false;
-        }
-    }
 
     public function storeVerificationToken($uuid, $token, $expiry)
     {
@@ -129,5 +94,34 @@ class AuthModel
         $stmt->bindParam(':token', $token);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function storeResetCode($email, $code, $expiry)
+    {
+        $query = "UPDATE `members` SET reset_token = :code, reset_expiry = :expiry WHERE email = :email";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':code', $code);
+        $stmt->bindParam(':expiry', $expiry);
+        $stmt->bindParam(':email', $email);
+        return $stmt->execute();
+    }
+
+    public function verifyResetCode($email, $code)
+    {
+        $query = "SELECT * FROM `members` WHERE email = :email AND reset_token = :code AND reset_expiry > NOW() LIMIT 1";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':code', $code);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function updatePassword($email, $passwordHash)
+    {
+        $query = "UPDATE `members` SET password_hash = :password, reset_token = NULL, reset_expiry = NULL WHERE email = :email";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':password', $passwordHash);
+        $stmt->bindParam(':email', $email);
+        return $stmt->execute();
     }
 }

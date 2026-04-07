@@ -38,24 +38,32 @@ class VerificationController extends BaseController
 
             // Content
             $verificationLink = BASE_URL . "/forum/verify?token=" . $token;
+            $logoUrl = BASE_URL . "/images/spider-tech.png";
 
             $mail->isHTML(true);
             $mail->Subject = 'Verify Your Email - Spider Tech Forum';
 
-            // Minimalist HTML Template
+            // Branded HTML Template
             $mail->Body    = "
-                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;'>
-                    <h2 style='color: #333;'>Welcome to Spider Tech Forum!</h2>
-                    <p>Hello $name,</p>
-                    <p>Thank you for joining our community. Please click the button below to verify your email address and activate your account.</p>
-                    <div style='text-align: center; margin: 30px 0;'>
-                        <a href='$verificationLink' style='background-color: #ff5722; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Verify Email Address</a>
+                <div style=\"font-family: 'Poppins', 'Open Sans', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #f8f9fa;\">
+                    <div style=\"background-color: #ffffff; border-radius: 20px; padding: 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e9ecef;\">
+                        <div style=\"text-align: center; margin-bottom: 30px;\">
+                            <img src=\"$logoUrl\" alt=\"Spider Tech\" style=\"max-width: 180px; height: auto;\">
+                        </div>
+                        <h2 style=\"color: #111111; font-size: 24px; font-weight: 700; margin-bottom: 15px; text-align: center;\">Verify Your Email</h2>
+                        <p style=\"color: #555555; font-size: 16px; line-height: 1.6; margin-bottom: 25px; text-align: center;\">Hello <strong>$name</strong>,</p>
+                        <p style=\"color: #555555; font-size: 16px; line-height: 1.6; margin-bottom: 30px; text-align: center;\">Thank you for joining the Spider Tech Community. To complete your registration and start discussing, please verify your email address by clicking the button below:</p>
+                        <div style=\"text-align: center; margin: 35px 0;\">
+                            <a href=\"$verificationLink\" style=\"background-color: #f48221; color: #ffffff; padding: 16px 35px; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 16px; display: inline-block; box-shadow: 0 4px 10px rgba(244,130,33,0.3);\">Verify Email Address</a>
+                        </div>
+                        <p style=\"color: #797979; font-size: 14px; line-height: 1.6; margin-top: 30px; text-align: center;\">If the button doesn't work, copy and paste this link into your browser:</p>
+                        <p style=\"text-align: center; margin-bottom: 30px;\"><a href=\"$verificationLink\" style=\"color: #f48221; text-decoration: none; word-break: break-all; font-size: 14px;\">$verificationLink</a></p>
+                        <hr style=\"border: 0; border-top: 1px solid #eeeeee; margin: 30px 0;\">
+                        <p style=\"font-size: 12px; color: #999999; text-align: center; line-height: 1.5;\">This link will expire in 24 hours. If you did not create an account, you can safely ignore this email.</p>
                     </div>
-                    <p>Or copy and paste this link into your browser:</p>
-                    <p><a href='$verificationLink'>$verificationLink</a></p>
-                    <p>This link will expire in 24 hours.</p>
-                    <hr style='border: 0; border-top: 1px solid #eee; margin: 20px 0;'>
-                    <p style='font-size: 12px; color: #888;'>If you did not create an account, no further action is required.</p>
+                    <div style=\"text-align: center; margin-top: 20px; color: #797979; font-size: 12px;\">
+                        &copy; " . date('Y') . " Spider Tech Limited. All rights reserved.
+                    </div>
                 </div>
             ";
 

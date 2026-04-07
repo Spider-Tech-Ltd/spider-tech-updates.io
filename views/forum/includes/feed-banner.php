@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Feed Banner — Member Welcome Banner (Phase 2)
  * Compact slim banner visible only to logged-in members.
@@ -13,7 +14,8 @@
   .feed-member-banner {
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
     border-bottom: 1px solid #e9ecef;
-    padding: 28px 0;
+    padding: 140px 0 28px 0;
+    /* Increased top padding to match hero section and push below fixed header */
     position: relative;
     overflow: hidden;
   }
@@ -22,7 +24,10 @@
   .feed-member-banner::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background-image:
       linear-gradient(rgba(244, 130, 33, 0.04) 1px, transparent 1px),
       linear-gradient(90deg, rgba(244, 130, 33, 0.04) 1px, transparent 1px);
@@ -34,7 +39,9 @@
   .feed-member-banner::after {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 3px;
     background: linear-gradient(90deg, #f48221, #e6751c 60%, transparent);
   }
@@ -160,14 +167,11 @@
   }
 
   @media (max-width: 768px) {
-    .banner-inner {
-      flex-direction: column;
-      align-items: flex-start;
+    .feed-member-banner {
+      padding: 80px 0 28px 0;
     }
-    .banner-greeting { font-size: 1.3rem; }
-    .btn-start-discussion { width: 100%; justify-content: center; }
-    .banner-cta-group { width: 100%; }
-    .banner-stats { flex-wrap: wrap; gap: 12px; }
+
+    /* Reduced top padding for mobile to match hero section */
   }
 </style>
 

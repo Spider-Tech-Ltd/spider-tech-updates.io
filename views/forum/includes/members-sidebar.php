@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Member Sidebar — Premium Synchronization
  * Dashboard-style sidebar for logged-in members.
@@ -21,8 +22,15 @@
     flex-direction: column;
     gap: 24px;
     position: sticky;
-    top: 136px;
+    top: 160px;
+    /* Keeps the sidebar below the fixed header */
     margin-top: 6px;
+  }
+
+  @media (max-width: 768px) {
+    .member-sidebar {
+      top: 110px;
+    }
   }
 
   .sidebar-widget {
@@ -75,15 +83,29 @@
     transition: transform 0.2s ease;
     text-decoration: none !important;
   }
-  .metric-row-premium:hover { transform: translateX(4px); background-color: #fffbf7; }
+
+  .metric-row-premium:hover {
+    transform: translateX(4px);
+    background-color: #fffbf7;
+  }
 
   .metric-label-group {
     display: flex;
     align-items: center;
     gap: 10px;
   }
-  .metric-label-group .material-symbols-outlined { font-size: 18px; color: var(--spider-gray); }
-  .metric-label { font-size: 0.82rem; font-weight: 600; color: var(--spider-gray); font-family: 'Open Sans'; }
+
+  .metric-label-group .material-symbols-outlined {
+    font-size: 18px;
+    color: var(--spider-gray);
+  }
+
+  .metric-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--spider-gray);
+    font-family: 'Open Sans';
+  }
 
   .metric-value-badge {
     background-color: #ffffff;
@@ -93,7 +115,7 @@
     font-size: 0.8rem;
     padding: 4px 12px;
     border-radius: 50px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
   }
 
   /* ============================
@@ -108,9 +130,10 @@
     margin-bottom: 8px;
     border: 1px solid transparent;
   }
+
   .trending-link-premium:hover {
     background-color: #fffbf7;
-    border-color: rgba(244,130,33,0.1);
+    border-color: rgba(244, 130, 33, 0.1);
     transform: translateX(4px);
   }
 
@@ -122,6 +145,7 @@
     line-height: 1.4;
     margin-bottom: 4px;
   }
+
   .trending-meta-premium {
     display: flex;
     align-items: center;
@@ -137,7 +161,7 @@
     height: 56px;
     border-radius: 50%;
     border: 2px solid #fff;
-    box-shadow: 0 4px 12px rgba(244,130,33,0.15);
+    box-shadow: 0 4px 12px rgba(244, 130, 33, 0.15);
   }
 </style>
 
@@ -164,36 +188,36 @@
     </div>
 
     <div class="profile-metrics-group">
-        <div class="metric-row-premium">
-            <div class="metric-label-group">
-                <span class="material-symbols-outlined">edit_square</span>
-                <span class="metric-label">Posts Made</span>
-            </div>
-            <span class="metric-value-badge"><?= Utils::formatNumber($member_stats['post_count'] ?? 0) ?></span>
+      <div class="metric-row-premium">
+        <div class="metric-label-group">
+          <span class="material-symbols-outlined">edit_square</span>
+          <span class="metric-label">Posts Made</span>
         </div>
-        <div class="metric-row-premium">
-            <div class="metric-label-group">
-                <span class="material-symbols-outlined">chat</span>
-                <span class="metric-label">Replies Sent</span>
-            </div>
-            <span class="metric-value-badge"><?= Utils::formatNumber($member_stats['reply_count'] ?? 0) ?></span>
+        <span class="metric-value-badge"><?= Utils::formatNumber($member_stats['post_count'] ?? 0) ?></span>
+      </div>
+      <div class="metric-row-premium">
+        <div class="metric-label-group">
+          <span class="material-symbols-outlined">chat</span>
+          <span class="metric-label">Replies Sent</span>
         </div>
-        <div class="metric-row-premium">
-            <div class="metric-label-group">
-                <span class="material-symbols-outlined">thumb_up</span>
-                <span class="metric-label">Likes Received</span>
-            </div>
-            <span class="metric-value-badge"><?= Utils::formatNumber($member_stats['likes_received'] ?? 0) ?></span>
+        <span class="metric-value-badge"><?= Utils::formatNumber($member_stats['reply_count'] ?? 0) ?></span>
+      </div>
+      <div class="metric-row-premium">
+        <div class="metric-label-group">
+          <span class="material-symbols-outlined">thumb_up</span>
+          <span class="metric-label">Likes Received</span>
         </div>
+        <span class="metric-value-badge"><?= Utils::formatNumber($member_stats['likes_received'] ?? 0) ?></span>
+      </div>
     </div>
 
     <div class="pt-3 mt-2 border-top d-flex justify-content-around align-items-center">
-        <a href="<?= BASE_URL ?>/forum/profile" class="text-decoration-none" style="font-family:'Poppins'; font-weight:700; font-size:0.8rem; color:var(--spider-gray); display:inline-flex; align-items:center; transition: color 0.2s;" onmouseover="this.style.color='var(--spider-orange)'" onmouseout="this.style.color='var(--spider-gray)'">
-            <span class="material-symbols-outlined mr-1" style="font-size:16px;">manage_accounts</span> Edit Profile
-        </a>
-        <a href="<?= BASE_URL ?>/forum/logout" class="text-decoration-none" style="font-family:'Poppins'; font-weight:700; font-size:0.8rem; color:#e11d48; display:inline-flex; align-items:center;">
-            <span class="material-symbols-outlined mr-1" style="font-size:16px;">logout</span> Sign Out
-        </a>
+      <a href="<?= BASE_URL ?>/forum/profile" class="text-decoration-none" style="font-family:'Poppins'; font-weight:700; font-size:0.8rem; color:var(--spider-gray); display:inline-flex; align-items:center; transition: color 0.2s;" onmouseover="this.style.color='var(--spider-orange)'" onmouseout="this.style.color='var(--spider-gray)'">
+        <span class="material-symbols-outlined mr-1" style="font-size:16px;">manage_accounts</span> Edit Profile
+      </a>
+      <a href="<?= BASE_URL ?>/forum/logout" class="text-decoration-none" style="font-family:'Poppins'; font-weight:700; font-size:0.8rem; color:#e11d48; display:inline-flex; align-items:center;">
+        <span class="material-symbols-outlined mr-1" style="font-size:16px;">logout</span> Sign Out
+      </a>
     </div>
   </section>
 
@@ -205,7 +229,7 @@
       </div>
       <h3 class="widget-title-premium">Active Now 🌐</h3>
     </div>
-    
+
     <div class="d-flex flex-wrap gap-2 pt-1 mb-3">
       <?php if (empty($active_members)): ?>
         <p class="text-muted small">No members active.</p>
@@ -213,7 +237,7 @@
         <?php foreach (array_slice($active_members, 0, 8) as $con): ?>
           <div class="position-relative" title="<?= htmlspecialchars($con['name']) ?>">
             <img src="<?= !empty($con['avatar']) ? BASE_URL . $con['avatar'] : "https://ui-avatars.com/api/?name=" . urlencode($con['name']) . "&background=f48221&color=fff&size=36" ?>"
-                 style="width:36px; height:36px; border-radius:50%; border:1.5px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,0.06); object-fit: cover;" alt="Member">
+              style="width:36px; height:36px; border-radius:50%; border:1.5px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,0.06); object-fit: cover;" alt="Member">
             <span class="position-absolute" style="width:10px; height:10px; background:#2ecc71; border:2.2px solid #fff; border-radius:50%; right:-1px; bottom:-1px;"></span>
           </div>
         <?php endforeach; ?>
@@ -221,7 +245,7 @@
     </div>
 
     <a href="#" class="text-decoration-none" style="font-family:'Poppins'; font-weight:700; font-size:0.75rem; color:var(--spider-orange); display:inline-flex; align-items:center; gap:4px;">
-       See community directory <span class="material-symbols-outlined" style="font-size:14px;">arrow_forward</span>
+      See community directory <span class="material-symbols-outlined" style="font-size:14px;">arrow_forward</span>
     </a>
   </section>
 
@@ -242,8 +266,8 @@
           <a href="<?= BASE_URL ?>/forum/discussion?uuid=<?= $topic['uuid'] ?>" class="trending-link-premium">
             <div class="trending-title-premium"><?= htmlspecialchars($topic['title']) ?></div>
             <div class="trending-meta-premium">
-                <span class="material-symbols-outlined" style="font-size:14px; color:var(--spider-orange); font-variation-settings: 'FILL' 1;">trending_up</span>
-                <span><?= $topic['likes'] ?> engagement score</span>
+              <span class="material-symbols-outlined" style="font-size:14px; color:var(--spider-orange); font-variation-settings: 'FILL' 1;">trending_up</span>
+              <span><?= $topic['likes'] ?> engagement score</span>
             </div>
           </a>
         <?php endforeach; ?>

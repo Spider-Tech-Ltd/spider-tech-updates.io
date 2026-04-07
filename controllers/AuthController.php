@@ -24,10 +24,17 @@ class AuthController extends BaseController
                 $login = $_POST['login'] ?? '';
                 $password = $_POST['password'] ?? '';
 
-                $member = $this->authModel->findByEmailOrUsername($login); // Currently handles both, but we'll focus UI on email
-                if ($member && password_verify($password, $member['password_hash'])) {
-                    if ($member['is_verified'] == 0) {
-                        $error = "Please verify your email address before signing in.";
+                $member = $this->authModel->findByEmail($login);
+                if ($member) {
+                    if (password_verify($password, $member['password_hash'])) {
+                        if ($member['is_verified'] == 0) {
+                            $error = "Please verify your email address before signing in.";
+                        } else {
+                            $_SESSION['member_id'] = $member['id'];
+                            $_SESSION['member_uuid'] = $member['uuid'];
+                            $_SESSION['member_name'] = $member['name'];
+                            $this->redirect('forum/feed');
+                        }
                     } else {
                         $_SESSION['member_id'] = $member['id'];
                         $_SESSION['member_uuid'] = $member['uuid'];
@@ -40,14 +47,18 @@ class AuthController extends BaseController
                         $this->redirect('forum/feed');
                     }
                 } else {
-                    $error = "Invalid username/email or password.";
+                    $error = "Incorrect email or password.";
                 }
             }
         }
 
+        $success = $_SESSION['success_message'] ?? '';
+        unset($_SESSION['success_message']);
+
         $this->render('forum/sign-in', [
             'title' => 'Sign In - Spider Tech Forum',
             'error' => $error,
+            'success' => $success,
             'csrf_token' => CSRF::generateToken()
         ], false);
     }
@@ -80,7 +91,7 @@ class AuthController extends BaseController
                     $error = "All fields are required.";
                 } elseif (!preg_match($regex, $password)) {
                     $error = "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.";
-                } elseif ($this->authModel->findByEmailOrUsername($email)) {
+                } elseif ($this->authModel->findByEmail($email)) {
                     $error = "Email address already exists.";
                 } else {
                     $uuid = $this->authModel->register($email, $email, $password, $name); // Use email as username as well to maintain integrity
@@ -90,7 +101,8 @@ class AuthController extends BaseController
                         $expiry = date('Y-m-d H:i:s', strtotime('+24 hours'));
 
                         if ($this->authModel->storeVerificationToken($uuid, $token, $expiry)) {
-                            $emailSent = $this->authModel->sendVerificationEmail($email, $name, $token);
+                            $verificationController = new VerificationController();
+                            $emailSent = $verificationController->sendVerificationEmail($email, $name, $token);
 
                             if ($emailSent) {
                                 $success = "Registration successful! Please check your email to verify your account.";
@@ -107,8 +119,24 @@ class AuthController extends BaseController
             }
 
             if ($this->isAjax()) {
-                echo json_encode(['success' => false, 'message' => $error]);
+                $response = [
+                    'success' => !empty($success),
+                    'message' => $success ?: $error
+                ];
+
+                if (!empty($success)) {
+                    $response['redirect'] = BASE_URL . '/forum/sign-in';
+                    $_SESSION['success_message'] = $success;
+                }
+
+                header('Content-Type: application/json');
+                echo json_encode($response);
                 return;
+            }
+
+            if (!empty($success)) {
+                $_SESSION['success_message'] = $success;
+                $this->redirect('forum/sign-in');
             }
         }
 
