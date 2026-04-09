@@ -111,10 +111,19 @@ class TrainingController extends BaseController {
 
         if (!empty($errors)) {
             if ($this->isAjax()) {
+                $message = 'Please fix the errors in the form.';
+                if (isset($errors['email']) && strpos($errors['email'], 'already registered') !== false) {
+                    $message = 'Email already taken, please try again.';
+                } elseif (isset($errors['phone']) && strpos($errors['phone'], 'already registered') !== false) {
+                    $message = 'Phone number already registered.';
+                } elseif (count($errors) === 1) {
+                    $message = reset($errors);
+                }
+
                 header('Content-Type: application/json');
                 echo json_encode([
                     'success' => false,
-                    'message' => 'Please fix the errors in the form.',
+                    'message' => $message,
                     'errors' => $errors
                 ]);
                 exit();

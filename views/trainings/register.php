@@ -247,6 +247,14 @@ unset($_SESSION['old_input']);
         font-weight: 500;
     }
 
+    .form-control:focus,
+    .custom-select:focus,
+    .auth-input:focus {
+        border-color: #f48221 !important;
+        box-shadow: 0 0 0 4px rgba(244, 130, 33, 0.1) !important;
+        outline: none;
+    }
+
     @media (max-width: 768px) {
         .registration-form-wrapper {
             padding: 30px 20px;
@@ -402,6 +410,13 @@ function registrationHandler() {
             show: false,
             message: '',
             type: 'success'
+        },
+
+        init() {
+            const err = '<?= addslashes($error_msg) ?>';
+            const scs = '<?= addslashes($success_msg) ?>';
+            if (err) this.showToast(err, 'error');
+            if (scs) this.showToast(scs, 'success');
         },
 
         showToast(message, type = 'success') {
