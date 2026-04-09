@@ -432,26 +432,6 @@ unset($_SESSION['old_input']);
                                 </a>
                             </div>
                         </div>
-                        <!-- Action Buttons -->
-                        <div class="row mt-4">
-                            <div class="col-md-8 mb-3">
-                                <button type="submit" class="submit-btn" :disabled="loading" style="color: #fff !important;">
-                                    <div x-show="!loading" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;">
-                                        <span class="material-symbols-outlined">how_to_reg</span>
-                                        <span>Complete Registration</span>
-                                    </div>
-                                    <div x-show="loading" style="display: none; align-items: center; justify-content: center; gap: 8px; width: 100%;">
-                                        <span class="spinner-border spinner-border-sm" role="status"></span>
-                                        <span>Processing...</span>
-                                    </div>
-                                </button>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <a href="<?= BASE_URL ?>/trainings/detail?id=<?= $program_id; ?>" class="cancel-btn">
-                                    Cancel
-                                </a>
-                            </div>
-                        </div>
 
                         <div class="required-note">
                             By submitting this application, you agree to our <a href="#" class="text-orange">Terms & Conditions</a> and <a href="#" class="text-orange">Privacy Policy</a>.
