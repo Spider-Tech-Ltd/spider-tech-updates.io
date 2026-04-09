@@ -13,16 +13,22 @@ class VerificationController extends BaseController
         $this->authModel = new AuthModel($this->db);
     }
 
+    /**
+     * Sends the branded verification email using the Spider Tech custom template.
+     */
     public function sendVerificationEmail($email, $name, $token)
     {
         $mail = new PHPMailer(true);
 
         try {
+            // SMTP Settings
             $mail->isSMTP();
             $mail->Host       = MAIL_HOST;
             $mail->SMTPAuth   = MAIL_AUTH;
             $mail->Username   = MAIL_USER;
             $mail->Password   = MAIL_PASS;
+            $mail->Port       = MAIL_PORT;
+            $mail->CharSet    = 'UTF-8'; // Ensure correct character encoding
 
             if (defined('MAIL_ENCRYPTION') && strtolower(MAIL_ENCRYPTION) === 'ssl') {
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
@@ -30,42 +36,63 @@ class VerificationController extends BaseController
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             }
 
-            $mail->Port = MAIL_PORT;
-
             // Recipients
             $mail->setFrom(MAIL_FROM_ADDRESS, MAIL_FROM_NAME);
             $mail->addAddress($email, $name);
 
-            // Content
+            // Content Setup
             $verificationLink = BASE_URL . "/forum/verify?token=" . $token;
             $logoUrl = BASE_URL . "/images/spider-tech.png";
+            $currentYear = date('Y');
 
             $mail->isHTML(true);
             $mail->Subject = 'Verify Your Email - Spider Tech Forum';
 
-            // Branded HTML Template
-            $mail->Body    = "
-                <div style=\"font-family: 'Poppins', 'Open Sans', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #f8f9fa;\">
-                    <div style=\"background-color: #ffffff; border-radius: 20px; padding: 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e9ecef;\">
-                        <div style=\"text-align: center; margin-bottom: 30px;\">
-                            <img src=\"$logoUrl\" alt=\"Spider Tech\" style=\"max-width: 180px; height: auto;\">
-                        </div>
-                        <h2 style=\"color: #111111; font-size: 24px; font-weight: 700; margin-bottom: 15px; text-align: center;\">Verify Your Email</h2>
-                        <p style=\"color: #555555; font-size: 16px; line-height: 1.6; margin-bottom: 25px; text-align: center;\">Hello <strong>$name</strong>,</p>
-                        <p style=\"color: #555555; font-size: 16px; line-height: 1.6; margin-bottom: 30px; text-align: center;\">Thank you for joining the Spider Tech Community. To complete your registration and start discussing, please verify your email address by clicking the button below:</p>
-                        <div style=\"text-align: center; margin: 35px 0;\">
-                            <a href=\"$verificationLink\" style=\"background-color: #f48221; color: #ffffff; padding: 16px 35px; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 16px; display: inline-block; box-shadow: 0 4px 10px rgba(244,130,33,0.3);\">Verify Email Address</a>
-                        </div>
-                        <p style=\"color: #797979; font-size: 14px; line-height: 1.6; margin-top: 30px; text-align: center;\">If the button doesn't work, copy and paste this link into your browser:</p>
-                        <p style=\"text-align: center; margin-bottom: 30px;\"><a href=\"$verificationLink\" style=\"color: #f48221; text-decoration: none; word-break: break-all; font-size: 14px;\">$verificationLink</a></p>
-                        <hr style=\"border: 0; border-top: 1px solid #eeeeee; margin: 30px 0;\">
-                        <p style=\"font-size: 12px; color: #999999; text-align: center; line-height: 1.5;\">This link will expire in 24 hours. If you did not create an account, you can safely ignore this email.</p>
-                    </div>
-                    <div style=\"text-align: center; margin-top: 20px; color: #797979; font-size: 12px;\">
-                        &copy; " . date('Y') . " Spider Tech Limited. All rights reserved.
-                    </div>
-                </div>
-            ";
+            // Branded HTML Template using Heredoc for clean formatting
+            $mail->Body = <<<HTML
+<div style="font-family: 'Poppins', 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #f8f9fa;">
+    <div style="background-color: #ffffff; border-radius: 20px; padding: 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e9ecef;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <img src="{$logoUrl}" alt="Spider Tech" style="max-width: 180px; height: auto;">
+        </div>
+        
+        <h2 style="color: #111111; font-size: 24px; font-weight: 700; margin-bottom: 15px; text-align: center; margin-top: 0;">Verify Your Email</h2>
+        
+        <p style="color: #555555; font-size: 16px; line-height: 1.6; margin-bottom: 20px; text-align: center;">
+            Hello <strong>{$name}</strong>,
+        </p>
+        
+        <p style="color: #555555; font-size: 16px; line-height: 1.6; margin-bottom: 30px; text-align: center;">
+            Thank you for joining the Spider Tech Community. To complete your registration and start discussing, please verify your email address by clicking the button below:
+        </p>
+        
+        <div style="text-align: center; margin: 35px 0;">
+            <a href="{$verificationLink}" style="background-color: #f48221; color: #ffffff; padding: 16px 35px; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 16px; display: inline-block; box-shadow: 0 4px 10px rgba(244,130,33,0.3);">Verify Email Address</a>
+        </div>
+        
+        <p style="color: #797979; font-size: 14px; line-height: 1.6; margin-top: 30px; text-align: center;">
+            If the button doesn't work, copy and paste this link into your browser:
+        </p>
+        
+        <p style="text-align: center; margin-bottom: 30px;">
+            <a href="{$verificationLink}" style="color: #f48221; text-decoration: none; word-break: break-all; font-size: 14px;">{$verificationLink}</a>
+        </p>
+        
+        <hr style="border: 0; border-top: 1px solid #eeeeee; margin: 30px 0;">
+        
+        <p style="font-size: 12px; color: #999999; text-align: center; line-height: 1.5;">
+            This link will expire in 24 hours. If you did not create an account, you can safely ignore this email.
+        </p>
+    </div>
+    
+    <div style="text-align: center; margin-top: 20px; color: #797979; font-size: 12px;">
+        &copy; {$currentYear} Spider Tech Limited. All rights reserved.
+    </div>
+</div>
+HTML;
+
+            // Plain text version for compatibility
+            $mail->AltBody = "Hello $name,\n\nThank you for joining Spider Tech. Please verify your email by clicking the link below:\n\n$verificationLink\n\nThis link expires in 24 hours.";
 
             $mail->send();
             return true;
@@ -75,6 +102,9 @@ class VerificationController extends BaseController
         }
     }
 
+    /**
+     * Handles the verification logic when a user clicks the link in their email.
+     */
     public function verify()
     {
         $token = $_GET['token'] ?? '';

@@ -45,7 +45,11 @@ $routes = [
     'about' => ['GeneralController', 'about'],
     'contact' => ['GeneralController', 'contact'],
     'faq' => ['GeneralController', 'faq'],
-    'blog' => ['GeneralController', 'blog']
+    'blog' => ['GeneralController', 'blog'],
+    // Password reset routes
+    'forum/forgot-password' => ['PasswordResetController', 'forgotPassword'],
+    'forum/verify-reset-code' => ['PasswordResetController', 'verifyResetCode'],
+    'forum/reset-password' => ['PasswordResetController', 'resetPassword'],
 ];
 
 foreach ($routes as $path => $route) {
@@ -53,4 +57,3 @@ foreach ($routes as $path => $route) {
 }
 
 $router->handleRequest();
-?>

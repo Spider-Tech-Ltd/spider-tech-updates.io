@@ -12,6 +12,8 @@
     --spider-orange: #f48221;
     --spider-dark: #111111;
     --spider-gray: #797979;
+    --sp-surface: #f8f9fa;
+    --sp-border: #e9ecef;
   }
 
   /* ============================
@@ -75,18 +77,27 @@
   .metric-row-premium {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 12px;
-    background-color: #f8f9fa;
-    border-radius: 14px;
-    margin-bottom: 10px;
-    transition: transform 0.2s ease;
-    text-decoration: none !important;
+    gap: 8px;
+    background: var(--sp-surface);
+    border-radius: 50px;
+    padding: 9px 16px;
+    margin-bottom: 12px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.8rem;
+    color: var(--sp-gray);
+    border: 1.5px solid var(--sp-border);
+    transition: all 0.2s ease;
+
+    >div:first-child {
+      flex-grow: 1;
+    }
   }
 
   .metric-row-premium:hover {
-    transform: translateX(4px);
-    background-color: #fffbf7;
+    background: rgba(244, 130, 33, 0.06);
+    border-color: rgba(244, 130, 33, 0.15);
+    color: var(--sp-orange);
+    text-decoration: none;
   }
 
   .metric-label-group {
@@ -162,6 +173,7 @@
     border-radius: 50%;
     border: 2px solid #fff;
     box-shadow: 0 4px 12px rgba(244, 130, 33, 0.15);
+    margin-inline-end: 8px;
   }
 </style>
 
@@ -179,7 +191,7 @@
     <div class="d-flex align-items-center gap-3 mb-4 p-2">
       <div class="position-relative">
         <img src="<?= !empty($member['avatar']) ? BASE_URL . $member['avatar'] : "https://ui-avatars.com/api/?name=" . urlencode($member['name']) . "&background=f48221&color=fff&size=56" ?>" class="profile-avatar-premium" alt="Avatar">
-        <span class="position-absolute" style="width:14px; height:14px; background:#2ecc71; border:2.5px solid #fff; border-radius:50%; right:2px; bottom:2px;"></span>
+        <span class="position-absolute" style="width:14px; height:14px; background:#2ecc71; border:2.5px solid #fff; border-radius:50%; right: 4px; bottom: 2px;"></span>
       </div>
       <div class="d-flex flex-column">
         <span style="font-family:'Poppins'; font-weight:700; font-size:1rem; color:#111; line-height:1.2;"><?= htmlspecialchars($member['name']) ?></span>

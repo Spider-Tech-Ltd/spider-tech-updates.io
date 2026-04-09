@@ -1,17 +1,17 @@
 <?php include 'includes/header.php'; ?>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 <style>
   :root {
-    --sp-orange:  #f48221;
-    --sp-dark:    #111111;
-    --sp-gray:    #797979;
+    --sp-orange: #f48221;
+    --sp-dark: #111111;
+    --sp-gray: #797979;
     --sp-surface: #f8f9fa;
-    --sp-white:   #ffffff;
-    --sp-border:  #e9ecef;
+    --sp-white: #ffffff;
+    --sp-border: #e9ecef;
   }
 
   /* ── Layout ── */
@@ -20,6 +20,7 @@
     min-height: calc(100vh - 80px);
     padding: 48px 16px 80px;
   }
+
   .pd-grid {
     display: grid;
     grid-template-columns: 300px 1fr;
@@ -27,8 +28,11 @@
     max-width: 1060px;
     margin: 0 auto;
   }
+
   @media (max-width: 900px) {
-    .pd-grid { grid-template-columns: 1fr; }
+    .pd-grid {
+      grid-template-columns: 1fr;
+    }
   }
 
   /* ── Card shell — mirrors .discussion-card ── */
@@ -36,7 +40,7 @@
     background: var(--sp-white);
     border-radius: 20px;
     padding: 28px;
-    box-shadow: 0 2px 12px rgba(17,17,17,0.05);
+    box-shadow: 0 2px 12px rgba(17, 17, 17, 0.05);
     border: 1px solid transparent;
   }
 
@@ -48,6 +52,7 @@
     margin: 0 auto 20px;
     cursor: pointer;
   }
+
   .avatar-ring img,
   .avatar-ring .avatar-initials {
     width: 110px;
@@ -55,23 +60,25 @@
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid var(--sp-orange);
-    box-shadow: 0 4px 16px rgba(244,130,33,0.2);
+    box-shadow: 0 4px 16px rgba(244, 130, 33, 0.2);
   }
+
   .avatar-initials {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(244,130,33,0.08);
+    background: rgba(244, 130, 33, 0.08);
     color: var(--sp-orange);
     font-family: 'Poppins', sans-serif;
     font-weight: 800;
     font-size: 2.8rem;
   }
+
   .avatar-overlay {
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    background: rgba(0,0,0,0.45);
+    background: rgba(0, 0, 0, 0.45);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -81,9 +88,20 @@
     color: #fff;
     gap: 2px;
   }
-  .avatar-ring:hover .avatar-overlay { opacity: 1; }
-  .avatar-overlay .material-symbols-outlined { font-size: 22px; }
-  .avatar-overlay span:last-child { font-family: 'Poppins'; font-size: 0.7rem; font-weight: 600; }
+
+  .avatar-ring:hover .avatar-overlay {
+    opacity: 1;
+  }
+
+  .avatar-overlay .material-symbols-outlined {
+    font-size: 22px;
+  }
+
+  .avatar-overlay span:last-child {
+    font-family: 'Poppins';
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
 
   .pd-name {
     font-family: 'Poppins', sans-serif;
@@ -93,6 +111,7 @@
     text-align: center;
     margin: 0 0 4px;
   }
+
   .pd-role {
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
@@ -111,6 +130,7 @@
     gap: 10px;
     margin-bottom: 20px;
   }
+
   .stat-pill {
     background: var(--sp-surface);
     border-radius: 50px;
@@ -119,10 +139,12 @@
     border: 1.5px solid var(--sp-border);
     transition: border-color 0.2s, background 0.2s;
   }
+
   .stat-pill:hover {
     border-color: var(--sp-orange);
-    background: rgba(244,130,33,0.04);
+    background: rgba(244, 130, 33, 0.04);
   }
+
   .stat-pill-val {
     font-family: 'Poppins', sans-serif;
     font-weight: 800;
@@ -131,6 +153,7 @@
     line-height: 1;
     margin-bottom: 4px;
   }
+
   .stat-pill-label {
     font-family: 'Open Sans', sans-serif;
     font-size: 0.67rem;
@@ -154,7 +177,11 @@
     color: var(--sp-gray);
     border: 1.5px solid var(--sp-border);
   }
-  .member-since-row .material-symbols-outlined { font-size: 15px; color: var(--sp-orange); }
+
+  .member-since-row .material-symbols-outlined {
+    font-size: 15px;
+    color: var(--sp-orange);
+  }
 
   /* Nav links — pill shaped */
   .pd-nav-link {
@@ -172,14 +199,23 @@
     margin-bottom: 4px;
     border: 1.5px solid transparent;
   }
+
   .pd-nav-link:hover {
-    background: rgba(244,130,33,0.06);
-    border-color: rgba(244,130,33,0.15);
+    background: rgba(244, 130, 33, 0.06);
+    border-color: rgba(244, 130, 33, 0.15);
     color: var(--sp-orange);
     text-decoration: none;
   }
-  .pd-nav-link .material-symbols-outlined { font-size: 17px; }
-  .pd-nav-link.danger:hover { color: #e11d48; background: #fff0f3; border-color: rgba(225,29,72,0.15); }
+
+  .pd-nav-link .material-symbols-outlined {
+    font-size: 17px;
+  }
+
+  .pd-nav-link.danger:hover {
+    color: #e11d48;
+    background: #fff0f3;
+    border-color: rgba(225, 29, 72, 0.15);
+  }
 
   /* ── Section titles — mirrors widget-title-premium ── */
   .pd-section-title {
@@ -192,14 +228,20 @@
     align-items: center;
     gap: 8px;
   }
+
   .pd-section-title .material-symbols-outlined {
     font-size: 17px;
     color: var(--sp-orange);
-    background: rgba(244,130,33,0.08);
+    background: rgba(244, 130, 33, 0.08);
     border-radius: 8px;
     padding: 4px;
   }
-  .pd-divider { border: none; border-top: 1px solid var(--sp-border); margin: 24px 0; }
+
+  .pd-divider {
+    border: none;
+    border-top: 1px solid var(--sp-border);
+    margin: 24px 0;
+  }
 
   /* ── Inputs — pill shaped, matching filter-sort-select ── */
   .pd-label {
@@ -210,6 +252,7 @@
     margin-bottom: 7px;
     display: block;
   }
+
   .pd-input {
     font-family: 'Open Sans', sans-serif;
     font-size: 0.88rem;
@@ -222,15 +265,18 @@
     transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
     outline: none;
   }
+
   .pd-input:focus {
     border-color: var(--sp-orange);
     box-shadow: 0 0 0 3px rgba(244, 130, 33, 0.1);
     background: var(--sp-white);
   }
+
   .pd-input:disabled {
     opacity: 0.55;
     cursor: not-allowed;
   }
+
   .pd-input-hint {
     font-family: 'Open Sans', sans-serif;
     font-size: 0.73rem;
@@ -240,7 +286,10 @@
   }
 
   /* Password show/hide toggle */
-  .pd-pw-wrapper { position: relative; }
+  .pd-pw-wrapper {
+    position: relative;
+  }
+
   .pd-pw-toggle {
     position: absolute;
     right: 16px;
@@ -255,8 +304,14 @@
     padding: 0;
     transition: color 0.15s;
   }
-  .pd-pw-toggle:hover { color: var(--sp-orange); }
-  .pd-pw-toggle .material-symbols-outlined { font-size: 17px; }
+
+  .pd-pw-toggle:hover {
+    color: var(--sp-orange);
+  }
+
+  .pd-pw-toggle .material-symbols-outlined {
+    font-size: 17px;
+  }
 
   /* Avatar drop zone */
   .avatar-drop-zone {
@@ -268,21 +323,41 @@
     transition: all 0.2s;
     background: var(--sp-surface);
   }
-  .avatar-drop-zone:hover, .avatar-drop-zone.dragging {
+
+  .avatar-drop-zone:hover,
+  .avatar-drop-zone.dragging {
     border-color: var(--sp-orange);
-    background: rgba(244,130,33,0.03);
+    background: rgba(244, 130, 33, 0.03);
   }
-  .avatar-drop-zone .drop-icon { font-size: 32px; color: var(--sp-orange); margin-bottom: 8px; display: block; }
-  .avatar-drop-zone p { font-family:'Open Sans'; font-size:0.82rem; color: var(--sp-gray); margin:0; line-height: 1.6; }
-  .avatar-drop-zone strong { color: var(--sp-orange); }
+
+  .avatar-drop-zone .drop-icon {
+    font-size: 32px;
+    color: var(--sp-orange);
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .avatar-drop-zone p {
+    font-family: 'Open Sans';
+    font-size: 0.82rem;
+    color: var(--sp-gray);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .avatar-drop-zone strong {
+    color: var(--sp-orange);
+  }
+
   .avatar-preview-thumb {
-    width: 72px; height: 72px;
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
     object-fit: cover;
     border: 2.5px solid var(--sp-orange);
     margin: 0 auto 10px;
     display: block;
-    box-shadow: 0 4px 12px rgba(244,130,33,0.15);
+    box-shadow: 0 4px 12px rgba(244, 130, 33, 0.15);
   }
 
   /* ── Save button — pill, matching all forum CTAs ── */
@@ -304,13 +379,23 @@
     box-shadow: 0 2px 8px rgba(244, 130, 33, 0.25);
     min-width: 150px;
   }
+
   .btn-pd-save:hover {
     background: #e6751c;
     box-shadow: 0 4px 14px rgba(244, 130, 33, 0.35);
     transform: translateY(-1px);
   }
-  .btn-pd-save:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
-  .btn-pd-save .material-symbols-outlined { font-size: 17px; }
+
+  .btn-pd-save:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btn-pd-save .material-symbols-outlined {
+    font-size: 17px;
+  }
 
   /* Toast — pill shape */
   .pd-toast {
@@ -328,19 +413,30 @@
     gap: 8px;
     z-index: 9999;
   }
-  .pd-toast.success { background: #10b981; box-shadow: 0 4px 16px rgba(16,185,129,0.3); }
-  .pd-toast.error   { background: #ef4444; box-shadow: 0 4px 16px rgba(239,68,68,0.3); }
-  .pd-toast .material-symbols-outlined { font-size: 17px; }
+
+  .pd-toast.success {
+    background: #10b981;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+  }
+
+  .pd-toast.error {
+    background: #ef4444;
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+  }
+
+  .pd-toast .material-symbols-outlined {
+    font-size: 17px;
+  }
 </style>
 
 <?php
-  $member_name  = htmlspecialchars($member['name'] ?? 'Member', ENT_QUOTES);
-  $member_role  = htmlspecialchars($member['role']  ?? 'Member', ENT_QUOTES);
-  $member_since = isset($member['created_at']) ? date('F Y', strtotime($member['created_at'])) : 'N/A';
-  $avatar_db    = $member['avatar'] ?? null;
-  $post_count   = $member_stats['post_count']     ?? 0;
-  $reply_count  = $member_stats['reply_count']    ?? 0;
-  $likes_count  = $member_stats['likes_received'] ?? 0;
+$member_name  = htmlspecialchars($member['name'] ?? 'Member', ENT_QUOTES);
+$member_role  = htmlspecialchars($member['role']  ?? 'Member', ENT_QUOTES);
+$member_since = isset($member['created_at']) ? date('F Y', strtotime($member['created_at'])) : 'N/A';
+$avatar_db    = $member['avatar'] ?? null;
+$post_count   = $member_stats['post_count']     ?? 0;
+$reply_count  = $member_stats['reply_count']    ?? 0;
+$likes_count  = $member_stats['likes_received'] ?? 0;
 ?>
 
 <div class="pd-wrapper" x-data="profileDash()">
@@ -412,14 +508,14 @@
         </h2>
 
         <input type="file" accept="image/*" x-ref="avatarInput" style="display:none"
-               @change="previewAvatar($event)">
+          @change="previewAvatar($event)">
 
         <div class="avatar-drop-zone"
-             @click="$refs.avatarInput.click()"
-             @dragover.prevent="dragging=true"
-             @dragleave="dragging=false"
-             @drop.prevent="dropFile($event)"
-             :class="{ dragging }">
+          @click="$refs.avatarInput.click()"
+          @dragover.prevent="dragging=true"
+          @dragleave="dragging=false"
+          @drop.prevent="dropFile($event)"
+          :class="{ dragging }">
           <template x-if="avatarPreview">
             <div>
               <img class="avatar-preview-thumb" :src="avatarPreview" alt="Preview">
@@ -449,8 +545,8 @@
         <div class="mb-3">
           <label class="pd-label">Email</label>
           <input type="email" class="pd-input"
-                 value="<?= htmlspecialchars($member['email'] ?? '', ENT_QUOTES) ?>"
-                 disabled title="Contact support to change email">
+            value="<?= htmlspecialchars($member['email'] ?? '', ENT_QUOTES) ?>"
+            disabled title="Contact support to change email">
           <p class="pd-input-hint">Email cannot be changed here. Contact support.</p>
         </div>
 
@@ -467,7 +563,7 @@
           </label>
           <div class="pd-pw-wrapper">
             <input :type="showPw1 ? 'text' : 'password'" class="pd-input" x-model="newPassword"
-                   placeholder="Enter new password" style="padding-right:44px;">
+              placeholder="Enter new password" style="padding-right:44px;">
             <button type="button" class="pd-pw-toggle" @click="showPw1 = !showPw1" tabindex="-1">
               <span class="material-symbols-outlined" x-text="showPw1 ? 'visibility_off' : 'visibility'"></span>
             </button>
@@ -478,7 +574,7 @@
           <label class="pd-label">Confirm New Password</label>
           <div class="pd-pw-wrapper">
             <input :type="showPw2 ? 'text' : 'password'" class="pd-input" x-model="confirmPassword"
-                   placeholder="Repeat new password" style="padding-right:44px;">
+              placeholder="Repeat new password" style="padding-right:44px;">
             <button type="button" class="pd-pw-toggle" @click="showPw2 = !showPw2" tabindex="-1">
               <span class="material-symbols-outlined" x-text="showPw2 ? 'visibility_off' : 'visibility'"></span>
             </button>
@@ -487,15 +583,15 @@
 
         <div class="d-flex justify-content-end mt-4">
           <button id="pdSaveBtn"
-                  class="btn-pd-save"
-                  @click="saveAll()"
-                  :disabled="loading">
+            class="btn-pd-save"
+            @click="saveAll()"
+            :disabled="loading">
             <span class="spinner-border spinner-border-sm" x-show="loading" style="display:none;"></span>
             <span class="material-symbols-outlined" x-show="!loading" style="font-size:17px;">save</span>
             <span x-text="loading ? 'Saving…' : 'Save Changes'"></span>
           </button>
           <p class="pd-input-hint ms-2 mt-2" x-show="newPassword && confirmPassword && newPassword !== confirmPassword"
-             style="color:#ef4444; display:none; align-self:center;">
+            style="color:#ef4444; display:none; align-self:center;">
             Passwords do not match.
           </p>
         </div>
@@ -506,89 +602,92 @@
 
   <!-- Toast -->
   <div class="pd-toast" :class="toastSuccess ? 'success' : 'error'"
-       x-show="toastShow" x-transition.duration.300ms style="display:none;">
+    x-show="toastShow" x-transition.duration.300ms style="display:none;">
     <span class="material-symbols-outlined" x-text="toastSuccess ? 'check_circle' : 'error'"></span>
     <span x-text="toastMessage"></span>
   </div>
 </div>
 
 <script>
-document.addEventListener('alpine:init', () => {
-  Alpine.data('profileDash', () => ({
-    name:            '<?= $member_name ?>',
-    newPassword:     '',
-    confirmPassword: '',
-    showPw1:         false,
-    showPw2:         false,
-    avatarPreview:   <?= $avatar_db ? "'" . BASE_URL . $avatar_db . "'" : 'null' ?>,
-    avatarFile:      null,
-    loading:         false,
-    dragging:        false,
-    toastShow:       false,
-    toastSuccess:    true,
-    toastMessage:    '',
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('profileDash', () => ({
+      name: '<?= $member_name ?>',
+      newPassword: '',
+      confirmPassword: '',
+      showPw1: false,
+      showPw2: false,
+      avatarPreview: <?= $avatar_db ? "'" . BASE_URL . $avatar_db . "'" : 'null' ?>,
+      avatarFile: null,
+      loading: false,
+      dragging: false,
+      toastShow: false,
+      toastSuccess: true,
+      toastMessage: '',
 
-    get initials() {
-      return this.name ? this.name.charAt(0).toUpperCase() : 'M';
-    },
+      get initials() {
+        return this.name ? this.name.charAt(0).toUpperCase() : 'M';
+      },
 
-    previewAvatar(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      this.avatarFile    = file;
-      this.avatarPreview = URL.createObjectURL(file);
-    },
-
-    dropFile(event) {
-      this.dragging = false;
-      const file = event.dataTransfer.files[0];
-      if (file && file.type.startsWith('image/')) {
-        this.avatarFile    = file;
+      previewAvatar(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        this.avatarFile = file;
         this.avatarPreview = URL.createObjectURL(file);
-      }
-    },
+      },
 
-    async saveAll() {
-      // Block only if both password fields are filled and they mismatch
-      if (this.newPassword && this.confirmPassword && this.newPassword !== this.confirmPassword) {
-        this.toastSuccess = false;
-        this.toastMessage = 'Passwords do not match.';
-        this.toastShow    = true;
-        setTimeout(() => this.toastShow = false, 3000);
-        return;
-      }
-      this.loading   = true;
-      this.toastShow = false;
-
-      try {
-        const fd = new FormData();
-        fd.append('name', this.name);
-        fd.append('new_password', this.newPassword);
-        if (this.avatarFile) fd.append('avatar', this.avatarFile);
-
-        const res  = await fetch('<?= BASE_URL ?>/forum/updateProfile', { method: 'POST', body: fd });
-        const data = await res.json();
-
-        this.toastSuccess = data.success;
-        this.toastMessage = data.message || (data.success ? 'Saved!' : 'Something went wrong.');
-        this.toastShow    = true;
-
-        if (data.success) {
-          this.newPassword     = '';
-          this.confirmPassword = '';
-          if (data.avatarPath) this.avatarPreview = '<?= BASE_URL ?>' + data.avatarPath;
+      dropFile(event) {
+        this.dragging = false;
+        const file = event.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+          this.avatarFile = file;
+          this.avatarPreview = URL.createObjectURL(file);
         }
-      } catch {
-        this.toastSuccess = false;
-        this.toastMessage = 'Network error. Try again.';
-        this.toastShow    = true;
-      } finally {
-        this.loading = false;
-        setTimeout(() => this.toastShow = false, 3500);
+      },
+
+      async saveAll() {
+        // Block only if both password fields are filled and they mismatch
+        if (this.newPassword && this.confirmPassword && this.newPassword !== this.confirmPassword) {
+          this.toastSuccess = false;
+          this.toastMessage = 'Passwords do not match.';
+          this.toastShow = true;
+          setTimeout(() => this.toastShow = false, 3000);
+          return;
+        }
+        this.loading = true;
+        this.toastShow = false;
+
+        try {
+          const fd = new FormData();
+          fd.append('name', this.name);
+          fd.append('new_password', this.newPassword);
+          if (this.avatarFile) fd.append('avatar', this.avatarFile);
+
+          const res = await fetch('<?= BASE_URL ?>/forum/updateProfile', {
+            method: 'POST',
+            body: fd
+          });
+          const data = await res.json();
+
+          this.toastSuccess = data.success;
+          this.toastMessage = data.message || (data.success ? 'Saved!' : 'Something went wrong.');
+          this.toastShow = true;
+
+          if (data.success) {
+            this.newPassword = '';
+            this.confirmPassword = '';
+            if (data.avatarPath) this.avatarPreview = '<?= BASE_URL ?>' + data.avatarPath;
+          }
+        } catch {
+          this.toastSuccess = false;
+          this.toastMessage = 'Network error. Try again.';
+          this.toastShow = true;
+        } finally {
+          this.loading = false;
+          setTimeout(() => this.toastShow = false, 3500);
+        }
       }
-    }
-  }));
-});
+    }));
+  });
 </script>
 
 <?php include 'includes/footer.php'; ?>

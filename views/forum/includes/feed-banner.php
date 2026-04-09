@@ -47,15 +47,28 @@
   }
 
   .banner-inner {
+    container-type: inline-size;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 24px;
     position: relative;
     z-index: 1;
+
+    @container (max-width: 600px) {
+      .banner-cta-group {
+        display: none;
+      }
+    }
   }
 
-  .banner-text-group {}
+  @media (max-width: 600px) {
+    .banner-inner {
+      padding-block-start: 1.2rem;
+    }
+
+    /* Reduced top padding for mobile to match hero section */
+  }
 
   .banner-greeting {
     font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;

@@ -25,26 +25,21 @@ class AuthController extends BaseController
                 $password = $_POST['password'] ?? '';
 
                 $member = $this->authModel->findByEmail($login);
-                if ($member) {
-                    if (password_verify($password, $member['password_hash'])) {
-                        if ($member['is_verified'] == 0) {
-                            $error = "Please verify your email address before signing in.";
-                        } else {
-                            $_SESSION['member_id'] = $member['id'];
-                            $_SESSION['member_uuid'] = $member['uuid'];
-                            $_SESSION['member_name'] = $member['name'];
-                            $this->redirect('forum/feed');
-                        }
+
+                if ($member && password_verify($password, $member['password_hash'])) {
+                    if ($member['is_verified'] == 0) {
+                        $error = "Please verify your email address before signing in.";
                     } else {
                         $_SESSION['member_id'] = $member['id'];
                         $_SESSION['member_uuid'] = $member['uuid'];
                         $_SESSION['member_name'] = $member['name'];
                         $_SESSION['terms_accepted'] = $member['terms_accepted'];
 
-                        if ($member['terms_accepted'] == 0) {
+                        if ((int)$member['terms_accepted'] === 0) {
                             $this->redirect('forum/terms');
+                        } else {
+                            $this->redirect('forum/feed');
                         }
-                        $this->redirect('forum/feed');
                     }
                 } else {
                     $error = "Incorrect email or password.";
