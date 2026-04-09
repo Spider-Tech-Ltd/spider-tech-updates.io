@@ -396,13 +396,13 @@ unset($_SESSION['old_input']);
                         <!-- Action Buttons -->
                         <div class="row mt-4">
                             <div class="col-md-8 mb-3">
-                                <button type="submit" class="submit-btn" :disabled="loading">
-                                    <div class="d-flex align-items-center gap-2" x-show="!loading">
+                                <button type="submit" class="submit-btn" :disabled="loading" style="color: #fff !important;">
+                                    <div x-show="!loading" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;">
                                         <span class="material-symbols-outlined">how_to_reg</span>
                                         <span>Complete Registration</span>
                                     </div>
-                                    <div class="d-flex align-items-center gap-2" x-show="loading" style="display: none;">
-                                        <div class="spinner-border spinner-border-sm" role="status"></div>
+                                    <div x-show="loading" style="display: none; align-items: center; justify-content: center; gap: 8px; width: 100%;">
+                                        <span class="spinner-border spinner-border-sm" role="status"></span>
                                         <span>Processing...</span>
                                     </div>
                                 </button>
