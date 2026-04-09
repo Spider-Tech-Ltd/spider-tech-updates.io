@@ -110,6 +110,24 @@ class TrainingController extends BaseController {
         }
 
         if (!empty($errors)) {
+            if ($this->isAjax()) {
+                $message = 'Please fix the errors in the form.';
+                if (isset($errors['email']) && strpos($errors['email'], 'already registered') !== false) {
+                    $message = 'Email already taken, please try again.';
+                } elseif (isset($errors['phone']) && strpos($errors['phone'], 'already registered') !== false) {
+                    $message = 'Phone number already registered.';
+                } elseif (count($errors) === 1) {
+                    $message = reset($errors);
+                }
+
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => false,
+                    'message' => $message,
+                    'errors' => $errors
+                ]);
+                exit();
+            }
             $_SESSION['registration_errors'] = $errors;
             $_SESSION['old_input'] = $_POST;
             header("Location: " . BASE_URL . "/trainings/register?id=" . $program_id);
@@ -121,15 +139,40 @@ class TrainingController extends BaseController {
             $result = $model->submitRegistration($program_id, $user_data_json);
 
             if ($result) {
+                if ($this->isAjax()) {
+                    header('Content-Type: application/json');
+                    echo json_encode([
+                        'success' => true,
+                        'message' => 'Thank you for registering! We have received your application.',
+                        'redirect' => BASE_URL . "/trainings/detail?id=" . $program_id
+                    ]);
+                    exit();
+                }
                 $_SESSION['registration_success'] = "Thank you for registering! We have received your application.";
                 header("Location: " . BASE_URL . "/trainings/register?id=" . $program_id);
                 exit();
             } else {
+                if ($this->isAjax()) {
+                    header('Content-Type: application/json');
+                    echo json_encode([
+                        'success' => false,
+                        'message' => 'An error occurred while processing your registration.'
+                    ]);
+                    exit();
+                }
                 $_SESSION['registration_error'] = "An error occurred while processing your registration.";
                 header("Location: " . BASE_URL . "/trainings/register?id=" . $program_id);
                 exit();
             }
         } catch (Exception $e) {
+            if ($this->isAjax()) {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'A database error occurred. Please try again later.'
+                ]);
+                exit();
+            }
             $_SESSION['registration_error'] = "A database error occurred. Please try again later.";
             header("Location: " . BASE_URL . "/trainings/register?id=" . $program_id);
             exit();
