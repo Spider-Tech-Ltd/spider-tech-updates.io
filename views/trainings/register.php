@@ -313,139 +313,160 @@ unset($_SESSION['old_input']);
                     Registration Form
                 </span>
                 <h1 class="hero-title"><?= htmlspecialchars(strip_tags($training['training_name'])); ?></h1>
+
+                <div class="breadcrumb-custom">
+                    <a href="<?= BASE_URL ?>/" title="Home">Home</a>
+                    <span>/</span>
+                    <a href="<?= BASE_URL ?>/trainings" title="Trainings">Trainings</a>
+                    <span>/</span>
+                    <a href="<?= BASE_URL ?>/trainings/detail?id=<?= $training['id']; ?>" title="<?= htmlspecialchars(strip_tags($training['training_name'])); ?>"><?= htmlspecialchars(strip_tags($training['training_name'])); ?></a>
+                    <span>/</span>
+                    <span style="color: #999;">Register</span>
+                </div>
+
                 <p class="hero-subtitle">Complete the form below to apply for this program. All fields marked with * are mandatory.</p>
             </div>
-            <div class="breadcrumb-custom">
-                <a href="<?= BASE_URL ?>/" title="Home">Home</a>
-                <span>/</span>
-                <a href="<?= BASE_URL ?>/trainings" title="Trainings">Trainings</a>
-                <span>/</span>
-                <a href="<?= BASE_URL ?>/trainings/detail?id=<?= $training['id']; ?>" title="<?= htmlspecialchars(strip_tags($training['training_name'])); ?>"><?= htmlspecialchars(strip_tags($training['training_name'])); ?></a>
-                <span>/</span>
-                <span style="color: #999;">Register</span>
-            </div>
-</div>
-</section>
+        </section>
 
-<section class="registration-content">
-    <div class="container">
-        <div class="registration-form-wrapper">
-            <!-- Program Information Box -->
-            <div class="program-info-box">
-                <h4>About the Program</h4>
-                <p class="mb-0 text-muted" style="line-height: 1.6;"><?= htmlspecialchars(strip_tags($training['training_description'])); ?></p>
-            </div>
+        <section class="registration-content">
+            <div class="container">
+                <div class="registration-form-wrapper">
+                    <!-- Program Information Box -->
+                    <div class="program-info-box">
+                        <h4>About the Program</h4>
+                        <p class="mb-0 text-muted" style="line-height: 1.6;"><?= htmlspecialchars(strip_tags($training['training_description'])); ?></p>
+                    </div>
 
-            <!-- Registration Form -->
-            <form @submit.prevent="submitForm" id="registrationForm" enctype="multipart/form-data">
-                <input type="hidden" name="program_id" value="<?= $program_id; ?>">
+                    <!-- Registration Form -->
+                    <form @submit.prevent="submitForm" id="registrationForm" enctype="multipart/form-data">
+                        <input type="hidden" name="program_id" value="<?= $program_id; ?>">
 
-                <?php if (!empty($sections)) : ?>
-                    <?php foreach ($sections as $section_name => $fields) : ?>
-                        <div class="form-section">
-                            <h3 class="form-section-title">
-                                <span class="material-symbols-outlined">
-                                    <?php
-                                    switch ($section_name) {
-                                        case 'Basic Information':
-                                            echo 'person';
-                                            break;
-                                        case 'Background Information':
-                                            echo 'analytics';
-                                            break;
-                                        case 'Professional Information':
-                                            echo 'work';
-                                            break;
-                                        default:
-                                            echo 'info';
-                                    }
-                                    ?>
-                                </span>
-                                <?= htmlspecialchars($section_name); ?>
-                            </h3>
+                        <?php if (!empty($sections)) : ?>
+                            <?php foreach ($sections as $section_name => $fields) : ?>
+                                <div class="form-section">
+                                    <h3 class="form-section-title">
+                                        <span class="material-symbols-outlined">
+                                            <?php
+                                            switch ($section_name) {
+                                                case 'Basic Information':
+                                                    echo 'person';
+                                                    break;
+                                                case 'Background Information':
+                                                    echo 'analytics';
+                                                    break;
+                                                case 'Professional Information':
+                                                    echo 'work';
+                                                    break;
+                                                default:
+                                                    echo 'info';
+                                            }
+                                            ?>
+                                        </span>
+                                        <?= htmlspecialchars($section_name); ?>
+                                    </h3>
 
-                            <div class="row">
-                                <?php foreach ($fields as $field) : ?>
-                                    <?= FormBuilder::render_form_field($field, $errors, $old_input); ?>
-                                <?php endforeach; ?>
+                                    <div class="row">
+                                        <?php foreach ($fields as $field) : ?>
+                                            <?= FormBuilder::render_form_field($field, $errors, $old_input); ?>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else : ?>
+                            <!-- Fallback UI if no dynamic fields -->
+                            <div class="form-section">
+                                <h3 class="form-section-title">
+                                    <span class="material-symbols-outlined">person</span>
+                                    Basic Information
+                                </h3>
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-group">
+                                            <label>First Name <span class="text-danger">*</span></label>
+                                            <input type="text" name="firstname" class="form-control" style="border-radius: 50px; padding: 15px 24px; height: 56px;" placeholder="Enter first name" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-group">
+                                            <label>Last Name <span class="text-danger">*</span></label>
+                                            <input type="text" name="lastname" class="form-control" style="border-radius: 50px; padding: 15px 24px; height: 56px;" placeholder="Enter last name" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-group">
+                                            <label>Email Address <span class="text-danger">*</span></label>
+                                            <input type="email" name="email" class="form-control" style="border-radius: 50px; padding: 15px 24px; height: 56px;" placeholder="Enter email address" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-group">
+                                            <label>Phone Number <span class="text-danger">*</span></label>
+                                            <input type="tel" name="phone_no" class="form-control" style="border-radius: 50px; padding: 15px 24px; height: 56px;" placeholder="Enter phone number" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- Action Buttons -->
+                        <div class="row mt-4">
+                            <div class="col-md-8 mb-3">
+                                <button type="submit" class="submit-btn" :disabled="loading">
+                                    <template x-if="!loading">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="material-symbols-outlined">how_to_reg</span>
+                                            <span>Complete Registration</span>
+                                        </div>
+                                    </template>
+                                    <template x-if="loading">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="spinner-border spinner-border-sm" role="status"></div>
+                                            <span>Processing...</span>
+                                        </div>
+                                    </template>
+                                </button>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <a href="<?= BASE_URL ?>/trainings/detail?id=<?= $program_id; ?>" class="cancel-btn">
+                                    Cancel
+                                </a>
                             </div>
                         </div>
-                    <?php endforeach; ?>
-                <?php else : ?>
-                    <!-- Fallback UI if no dynamic fields -->
-                    <div class="form-section">
-                        <h3 class="form-section-title">
-                            <span class="material-symbols-outlined">person</span>
-                            Basic Information
-                        </h3>
-                        <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <div class="form-group">
-                                    <label>First Name <span class="text-danger">*</span></label>
-                                    <input type="text" name="firstname" class="form-control" style="border-radius: 50px; padding: 15px 24px; height: 56px;" placeholder="Enter first name" required>
-                                </div>
+                        <!-- Action Buttons -->
+                        <div class="row mt-4">
+                            <div class="col-md-8 mb-3">
+                                <button type="submit" class="submit-btn" :disabled="loading" style="color: #fff !important;">
+                                    <div x-show="!loading" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;">
+                                        <span class="material-symbols-outlined">how_to_reg</span>
+                                        <span>Complete Registration</span>
+                                    </div>
+                                    <div x-show="loading" style="display: none; align-items: center; justify-content: center; gap: 8px; width: 100%;">
+                                        <span class="spinner-border spinner-border-sm" role="status"></span>
+                                        <span>Processing...</span>
+                                    </div>
+                                </button>
                             </div>
-                            <div class="col-md-6 mb-4">
-                                <div class="form-group">
-                                    <label>Last Name <span class="text-danger">*</span></label>
-                                    <input type="text" name="lastname" class="form-control" style="border-radius: 50px; padding: 15px 24px; height: 56px;" placeholder="Enter last name" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <div class="form-group">
-                                    <label>Email Address <span class="text-danger">*</span></label>
-                                    <input type="email" name="email" class="form-control" style="border-radius: 50px; padding: 15px 24px; height: 56px;" placeholder="Enter email address" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <div class="form-group">
-                                    <label>Phone Number <span class="text-danger">*</span></label>
-                                    <input type="tel" name="phone_no" class="form-control" style="border-radius: 50px; padding: 15px 24px; height: 56px;" placeholder="Enter phone number" required>
-                                </div>
+                            <div class="col-md-4 mb-3">
+                                <a href="<?= BASE_URL ?>/trainings/detail?id=<?= $program_id; ?>" class="cancel-btn">
+                                    Cancel
+                                </a>
                             </div>
                         </div>
-                    </div>
-                <?php endif; ?>
 
-                <!-- Action Buttons -->
-                <div class="row mt-4">
-                    <div class="col-md-8 mb-3">
-                        <button type="submit" class="submit-btn" :disabled="loading">
-                            <template x-if="!loading">
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="material-symbols-outlined">how_to_reg</span>
-                                    <span>Complete Registration</span>
-                                </div>
-                            </template>
-                            <template x-if="loading">
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="spinner-border spinner-border-sm" role="status"></div>
-                                    <span>Processing...</span>
-                                </div>
-                            </template>
-                        </button>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <a href="<?= BASE_URL ?>/trainings/detail?id=<?= $program_id; ?>" class="cancel-btn">
-                            Cancel
-                        </a>
-                    </div>
+                        <div class="required-note">
+                            By submitting this application, you agree to our <a href="#" class="text-orange">Terms & Conditions</a> and <a href="#" class="text-orange">Privacy Policy</a>.
+                        </div>
+                    </form>
                 </div>
+            </div>
+        </section>
+    <?php endif; ?>
 
-                <div class="required-note">
-                    By submitting this application, you agree to our <a href="#" class="text-orange">Terms & Conditions</a> and <a href="#" class="text-orange">Privacy Policy</a>.
-                </div>
-            </form>
-        </div>
+    <!-- Toast Component -->
+    <div class="pd-toast" :class="toast.type" x-show="toast.show" x-transition style="display: none;">
+        <span class="material-symbols-outlined" x-text="toast.type === 'success' ? 'check_circle' : 'error'"></span>
+        <span x-text="toast.message"></span>
     </div>
-</section>
-<?php endif; ?>
-
-<!-- Toast Component -->
-<div class="pd-toast" :class="toast.type" x-show="toast.show" x-transition style="display: none;">
-    <span class="material-symbols-outlined" x-text="toast.type === 'success' ? 'check_circle' : 'error'"></span>
-    <span x-text="toast.message"></span>
-</div>
 </div>
 
 <script>
