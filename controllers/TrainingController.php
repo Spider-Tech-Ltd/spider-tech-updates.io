@@ -110,6 +110,15 @@ class TrainingController extends BaseController {
         }
 
         if (!empty($errors)) {
+            if ($this->isAjax()) {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Please fix the errors in the form.',
+                    'errors' => $errors
+                ]);
+                exit();
+            }
             $_SESSION['registration_errors'] = $errors;
             $_SESSION['old_input'] = $_POST;
             header("Location: " . BASE_URL . "/trainings/register?id=" . $program_id);
@@ -121,15 +130,40 @@ class TrainingController extends BaseController {
             $result = $model->submitRegistration($program_id, $user_data_json);
 
             if ($result) {
+                if ($this->isAjax()) {
+                    header('Content-Type: application/json');
+                    echo json_encode([
+                        'success' => true,
+                        'message' => 'Thank you for registering! We have received your application.',
+                        'redirect' => BASE_URL . "/trainings/detail?id=" . $program_id
+                    ]);
+                    exit();
+                }
                 $_SESSION['registration_success'] = "Thank you for registering! We have received your application.";
                 header("Location: " . BASE_URL . "/trainings/register?id=" . $program_id);
                 exit();
             } else {
+                if ($this->isAjax()) {
+                    header('Content-Type: application/json');
+                    echo json_encode([
+                        'success' => false,
+                        'message' => 'An error occurred while processing your registration.'
+                    ]);
+                    exit();
+                }
                 $_SESSION['registration_error'] = "An error occurred while processing your registration.";
                 header("Location: " . BASE_URL . "/trainings/register?id=" . $program_id);
                 exit();
             }
         } catch (Exception $e) {
+            if ($this->isAjax()) {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'A database error occurred. Please try again later.'
+                ]);
+                exit();
+            }
             $_SESSION['registration_error'] = "A database error occurred. Please try again later.";
             header("Location: " . BASE_URL . "/trainings/register?id=" . $program_id);
             exit();

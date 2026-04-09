@@ -3,59 +3,292 @@
  * Training Detail View
  */
 ?>
-<!-- ====== Banner Start ====== -->
-<section id="inner-banner" class="index-2">
-  <div class="container">
-    <div class="col-lg-12 col-md-12 col-xs-12">
-      <div class="inner-heading">
-        <h2>Training Detail</h2>
-        <div class="separator left-align">
-          <ul><li></li><li></li><li></li></ul>
+
+<style>
+    .training-hero {
+      position: relative;
+      background-color: #f4f4f4;
+      padding: 140px 16px 80px;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .training-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(244, 130, 33, 0.08) 0%, transparent 68%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-blob {
+      position: absolute;
+      border-radius: 50%;
+      background-color: rgba(244, 130, 33, 0.06);
+      filter: blur(60px);
+      pointer-events: none;
+    }
+
+    .hero-blob-left {
+      width: 280px;
+      height: 280px;
+      top: 20%;
+      left: -80px;
+    }
+
+    .hero-blob-right {
+      width: 320px;
+      height: 320px;
+      bottom: 15%;
+      right: -80px;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-eyebrow-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 18px;
+      border-radius: 50px;
+      background-color: rgba(244, 130, 33, 0.12);
+      border: 1px solid rgba(244, 130, 33, 0.25);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #f48221;
+      margin-bottom: 28px;
+    }
+
+    .hero-title {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin: 0 auto 1.5rem;
+      color: #111111;
+      max-width: 800px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .breadcrumb-custom {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: #666;
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    .breadcrumb-custom a {
+      color: #f48221;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .breadcrumb-custom span {
+      color: #ccc;
+    }
+
+    .detail-section {
+      padding: 80px 0;
+      background-color: #fff;
+    }
+
+    .project_screen {
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      margin-bottom: 40px;
+    }
+
+    .project_screen img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .project_description h3 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 2rem;
+      color: #111;
+      margin-bottom: 20px;
+    }
+
+    .project_description {
+      font-family: 'Open Sans', sans-serif;
+      line-height: 1.8;
+      color: #555;
+      font-size: 1.05rem;
+    }
+
+    .sidebar-card {
+      background: #ffffff;
+      border: 1px solid #e9ecef;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+      position: sticky;
+      top: 120px;
+    }
+
+    .sidebar-title {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #111;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #fef4ea;
+    }
+
+    .info-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 30px 0;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      font-size: 0.95rem;
+    }
+
+    .info-item .material-symbols-outlined {
+      color: #f48221;
+      font-size: 22px;
+    }
+
+    .info-item strong {
+      color: #111;
+      font-weight: 600;
+    }
+
+    .register-btn-large {
+      background-color: #f48221;
+      color: #ffffff;
+      height: 56px;
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      width: 100%;
+      border: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none !important;
+      box-shadow: 0 4px 14px rgba(244, 130, 33, 0.25);
+    }
+
+    .register-btn-large:hover {
+      background-color: #e6751c;
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(244, 130, 33, 0.35);
+    }
+
+    .text-orange {
+        color: #f48221 !important;
+    }
+
+    @media (max-width: 991px) {
+        .sidebar-card {
+            margin-top: 40px;
+            position: static;
+        }
+    }
+</style>
+
+<!-- ====== Hero Section Start ====== -->
+<section class="training-hero">
+    <div class="hero-blob hero-blob-left"></div>
+    <div class="hero-blob hero-blob-right"></div>
+    <div class="container hero-inner">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <span class="hero-eyebrow-pill">
+            <span class="material-symbols-outlined" style="font-size: 16px;">school</span>
+            Training Course
+          </span>
+          <h1 class="hero-title"><?= $training ? htmlspecialchars($training['training_name']) : 'Training Detail'; ?></h1>
+
+          <div class="breadcrumb-custom">
+             <a href="<?= BASE_URL ?>/" title="Home">Home</a>
+             <span>/</span>
+             <a href="<?= BASE_URL ?>/trainings" title="Trainings">Trainings</a>
+             <span>/</span>
+             <span style="color: #999;">Detail</span>
+          </div>
         </div>
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/" title="Home">Home</a></li>
-             <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/trainings" title="Trainings">Trainings</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Training Detail</li>
-          </ol>
-        </nav>
       </div>
     </div>
-  </div>
 </section>
-<!-- ====== Banner End ====== -->
+<!-- ====== Hero Section End ====== -->
 
-<section id="portfolio_detail" class="py-5">
+<section class="detail-section">
     <?php if($training): ?>
     <div class="container">
         <div class="row">
             <div class="col-lg-8">
-                <div class="project_screen mb-4">
-                    <img src="<?= (strpos($training['training_image'], 'http') === 0) ? htmlspecialchars($training['training_image']) : BASE_URL . '/' . ltrim(substr($training['training_image'], 3), '/'); ?>" alt="Training" class="img-fluid rounded" />
+                <div class="project_screen">
+                    <img src="<?= (strpos($training['training_image'], 'http') === 0) ? htmlspecialchars($training['training_image']) : BASE_URL . '/' . ltrim(substr($training['training_image'], 3), '/'); ?>" alt="Training" />
                 </div>
                 <div class="project_description">
-                    <h3 class="mb-3"><?= htmlspecialchars($training['training_name']); ?></h3>
+                    <h3 class="mb-4">About this Program</h3>
                     <div class="mb-4"><?= nl2br(htmlspecialchars($training['training_description'])); ?></div>
-                    <div class="mb-4">
+                    <div class="training-rich-content">
                         <?= $training['training_details']; ?>
                     </div>
-                    <a href="<?= BASE_URL ?>/trainings/register?id=<?= $training['id']; ?>" class="btn btn-primary" style="background-color: #f48221; border: none;">Register Now</a>
                 </div>
             </div>
             <div class="col-lg-4">
-                <div class="sidebar p-4 border rounded" style="background-color: #f9f9f9;">
-                    <h5 class="mb-3">Course Info</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><i class="fas fa-clock text-orange mr-2"></i> <strong>Duration:</strong> 24 Weeks</li>
-                        <li class="mb-2"><i class="fas fa-users text-orange mr-2"></i> <strong>Enrolled:</strong> 41,000+</li>
-                        <li class="mb-2"><i class="fas fa-star text-orange mr-2"></i> <strong>Rating:</strong> 4.9/5</li>
-                        <li class="mb-2"><i class="fas fa-certificate text-orange mr-2"></i> <strong>Certified:</strong> Yes</li>
+                <div class="sidebar-card">
+                    <h5 class="sidebar-title">Course Information</h5>
+                    <ul class="info-list">
+                        <li class="info-item">
+                            <span class="material-symbols-outlined">schedule</span>
+                            <div><strong>Duration:</strong> 24 Weeks</div>
+                        </li>
+                        <li class="info-item">
+                            <span class="material-symbols-outlined">group</span>
+                            <div><strong>Enrolled:</strong> 41,000+ Students</div>
+                        </li>
+                        <li class="info-item">
+                            <span class="material-symbols-outlined">star</span>
+                            <div><strong>Rating:</strong> 4.9/5.0</div>
+                        </li>
+                        <li class="info-item">
+                            <span class="material-symbols-outlined">verified</span>
+                            <div><strong>Certified:</strong> Yes, upon completion</div>
+                        </li>
+                        <li class="info-item">
+                            <span class="material-symbols-outlined">language</span>
+                            <div><strong>Language:</strong> English</div>
+                        </li>
                     </ul>
+                    <a href="<?= BASE_URL ?>/trainings/register?id=<?= $training['id']; ?>" class="register-btn-large">
+                        <span class="material-symbols-outlined">how_to_reg</span>
+                        Enroll Now
+                    </a>
                 </div>
             </div>
         </div>
     </div>
     <?php else: ?>
-    <div class="container"><p>Training program not found.</p></div>
+    <div class="container text-center">
+        <h3 class="mb-4">Training program not found.</h3>
+        <a href="<?= BASE_URL ?>/trainings" class="btn-header-cta d-inline-flex">Back to Trainings</a>
+    </div>
     <?php endif; ?>
 </section>

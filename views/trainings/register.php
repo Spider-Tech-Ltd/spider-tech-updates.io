@@ -21,120 +21,156 @@ unset($_SESSION['registration_errors']);
 unset($_SESSION['old_input']);
 ?>
 
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 <style>
-    /* Restore Light Orange Hero Section */
-    .registration-hero {
-      background: linear-gradient(135deg, #fef4ea 0%, #fff7f0 100%);
-      padding: 40px 0 80px 0;
-      color: #333;
-      text-align: center;
+    .training-hero {
       position: relative;
-      border-bottom: 1px solid #fce3cc;
+      background-color: #f4f4f4;
+      padding: 140px 16px 80px;
+      overflow: hidden;
+      text-align: center;
     }
 
-    .registration-hero-title {
+    .training-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(244, 130, 33, 0.08) 0%, transparent 68%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-blob {
+      position: absolute;
+      border-radius: 50%;
+      background-color: rgba(244, 130, 33, 0.06);
+      filter: blur(60px);
+      pointer-events: none;
+    }
+
+    .hero-blob-left {
+      width: 280px;
+      height: 280px;
+      top: 20%;
+      left: -80px;
+    }
+
+    .hero-blob-right {
+      width: 320px;
+      height: 320px;
+      bottom: 15%;
+      right: -80px;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-eyebrow-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 18px;
+      border-radius: 50px;
+      background-color: rgba(244, 130, 33, 0.12);
+      border: 1px solid rgba(244, 130, 33, 0.25);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #f48221;
+      margin-bottom: 28px;
+    }
+
+    .hero-title {
       font-size: 2.8rem;
       font-weight: 800;
-      margin-bottom: 15px;
-      color: #1a1a1a;
-    }
-
-    .registration-hero-subtitle {
-      font-size: 1.2rem;
-      color: #666;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .registration-intro {
-      padding: 60px 0 80px;
-      position: relative;
-      z-index: 20;
+      line-height: 1.1;
+      margin: 0 auto 1.5rem;
+      color: #111111;
+      max-width: 800px;
+      font-family: 'Poppins', sans-serif;
     }
 
     .registration-form-wrapper {
       background: #fff;
-      border-radius: 20px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
-      padding: 40px;
-      max-width: 950px;
-      margin: 0 auto 80px;
-      border: 1px solid #eee;
+      border-radius: 24px;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
+      padding: 50px;
+      max-width: 1000px;
+      margin: -60px auto 100px;
+      border: 1px solid rgba(0,0,0,0.05);
       position: relative;
       z-index: 20;
-    }
-
-    .form-section-title {
-      font-size: 1.4rem;
-      font-weight: 700;
-      margin: 0 0 0 0;
-      padding: 15px 20px;
-      background: #f48221;
-      color: #fff !important;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border-radius: 10px 10px 0 0;
-    }
-
-    .form-section-title .material-symbols-outlined {
-      color: #fff !important;
-    }
-
-    .form-section {
-      margin-top: 30px;
-      border: 1px solid #eee;
-      border-radius: 15px;
-      background: #fafafa;
-      overflow: hidden;
     }
 
     .program-info-box {
       background: #fef4ea;
       border-left: 5px solid #f48221;
       padding: 25px;
-      border-radius: 0 15px 15px 0;
-      margin-bottom: 40px;
+      border-radius: 15px;
+      margin-bottom: 45px;
     }
 
     .program-info-box h4 {
-      color: #f48221;
-      font-weight: 800;
-      margin-bottom: 8px;
+      color: #111;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
     }
 
-    .btn-group {
+    .form-section {
+      margin-bottom: 40px;
+      background: #ffffff;
+    }
+
+    .form-section-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 25px;
+      color: #111;
       display: flex;
-      flex-direction: column;
-      gap: 15px;
-      margin-top: 30px;
-      padding-top: 30px;
-      border-top: 1px solid #eee;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #f8f9fa;
+    }
+
+    .form-section-title .material-symbols-outlined {
+      color: #f48221;
     }
 
     .submit-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.6rem;
       background: #f48221;
       color: #fff !important;
       border: none;
       border-radius: 50px;
       padding: 16px 40px;
+      font-family: 'Poppins', sans-serif;
       font-weight: 700;
-      font-size: 1.1rem;
+      font-size: 1rem;
       cursor: pointer;
       transition: all 0.3s ease;
       width: 100%;
-      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 14px rgba(244, 130, 33, 0.25);
     }
 
     .submit-btn:hover {
       background: #e6751c;
       transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(244, 130, 33, 0.3);
+      box-shadow: 0 6px 18px rgba(244, 130, 33, 0.35);
+    }
+
+    .submit-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
     }
 
     .cancel-btn {
@@ -143,195 +179,303 @@ unset($_SESSION['old_input']);
       justify-content: center;
       gap: 0.5rem;
       background: transparent;
-      color: #f48221;
-      border: 2px solid #f48221;
+      color: #777;
+      border: 2px solid #eee;
       border-radius: 50px;
       padding: 14px 40px;
-      font-weight: 700;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
       text-decoration: none;
-      font-size: 1rem;
-      cursor: pointer;
+      font-size: 0.95rem;
       transition: all 0.3s ease;
-      min-height: 56px;
       width: 100%;
     }
 
     .cancel-btn:hover {
-      background: #fef4ea;
-      color: #f48221;
-      text-decoration: none;
-    }
-
-    /* Input focus effects */
-    .form-control:focus,
-    .custom-select:focus {
-      border-color: #f48221 !important;
-      box-shadow: 0 0 0 0.2rem rgba(244, 130, 33, 0.15) !important;
-    }
-
-    /* Dropdown fix */
-    .custom-select {
-      background-color: #fff;
-      cursor: pointer;
-      padding-right: 40px;
+      background: #f8f9fa;
+      color: #333;
+      border-color: #ddd;
     }
 
     .required-note {
-      font-size: 0.9rem;
-      color: #777;
-      margin-top: 25px;
-      font-style: italic;
+      font-size: 0.85rem;
+      color: #888;
+      margin-top: 30px;
+      text-align: center;
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    /* Toast Notification */
+    .pd-toast {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        padding: 14px 28px;
+        border-radius: 50px;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 10000;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .pd-toast.success { background: #10b981; }
+    .pd-toast.error { background: #ef4444; }
+
+    .pd-toast .material-symbols-outlined { font-size: 20px; }
+
+    .form-group label {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: #111;
+        margin-bottom: 10px;
+    }
+
+    .is-invalid {
+        border-color: #ef4444 !important;
+    }
+
+    .invalid-feedback {
+        color: #ef4444;
+        font-size: 0.85rem;
+        margin-top: 5px;
+        font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+        .registration-form-wrapper {
+            padding: 30px 20px;
+            margin-top: -40px;
+        }
     }
 </style>
 
-  <?php if (!$training) : ?>
-    <section class="registration-hero">
-      <div class="container registration-hero-inner">
-        <h1 class="registration-hero-title">Program Not Found</h1>
-        <p class="registration-hero-subtitle text-danger">The program you're trying to register for does not exist or may have been removed.</p>
-        <div class="mt-4">
-            <a class="cancel-btn d-inline-block w-auto" href="<?= BASE_URL ?>/trainings">Back to Programs</a>
-        </div>
-      </div>
-    </section>
-  <?php else : ?>
-    <section class="registration-hero">
-      <div class="container registration-hero-inner">
-        <div class="badge px-3 py-2 mb-3" style="background: rgba(244, 130, 33, 0.1); color: #f48221; border-radius: 50px; font-weight: 700;">REGISTRATION OPEN</div>
-        <h1 class="registration-hero-title"><?= htmlspecialchars(strip_tags($training['training_name'])); ?></h1>
-        <p class="registration-hero-subtitle">Secure your spot in this industry-recognized training program. Please fill out all required details accurately.</p>
-      </div>
-    </section>
-
-    <section class="registration-intro">
-      <div class="container">
-        <div class="registration-form-wrapper">
-
-          <?php if (!empty($success_msg)) : ?>
-            <div class="alert alert-success p-3 rounded-lg mb-4">
-              <span class="material-symbols-outlined align-middle mr-2">check_circle</span>
-              <strong>Success!</strong> <?= $success_msg; ?>
+<div x-data="registrationHandler()">
+    <?php if (!$training) : ?>
+        <section class="training-hero">
+            <div class="container hero-inner">
+                <h1 class="hero-title">Program Not Found</h1>
+                <p class="hero-subtitle">The program you're trying to register for does not exist or may have been removed.</p>
+                <div class="mt-4">
+                    <a class="cancel-btn d-inline-block w-auto" href="<?= BASE_URL ?>/trainings">Back to Programs</a>
+                </div>
             </div>
-          <?php endif; ?>
-
-          <?php if (!empty($error_msg)) : ?>
-            <div class="alert alert-danger p-3 rounded-lg mb-4">
-              <span class="material-symbols-outlined align-middle mr-2">error</span>
-              <strong>Error!</strong> <?= $error_msg; ?>
+        </section>
+    <?php else : ?>
+        <section class="training-hero">
+            <div class="hero-blob hero-blob-left"></div>
+            <div class="hero-blob hero-blob-right"></div>
+            <div class="container hero-inner">
+                <span class="hero-eyebrow-pill">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">edit_note</span>
+                    Registration Form
+                </span>
+                <h1 class="hero-title"><?= htmlspecialchars(strip_tags($training['training_name'])); ?></h1>
+                <p class="hero-subtitle">Complete the form below to apply for this program. All fields marked with * are mandatory.</p>
             </div>
-          <?php endif; ?>
+        </section>
 
-          <!-- Program Information Box -->
-          <div class="program-info-box">
-            <h4>About the Program</h4>
-            <p class="mb-0 text-muted"><?= htmlspecialchars(strip_tags($training['training_description'])); ?></p>
-          </div>
+        <section class="registration-content">
+            <div class="container">
+                <div class="registration-form-wrapper">
+                    <!-- Program Information Box -->
+                    <div class="program-info-box">
+                        <h4>About the Program</h4>
+                        <p class="mb-0 text-muted" style="line-height: 1.6;"><?= htmlspecialchars(strip_tags($training['training_description'])); ?></p>
+                    </div>
 
-          <!-- Registration Form -->
-          <form method="POST" action="<?= BASE_URL ?>/trainings/submit" id="registrationForm" enctype="multipart/form-data">
-            <!-- Hidden fields -->
-            <input type="hidden" name="program_id" value="<?= $program_id; ?>">
-            <input type="hidden" name="program_name" value="<?= htmlspecialchars(strip_tags($training['training_name'])); ?>">
+                    <!-- Registration Form -->
+                    <form @submit.prevent="submitForm" id="registrationForm" enctype="multipart/form-data">
+                        <input type="hidden" name="program_id" value="<?= $program_id; ?>">
 
-            <?php if (!empty($sections)) : ?>
-              <?php foreach ($sections as $section_name => $fields) : ?>
-                <div class="form-section">
-                  <h3 class="form-section-title">
-                    <span class="material-symbols-outlined" style="color: #fff;">
-                      <?php
-                      switch ($section_name) {
-                        case 'Basic Information': echo 'person'; break;
-                        case 'Background Information': echo 'analytics'; break;
-                        case 'Professional Information': echo 'work'; break;
-                        case 'Additional Information': echo 'info'; break;
-                        default: echo 'info';
-                      }
-                      ?>
-                    </span>
-                    <?= htmlspecialchars($section_name); ?>
-                  </h3>
+                        <?php if (!empty($sections)) : ?>
+                            <?php foreach ($sections as $section_name => $fields) : ?>
+                                <div class="form-section">
+                                    <h3 class="form-section-title">
+                                        <span class="material-symbols-outlined">
+                                            <?php
+                                            switch ($section_name) {
+                                                case 'Basic Information': echo 'person'; break;
+                                                case 'Background Information': echo 'analytics'; break;
+                                                case 'Professional Information': echo 'work'; break;
+                                                default: echo 'info';
+                                            }
+                                            ?>
+                                        </span>
+                                        <?= htmlspecialchars($section_name); ?>
+                                    </h3>
 
-                  <div class="row" style="padding: 20px;">
-                    <?php foreach ($fields as $field) : ?>
-                      <?= FormBuilder::render_form_field($field, $errors, $old_input); ?>
-                    <?php endforeach; ?>
-                  </div>
+                                    <div class="row">
+                                        <?php foreach ($fields as $field) : ?>
+                                            <?= FormBuilder::render_form_field($field, $errors, $old_input); ?>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else : ?>
+                            <!-- Fallback UI if no dynamic fields -->
+                            <div class="form-section">
+                                <h3 class="form-section-title">
+                                    <span class="material-symbols-outlined">person</span>
+                                    Basic Information
+                                </h3>
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-group">
+                                            <label>First Name <span class="text-danger">*</span></label>
+                                            <input type="text" name="firstname" class="form-control" style="border-radius: 50px; padding: 15px 24px; height: 56px;" placeholder="Enter first name" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-group">
+                                            <label>Last Name <span class="text-danger">*</span></label>
+                                            <input type="text" name="lastname" class="form-control" style="border-radius: 50px; padding: 15px 24px; height: 56px;" placeholder="Enter last name" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-group">
+                                            <label>Email Address <span class="text-danger">*</span></label>
+                                            <input type="email" name="email" class="form-control" style="border-radius: 50px; padding: 15px 24px; height: 56px;" placeholder="Enter email address" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-group">
+                                            <label>Phone Number <span class="text-danger">*</span></label>
+                                            <input type="tel" name="phone_no" class="form-control" style="border-radius: 50px; padding: 15px 24px; height: 56px;" placeholder="Enter phone number" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- Action Buttons -->
+                        <div class="row mt-4">
+                            <div class="col-md-8 mb-3">
+                                <button type="submit" class="submit-btn" :disabled="loading">
+                                    <template x-if="!loading">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="material-symbols-outlined">how_to_reg</span>
+                                            <span>Complete Registration</span>
+                                        </div>
+                                    </template>
+                                    <template x-if="loading">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="spinner-border spinner-border-sm" role="status"></div>
+                                            <span>Processing...</span>
+                                        </div>
+                                    </template>
+                                </button>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <a href="<?= BASE_URL ?>/trainings/detail?id=<?= $program_id; ?>" class="cancel-btn">
+                                    Cancel
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="required-note">
+                            By submitting this application, you agree to our <a href="#" class="text-orange">Terms & Conditions</a> and <a href="#" class="text-orange">Privacy Policy</a>.
+                        </div>
+                    </form>
                 </div>
-              <?php endforeach; ?>
-
-            <?php else : ?>
-              <!-- Fallback -->
-              <h3 class="form-section-title">
-                <span class="material-symbols-outlined" style="color: #fff;">person</span>
-                Basic Information
-              </h3>
-              <div class="row" style="padding: 20px;">
-                <div class="col-md-6 mb-3">
-                  <div class="form-group">
-                    <label class="font-weight-bold">First Name <span class="text-danger">*</span></label>
-                    <input type="text" name="firstname" class="form-control <?= isset($errors['firstname']) ? 'is-invalid' : '' ?>" style="border-radius: 50px; padding: 12px 20px; border: 1px solid <?= isset($errors['firstname']) ? '#dc3545' : '#ddd' ?>;" value="<?= htmlspecialchars($old_input['firstname'] ?? '') ?>" required>
-                    <?php if(isset($errors['firstname'])): ?><div class="invalid-feedback d-block ml-3 mt-1"><?= $errors['firstname'] ?></div><?php endif; ?>
-                  </div>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <div class="form-group">
-                    <label class="font-weight-bold">Last Name <span class="text-danger">*</span></label>
-                    <input type="text" name="lastname" class="form-control <?= isset($errors['lastname']) ? 'is-invalid' : '' ?>" style="border-radius: 50px; padding: 12px 20px; border: 1px solid <?= isset($errors['lastname']) ? '#dc3545' : '#ddd' ?>;" value="<?= htmlspecialchars($old_input['lastname'] ?? '') ?>" required>
-                    <?php if(isset($errors['lastname'])): ?><div class="invalid-feedback d-block ml-3 mt-1"><?= $errors['lastname'] ?></div><?php endif; ?>
-                  </div>
-                </div>
-                <div class="col-12 mb-3">
-                  <div class="form-group">
-                    <label class="font-weight-bold">Email Address <span class="text-danger">*</span></label>
-                    <input type="email" name="email" class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>" style="border-radius: 50px; padding: 12px 20px; border: 1px solid <?= isset($errors['email']) ? '#dc3545' : '#ddd' ?>;" value="<?= htmlspecialchars($old_input['email'] ?? '') ?>" required>
-                    <?php if(isset($errors['email'])): ?><div class="invalid-feedback d-block ml-3 mt-1"><?= $errors['email'] ?></div><?php endif; ?>
-                  </div>
-                </div>
-                <div class="col-12 mb-3">
-                  <div class="form-group">
-                    <label class="font-weight-bold">Phone Number <span class="text-danger">*</span></label>
-                    <input type="tel" name="phone_no" class="form-control <?= isset($errors['phone']) ? 'is-invalid' : '' ?>" style="border-radius: 50px; padding: 12px 20px; border: 1px solid <?= isset($errors['phone']) ? '#dc3545' : '#ddd' ?>;" value="<?= htmlspecialchars($old_input['phone_no'] ?? '') ?>" required>
-                    <?php if(isset($errors['phone'])): ?><div class="invalid-feedback d-block ml-3 mt-1"><?= $errors['phone'] ?></div><?php endif; ?>
-                  </div>
-                </div>
-              </div>
-            <?php endif; ?>
-
-            <!-- Submit Buttons -->
-            <div class="btn-group">
-              <button type="submit" name="register" class="submit-btn">
-                <span class="material-symbols-outlined">how_to_reg</span>
-                Submit Registration
-              </button>
-              <a href="<?= BASE_URL ?>/trainings/detail?id=<?= $program_id; ?>" class="cancel-btn">
-                Cancel
-              </a>
             </div>
+        </section>
+    <?php endif; ?>
 
-            <div class="required-note">
-              * By submitting this form, you agree to our terms of service and privacy policy. All your information is stored securely.
-            </div>
-          </form>
-        </div>
-      </div>
-    </section>
-  <?php endif; ?>
+    <!-- Toast Component -->
+    <div class="pd-toast" :class="toast.type" x-show="toast.show" x-transition style="display: none;">
+        <span class="material-symbols-outlined" x-text="toast.type === 'success' ? 'check_circle' : 'error'"></span>
+        <span x-text="toast.message"></span>
+    </div>
+</div>
 
-  <script>
-    // Enhanced File Input Styling
-    document.addEventListener('DOMContentLoaded', function() {
-      document.querySelectorAll('.custom-file-input').forEach(input => {
-        input.addEventListener('change', function(e) {
-          if (this.files && this.files[0]) {
-            let fileName = this.files[0].name;
-            let label = this.nextElementSibling;
-            let nameSpan = label.querySelector('.file-name-text');
-            if (nameSpan) {
-              nameSpan.textContent = fileName;
-              nameSpan.style.color = '#333';
+<script>
+function registrationHandler() {
+    return {
+        loading: false,
+        toast: {
+            show: false,
+            message: '',
+            type: 'success'
+        },
+
+        showToast(message, type = 'success') {
+            this.toast.message = message;
+            this.toast.type = type;
+            this.toast.show = true;
+            setTimeout(() => {
+                this.toast.show = false;
+            }, 5000);
+        },
+
+        async submitForm(e) {
+            this.loading = true;
+            const form = e.target;
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('<?= BASE_URL ?>/trainings/submit', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                // Clear previous errors
+                document.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+                document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+                if (result.success) {
+                    this.showToast(result.message, 'success');
+                    // Optional: Reset form or redirect
+                    if (result.redirect) {
+                        setTimeout(() => {
+                            window.location.href = result.redirect;
+                        }, 2000);
+                    }
+                } else {
+                    this.showToast(result.message || 'Please fix the errors below.', 'error');
+
+                    if (result.errors) {
+                        Object.keys(result.errors).forEach(key => {
+                            const input = form.querySelector(`[name="${key}"]`) || form.querySelector(`[name="${key}[]"]`);
+                            if (input) {
+                                input.classList.add('is-invalid');
+                                const errorDiv = document.createElement('div');
+                                errorDiv.className = 'invalid-feedback d-block';
+                                errorDiv.innerText = result.errors[key];
+                                input.closest('.form-group').appendChild(errorDiv);
+                            }
+                        });
+                    }
+                }
+            } catch (error) {
+                this.showToast('A network error occurred. Please try again.', 'error');
+            } finally {
+                this.loading = false;
             }
-          }
-        });
-      });
-    });
-  </script>
+        }
+    }
+}
+
+// File input preview enhancement
+document.addEventListener('change', function(e) {
+    if (e.target.classList.contains('custom-file-input')) {
+        const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose file';
+        const label = e.target.nextElementSibling;
+        const nameSpan = label.querySelector('.file-name-text');
+        if (nameSpan) {
+            nameSpan.textContent = fileName;
+            nameSpan.style.color = '#111';
+        }
+    }
+});
+</script>
