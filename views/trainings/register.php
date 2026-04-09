@@ -92,6 +92,27 @@ unset($_SESSION['old_input']);
       font-family: 'Poppins', sans-serif;
     }
 
+    .breadcrumb-custom {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: #666;
+      font-family: 'Open Sans', sans-serif;
+      margin-top: -10px;
+      margin-bottom: 20px;
+    }
+
+    .breadcrumb-custom a {
+      color: #f48221;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .breadcrumb-custom span {
+      color: #ccc;
+    }
+
     .registration-form-wrapper {
       background: #fff;
       border-radius: 24px;
@@ -284,6 +305,17 @@ unset($_SESSION['old_input']);
                     Registration Form
                 </span>
                 <h1 class="hero-title"><?= htmlspecialchars(strip_tags($training['training_name'])); ?></h1>
+
+                <div class="breadcrumb-custom">
+                    <a href="<?= BASE_URL ?>/" title="Home">Home</a>
+                    <span>/</span>
+                    <a href="<?= BASE_URL ?>/trainings" title="Trainings">Trainings</a>
+                    <span>/</span>
+                    <a href="<?= BASE_URL ?>/trainings/detail?id=<?= $training['id']; ?>" title="<?= htmlspecialchars(strip_tags($training['training_name'])); ?>"><?= htmlspecialchars(strip_tags($training['training_name'])); ?></a>
+                    <span>/</span>
+                    <span style="color: #999;">Register</span>
+                </div>
+
                 <p class="hero-subtitle">Complete the form below to apply for this program. All fields marked with * are mandatory.</p>
             </div>
         </section>
