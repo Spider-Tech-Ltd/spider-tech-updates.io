@@ -397,18 +397,14 @@ unset($_SESSION['old_input']);
                         <div class="row mt-4">
                             <div class="col-md-8 mb-3">
                                 <button type="submit" class="submit-btn" :disabled="loading">
-                                    <template x-if="!loading">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <span class="material-symbols-outlined">how_to_reg</span>
-                                            <span>Complete Registration</span>
-                                        </div>
-                                    </template>
-                                    <template x-if="loading">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="spinner-border spinner-border-sm" role="status"></div>
-                                            <span>Processing...</span>
-                                        </div>
-                                    </template>
+                                    <div class="d-flex align-items-center gap-2" x-show="!loading">
+                                        <span class="material-symbols-outlined">how_to_reg</span>
+                                        <span>Complete Registration</span>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2" x-show="loading" style="display: none;">
+                                        <div class="spinner-border spinner-border-sm" role="status"></div>
+                                        <span>Processing...</span>
+                                    </div>
                                 </button>
                             </div>
                             <div class="col-md-4 mb-3">
