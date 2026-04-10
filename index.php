@@ -45,7 +45,8 @@ $routes = [
     'about' => ['GeneralController', 'about'],
     'contact' => ['GeneralController', 'contact'],
     'faq' => ['GeneralController', 'faq'],
-    'blog' => ['GeneralController', 'blog'],
+    'blog' => ['BlogController', 'index'],
+    'blog/{slug}' => ['BlogController', 'detail'],
     // Password reset routes
     'forum/forgot-password' => ['PasswordResetController', 'forgotPassword'],
     'forum/verify-reset-code' => ['PasswordResetController', 'verifyResetCode'],
