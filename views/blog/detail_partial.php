@@ -57,8 +57,8 @@
 
         <!-- Back Link -->
         <div class="mt-5 text-center">
-             <button @click="view = 'index'; history.pushState({view: 'index'}, '', '<?= BASE_URL ?>/blog')" class="btn btn-outline-primary rounded-pill px-4">
-                <i class="material-symbols-outlined align-middle">arrow_back</i> Back to Insights
+             <button @click="view = 'index'; history.pushState({view: 'index'}, '', '<?= BASE_URL ?>/blog')" class="btn-insights-back">
+                <span class="material-symbols-outlined">arrow_back</span> Back to Insights
              </button>
         </div>
 

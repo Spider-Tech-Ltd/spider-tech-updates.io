@@ -205,6 +205,33 @@
         color: var(--primary-dark);
         font-weight: 700;
     }
+
+    /* Back Button Branding */
+    .btn-insights-back {
+        background-color: var(--primary-orange);
+        color: #fff;
+        border: none;
+        border-radius: 50px;
+        padding: 12px 35px;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 14px rgba(244, 130, 33, 0.25);
+        text-decoration: none !important;
+    }
+
+    .btn-insights-back:hover {
+        background-color: #db7015;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(244, 130, 33, 0.35);
+        color: #fff;
+    }
 </style>
 
 <main class="article-main">
@@ -260,6 +287,13 @@
                 </div>
             </div>
             <?php endif; ?>
+
+            <!-- Back Link -->
+            <div class="mt-5 text-center">
+                 <a href="<?= BASE_URL ?>/blog" class="btn-insights-back">
+                    <span class="material-symbols-outlined">arrow_back</span> Back to Insights
+                 </a>
+            </div>
 
         </div>
     </div>
