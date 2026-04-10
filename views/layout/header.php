@@ -197,6 +197,7 @@
           <a href="<?= BASE_URL ?>/trainings" class="nav-link-item">Trainings</a>
           <a href="<?= BASE_URL ?>/forum" class="nav-link-item">Forum</a>
           <a href="<?= BASE_URL ?>/blog" class="nav-link-item">Blog</a>
+          <a href="<?= BASE_URL ?>/events" class="nav-link-item">Events</a>
         </nav>
 
         <!-- Actions -->

@@ -66,7 +66,7 @@
         </div>
         <?php else: ?>
             <div class="section_heading mb-3">
-                <h3>There are no upcoming events. Check out <a href="<?= BASE_URL ?>/events/past" class="orange-hover">past events here</a>.</h3>
+                <h3>There are no upcoming events. Check out <a href="<?= BASE_URL ?>/events#past-events" class="orange-hover">past events here</a>.</h3>
             </div>
         <?php endif; ?>
     </div>

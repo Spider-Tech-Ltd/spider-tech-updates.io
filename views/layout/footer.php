@@ -170,7 +170,7 @@
         <ul class="footer-links">
           <li><a href="<?= BASE_URL ?>/forum">Forum</a></li>
           <li><a href="<?= BASE_URL ?>/blog">Blog</a></li>
-          <li><a href="<?= BASE_URL ?>/events/upcoming">Upcoming Events</a></li>
+          <li><a href="<?= BASE_URL ?>/events">Events</a></li>
           <li><a href="#">Developer Hub</a></li>
           <li><a href="#">Resources</a></li>
         </ul>
