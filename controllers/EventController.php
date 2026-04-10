@@ -23,6 +23,7 @@ class EventController extends BaseController {
         $model = new EventModel($this->db);
         $data = [
             'event' => $model->getEventById($id),
+            'event_media' => $model->getEventMedia($id),
             'contact' => $model->getContactDetails()
         ];
         $this->render("events/detail", $data);
