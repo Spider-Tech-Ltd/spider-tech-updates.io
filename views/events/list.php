@@ -262,6 +262,77 @@
         .hero-title { font-size: 2.5rem; }
         .events-hero { padding: 100px 16px 60px; }
     }
+
+    /* CTA Section */
+    .events-cta-section {
+        background: linear-gradient(135deg, #111111 0%, #262626 100%);
+        border-radius: 40px;
+        padding: 80px 40px;
+        margin-bottom: 80px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    .cta-blob {
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: rgba(244, 130, 33, 0.1);
+        filter: blur(80px);
+        border-radius: 50%;
+        z-index: 0;
+    }
+
+    .cta-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .cta-title {
+        color: #ffffff;
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .cta-text {
+        color: #aaaaaa;
+        font-size: 1.1rem;
+        max-width: 650px;
+        margin: 0 auto 40px;
+        line-height: 1.6;
+    }
+
+    .btn-cta-prominent {
+        background-color: #f48221;
+        color: #ffffff;
+        padding: 16px 48px;
+        border-radius: 50px;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 1.1rem;
+        text-decoration: none !important;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 14px rgba(244, 130, 33, 0.25);
+    }
+
+    .btn-cta-prominent:hover {
+        background-color: #e6751c;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(244, 130, 33, 0.4);
+        color: #ffffff;
+    }
+
+    @media (max-width: 768px) {
+        .cta-title { font-size: 1.8rem; }
+        .events-cta-section { padding: 60px 20px; border-radius: 30px; }
+    }
 </style>
 
 <!-- ====== Hero Section Start ====== -->
@@ -402,3 +473,28 @@
     </div>
 </section>
 <!-- ====== Past Events Section End ====== -->
+
+<!-- ====== CTA Section Start ====== -->
+<section class="padding pt-0">
+    <div class="container">
+        <div class="events-cta-section">
+            <div class="cta-blob" style="top: -100px; right: -100px;"></div>
+            <div class="cta-blob" style="bottom: -100px; left: -100px;"></div>
+
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to Elevate Your Tech Skills?</h2>
+                <p class="cta-text">Beyond our community events, we offer specialized, high-impact training programs designed to fast-track your professional growth in the digital landscape.</p>
+                <a href="<?= BASE_URL ?>/trainings" class="btn-cta-prominent">
+                    Explore Professional Trainings
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <div class="mt-4">
+                    <span class="text-orange" style="font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">
+                        <i class="fas fa-certificate"></i> Industry Recognized Certification
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ====== CTA Section End ====== -->
