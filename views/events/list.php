@@ -302,13 +302,14 @@
 
     /* CTA Section */
     .events-cta-section {
-        background: linear-gradient(135deg, #111111 0%, #262626 100%);
+        background: linear-gradient(135deg, #f48221 0%, #ff9d4d 100%);
         border-radius: 40px;
         padding: 80px 40px;
         margin-bottom: 80px;
         text-align: center;
         position: relative;
         overflow: hidden;
+        box-shadow: 0 20px 40px rgba(244, 130, 33, 0.15);
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
     }
 
@@ -316,7 +317,7 @@
         position: absolute;
         width: 300px;
         height: 300px;
-        background: rgba(244, 130, 33, 0.1);
+        background: rgba(255, 255, 255, 0.15);
         filter: blur(80px);
         border-radius: 50%;
         z-index: 0;
@@ -333,19 +334,21 @@
         font-weight: 800;
         margin-bottom: 20px;
         font-family: 'Poppins', sans-serif;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     }
 
     .cta-text {
-        color: #aaaaaa;
+        color: #ffffff;
         font-size: 1.1rem;
         max-width: 650px;
         margin: 0 auto 40px;
         line-height: 1.6;
+        opacity: 0.95;
     }
 
     .btn-cta-prominent {
-        background-color: #f48221;
-        color: #ffffff;
+        background-color: #ffffff;
+        color: #f48221;
         padding: 16px 48px;
         border-radius: 50px;
         font-family: 'Poppins', sans-serif;
@@ -356,14 +359,14 @@
         align-items: center;
         gap: 12px;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 14px rgba(244, 130, 33, 0.25);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     }
 
     .btn-cta-prominent:hover {
-        background-color: #e6751c;
+        background-color: #f8f9fa;
         transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(244, 130, 33, 0.4);
-        color: #ffffff;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+        color: #e6751c;
     }
 
     @media (max-width: 768px) {
@@ -532,7 +535,7 @@
                     <i class="fas fa-arrow-right"></i>
                 </a>
                 <div class="mt-4">
-                    <span class="text-orange" style="font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">
+                    <span style="color: #ffffff; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9;">
                         <i class="fas fa-certificate"></i> Industry Recognized Certification
                     </span>
                 </div>
