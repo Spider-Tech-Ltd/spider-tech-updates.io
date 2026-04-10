@@ -1,16 +1,8 @@
 <style>
     /* Global Overrides for modern feel - Matching Trainings Page */
-    .text-orange {
-        color: #f48221 !important;
-    }
-
-    .gap-2 {
-        gap: 0.5rem;
-    }
-
-    .gap-3 {
-        gap: 1rem;
-    }
+    .text-orange { color: #f48221 !important; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-3 { gap: 1rem; }
 
     .events-hero {
         position: relative;
@@ -37,24 +29,10 @@
         pointer-events: none;
     }
 
-    .hero-blob-left {
-        width: 280px;
-        height: 280px;
-        top: 20%;
-        left: -80px;
-    }
+    .hero-blob-left { width: 280px; height: 280px; top: 20%; left: -80px; }
+    .hero-blob-right { width: 320px; height: 320px; bottom: 15%; right: -80px; }
 
-    .hero-blob-right {
-        width: 320px;
-        height: 320px;
-        bottom: 15%;
-        right: -80px;
-    }
-
-    .hero-inner {
-        position: relative;
-        z-index: 1;
-    }
+    .hero-inner { position: relative; z-index: 1; }
 
     .hero-eyebrow-pill {
         display: inline-flex;
@@ -183,7 +161,7 @@
         border-radius: 12px;
         text-align: center;
         min-width: 60px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
     .card-date-badge .day {
@@ -211,7 +189,6 @@
 
     .card-status-pill {
         display: inline-flex;
-        max-width: max-content;
         align-items: center;
         gap: 5px;
         font-size: 0.65rem;
@@ -223,15 +200,8 @@
         border-radius: 50px;
     }
 
-    .status-upcoming {
-        background: rgba(40, 167, 69, 0.1);
-        color: #28a745;
-    }
-
-    .status-past {
-        background: rgba(108, 117, 125, 0.1);
-        color: #6c757d;
-    }
+    .status-upcoming { background: rgba(40, 167, 69, 0.1); color: #28a745; }
+    .status-past { background: rgba(108, 117, 125, 0.1); color: #6c757d; }
 
     .card-title {
         font-size: 1.3rem;
@@ -270,9 +240,7 @@
         transition: gap 0.3s;
     }
 
-    .view-btn:hover {
-        gap: 12px;
-    }
+    .view-btn:hover { gap: 12px; }
 
     .empty-state {
         text-align: center;
@@ -291,13 +259,8 @@
     }
 
     @media (max-width: 768px) {
-        .hero-title {
-            font-size: 2.5rem;
-        }
-
-        .events-hero {
-            padding: 100px 16px 60px;
-        }
+        .hero-title { font-size: 2.5rem; }
+        .events-hero { padding: 100px 16px 60px; }
     }
 
     /* CTA Section */
@@ -310,7 +273,6 @@
         position: relative;
         overflow: hidden;
         box-shadow: 0 20px 40px rgba(244, 130, 33, 0.15);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
     }
 
     .cta-blob {
@@ -334,7 +296,7 @@
         font-weight: 800;
         margin-bottom: 20px;
         font-family: 'Poppins', sans-serif;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        text-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
 
     .cta-text {
@@ -370,14 +332,8 @@
     }
 
     @media (max-width: 768px) {
-        .cta-title {
-            font-size: 1.8rem;
-        }
-
-        .events-cta-section {
-            padding: 60px 20px;
-            border-radius: 30px;
-        }
+        .cta-title { font-size: 1.8rem; }
+        .events-cta-section { padding: 60px 20px; border-radius: 30px; }
     }
 </style>
 
@@ -423,35 +379,35 @@
         </div>
 
         <div class="row">
-            <?php if (!empty($upcoming_events)): ?>
-                <?php foreach ($upcoming_events as $event):
+            <?php if(!empty($upcoming_events)): ?>
+                <?php foreach($upcoming_events as $event):
                     $date = strtotime($event['event_date']);
                     $day = date('d', $date);
                     $month = date('M', $date);
                 ?>
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="event-card">
-                            <div class="card-img-wrap">
-                                <img src="<?= BASE_URL . '/' . ltrim(substr($event['event_img'], 3), '/'); ?>" alt="<?= htmlspecialchars($event['event_title']); ?>">
-                                <div class="card-date-badge">
-                                    <span class="day"><?= $day ?></span>
-                                    <span class="month"><?= $month ?></span>
-                                </div>
-                            </div>
-                            <div class="card-content">
-                                <span class="card-status-pill status-upcoming">
-                                    <i class="fas fa-bolt"></i>
-                                    Upcoming
-                                </span>
-                                <h3 class="card-title"><?= stripslashes($event['event_title']); ?></h3>
-                                <p class="card-desc"><?= stripslashes($event['event_content']); ?></p>
-                                <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="view-btn">
-                                    View Event Details
-                                    <i class="fas fa-arrow-right"></i>
-                                </a>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="event-card">
+                        <div class="card-img-wrap">
+                            <img src="<?= BASE_URL . '/' . ltrim(substr($event['event_img'], 3), '/'); ?>" alt="<?= htmlspecialchars($event['event_title']); ?>">
+                            <div class="card-date-badge">
+                                <span class="day"><?= $day ?></span>
+                                <span class="month"><?= $month ?></span>
                             </div>
                         </div>
+                        <div class="card-content">
+                            <span class="card-status-pill status-upcoming">
+                                <i class="fas fa-bolt"></i>
+                                Upcoming
+                            </span>
+                            <h3 class="card-title"><?= stripslashes($event['event_title']); ?></h3>
+                            <p class="card-desc"><?= stripslashes($event['event_content']); ?></p>
+                            <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="view-btn">
+                                View Event Details
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
                     </div>
+                </div>
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="col-12">
@@ -476,35 +432,35 @@
         </div>
 
         <div class="row">
-            <?php if (!empty($past_events)): ?>
-                <?php foreach ($past_events as $event):
+            <?php if(!empty($past_events)): ?>
+                <?php foreach($past_events as $event):
                     $date = strtotime($event['event_date']);
                     $day = date('d', $date);
                     $month = date('M', $date);
                 ?>
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="event-card">
-                            <div class="card-img-wrap">
-                                <img src="<?= BASE_URL . '/' . ltrim(substr($event['event_img'], 3), '/'); ?>" alt="<?= htmlspecialchars($event['event_title']); ?>">
-                                <div class="card-date-badge">
-                                    <span class="day"><?= $day ?></span>
-                                    <span class="month"><?= $month ?></span>
-                                </div>
-                            </div>
-                            <div class="card-content">
-                                <span class="card-status-pill status-past">
-                                    <i class="fas fa-history"></i>
-                                    Completed
-                                </span>
-                                <h3 class="card-title"><?= stripslashes($event['event_title']); ?></h3>
-                                <p class="card-desc"><?= stripslashes($event['event_content']); ?></p>
-                                <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="view-btn">
-                                    View Recap
-                                    <i class="fas fa-arrow-right"></i>
-                                </a>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="event-card">
+                        <div class="card-img-wrap">
+                            <img src="<?= BASE_URL . '/' . ltrim(substr($event['event_img'], 3), '/'); ?>" alt="<?= htmlspecialchars($event['event_title']); ?>">
+                            <div class="card-date-badge">
+                                <span class="day"><?= $day ?></span>
+                                <span class="month"><?= $month ?></span>
                             </div>
                         </div>
+                        <div class="card-content">
+                            <span class="card-status-pill status-past">
+                                <i class="fas fa-history"></i>
+                                Completed
+                            </span>
+                            <h3 class="card-title"><?= stripslashes($event['event_title']); ?></h3>
+                            <p class="card-desc"><?= stripslashes($event['event_content']); ?></p>
+                            <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="view-btn">
+                                View Recap
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
                     </div>
+                </div>
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="col-12">
