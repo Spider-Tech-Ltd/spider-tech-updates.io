@@ -224,13 +224,7 @@
 
             <!-- Content Area -->
             <div class="project-content">
-                <p class="abstract">Innovative digital solution leveraging cutting-edge technology for Spider Technologies. This project represents our commitment to excellence in technical execution and user-centric design.</p>
-
-                <h2>Project Overview</h2>
-                <p>We collaborated closely with industry stakeholders to deliver a robust solution that addresses critical operational challenges while providing a seamless user experience. The implementation focused on scalability, security, and performance.</p>
-
-                <h2>Technical Execution</h2>
-                <p>By employing modern development methodologies and a highly optimized architecture, we ensured that the final product not only meets but exceeds industry standards. Key features include real-time data processing, an intuitive dashboard, and comprehensive integration capabilities.</p>
+                <?= stripslashes($project['project_description']) ?>
             </div>
 
             <!-- CTA -->

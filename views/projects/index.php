@@ -151,14 +151,29 @@
     .card-title {
         font-size: 1.3rem;
         font-weight: 700;
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
         color: #111111;
         line-height: 1.3;
         transition: color 0.3s;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     .project-card:hover .card-title {
         color: #f48221;
+    }
+
+    .card-desc {
+        font-size: 0.9rem;
+        color: #555555;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     .view-btn {
@@ -296,6 +311,9 @@
                     <div class="card-content">
                         <span class="card-category"><?= htmlspecialchars($project['service_name']); ?></span>
                         <h3 class="card-title"><?= stripslashes($project['project_name']); ?></h3>
+                        <div class="card-desc">
+                            <?= stripslashes($project['project_description']); ?>
+                        </div>
                         <a href="<?= BASE_URL ?>/projects/detail?id=<?= $project['project_id']; ?>" class="view-btn">
                             View Project Details
                             <i class="fas fa-arrow-right"></i>
