@@ -8,10 +8,10 @@
 foreach ($banners as &$banner) {
     if (strpos($banner['banner_title'], 'Homepage slider') !== false) {
         switch ($banner['banner_id']) {
-            case 1: $banner['banner_title'] = "Innovating the Future of Tech"; break;
-            case 2: $banner['banner_title'] = "Empowering Digital Transformation"; break;
-            case 3: $banner['banner_title'] = "Scaling African Excellence"; break;
-            default: $banner['banner_title'] = "Master the Industrial Tech of Tomorrow"; break;
+            case 1: $banner['banner_title'] = "Innovating the <span>Future</span> of Tech"; break;
+            case 2: $banner['banner_title'] = "Empowering <span>Digital</span> Transformation"; break;
+            case 3: $banner['banner_title'] = "Scaling African <span>Excellence</span>"; break;
+            default: $banner['banner_title'] = "Master the <span>Industrial Tech</span> of Tomorrow"; break;
         }
     }
 }
@@ -52,7 +52,7 @@ foreach ($banners as &$banner) {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        filter: brightness(0.45);
+        filter: brightness(0.6);
     }
 
     .hero-overlay {
@@ -61,13 +61,13 @@ foreach ($banners as &$banner) {
         z-index: 10;
         display: flex;
         align-items: center;
-        background: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
+        background: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
     }
 
     .hero-content {
         max-width: 850px;
         color: #fff;
-        padding: 0 15px;
+        padding: 120px 15px 0; /* Clear fixed header */
     }
 
     .hero-eyebrow {
@@ -95,6 +95,11 @@ foreach ($banners as &$banner) {
         font-size: clamp(2.5rem, 5vw, 4.5rem);
         line-height: 1.1;
         margin-bottom: 1.5rem;
+        color: #fff;
+    }
+
+    .hero-title span {
+        color: var(--primary-orange);
     }
 
     .hero-desc {
@@ -170,7 +175,7 @@ foreach ($banners as &$banner) {
         font-size: 2.5rem;
         font-weight: 800;
         font-family: 'Poppins', sans-serif;
-        color: #fff;
+        color: var(--primary-orange);
         line-height: 1;
     }
 
@@ -540,7 +545,7 @@ foreach ($banners as &$banner) {
             <div class="hero-content" x-show="true" x-transition:enter="animate__animated animate__fadeInUp">
                 <span class="hero-eyebrow">Innovation at Scale</span>
 
-                <h1 class="hero-title" x-text="slides[activeSlide].banner_title"></h1>
+                <h1 class="hero-title" x-html="slides[activeSlide].banner_title"></h1>
 
                 <p class="hero-desc">
                     Empowering African Tech Innovators since 2020. We build, nurture, and scale the next generation of digital solutions to solve real-world industrial challenges.
