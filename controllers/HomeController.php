@@ -13,7 +13,8 @@ class HomeController extends BaseController {
             'projects' => $model->getProjects(),
             'upcoming_events' => $model->getUpcomingEvents(),
             'latest_events' => $model->getLatestEvents(),
-            'testimonials' => $model->getTestimonials()
+            'testimonials' => $model->getTestimonials(),
+            'stats' => $model->getStats()
         ];
 
         $this->render("home/index", $data);
