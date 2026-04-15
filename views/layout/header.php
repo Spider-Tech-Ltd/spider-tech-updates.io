@@ -194,6 +194,7 @@
           <a href="<?= BASE_URL ?>/about" class="nav-link-item">About Us</a>
           <a href="<?= BASE_URL ?>/services" class="nav-link-item">Services</a>
           <a href="<?= BASE_URL ?>/projects" class="nav-link-item">Projects</a>
+          <a href="<?= BASE_URL ?>/events" class="nav-link-item">Events</a>
           <a href="<?= BASE_URL ?>/trainings" class="nav-link-item">Trainings</a>
           <a href="<?= BASE_URL ?>/forum" class="nav-link-item">Forum</a>
           <a href="<?= BASE_URL ?>/blog" class="nav-link-item">Blog</a>

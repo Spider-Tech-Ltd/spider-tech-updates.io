@@ -34,6 +34,13 @@ class EventModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getEventMedia($id) {
+        $query = "SELECT * FROM `events_media` WHERE event_id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getContactDetails() {
         $query = "SELECT * FROM `contact_details` WHERE contact_id = 1 LIMIT 1";
         $stmt = $this->conn->prepare($query);
