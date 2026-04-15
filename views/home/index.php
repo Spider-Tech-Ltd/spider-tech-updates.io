@@ -8,10 +8,10 @@
 foreach ($banners as &$banner) {
     if (strpos($banner['banner_title'], 'Homepage slider') !== false) {
         switch ($banner['banner_id']) {
-            case 1: $banner['banner_title'] = "Innovating the Future of Tech"; break;
-            case 2: $banner['banner_title'] = "Empowering Digital Transformation"; break;
-            case 3: $banner['banner_title'] = "Scaling African Excellence"; break;
-            default: $banner['banner_title'] = "Master the Industrial Tech of Tomorrow"; break;
+            case 1: $banner['banner_title'] = "Innovating the <span>Future of Tech</span>"; break;
+            case 2: $banner['banner_title'] = "Empowering <span>Digital Transformation</span>"; break;
+            case 3: $banner['banner_title'] = "Scaling <span>African Excellence</span>"; break;
+            default: $banner['banner_title'] = "Master the <span>Industrial Tech</span> of Tomorrow"; break;
         }
     }
 }
@@ -52,7 +52,7 @@ foreach ($banners as &$banner) {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        filter: brightness(0.45);
+        filter: brightness(0.65);
     }
 
     .hero-overlay {
@@ -61,7 +61,8 @@ foreach ($banners as &$banner) {
         z-index: 10;
         display: flex;
         align-items: center;
-        background: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
+        background: linear-gradient(to right, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
+        padding-top: 100px;
     }
 
     .hero-content {
@@ -95,13 +96,18 @@ foreach ($banners as &$banner) {
         font-size: clamp(2.5rem, 5vw, 4.5rem);
         line-height: 1.1;
         margin-bottom: 1.5rem;
+        color: rgba(255,255,255,0.85); /* Match description color and fix visibility */
+    }
+
+    .hero-title span {
+        color: var(--primary-orange);
     }
 
     .hero-desc {
         font-family: 'Open Sans', sans-serif;
         font-size: 1.2rem;
         color: rgba(255,255,255,0.85);
-        margin-bottom: 3rem;
+        margin-bottom: 2rem;
         max-width: 650px;
         line-height: 1.7;
     }
@@ -109,7 +115,7 @@ foreach ($banners as &$banner) {
     .hero-btns {
         display: flex;
         gap: 1.25rem;
-        margin-bottom: 5rem;
+        margin-bottom: 3rem;
     }
 
     .btn-pill {
@@ -156,9 +162,9 @@ foreach ($banners as &$banner) {
     /* Hero Stats */
     .hero-stats {
         display: flex;
-        gap: 4.5rem;
+        gap: 3rem;
         border-top: 1px solid rgba(255,255,255,0.2);
-        padding-top: 2.5rem;
+        padding-top: 2rem;
     }
 
     .hero-stat-item {
@@ -189,7 +195,12 @@ foreach ($banners as &$banner) {
 
     .section-header {
         text-align: center;
-        margin-bottom: 60px;
+        margin-bottom: 70px;
+    }
+
+    .section-footer {
+        margin-top: 60px;
+        text-align: center;
     }
 
     .section-title {
@@ -200,6 +211,7 @@ foreach ($banners as &$banner) {
         margin-bottom: 1.25rem;
         position: relative;
         display: inline-block;
+        line-height: 1.2;
     }
 
     .section-title span {
@@ -233,10 +245,10 @@ foreach ($banners as &$banner) {
         right: 0;
         background: var(--primary-orange);
         color: #fff;
-        padding: 30px;
+        padding: 20px;
         border-radius: 25px;
         text-align: center;
-        min-width: 180px;
+        min-width: 160px;
         box-shadow: 0 15px 30px rgba(244, 130, 33, 0.3);
     }
 
@@ -310,15 +322,18 @@ foreach ($banners as &$banner) {
     /* Events Horizontal Card */
     .event-card-horizontal {
         background: #fff;
-        border-radius: 30px;
+        border-radius: 24px;
         overflow: hidden;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.04);
         border: 1px solid #f0f0f0;
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        height: 100%;
     }
 
     .event-card-horizontal:hover {
-        box-shadow: 0 25px 60px rgba(0,0,0,0.1);
+        transform: translateY(-5px);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+        border-color: rgba(244, 130, 33, 0.2);
     }
 
     .event-img-h {
@@ -339,13 +354,16 @@ foreach ($banners as &$banner) {
         font-weight: 700;
         font-size: 0.75rem;
         text-transform: uppercase;
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
         margin-bottom: 1.5rem;
     }
 
     .event-meta-h {
         display: flex;
-        gap: 25px;
+        flex-wrap: wrap;
+        gap: 12px;
         margin-bottom: 2rem;
     }
 
@@ -353,124 +371,203 @@ foreach ($banners as &$banner) {
         display: flex;
         align-items: center;
         gap: 8px;
-        color: var(--text-muted);
-        font-size: 0.9rem;
+        color: var(--dark-bg);
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 8px 16px;
+        background: #f8f9fa;
+        border-radius: 50px;
+        border: 1px solid #eee;
     }
 
     .meta-item-h i {
         color: var(--primary-orange);
+        font-size: 0.9rem;
     }
 
-    /* Projects Grid */
-    .project-card-v2 {
-        position: relative;
-        border-radius: 24px;
+    /* Projects Grid - Ported from Projects Page */
+    .project-card-new {
+        background-color: #ffffff;
+        border-radius: 1.5rem;
+        padding: 0.25rem;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        height: 100%;
+        border: 1px solid #e9ecef;
+        display: flex;
+        flex-direction: column;
         overflow: hidden;
-        aspect-ratio: 4/3;
-        margin-bottom: 30px;
+        text-decoration: none !important;
     }
 
-    .project-card-v2 img {
+    .project-card-new:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        border-color: rgba(244, 130, 33, 0.2);
+    }
+
+    .card-img-wrap {
+        aspect-ratio: 16/9;
+        border-radius: 1.25rem;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .card-img-wrap img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        transition: transform 0.6s ease;
     }
 
-    .project-card-v2:hover img {
-        transform: scale(1.1);
+    .project-card-new:hover .card-img-wrap img {
+        transform: scale(1.08);
     }
 
-    .project-overlay-v2 {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 70%);
-        padding: 30px;
+    .card-content-p {
+        padding: 0 1.5rem 1.5rem;
         display: flex;
         flex-direction: column;
-        justify-content: flex-end;
-        opacity: 0;
-        transition: opacity 0.4s ease;
+        flex: 1;
     }
 
-    .project-card-v2:hover .project-overlay-v2 {
-        opacity: 1;
-    }
-
-    .project-cat-v2 {
-        color: var(--primary-orange);
+    .card-category-p {
+        font-size: 0.65rem;
+        font-weight: 800;
         text-transform: uppercase;
-        font-weight: 700;
-        font-size: 0.75rem;
-        letter-spacing: 1px;
+        letter-spacing: 0.1em;
+        color: var(--primary-orange);
+        margin-bottom: 8px;
     }
 
-    .project-title-v2 {
-        color: #fff;
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
+    .card-title-p {
         font-size: 1.25rem;
-        margin-top: 5px;
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+        color: var(--dark-bg);
+        line-height: 1.3;
+        transition: color 0.3s;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
+
+    .project-card-new:hover .card-title-p {
+        color: var(--primary-orange);
+    }
+
+    .view-btn-p {
+        margin-top: auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--primary-orange);
+        font-weight: 700;
+        font-size: 0.85rem;
+        transition: gap 0.3s;
+    }
+
+    .view-btn-p:hover { gap: 12px; }
 
     /* Testimonials Slider */
+    /* Testimonials Slider - High Fidelity Refinement */
     .testimonial-slide-new {
         background: #fff;
-        padding: 50px;
-        border-radius: 30px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.04);
-        margin: 20px;
-        border: 1px solid #f8f9fa;
+        padding: 35px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        margin: 10px;
+        border: 1px solid #f2f2f2;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .testimonial-slide-new:hover {
+        border-color: rgba(244, 130, 33, 0.3);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.06);
+        transform: translateY(-5px);
     }
 
     .quote-icon {
-        font-size: 3rem;
-        color: rgba(244, 130, 33, 0.15);
-        margin-bottom: 1.5rem;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 2rem;
+        color: rgba(244, 130, 33, 0.1);
     }
 
     .testimonial-text {
-        font-size: 1.15rem;
-        line-height: 1.7;
-        color: #444;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #555;
         margin-bottom: 2rem;
         font-style: italic;
+        position: relative;
+        z-index: 1;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        flex: 1;
     }
 
     .client-info-v2 {
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 12px;
+        border-top: 1px solid #f8f8f8;
+        padding-top: 15px;
+        margin-top: auto;
     }
 
-    .client-img-v2 {
-        width: 55px;
-        height: 55px;
+    .client-avatar-v2 {
+        width: 45px;
+        height: 45px;
         border-radius: 50%;
-        object-fit: cover;
+        background: rgba(244, 130, 33, 0.1);
+        color: var(--primary-orange);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .client-avatar-v2 .material-symbols-outlined {
+        font-size: 1.5rem;
     }
 
     .client-name-v2 {
         font-family: 'Poppins', sans-serif;
-        font-weight: 700;
+        font-weight: 800;
         font-size: 1.05rem;
         color: var(--dark-bg);
         margin: 0;
+        line-height: 1.2;
     }
 
     .client-job-v2 {
-        font-size: 0.85rem;
-        color: var(--text-muted);
+        font-size: 0.75rem;
+        color: var(--primary-orange);
         margin: 0;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
-    /* Newsletter */
+    /* Newsletter Premium Refinement */
     .newsletter-section {
-        background: #f8f9fa;
+        background: #fdfdfd;
+        border: 1px solid #f0f0f0;
         border-radius: 40px;
         padding: 80px 60px;
         position: relative;
         overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.02);
     }
 
     .newsletter-section::before {
@@ -478,27 +575,59 @@ foreach ($banners as &$banner) {
         position: absolute;
         top: -100px;
         right: -100px;
-        width: 300px;
-        height: 300px;
-        background: rgba(244, 130, 33, 0.05);
+        width: 350px;
+        height: 350px;
+        background: radial-gradient(circle, rgba(244, 130, 33, 0.08) 0%, transparent 70%);
         border-radius: 50%;
+        z-index: 0;
+    }
+
+    .newsletter-grid-overlay {
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(#eee 1px, transparent 1px);
+        background-size: 20px 20px;
+        opacity: 0.3;
+        mask-image: linear-gradient(to right, black, transparent);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .news-content {
+        position: relative;
+        z-index: 1;
     }
 
     .news-input-group {
         background: #fff;
-        padding: 8px;
+        padding: 6px;
         border-radius: 60px;
         display: flex;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border: 1px solid #e9ecef;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.04), 0 2px 4px rgba(0,0,0,0.02);
+        transition: all 0.3s ease;
+    }
+
+    .news-input-group:focus-within {
+        border-color: var(--primary-orange);
+        box-shadow: 0 10px 40px rgba(244, 130, 33, 0.12);
+        transform: translateY(-2px);
     }
 
     .news-input {
         border: none;
         background: transparent;
-        padding: 0 30px;
+        padding: 0 35px;
         flex: 1;
         outline: none !important;
         font-size: 1rem;
+        color: var(--dark-bg);
+        font-weight: 500;
+    }
+
+    .news-input::placeholder {
+        color: #999;
+        font-weight: 400;
     }
 
     @media (max-width: 991px) {
@@ -507,6 +636,9 @@ foreach ($banners as &$banner) {
         .event-img-h { height: 250px; min-height: auto; }
         .newsletter-section { padding: 60px 30px; }
         .hero-btns { flex-direction: column; }
+        .section-padding { padding: 80px 0; }
+        .section-header { margin-bottom: 50px; }
+        .section-footer { margin-top: 50px; }
     }
 
     @media (max-width: 576px) {
@@ -516,6 +648,7 @@ foreach ($banners as &$banner) {
         .hero-eyebrow { justify-content: center; }
         .hero-eyebrow::after { display: none; }
         .hero-desc { margin-left: auto; margin-right: auto; }
+        .section-padding { padding: 60px 0; }
     }
 </style>
 
@@ -540,7 +673,7 @@ foreach ($banners as &$banner) {
             <div class="hero-content" x-show="true" x-transition:enter="animate__animated animate__fadeInUp">
                 <span class="hero-eyebrow">Innovation at Scale</span>
 
-                <h1 class="hero-title" x-text="slides[activeSlide].banner_title"></h1>
+                <h1 class="hero-title" x-html="slides[activeSlide].banner_title"></h1>
 
                 <p class="hero-desc">
                     Empowering African Tech Innovators since 2020. We build, nurture, and scale the next generation of digital solutions to solve real-world industrial challenges.
@@ -595,12 +728,15 @@ foreach ($banners as &$banner) {
                 </div>
             </div>
             <div class="col-lg-6 pl-lg-5">
-                <span class="event-tag">Our Story</span>
+                <span class="event-tag">
+                    <span class="material-symbols-outlined" style="font-size: 1.1rem;">auto_stories</span>
+                    Our Story
+                </span>
                 <h2 class="section-title">Driving <span>Innovation</span> with Purpose</h2>
                 <div class="section-subtitle text-left mb-4" style="margin: 0;">
                     <?= stripslashes($about[0]['details'] ?? ''); ?>
                 </div>
-                <p class="mb-5 text-muted">
+                <p class="mb-4 text-muted">
                     <?= stripslashes($about[0]['short_details'] ?? ''); ?>
                 </p>
                 <a href="<?= BASE_URL ?>/about" class="btn-pill btn-orange">Learn More About Us</a>
@@ -629,7 +765,7 @@ foreach ($banners as &$banner) {
             </div>
             <?php endforeach; ?>
         </div>
-        <div class="text-center mt-5">
+        <div class="section-footer">
             <a href="<?= BASE_URL ?>/services" class="btn-pill btn-orange">Explore All Services</a>
         </div>
     </div>
@@ -660,18 +796,23 @@ foreach ($banners as &$banner) {
                                 </h3>
                                 <div class="event-meta-h">
                                     <div class="meta-item-h">
-                                        <i class="fa-solid fa-calendar-days"></i>
-                                        <span><?= date_format(date_create($event['event_date']), "F j, Y"); ?></span>
+                                        <span class="material-symbols-outlined">calendar_today</span>
+                                        <span><?= date_format(date_create($event['event_date']), "M j, Y"); ?></span>
                                     </div>
                                     <div class="meta-item-h">
-                                        <i class="fa-solid fa-clock"></i>
+                                        <span class="material-symbols-outlined">schedule</span>
                                         <span><?= stripslashes($event['event_time']); ?></span>
                                     </div>
                                 </div>
-                                <div class="text-muted mb-5 line-clamp-3">
-                                    <?= substr(strip_tags(stripslashes($event['event_detail'])), 0, 180); ?>...
+                                <div class="text-muted mb-5 line-clamp-2" style="font-size: 0.95rem; line-height: 1.6;">
+                                    <?= substr(strip_tags(stripslashes($event['event_detail'])), 0, 150); ?>...
                                 </div>
-                                <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="btn-pill btn-orange">Register Now</a>
+                                <div class="mt-auto">
+                                    <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="btn-pill btn-orange">
+                                        Register Now
+                                        <span class="material-symbols-outlined">arrow_forward</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -692,18 +833,24 @@ foreach ($banners as &$banner) {
         </div>
         <div class="row">
             <?php foreach ($projects as $project): ?>
-            <div class="col-lg-4 col-md-6">
-                <a href="<?= BASE_URL ?>/projects/detail?id=<?= $project['project_id']; ?>" class="project-card-v2 d-block">
-                    <img src="<?= BASE_URL . '/' . ltrim(substr($project['project_pic'], 3), '/'); ?>" alt="<?= stripslashes($project['project_name']); ?>">
-                    <div class="project-overlay-v2">
-                        <span class="project-cat-v2"><?= $project['service_name']; ?></span>
-                        <h4 class="project-title-v2"><?= stripslashes($project['project_name']); ?></h4>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <a href="<?= BASE_URL ?>/projects/detail?id=<?= $project['project_id']; ?>" class="project-card-new">
+                    <div class="card-img-wrap">
+                        <img src="<?= BASE_URL . '/' . ltrim(substr($project['project_pic'], 3), '/'); ?>" alt="<?= stripslashes($project['project_name']); ?>">
+                    </div>
+                    <div class="card-content-p">
+                        <span class="card-category-p"><?= $project['service_name']; ?></span>
+                        <h4 class="card-title-p"><?= stripslashes($project['project_name']); ?></h4>
+                        <div class="view-btn-p">
+                            View Project Details
+                            <span class="material-symbols-outlined" style="font-size: 1.1rem;">arrow_forward</span>
+                        </div>
                     </div>
                 </a>
             </div>
             <?php endforeach; ?>
         </div>
-        <div class="text-center mt-5">
+        <div class="section-footer">
             <a href="<?= BASE_URL ?>/projects" class="btn-pill btn-orange">View All Projects</a>
         </div>
     </div>
@@ -727,7 +874,9 @@ foreach ($banners as &$banner) {
                         "<?= stripslashes($testimonial['testimonial']); ?>"
                     </p>
                     <div class="client-info-v2">
-                        <img src="<?= BASE_URL . '/' . ltrim(substr($testimonial['image'], 3), '/'); ?>" alt="Client" class="client-img-v2">
+                        <div class="client-avatar-v2">
+                            <span class="material-symbols-outlined">account_circle</span>
+                        </div>
                         <div>
                             <h5 class="client-name-v2"><?= stripslashes($testimonial['name']); ?></h5>
                             <p class="client-job-v2"><?= stripslashes($testimonial['title']); ?>, <?= stripslashes($testimonial['organization']); ?></p>
@@ -744,15 +893,19 @@ foreach ($banners as &$banner) {
 <section class="section-padding">
     <div class="container">
         <div class="newsletter-section">
-            <div class="row align-items-center">
+            <div class="newsletter-grid-overlay"></div>
+            <div class="row align-items-center news-content">
                 <div class="col-lg-6 mb-4 mb-lg-0">
-                    <h2 class="section-title mb-2" style="font-size: 2.2rem; text-align: left;">Stay <span>Connected</span></h2>
-                    <p class="mb-0 text-muted">Subscribe to our newsletter for latest tech insights and company updates.</p>
+                    <h2 class="section-title" style="margin-bottom: 0.5rem; line-height: 1.2;">Stay <span>Connected</span></h2>
+                    <p class="section-subtitle mb-0" style="font-size: 1.05rem;">Get the latest tech updates and community news delivered to your inbox.</p>
                 </div>
                 <div class="col-lg-6">
                     <form id="subscribeForm" class="news-input-group">
                         <input type="email" name="email" class="news-input" placeholder="Enter your email address" required>
-                        <button type="submit" class="btn-pill btn-orange border-0" id="subscribeBtn">Subscribe</button>
+                        <button type="submit" class="btn-pill btn-orange border-0" id="subscribeBtn">
+                            Subscribe
+                            <span class="material-symbols-outlined" style="font-size: 1.2rem;">mail</span>
+                        </button>
                     </form>
                     <div id="subscribeMessage" class="mt-3"></div>
                 </div>
@@ -774,17 +927,20 @@ $(document).ready(function() {
         margin: 30
     });
 
-    // Initialize Testimonial Carousel
+    // Initialize Testimonial Carousel - Smooth Glide
     $("#testimonial-carousel").owlCarousel({
         loop: true,
         margin: 20,
         nav: false,
         dots: true,
         autoplay: true,
+        autoplayTimeout: 6000,
+        smartSpeed: 1000,
+        autoplayHoverPause: true,
         responsive: {
             0: { items: 1 },
             768: { items: 2 },
-            1200: { items: 2 }
+            1200: { items: 3 }
         }
     });
 
