@@ -8,9 +8,9 @@
 foreach ($banners as &$banner) {
     if (strpos($banner['banner_title'], 'Homepage slider') !== false) {
         switch ($banner['banner_id']) {
-            case 1: $banner['banner_title'] = "Innovating the <span>Future of Tech</span>"; break;
-            case 2: $banner['banner_title'] = "Empowering <span>Digital Transformation</span>"; break;
-            case 3: $banner['banner_title'] = "Scaling <span>African Excellence</span>"; break;
+            case 1: $banner['banner_title'] = "Innovating the <span>Future</span> of Tech"; break;
+            case 2: $banner['banner_title'] = "Empowering <span>Digital</span> Transformation"; break;
+            case 3: $banner['banner_title'] = "Scaling African <span>Excellence</span>"; break;
             default: $banner['banner_title'] = "Master the <span>Industrial Tech</span> of Tomorrow"; break;
         }
     }
@@ -52,7 +52,7 @@ foreach ($banners as &$banner) {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        filter: brightness(0.65);
+        filter: brightness(0.6);
     }
 
     .hero-overlay {
@@ -61,14 +61,13 @@ foreach ($banners as &$banner) {
         z-index: 10;
         display: flex;
         align-items: center;
-        background: linear-gradient(to right, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
-        padding-top: 80px; /* Reduced to bring stats more into view */
+        background: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
     }
 
     .hero-content {
         max-width: 850px;
         color: #fff;
-        padding: 0 15px;
+        padding: 120px 15px 0; /* Clear fixed header */
     }
 
     .hero-eyebrow {
@@ -96,7 +95,7 @@ foreach ($banners as &$banner) {
         font-size: clamp(2.5rem, 5vw, 4.5rem);
         line-height: 1.1;
         margin-bottom: 1.5rem;
-        color: rgba(255,255,255,0.85); /* Match description color for readability */
+        color: rgba(255,255,255,0.95);
     }
 
     .hero-title span {
@@ -107,7 +106,7 @@ foreach ($banners as &$banner) {
         font-family: 'Open Sans', sans-serif;
         font-size: 1.2rem;
         color: rgba(255,255,255,0.85);
-        margin-bottom: 1.5rem; /* Reduced for tighter layout */
+        margin-bottom: 3rem;
         max-width: 650px;
         line-height: 1.7;
     }
@@ -115,7 +114,7 @@ foreach ($banners as &$banner) {
     .hero-btns {
         display: flex;
         gap: 1.25rem;
-        margin-bottom: 3rem; /* Reduced to pull stats up */
+        margin-bottom: 5rem;
     }
 
     .btn-pill {
@@ -164,7 +163,7 @@ foreach ($banners as &$banner) {
         display: flex;
         gap: 4.5rem;
         border-top: 1px solid rgba(255,255,255,0.2);
-        padding-top: 1.5rem;
+        padding-top: 2.5rem;
     }
 
     .hero-stat-item {
@@ -176,7 +175,7 @@ foreach ($banners as &$banner) {
         font-size: 2.5rem;
         font-weight: 800;
         font-family: 'Poppins', sans-serif;
-        color: #fff;
+        color: var(--primary-orange);
         line-height: 1;
     }
 
@@ -188,18 +187,14 @@ foreach ($banners as &$banner) {
         margin-top: 8px;
     }
 
+    /* Generic Section Styles */
     .section-padding {
         padding: 120px 0;
     }
 
     .section-header {
         text-align: center;
-        margin-bottom: 70px;
-    }
-
-    .section-footer {
-        margin-top: 60px;
-        text-align: center;
+        margin-bottom: 60px;
     }
 
     .section-title {
@@ -210,7 +205,6 @@ foreach ($banners as &$banner) {
         margin-bottom: 1.25rem;
         position: relative;
         display: inline-block;
-        line-height: 1.2;
     }
 
     .section-title span {
@@ -244,10 +238,10 @@ foreach ($banners as &$banner) {
         right: 0;
         background: var(--primary-orange);
         color: #fff;
-        padding: 20px;
+        padding: 30px;
         border-radius: 25px;
         text-align: center;
-        min-width: 160px;
+        min-width: 180px;
         box-shadow: 0 15px 30px rgba(244, 130, 33, 0.3);
     }
 
@@ -321,18 +315,15 @@ foreach ($banners as &$banner) {
     /* Events Horizontal Card */
     .event-card-horizontal {
         background: #fff;
-        border-radius: 24px;
+        border-radius: 30px;
         overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.05);
         border: 1px solid #f0f0f0;
-        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        height: 100%;
+        transition: all 0.3s ease;
     }
 
     .event-card-horizontal:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 50px rgba(0,0,0,0.08);
-        border-color: rgba(244, 130, 33, 0.2);
+        box-shadow: 0 25px 60px rgba(0,0,0,0.1);
     }
 
     .event-img-h {
@@ -353,9 +344,7 @@ foreach ($banners as &$banner) {
         font-weight: 700;
         font-size: 0.75rem;
         text-transform: uppercase;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
+        display: inline-block;
         margin-bottom: 1.5rem;
     }
 
@@ -377,180 +366,145 @@ foreach ($banners as &$banner) {
         color: var(--primary-orange);
     }
 
-    /* Projects Grid - Ported from Projects Page */
-    .project-card-new {
-        background-color: #ffffff;
-        border-radius: 1.5rem;
-        padding: 0.25rem;
-        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        height: 100%;
-        border: 1px solid #e9ecef;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        text-decoration: none !important;
-    }
-
-    .project-card-new:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-        border-color: rgba(244, 130, 33, 0.2);
-    }
-
-    .card-img-wrap {
-        aspect-ratio: 16/9;
-        border-radius: 1.25rem;
-        overflow: hidden;
-        margin-bottom: 1.5rem;
+    /* Projects Grid */
+    .project-card-v2 {
         position: relative;
+        border-radius: 24px;
+        overflow: hidden;
+        aspect-ratio: 4/3;
+        margin-bottom: 30px;
     }
 
-    .card-img-wrap img {
+    .project-card-v2 img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: transform 0.6s ease;
+        transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
-    .project-card-new:hover .card-img-wrap img {
-        transform: scale(1.08);
+    .project-card-v2:hover img {
+        transform: scale(1.1);
     }
 
-    .card-content-p {
-        padding: 0 1.5rem 1.5rem;
+    .project-overlay-v2 {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 70%);
+        padding: 30px;
         display: flex;
         flex-direction: column;
-        flex: 1;
+        justify-content: flex-end;
+        opacity: 0;
+        transition: opacity 0.4s ease;
     }
 
-    .card-category-p {
-        font-size: 0.65rem;
-        font-weight: 800;
+    .project-card-v2:hover .project-overlay-v2 {
+        opacity: 1;
+    }
+
+    .project-cat-v2 {
+        color: var(--primary-orange);
         text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: var(--primary-orange);
-        margin-bottom: 8px;
+        font-weight: 700;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
     }
 
-    .card-title-p {
+    .project-title-v2 {
+        color: #fff;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
         font-size: 1.25rem;
-        font-weight: 700;
-        margin-bottom: 0.8rem;
-        color: var(--dark-bg);
-        line-height: 1.3;
-        transition: color 0.3s;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+        margin-top: 5px;
     }
 
-    .project-card-new:hover .card-title-p {
-        color: var(--primary-orange);
-    }
-
-    .view-btn-p {
-        margin-top: auto;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--primary-orange);
-        font-weight: 700;
-        font-size: 0.85rem;
-        transition: gap 0.3s;
-    }
-
-    .view-btn-p:hover { gap: 12px; }
-
-    /* Testimonials Slider - High Fidelity Refinement */
+    /* Testimonials Slider */
     .testimonial-slide-new {
         background: #fff;
-        padding: 35px;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-        margin: 10px;
-        border: 1px solid #f2f2f2;
-        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        position: relative;
-        overflow: hidden;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .testimonial-slide-new:hover {
-        border-color: rgba(244, 130, 33, 0.3);
-        box-shadow: 0 15px 40px rgba(0,0,0,0.06);
-        transform: translateY(-5px);
+        padding: 50px;
+        border-radius: 30px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+        margin: 20px;
+        border: 1px solid #f8f9fa;
     }
 
     .quote-icon {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        font-size: 2rem;
-        color: rgba(244, 130, 33, 0.1);
+        font-size: 3rem;
+        color: rgba(244, 130, 33, 0.15);
+        margin-bottom: 1.5rem;
     }
 
     .testimonial-text {
-        font-family: 'Open Sans', sans-serif;
-        font-size: 0.95rem;
-        line-height: 1.6;
-        color: #555;
+        font-size: 1.15rem;
+        line-height: 1.7;
+        color: #444;
         margin-bottom: 2rem;
         font-style: italic;
-        position: relative;
-        z-index: 1;
-        display: -webkit-box;
-        -webkit-line-clamp: 4;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        flex: 1;
     }
 
     .client-info-v2 {
         display: flex;
         align-items: center;
-        gap: 12px;
-        border-top: 1px solid #f8f8f8;
-        padding-top: 15px;
-        margin-top: auto;
+        gap: 15px;
     }
 
-    .client-avatar-v2 {
-        width: 45px;
-        height: 45px;
+    .client-img-v2 {
+        width: 55px;
+        height: 55px;
         border-radius: 50%;
-        background: rgba(244, 130, 33, 0.1);
-        color: var(--primary-orange);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .client-avatar-v2 .material-symbols-outlined {
-        font-size: 1.5rem;
+        object-fit: cover;
     }
 
     .client-name-v2 {
         font-family: 'Poppins', sans-serif;
-        font-weight: 800;
+        font-weight: 700;
         font-size: 1.05rem;
         color: var(--dark-bg);
         margin: 0;
-        line-height: 1.2;
     }
 
     .client-job-v2 {
-        font-size: 0.75rem;
-        color: var(--primary-orange);
+        font-size: 0.85rem;
+        color: var(--text-muted);
         margin: 0;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
     }
 
+    /* Newsletter */
+    .newsletter-section {
+        background: #f8f9fa;
+        border-radius: 40px;
+        padding: 80px 60px;
+        position: relative;
+        overflow: hidden;
+    }
 
+    .newsletter-section::before {
+        content: '';
+        position: absolute;
+        top: -100px;
+        right: -100px;
+        width: 300px;
+        height: 300px;
+        background: rgba(244, 130, 33, 0.05);
+        border-radius: 50%;
+    }
+
+    .news-input-group {
+        background: #fff;
+        padding: 8px;
+        border-radius: 60px;
+        display: flex;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+
+    .news-input {
+        border: none;
+        background: transparent;
+        padding: 0 30px;
+        flex: 1;
+        outline: none !important;
+        font-size: 1rem;
+    }
 
     @media (max-width: 991px) {
         .hero-stats { gap: 2.5rem; }
@@ -646,10 +600,7 @@ foreach ($banners as &$banner) {
                 </div>
             </div>
             <div class="col-lg-6 pl-lg-5">
-                <span class="event-tag">
-                    <span class="material-symbols-outlined" style="font-size: 1.1rem;">auto_stories</span>
-                    Our Story
-                </span>
+                <span class="event-tag">Our Story</span>
                 <h2 class="section-title">Driving <span>Innovation</span> with Purpose</h2>
                 <div class="section-subtitle text-left mb-4" style="margin: 0;">
                     <?= stripslashes($about[0]['details'] ?? ''); ?>
@@ -683,7 +634,7 @@ foreach ($banners as &$banner) {
             </div>
             <?php endforeach; ?>
         </div>
-        <div class="section-footer">
+        <div class="text-center mt-5">
             <a href="<?= BASE_URL ?>/services" class="btn-pill btn-orange">Explore All Services</a>
         </div>
     </div>
@@ -714,23 +665,18 @@ foreach ($banners as &$banner) {
                                 </h3>
                                 <div class="event-meta-h">
                                     <div class="meta-item-h">
-                                        <span class="material-symbols-outlined">calendar_today</span>
-                                        <span><?= date_format(date_create($event['event_date']), "M j, Y"); ?></span>
+                                        <i class="fa-solid fa-calendar-days"></i>
+                                        <span><?= date_format(date_create($event['event_date']), "F j, Y"); ?></span>
                                     </div>
                                     <div class="meta-item-h">
-                                        <span class="material-symbols-outlined">schedule</span>
+                                        <i class="fa-solid fa-clock"></i>
                                         <span><?= stripslashes($event['event_time']); ?></span>
                                     </div>
                                 </div>
-                                <div class="text-muted mb-5 line-clamp-2" style="font-size: 0.95rem; line-height: 1.6;">
-                                    <?= substr(strip_tags(stripslashes($event['event_detail'])), 0, 150); ?>...
+                                <div class="text-muted mb-5 line-clamp-3">
+                                    <?= substr(strip_tags(stripslashes($event['event_detail'])), 0, 180); ?>...
                                 </div>
-                                <div class="mt-auto">
-                                    <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="btn-pill btn-orange">
-                                        Register Now
-                                        <span class="material-symbols-outlined">arrow_forward</span>
-                                    </a>
-                                </div>
+                                <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="btn-pill btn-orange">Register Now</a>
                             </div>
                         </div>
                     </div>
@@ -751,24 +697,18 @@ foreach ($banners as &$banner) {
         </div>
         <div class="row">
             <?php foreach ($projects as $project): ?>
-            <div class="col-lg-4 col-md-6 mb-4">
-                <a href="<?= BASE_URL ?>/projects/detail?id=<?= $project['project_id']; ?>" class="project-card-new">
-                    <div class="card-img-wrap">
-                        <img src="<?= BASE_URL . '/' . ltrim(substr($project['project_pic'], 3), '/'); ?>" alt="<?= stripslashes($project['project_name']); ?>">
-                    </div>
-                    <div class="card-content-p">
-                        <span class="card-category-p"><?= $project['service_name']; ?></span>
-                        <h4 class="card-title-p"><?= stripslashes($project['project_name']); ?></h4>
-                        <div class="view-btn-p">
-                            View Project Details
-                            <span class="material-symbols-outlined" style="font-size: 1.1rem;">arrow_forward</span>
-                        </div>
+            <div class="col-lg-4 col-md-6">
+                <a href="<?= BASE_URL ?>/projects/detail?id=<?= $project['project_id']; ?>" class="project-card-v2 d-block">
+                    <img src="<?= BASE_URL . '/' . ltrim(substr($project['project_pic'], 3), '/'); ?>" alt="<?= stripslashes($project['project_name']); ?>">
+                    <div class="project-overlay-v2">
+                        <span class="project-cat-v2"><?= $project['service_name']; ?></span>
+                        <h4 class="project-title-v2"><?= stripslashes($project['project_name']); ?></h4>
                     </div>
                 </a>
             </div>
             <?php endforeach; ?>
         </div>
-        <div class="section-footer">
+        <div class="text-center mt-5">
             <a href="<?= BASE_URL ?>/projects" class="btn-pill btn-orange">View All Projects</a>
         </div>
     </div>
@@ -792,9 +732,7 @@ foreach ($banners as &$banner) {
                         "<?= stripslashes($testimonial['testimonial']); ?>"
                     </p>
                     <div class="client-info-v2">
-                        <div class="client-avatar-v2">
-                            <span class="material-symbols-outlined">account_circle</span>
-                        </div>
+                        <img src="<?= BASE_URL . '/' . ltrim(substr($testimonial['image'], 3), '/'); ?>" alt="Client" class="client-img-v2">
                         <div>
                             <h5 class="client-name-v2"><?= stripslashes($testimonial['name']); ?></h5>
                             <p class="client-job-v2"><?= stripslashes($testimonial['title']); ?>, <?= stripslashes($testimonial['organization']); ?></p>
@@ -807,7 +745,26 @@ foreach ($banners as &$banner) {
     </div>
 </section>
 
-<?php include ROOT_PATH . '/views/layout/newsletter.php'; ?>
+<!-- ====== Newsletter Section ====== -->
+<section class="section-padding">
+    <div class="container">
+        <div class="newsletter-section">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h2 class="section-title mb-2" style="font-size: 2.2rem; text-align: left;">Stay <span>Connected</span></h2>
+                    <p class="mb-0 text-muted">Subscribe to our newsletter for latest tech insights and company updates.</p>
+                </div>
+                <div class="col-lg-6">
+                    <form id="subscribeForm" class="news-input-group">
+                        <input type="email" name="email" class="news-input" placeholder="Enter your email address" required>
+                        <button type="submit" class="btn-pill btn-orange border-0" id="subscribeBtn">Subscribe</button>
+                    </form>
+                    <div id="subscribeMessage" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <script>
 $(document).ready(function() {
@@ -822,23 +779,38 @@ $(document).ready(function() {
         margin: 30
     });
 
-    // Initialize Testimonial Carousel - Smooth Glide
+    // Initialize Testimonial Carousel
     $("#testimonial-carousel").owlCarousel({
         loop: true,
         margin: 20,
         nav: false,
         dots: true,
         autoplay: true,
-        autoplayTimeout: 6000,
-        smartSpeed: 1000,
-        autoplayHoverPause: true,
         responsive: {
             0: { items: 1 },
             768: { items: 2 },
-            1200: { items: 3 }
+            1200: { items: 2 }
         }
     });
 
-
+    // AJAX Subscription
+    $("#subscribeForm").submit(function(e) {
+        e.preventDefault();
+        var btn = $("#subscribeBtn");
+        var msg = $("#subscribeMessage");
+        btn.prop('disabled', true).text('Submitting...');
+        $.ajax({
+            url: '<?= BASE_URL ?>/includes/subscribe_function.php',
+            type: 'POST',
+            data: $(this).serialize() + '&subscribe=1',
+            success: function(data) {
+                btn.prop('disabled', false).text('Subscribe');
+                msg.html(data).fadeIn();
+                if(data.indexOf('alert-success') !== -1) {
+                    $("#subscribeForm")[0].reset();
+                }
+            }
+        });
+    });
 });
 </script>

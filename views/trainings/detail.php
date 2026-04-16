@@ -5,76 +5,93 @@
 ?>
 
 <style>
-    /* Page Header High-Fidelity */
-    .page-header {
-        background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
-        background-color: var(--dark-bg);
-        padding: 140px 0 80px;
-        position: relative;
-        overflow: hidden;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+    .training-hero {
+      position: relative;
+      background-color: #f4f4f4;
+      padding: 140px 16px 80px;
+      overflow: hidden;
+      text-align: center;
     }
 
-    .page-header::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at 70% 30%, rgba(244, 130, 33, 0.05) 0%, transparent 60%);
-        pointer-events: none;
+    .training-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(244, 130, 33, 0.08) 0%, transparent 68%);
+      pointer-events: none;
+      z-index: 0;
     }
 
-    .page-title {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 800;
-        font-size: clamp(2.2rem, 5vw, 3.2rem);
-        color: #ffffff;
-        margin-bottom: 1rem;
-        letter-spacing: -1.2px;
-        line-height: 1.2;
+    .hero-blob {
+      position: absolute;
+      border-radius: 50%;
+      background-color: rgba(244, 130, 33, 0.06);
+      filter: blur(60px);
+      pointer-events: none;
     }
 
-    .page-title span {
-        color: var(--primary-orange);
+    .hero-blob-left {
+      width: 280px;
+      height: 280px;
+      top: 20%;
+      left: -80px;
     }
 
-    /* Professional Breadcrumbs */
+    .hero-blob-right {
+      width: 320px;
+      height: 320px;
+      bottom: 15%;
+      right: -80px;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-eyebrow-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 18px;
+      border-radius: 50px;
+      background-color: rgba(244, 130, 33, 0.12);
+      border: 1px solid rgba(244, 130, 33, 0.25);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #f48221;
+      margin-bottom: 28px;
+    }
+
+    .hero-title {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin: 0 auto 1.5rem;
+      color: #111111;
+      max-width: 800px;
+      font-family: 'Poppins', sans-serif;
+    }
+
     .breadcrumb-custom {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-top: 15px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: #666;
+      font-family: 'Open Sans', sans-serif;
     }
 
-    .breadcrumb-item-custom {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        color: rgba(255,255,255,0.5);
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
+    .breadcrumb-custom a {
+      color: #f48221;
+      text-decoration: none;
+      font-weight: 600;
     }
 
-    .breadcrumb-item-custom a {
-        color: rgba(255,255,255,0.5);
-        text-decoration: none;
-        transition: color 0.3s ease;
-    }
-
-    .breadcrumb-item-custom a:hover {
-        color: var(--primary-orange);
-    }
-
-    .breadcrumb-item-custom.active {
-        color: var(--primary-orange);
-    }
-
-    .breadcrumb-separator {
-        width: 4px;
-        height: 4px;
-        background: rgba(255,255,255,0.2);
-        border-radius: 50%;
+    .breadcrumb-custom span {
+      color: #ccc;
     }
 
     .detail-section {

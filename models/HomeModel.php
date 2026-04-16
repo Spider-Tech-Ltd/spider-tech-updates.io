@@ -56,22 +56,10 @@ class HomeModel {
     }
 
     public function getTestimonials() {
-        $query = "SELECT * FROM `testimonials_tb` ORDER BY id DESC";
+        $query = "SELECT * FROM `testimonials_tb` LIMIT 6";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
-        $all = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        $unique = [];
-        $filtered = [];
-        foreach ($all as $t) {
-            $name = trim($t['name']);
-            if (!isset($unique[$name])) {
-                $unique[$name] = true;
-                $filtered[] = $t;
-            }
-            if (count($filtered) >= 10) break; // Fetch up to 10 unique ones
-        }
-        return $filtered;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getStats() {

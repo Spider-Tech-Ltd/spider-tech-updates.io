@@ -29,27 +29,6 @@ class GeneralModel {
         }
     }
 
-    public function getMission() {
-        $query = "SELECT * FROM `about_mission` ORDER BY id ASC";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getVision() {
-        $query = "SELECT * FROM `about_vision` ORDER BY id ASC";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getValues() {
-        $query = "SELECT * FROM `about_value` ORDER BY id ASC";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
     public function getBlogs() {
         return [];
     }

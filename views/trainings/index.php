@@ -32,80 +32,111 @@
       margin-left: -0.5rem;
     }
 
-    /* Page Header High-Fidelity */
-    .page-header {
-        background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
-        background-color: var(--dark-bg);
-        padding: 140px 0 80px;
-        position: relative;
-        overflow: hidden;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+    .training-hero {
+      position: relative;
+      background-color: #f4f4f4;
+      padding: 140px 16px 80px;
+      overflow: hidden;
+      text-align: center;
     }
 
-    .page-header::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at 70% 30%, rgba(244, 130, 33, 0.05) 0%, transparent 60%);
-        pointer-events: none;
+    .training-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(244, 130, 33, 0.08) 0%, transparent 68%);
+      pointer-events: none;
+      z-index: 0;
     }
 
-    .page-title {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 800;
-        font-size: clamp(2.5rem, 5vw, 3.8rem);
-        color: #ffffff;
-        margin-bottom: 1rem;
-        letter-spacing: -1.5px;
-        line-height: 1.1;
+    .hero-blob {
+      position: absolute;
+      border-radius: 50%;
+      background-color: rgba(244, 130, 33, 0.06);
+      filter: blur(60px);
+      pointer-events: none;
     }
 
-    .page-title span {
-        color: var(--primary-orange);
+    .hero-blob-left {
+      width: 280px;
+      height: 280px;
+      top: 20%;
+      left: -80px;
     }
 
-    /* Professional Breadcrumbs */
-    .breadcrumb-custom {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-top: 15px;
+    .hero-blob-right {
+      width: 320px;
+      height: 320px;
+      bottom: 15%;
+      right: -80px;
     }
 
-    .breadcrumb-item-custom {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        color: rgba(255,255,255,0.5);
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
+    .hero-inner {
+      position: relative;
+      z-index: 1;
     }
 
-    .breadcrumb-item-custom a {
-        color: rgba(255,255,255,0.5);
-        text-decoration: none;
-        transition: color 0.3s ease;
+    .hero-eyebrow-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 18px;
+      border-radius: 50px;
+      background-color: rgba(244, 130, 33, 0.12);
+      border: 1px solid rgba(244, 130, 33, 0.25);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #f48221;
+      margin-bottom: 28px;
     }
 
-    .breadcrumb-item-custom a:hover {
-        color: var(--primary-orange);
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin: 0 auto 1.5rem;
+      color: #111111;
+      max-width: 800px;
     }
 
-    .breadcrumb-item-custom.active {
-        color: var(--primary-orange);
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: #555555;
+      max-width: 600px;
+      margin: 0 auto 24px;
+      line-height: 1.7;
     }
 
-    .breadcrumb-separator {
-        width: 4px;
-        height: 4px;
-        background: rgba(255,255,255,0.2);
-        border-radius: 50%;
+    .hero-btn-primary {
+      height: 48px;
+      padding: 0 32px;
+      background-color: #f48221;
+      color: #ffffff;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      border-radius: 50px;
+      white-space: nowrap;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(244, 130, 33, 0.28);
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    @media (max-width: 991px) {
-        .page-header { padding: 120px 0 60px; }
+    .hero-btn-primary:hover {
+      background-color: #e6751c;
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+    .hero-btn-primary:active {
+      transform: scale(0.98);
     }
 
     .industry-standard-badge {
@@ -363,8 +394,6 @@
     }
   </style>
 
-
-
   <!-- ====== Hero Section Start ====== -->
   <section class="training-hero">
     <div class="hero-blob hero-blob-left"></div>
@@ -428,6 +457,28 @@
                       <span class="px-3 py-1 bg-white-20 font-weight-bold" style="background: rgba(255,255,255,0.2); font-size: 11px; border-radius: 9999px;">TRAINING</span>
                       <span class="px-3 py-1 bg-white-20 font-weight-bold" style="background: rgba(255,255,255,0.2); font-size: 11px; border-radius: 9999px;">24 WEEKS</span>
                     </div>
+                    <a href="<?= BASE_URL ?>/trainings/detail?id=<?= stripslashes($training['id']); ?>" class="featured-btn w-100 d-block text-center">View Program</a>
+                  </div>
+                </div>
+              </div>
+            <?php } else { ?>
+              <div class="col-lg-4 col-md-6 mb-4">
+                <div class="training-card">
+                  <div class="card-img-wrap">
+                    <img src="<?= (strpos($training['training_image'], 'http') === 0) ? htmlspecialchars($training['training_image']) : BASE_URL . '/' . ltrim(substr($training['training_image'], 3), '/'); ?>" alt="<?= htmlspecialchars(strip_tags($training['training_name'])); ?>">
+                  </div>
+                  <div class="card-content">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <span class="card-category">Program</span>
+                      <span class="card-provider">Spider Tech</span>
+                    </div>
+                    <h3 class="card-title"><?= htmlspecialchars(strip_tags($training['training_name'])); ?></h3>
+                    <div class="course-meta">
+                      <div class="meta-item">
+                        <span class="material-symbols-outlined">schedule</span>
+                        <span><?= isset($training['duration_minutes']) ? round($training['duration_minutes'] / 60, 1) . 'h' : '2h 14min'; ?></span>
+                      </div>
+                      <div class="meta-item">
                         <span class="material-symbols-outlined">school</span>
                         <span><?= isset($training['students_enrolled']) ? number_format($training['students_enrolled']) . '+' : '41K+'; ?></span>
                       </div>
@@ -461,6 +512,3 @@
     </div>
   </section>
   <!-- ====== Trainings End ====== -->
-
-<!-- Include Modular Newsletter -->
-<?php include ROOT_PATH . '/views/layout/newsletter.php'; ?>
