@@ -1,158 +1,173 @@
 <style>
-    /* Global Overrides for modern feel */
-    .text-orange { color: #f48221 !important; }
-    .gap-2 { gap: 0.5rem; }
-    .gap-3 { gap: 1rem; }
-
-    .projects-hero {
-        position: relative;
-        background-color: #f4f4f4;
-        padding: 140px 16px 80px;
-        overflow: hidden;
-        text-align: center;
+    :root {
+        --primary-orange: #f48221;
+        --dark-bg: #111111;
+        --text-muted: #888888;
+        --card-bg: #ffffff;
     }
 
-    .projects-hero::before {
+    /* Page Header High-Fidelity */
+    .page-header {
+        background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
+        background-color: var(--dark-bg);
+        padding: 140px 0 80px;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .page-header::before {
         content: '';
         position: absolute;
         inset: 0;
-        background: radial-gradient(circle at center, rgba(244, 130, 33, 0.08) 0%, transparent 68%);
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    .hero-blob {
-        position: absolute;
-        border-radius: 50%;
-        background-color: rgba(244, 130, 33, 0.06);
-        filter: blur(60px);
+        background: radial-gradient(circle at 70% 30%, rgba(244, 130, 33, 0.05) 0%, transparent 60%);
         pointer-events: none;
     }
 
-    .hero-blob-left { width: 280px; height: 280px; top: 20%; left: -80px; }
-    .hero-blob-right { width: 320px; height: 320px; bottom: 15%; right: -80px; }
-
-    .hero-inner { position: relative; z-index: 1; }
-
-    .hero-eyebrow-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        padding: 6px 18px;
-        border-radius: 50px;
-        background-color: rgba(244, 130, 33, 0.12);
-        border: 1px solid rgba(244, 130, 33, 0.25);
-        font-size: 0.72rem;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: #f48221;
-        margin-bottom: 28px;
-    }
-
-    .hero-title {
-        font-size: 3.5rem;
-        font-weight: 800;
-        line-height: 1.1;
-        margin: 0 auto 1.5rem;
-        color: #111111;
-        max-width: 800px;
-    }
-
-    .hero-subtitle {
-        font-size: 1.1rem;
-        color: #555555;
-        max-width: 600px;
-        margin: 0 auto 24px;
-        line-height: 1.7;
-    }
-
-    .hero-btn-primary {
-        height: 52px;
-        padding: 0 32px;
-        background-color: #f48221;
-        color: #ffffff;
+    .page-title {
         font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        font-size: 1rem;
-        border: none;
-        border-radius: 50px;
-        white-space: nowrap;
-        cursor: pointer;
-        box-shadow: 0 4px 20px rgba(244, 130, 33, 0.28);
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        text-decoration: none !important;
-    }
-
-    .hero-btn-primary:hover {
-        background-color: #e6751c;
+        font-weight: 800;
+        font-size: clamp(2.5rem, 5vw, 3.8rem);
         color: #ffffff;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 24px rgba(244, 130, 33, 0.35);
+        margin-bottom: 1rem;
+        letter-spacing: -1.5px;
+        line-height: 1.1;
     }
 
-    /* Project Card Styles */
+    .page-title span {
+        color: var(--primary-orange);
+    }
+
+    /* Professional Breadcrumbs */
+    .breadcrumb-custom {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 15px;
+    }
+
+    .breadcrumb-item-custom {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: rgba(255,255,255,0.5);
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+    }
+
+    .breadcrumb-item-custom a {
+        color: rgba(255,255,255,0.5);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .breadcrumb-item-custom a:hover {
+        color: var(--primary-orange);
+    }
+
+    .breadcrumb-item-custom.active {
+        color: var(--primary-orange);
+    }
+
+    .breadcrumb-separator {
+        width: 4px;
+        height: 4px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+    }
+
+    /* Section Styles */
+    .section-padding {
+        padding: 120px 0;
+    }
+
+    .tag-eyebrow {
+        background: rgba(244, 130, 33, 0.1);
+        color: var(--primary-orange);
+        padding: 8px 18px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        display: inline-block;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Project Cards High-Fidelity */
     .project-card {
-        background-color: #ffffff;
-        border-radius: 1.5rem;
-        padding: 0.25rem;
-        transition: all 0.3s ease;
+        background: var(--card-bg);
+        border-radius: 30px;
+        border: 1px solid #f0f0f0;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         height: 100%;
-        border: 1px solid #e9ecef;
-        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
         display: flex;
         flex-direction: column;
-        overflow: hidden;
     }
 
     .project-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        transform: translateY(-12px);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.06);
+        border-color: rgba(244, 130, 33, 0.2);
     }
 
-    .card-img-wrap {
-        aspect-ratio: 16/9;
-        border-radius: 1.25rem;
-        overflow: hidden;
-        margin-bottom: 1.5rem;
+    .project-img-wrap {
         position: relative;
+        height: 260px;
+        overflow: hidden;
+        margin: 10px;
+        border-radius: 24px;
     }
 
-    .card-img-wrap img {
+    .project-img-wrap img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: transform 0.5s ease;
+        transition: transform 0.6s ease;
     }
 
-    .project-card:hover .card-img-wrap img {
-        transform: scale(1.05);
+    .project-card:hover .project-img-wrap img {
+        transform: scale(1.1);
     }
 
-    .card-content {
-        padding: 0 1.5rem 1.5rem;
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-    }
-
-    .card-category {
-        font-size: 0.65rem;
+    .project-category-tag {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #ffffff;
+        color: var(--dark-bg);
+        padding: 6px 16px;
+        border-radius: 50px;
+        font-size: 0.7rem;
         font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: #f48221;
-        margin-bottom: 8px;
+        letter-spacing: 1px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        z-index: 2;
+        max-width: 140px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
     }
 
-    .card-title {
-        font-size: 1.3rem;
+    .project-body {
+        padding: 30px 35px 35px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .project-title {
+        font-family: 'Poppins', sans-serif;
         font-weight: 700;
-        margin-bottom: 0.5rem;
-        color: #111111;
+        font-size: 1.4rem;
+        color: var(--dark-bg);
+        margin-bottom: 12px;
         line-height: 1.3;
         transition: color 0.3s;
         display: -webkit-box;
@@ -161,162 +176,150 @@
         overflow: hidden;
     }
 
-    .project-card:hover .card-title {
-        color: #f48221;
+    .project-card:hover .project-title {
+        color: var(--primary-orange);
     }
 
-    .card-desc {
-        font-size: 0.9rem;
-        color: #555555;
-        line-height: 1.5;
-        margin-bottom: 1.5rem;
+    .project-desc {
+        color: var(--text-muted);
+        line-height: 1.7;
+        font-size: 0.95rem;
+        margin-bottom: 25px;
         display: -webkit-box;
-        -webkit-line-clamp: 2;
+        -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
 
-    .view-btn {
-        margin-top: auto;
+    .project-link {
+        color: var(--dark-bg);
+        font-weight: 700;
+        text-decoration: none;
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        color: #f48221;
-        font-weight: 700;
-        text-decoration: none !important;
-        font-size: 0.9rem;
-        transition: gap 0.3s;
+        font-size: 0.85rem;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: auto;
     }
 
-    .view-btn:hover { gap: 12px; }
+    .project-link .arrow-icon {
+        font-size: 1.2rem;
+        transition: transform 0.3s;
+    }
 
-    /* CTA Section */
-    .projects-cta-section {
-        background: linear-gradient(135deg, #f48221 0%, #ff9d4d 100%);
+    .project-card:hover .project-link {
+        color: var(--primary-orange);
+    }
+
+    .project-card:hover .project-link .arrow-icon {
+        transform: translateX(5px);
+    }
+
+    /* CTA Section Upgrade */
+    .premium-cta {
+        background: var(--dark-bg);
         border-radius: 40px;
-        padding: 80px 40px;
-        margin: 60px 0 80px;
-        text-align: center;
+        padding: 60px 40px;
+        margin-top: 60px;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 20px 40px rgba(244, 130, 33, 0.15);
+        text-align: center;
+        color: #fff;
     }
 
-    .cta-blob {
+    .premium-cta h2 {
+        color: #fff;
+    }
+
+    .premium-cta::before {
+        content: '';
         position: absolute;
-        width: 300px;
-        height: 300px;
-        background: rgba(255, 255, 255, 0.15);
-        filter: blur(80px);
-        border-radius: 50%;
-        z-index: 0;
+        inset: 0;
+        background: radial-gradient(circle at 10% 20%, rgba(244, 130, 33, 0.1) 0%, transparent 40%),
+                    radial-gradient(circle at 90% 80%, rgba(244, 130, 33, 0.1) 0%, transparent 40%);
+        pointer-events: none;
     }
 
-    .cta-content {
-        position: relative;
-        z-index: 1;
-    }
-
-    .cta-title {
-        color: #ffffff;
-        font-size: 2.5rem;
-        font-weight: 800;
-        margin-bottom: 20px;
-        font-family: 'Poppins', sans-serif;
-    }
-
-    .cta-text {
-        color: #ffffff;
-        font-size: 1.1rem;
-        max-width: 650px;
-        margin: 0 auto 40px;
-        line-height: 1.6;
-        opacity: 0.95;
-    }
-
-    .btn-cta-white {
-        background-color: #ffffff;
-        color: #f48221;
-        padding: 16px 48px;
+    .cta-button {
+        background: var(--primary-orange);
+        color: #fff;
+        padding: 16px 40px;
         border-radius: 50px;
         font-family: 'Poppins', sans-serif;
         font-weight: 700;
-        font-size: 1.1rem;
-        text-decoration: none !important;
+        text-transform: uppercase;
+        font-size: 1rem;
+        letter-spacing: 1px;
         display: inline-flex;
         align-items: center;
         gap: 12px;
-        transition: all 0.3s ease;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s;
+        text-decoration: none !important;
+        box-shadow: 0 10px 25px rgba(244, 130, 33, 0.3);
     }
 
-    .btn-cta-white:hover {
-        background-color: #f8f9fa;
-        transform: translateY(-3px);
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
-        color: #e6751c;
+    .cta-button:hover {
+        background: #e6751c;
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(244, 130, 33, 0.4);
+        color: #fff;
     }
 
-    @media (max-width: 768px) {
-        .hero-title { font-size: 2.5rem; }
-        .projects-hero { padding: 100px 16px 60px; }
-        .cta-title { font-size: 1.8rem; }
-        .projects-cta-section { padding: 60px 20px; border-radius: 30px; }
+    @media (max-width: 991px) {
+        .section-padding { padding: 80px 0; }
+        .page-header { padding: 120px 0 60px; }
+        .premium-cta { padding: 60px 30px; }
     }
 </style>
 
-<!-- ====== Hero Section Start ====== -->
-<section class="projects-hero">
-    <div class="hero-blob hero-blob-left"></div>
-    <div class="hero-blob hero-blob-right"></div>
-    <div class="container hero-inner">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <span class="hero-eyebrow-pill">
-                    <i class="fas fa-rocket"></i>
-                    Innovations & Impact
-                </span>
-                <h1 class="hero-title">Our Projects</h1>
-                <p class="hero-subtitle">Exploring the next frontier of digital solutions. From AI-driven platforms to sustainable tech, see how we are building the future.</p>
-
-                <div class="row justify-content-center mt-4 mb-5">
-                    <div class="col-md-8 col-lg-4 text-center">
-                        <a href="#projects-grid" class="hero-btn-primary w-100">View Showcase</a>
+<!-- ====== Page Header ====== -->
+<section class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-title">Project <span>Showcase</span></h1>
+                <div class="breadcrumb-custom">
+                    <div class="breadcrumb-item-custom">
+                        <a href="<?= BASE_URL ?>/">Home</a>
+                    </div>
+                    <div class="breadcrumb-separator"></div>
+                    <div class="breadcrumb-item-custom active">
+                        Projects
                     </div>
                 </div>
-
-                <!-- Breadcrumb -->
-                <nav aria-label="breadcrumb" class="mb-5 d-flex justify-content-center">
-                    <ol class="breadcrumb bg-transparent p-0 m-0">
-                        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>/home" class="text-muted">Home</a></li>
-                        <li class="breadcrumb-item active text-orange" aria-current="page">Projects</li>
-                    </ol>
-                </nav>
             </div>
         </div>
     </div>
 </section>
-<!-- ====== Hero Section End ====== -->
 
-<!-- ====== Projects Showcase Start ====== -->
-<section id="projects-grid" class="padding">
+<!-- ====== Projects Section ====== -->
+<section class="section-padding bg-light">
     <div class="container">
-        <div class="row">
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center">
+                <span class="tag-eyebrow">Innovation in Action</span>
+                <h2 class="section-title" style="font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 2.8rem; color: var(--dark-bg);">Building the <span>Future</span></h2>
+                <p class="section-subtitle">Explore our portfolio of cutting-edge digital solutions, enterprise platforms, and transformative tech projects across Africa.</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
             <?php foreach($projects as $project): ?>
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="project-card">
-                    <div class="card-img-wrap">
+                    <div class="project-img-wrap">
+                        <span class="project-category-tag"><?= htmlspecialchars($project['service_name']); ?></span>
                         <img src="<?= BASE_URL . '/' . ltrim(substr($project['project_pic'], 3), '/'); ?>" alt="<?= htmlspecialchars($project['project_name']); ?>">
                     </div>
-                    <div class="card-content">
-                        <span class="card-category"><?= htmlspecialchars($project['service_name']); ?></span>
-                        <h3 class="card-title"><?= stripslashes($project['project_name']); ?></h3>
-                        <div class="card-desc">
-                            <?= stripslashes($project['project_description']); ?>
-                        </div>
-                        <a href="<?= BASE_URL ?>/projects/detail?id=<?= $project['project_id']; ?>" class="view-btn">
-                            View Project Details
-                            <i class="fas fa-arrow-right"></i>
+                    <div class="project-body">
+                        <h3 class="project-title"><?= stripslashes($project['project_name']); ?></h3>
+                        <div class="project-desc"><?= strip_tags(stripslashes($project['project_description'])); ?></div>
+                        <a href="<?= BASE_URL ?>/projects/detail?id=<?= $project['project_id']; ?>" class="project-link">
+                            View Case Study 
+                            <span class="material-symbols-outlined arrow-icon">trending_flat</span>
                         </a>
                     </div>
                 </div>
@@ -324,20 +327,23 @@
             <?php endforeach; ?>
         </div>
 
-        <!-- CTA Section -->
-        <div class="projects-cta-section">
-            <div class="cta-blob" style="top: -100px; right: -100px;"></div>
-            <div class="cta-blob" style="bottom: -100px; left: -100px;"></div>
-
-            <div class="cta-content">
-                <h2 class="cta-title">Have a Visionary Idea?</h2>
-                <p class="cta-text">We specialize in turning complex challenges into elegant digital realities. Let's collaborate to build something extraordinary together.</p>
-                <a href="<?= BASE_URL ?>/contact" class="btn-cta-white">
-                    Start a Project
-                    <i class="fas fa-paper-plane"></i>
-                </a>
+        <!-- Premium CTA Section -->
+        <div class="premium-cta">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h2 style="font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 2.5rem; margin-bottom: 1.5rem;">Have a Visionary <span>Idea?</span></h2>
+                    <p style="color: rgba(255,255,255,0.7); line-height: 1.8; font-size: 1.1rem; margin-bottom: 2.5rem;">
+                        We specialize in turning complex challenges into elegant digital realities. Let's collaborate to build something extraordinary together.
+                    </p>
+                    <a href="<?= BASE_URL ?>/contact" class="cta-button">
+                        Start a Project
+                        <span class="material-symbols-outlined">rocket_launch</span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </section>
-<!-- ====== Projects Showcase End ====== -->
+
+<!-- Include Modular Newsletter -->
+<?php include ROOT_PATH . '/views/layout/newsletter.php'; ?>

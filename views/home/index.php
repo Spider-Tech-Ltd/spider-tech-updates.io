@@ -62,7 +62,7 @@ foreach ($banners as &$banner) {
         display: flex;
         align-items: center;
         background: linear-gradient(to right, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
-        padding-top: 100px;
+        padding-top: 80px; /* Reduced to bring stats more into view */
     }
 
     .hero-content {
@@ -96,7 +96,7 @@ foreach ($banners as &$banner) {
         font-size: clamp(2.5rem, 5vw, 4.5rem);
         line-height: 1.1;
         margin-bottom: 1.5rem;
-        color: rgba(255,255,255,0.85); /* Match description color and fix visibility */
+        color: rgba(255,255,255,0.85); /* Match description color for readability */
     }
 
     .hero-title span {
@@ -107,7 +107,7 @@ foreach ($banners as &$banner) {
         font-family: 'Open Sans', sans-serif;
         font-size: 1.2rem;
         color: rgba(255,255,255,0.85);
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem; /* Reduced for tighter layout */
         max-width: 650px;
         line-height: 1.7;
     }
@@ -115,7 +115,7 @@ foreach ($banners as &$banner) {
     .hero-btns {
         display: flex;
         gap: 1.25rem;
-        margin-bottom: 3rem;
+        margin-bottom: 3rem; /* Reduced to pull stats up */
     }
 
     .btn-pill {
@@ -162,9 +162,9 @@ foreach ($banners as &$banner) {
     /* Hero Stats */
     .hero-stats {
         display: flex;
-        gap: 3rem;
+        gap: 4.5rem;
         border-top: 1px solid rgba(255,255,255,0.2);
-        padding-top: 2rem;
+        padding-top: 1.5rem;
     }
 
     .hero-stat-item {
@@ -188,7 +188,6 @@ foreach ($banners as &$banner) {
         margin-top: 8px;
     }
 
-    /* Generic Section Styles */
     .section-padding {
         padding: 120px 0;
     }
@@ -362,8 +361,7 @@ foreach ($banners as &$banner) {
 
     .event-meta-h {
         display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
+        gap: 25px;
         margin-bottom: 2rem;
     }
 
@@ -371,18 +369,12 @@ foreach ($banners as &$banner) {
         display: flex;
         align-items: center;
         gap: 8px;
-        color: var(--dark-bg);
-        font-size: 0.85rem;
-        font-weight: 600;
-        padding: 8px 16px;
-        background: #f8f9fa;
-        border-radius: 50px;
-        border: 1px solid #eee;
+        color: var(--text-muted);
+        font-size: 0.9rem;
     }
 
     .meta-item-h i {
         color: var(--primary-orange);
-        font-size: 0.9rem;
     }
 
     /* Projects Grid - Ported from Projects Page */
@@ -470,7 +462,6 @@ foreach ($banners as &$banner) {
 
     .view-btn-p:hover { gap: 12px; }
 
-    /* Testimonials Slider */
     /* Testimonials Slider - High Fidelity Refinement */
     .testimonial-slide-new {
         background: #fff;
@@ -559,76 +550,7 @@ foreach ($banners as &$banner) {
         letter-spacing: 0.5px;
     }
 
-    /* Newsletter Premium Refinement */
-    .newsletter-section {
-        background: #fdfdfd;
-        border: 1px solid #f0f0f0;
-        border-radius: 40px;
-        padding: 80px 60px;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.02);
-    }
 
-    .newsletter-section::before {
-        content: '';
-        position: absolute;
-        top: -100px;
-        right: -100px;
-        width: 350px;
-        height: 350px;
-        background: radial-gradient(circle, rgba(244, 130, 33, 0.08) 0%, transparent 70%);
-        border-radius: 50%;
-        z-index: 0;
-    }
-
-    .newsletter-grid-overlay {
-        position: absolute;
-        inset: 0;
-        background-image: radial-gradient(#eee 1px, transparent 1px);
-        background-size: 20px 20px;
-        opacity: 0.3;
-        mask-image: linear-gradient(to right, black, transparent);
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    .news-content {
-        position: relative;
-        z-index: 1;
-    }
-
-    .news-input-group {
-        background: #fff;
-        padding: 6px;
-        border-radius: 60px;
-        display: flex;
-        border: 1px solid #e9ecef;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.04), 0 2px 4px rgba(0,0,0,0.02);
-        transition: all 0.3s ease;
-    }
-
-    .news-input-group:focus-within {
-        border-color: var(--primary-orange);
-        box-shadow: 0 10px 40px rgba(244, 130, 33, 0.12);
-        transform: translateY(-2px);
-    }
-
-    .news-input {
-        border: none;
-        background: transparent;
-        padding: 0 35px;
-        flex: 1;
-        outline: none !important;
-        font-size: 1rem;
-        color: var(--dark-bg);
-        font-weight: 500;
-    }
-
-    .news-input::placeholder {
-        color: #999;
-        font-weight: 400;
-    }
 
     @media (max-width: 991px) {
         .hero-stats { gap: 2.5rem; }
@@ -636,9 +558,6 @@ foreach ($banners as &$banner) {
         .event-img-h { height: 250px; min-height: auto; }
         .newsletter-section { padding: 60px 30px; }
         .hero-btns { flex-direction: column; }
-        .section-padding { padding: 80px 0; }
-        .section-header { margin-bottom: 50px; }
-        .section-footer { margin-top: 50px; }
     }
 
     @media (max-width: 576px) {
@@ -648,7 +567,6 @@ foreach ($banners as &$banner) {
         .hero-eyebrow { justify-content: center; }
         .hero-eyebrow::after { display: none; }
         .hero-desc { margin-left: auto; margin-right: auto; }
-        .section-padding { padding: 60px 0; }
     }
 </style>
 
@@ -736,7 +654,7 @@ foreach ($banners as &$banner) {
                 <div class="section-subtitle text-left mb-4" style="margin: 0;">
                     <?= stripslashes($about[0]['details'] ?? ''); ?>
                 </div>
-                <p class="mb-4 text-muted">
+                <p class="mb-5 text-muted">
                     <?= stripslashes($about[0]['short_details'] ?? ''); ?>
                 </p>
                 <a href="<?= BASE_URL ?>/about" class="btn-pill btn-orange">Learn More About Us</a>
@@ -889,30 +807,7 @@ foreach ($banners as &$banner) {
     </div>
 </section>
 
-<!-- ====== Newsletter Section ====== -->
-<section class="section-padding">
-    <div class="container">
-        <div class="newsletter-section">
-            <div class="newsletter-grid-overlay"></div>
-            <div class="row align-items-center news-content">
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                    <h2 class="section-title" style="margin-bottom: 0.5rem; line-height: 1.2;">Stay <span>Connected</span></h2>
-                    <p class="section-subtitle mb-0" style="font-size: 1.05rem;">Get the latest tech updates and community news delivered to your inbox.</p>
-                </div>
-                <div class="col-lg-6">
-                    <form id="subscribeForm" class="news-input-group">
-                        <input type="email" name="email" class="news-input" placeholder="Enter your email address" required>
-                        <button type="submit" class="btn-pill btn-orange border-0" id="subscribeBtn">
-                            Subscribe
-                            <span class="material-symbols-outlined" style="font-size: 1.2rem;">mail</span>
-                        </button>
-                    </form>
-                    <div id="subscribeMessage" class="mt-3"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+<?php include ROOT_PATH . '/views/layout/newsletter.php'; ?>
 
 <script>
 $(document).ready(function() {
@@ -944,24 +839,6 @@ $(document).ready(function() {
         }
     });
 
-    // AJAX Subscription
-    $("#subscribeForm").submit(function(e) {
-        e.preventDefault();
-        var btn = $("#subscribeBtn");
-        var msg = $("#subscribeMessage");
-        btn.prop('disabled', true).text('Submitting...');
-        $.ajax({
-            url: '<?= BASE_URL ?>/includes/subscribe_function.php',
-            type: 'POST',
-            data: $(this).serialize() + '&subscribe=1',
-            success: function(data) {
-                btn.prop('disabled', false).text('Subscribe');
-                msg.html(data).fadeIn();
-                if(data.indexOf('alert-success') !== -1) {
-                    $("#subscribeForm")[0].reset();
-                }
-            }
-        });
-    });
+
 });
 </script>
