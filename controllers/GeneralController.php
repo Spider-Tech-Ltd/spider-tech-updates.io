@@ -4,6 +4,9 @@ class GeneralController extends BaseController {
         $model = new GeneralModel($this->db);
         $data = [
             'about' => $model->getAboutInfo(),
+            'mission' => $model->getMission(),
+            'vision' => $model->getVision(),
+            'values' => $model->getValues(),
             'contact' => $model->getContactDetails()
         ];
         $this->render("general/about", $data);
