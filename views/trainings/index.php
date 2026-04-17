@@ -180,240 +180,125 @@
       transform: translateY(-2px);
     }
 
-    .training-card {
-      background-color: #ffffff;
-      border-radius: 1.5rem;
-      padding: 1.75rem;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      min-height: 420px;
-      border: 1px solid #e9ecef;
-      overflow: hidden;
-      height: 100%;
+    /* Synchronized Training Card - Industrial Grade */
+    .research-card {
+        background: #fff;
+        border-radius: 24px;
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: 8px;
+        cursor: pointer;
+        text-decoration: none !important;
+    }
+
+    .research-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+        border-color: rgba(244, 130, 33, 0.2);
     }
 
     .card-img-wrap {
-      position: relative;
-      overflow: hidden;
-      border-radius: 1.5rem;
-      margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+        position: relative;
+        aspect-ratio: 16/10;
+        border-radius: 20px;
+        overflow: hidden;
+        background: var(--dark-bg);
     }
 
     .card-img-wrap img {
-      width: 100%;
-      height: 240px;
-      object-fit: cover;
-      display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
     }
 
-    .training-card.featured-card {
-      background: linear-gradient(135deg, rgba(244, 130, 33, 0.32) 0%, rgba(244, 130, 33, 0.92) 100%);
-      border: none;
-      color: #ffffff;
-      box-shadow: 0 24px 40px rgba(244, 130, 33, 0.18);
+    .research-card:hover .card-img-wrap img {
+        transform: scale(1.1);
     }
 
-    .training-card.featured-card .card-img-wrap::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(244, 130, 33, 0.35), rgba(244, 130, 33, 0.05));
-      pointer-events: none;
+    .card-img-wrap::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(17, 24, 39, 0.6), transparent);
+        z-index: 1;
     }
 
-    .row.g-4 {
-      align-items: stretch;
+    .card-category {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        z-index: 2;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 4px 12px;
+        border-radius: 50px;
     }
 
-    .training-card.featured-card .card-title,
-    .training-card.featured-card .card-desc,
-    .training-card.featured-card .meta-item,
-    .training-card.featured-card .card-footer .text-muted {
-      color: #ffffff;
+    .card-body-content {
+        padding: 30px 25px 35px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
     }
 
-    .training-card.featured-card .card-badge,
-    .training-card.featured-card .training-icon {
-      color: #ffffff;
+    .card-body-content h3 {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 1.4rem;
+        line-height: 1.3;
+        color: var(--dark-bg);
+        margin-bottom: 1rem;
+        transition: color 0.3s ease;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
-    .training-card.featured-card .card-badge {
-      background: rgba(255, 255, 255, 0.16);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+    .research-card:hover .card-body-content h3 {
+        color: var(--primary-orange);
     }
 
-    .training-card.featured-card .card-head {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.18);
-      padding-bottom: 1rem;
-      margin-bottom: 1.4rem;
+    .card-body-content p {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: #555;
+        margin-bottom: 1.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
-    .training-card.featured-card .course-meta {
-      gap: 0.75rem;
-      margin-bottom: 1.5rem;
+    .read-link {
+        margin-top: auto;
+        font-weight: 700;
+        font-size: 13px;
+        color: var(--primary-orange);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
     }
 
-    .training-card.featured-card .meta-item {
-      background: rgba(255, 255, 255, 0.14);
-      color: rgba(255, 255, 255, 0.95);
+    .read-link i {
+        font-size: 18px;
+        transition: transform 0.3s;
     }
 
-    .training-card.featured-card .meta-item .material-symbols-outlined {
-      color: #ffffff;
-    }
-
-    .training-card.featured-card .card-footer {
-      border-top-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .card-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 1.4rem;
-    }
-
-    .card-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.7rem 1rem;
-      border-radius: 9999px;
-      background: rgba(244, 130, 33, 0.1);
-      color: #f48221;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .training-card.featured-card .card-badge {
-      background: rgba(255, 255, 255, 0.18);
-      color: #ffffff;
-    }
-
-    .training-icon {
-      width: 52px;
-      height: 52px;
-      flex-shrink: 0;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 18px;
-      background: rgba(244, 130, 33, 0.12);
-      color: #f48221;
-      font-size: 1.45rem;
-    }
-
-    .training-icon.material-symbols-outlined {
-      font-variation-settings: 'FILL' 1;
-      line-height: 1;
-    }
-
-    .training-card.featured-card .training-icon {
-      background: #ffffff;
-      color: #f48221;
-      box-shadow: inset 0 0 0 1px rgba(244, 130, 33, 0.12);
-    }
-
-    .card-title {
-      font-size: 1.35rem;
-      font-weight: 700;
-      line-height: 1.25;
-      margin-bottom: 1rem;
-      color: #111111;
-      transition: color 0.3s ease;
-    }
-
-    .training-card:hover .card-title {
-      color: #f48221;
-    }
-
-    .training-card.featured-card:hover .card-title {
-      color: #ffffff;
-    }
-
-    .card-desc {
-      font-size: 0.95rem;
-      color: #58606c;
-      line-height: 1.75;
-      margin-bottom: 1.75rem;
-      flex: 1;
-    }
-
-    .training-card.featured-card .card-desc {
-      color: rgba(255, 255, 255, 0.92);
-    }
-
-    .course-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .meta-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-size: 0.8rem;
-      color: #6b7280;
-      background: #f4f5f7;
-      padding: 0.65rem 0.95rem;
-      border-radius: 9999px;
-    }
-
-    .training-card.featured-card .meta-item {
-      color: rgba(255, 255, 255, 0.95);
-      background: rgba(255, 255, 255, 0.12);
-    }
-
-    .meta-item .material-symbols-outlined {
-      font-size: 14px;
-      color: #f48221;
-    }
-
-    .training-card.featured-card .meta-item .material-symbols-outlined {
-      color: #ffffff;
-    }
-
-    .card-footer {
-      padding-top: 1rem !important;
-      border-top: 1px solid #eef2f7;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: auto;
-      gap: 1rem;
-    }
-
-    .register-btn {
-      color: #f48221;
-      font-weight: 700;
-      font-size: 0.9rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      text-decoration: none !important;
-      transition: transform 0.2s ease, color 0.2s ease;
-    }
-
-    .register-btn:hover {
-      transform: translateX(3px);
-    }
-
-    .training-card.featured-card .register-btn {
-      color: #ffffff;
-    }
-
-    .register-btn span {
-      transition: transform 0.3s ease;
-    }
-
-    .register-btn:hover span {
-      transform: translateX(4px);
+    .research-card:hover .read-link i {
+        transform: translateX(5px);
     }
 
     .industry-standard-badge {
@@ -534,34 +419,28 @@
               }
             }
             ?>
-            <div class="col-lg-4 col-md-6 d-flex">
-              <article class="training-card<?= $is_featured ? ' featured-card' : '' ?> h-100">
+            <div class="col-lg-4 col-md-6 mb-4 d-flex">
+              <a href="<?= BASE_URL ?>/trainings/detail?id=<?= stripslashes($training['id']); ?>" class="research-card">
                 <?php if (!empty($imageSrc)): ?>
                   <div class="card-img-wrap">
                     <img src="<?= htmlspecialchars($imageSrc) ?>" alt="<?= htmlspecialchars(strip_tags($training['training_name'])) ?>">
+                    <div class="card-category">[ <?= $is_featured ? 'Featured' : 'Program' ?> ]</div>
                   </div>
                 <?php endif; ?>
-                <div class="card-head">
-                  <span class="card-badge"><?= $is_featured ? 'Featured Program' : 'Training Track' ?></span>
-                  <span class="training-icon material-symbols-outlined"><?= htmlspecialchars($iconName) ?></span>
-                </div>
-                <h3 class="card-title"><?= htmlspecialchars(strip_tags($training['training_name'])) ?></h3>
-                <p class="card-desc"><?= nl2br(htmlspecialchars(strip_tags($training['training_description']))) ?></p>
-                <div class="course-meta">
-                  <span class="meta-item"><span class="material-symbols-outlined">school</span><?= isset($training['students_enrolled']) ? number_format($training['students_enrolled']) . '+' : '41K+' ?></span>
-                  <span class="meta-item"><span class="material-symbols-outlined">star</span><?= isset($training['rating']) ? $training['rating'] : '4.9' ?>/5</span>
-                </div>
-                <div class="card-footer">
-                  <div class="text-muted small d-flex align-items-center gap-1">
-                    <span class="material-symbols-outlined text-orange" style="font-size: 16px;">bolt</span>
-                    Intensive
+                <div class="card-body-content">
+                  <h3><?= htmlspecialchars(strip_tags($training['training_name'])) ?></h3>
+                  <p><?= strip_tags($training['training_description']) ?></p>
+                  
+                  <div style="display: flex; gap: 15px; margin-bottom: 20px; font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 1px;">
+                      <span style="display: flex; align-items: center; gap: 5px;"><span class="material-symbols-outlined" style="font-size: 16px; color: #f48221;">school</span> <?= isset($training['students_enrolled']) ? number_format($training['students_enrolled']) . '+' : '41K+' ?></span>
+                      <span style="display: flex; align-items: center; gap: 5px;"><span class="material-symbols-outlined" style="font-size: 16px; color: #f48221;">star</span> <?= isset($training['rating']) ? $training['rating'] : '4.9' ?></span>
                   </div>
-                  <a href="<?= BASE_URL ?>/trainings/detail?id=<?= stripslashes($training['id']); ?>" class="register-btn">
-                    View Details
-                    <span class="material-symbols-outlined">arrow_forward</span>
-                  </a>
+
+                  <span class="read-link">
+                    View Details <i class="material-symbols-outlined">trending_flat</i>
+                  </span>
                 </div>
-              </article>
+              </a>
             </div>
           <?php endforeach; ?>
         <?php else: ?>

@@ -408,7 +408,7 @@
 <section class="section-padding bg-light">
     <div class="container">
         <div class="row">
-            <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="col-lg-4 mb-4 mb-lg-0">
                 <div class="mission-vision-card">
                     <div class="card-icon-box">
                         <?php if (!empty($mission[0]['icon'])): ?>
@@ -417,6 +417,8 @@
                             <?php else: ?>
                                 <i class="<?= $mission[0]['icon'] ?> icon-render" style="font-size: 2.2rem;"></i>
                             <?php endif; ?>
+                        <?php else: ?>
+                            <span class="material-symbols-outlined">rocket_launch</span>
                         <?php endif; ?>
                     </div>
                     <h3 class="mv-title"><?= stripslashes($mission[0]['title'] ?? 'Our Mission'); ?></h3>
@@ -425,7 +427,7 @@
                     </p>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-4 mb-4 mb-lg-0">
                 <div class="mission-vision-card">
                     <div class="card-icon-box">
                         <?php if (!empty($vision[0]['icon'])): ?>
@@ -444,50 +446,29 @@
                     </p>
                 </div>
             </div>
+            <div class="col-lg-4">
+                <div class="mission-vision-card">
+                    <div class="card-icon-box">
+                        <?php if (!empty($values[0]['icon'])): ?>
+                            <?php if (strpos($values[0]['icon'], 'material') !== false): ?>
+                                <span class="material-symbols-outlined"><?= $values[0]['icon'] ?></span>
+                            <?php else: ?>
+                                <i class="<?= $values[0]['icon'] ?> icon-render" style="font-size: 2.2rem;"></i>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <span class="material-symbols-outlined">architecture</span>
+                        <?php endif; ?>
+                    </div>
+                    <h3 class="mv-title"><?= stripslashes($values[0]['title'] ?? 'Custom Solutions'); ?></h3>
+                    <p class="mv-text">
+                        <?= stripslashes($values[0]['details'] ?? 'Spider offers custom solutions tailored to your specific needs, unlike generic bundles from product-focused companies. As a vendor-independent provider, we choose the best options to minimize your Total Cost of Ownership and maximize Quality of Service.'); ?>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- ====== Core Values Section ====== -->
-<section class="section-padding">
-    <div class="container">
-        <div class="section-header text-center">
-            <h2 class="section-title">Our Core <span>Values</span></h2>
-            <p class="section-subtitle">The fundamental principles that guide every decision and technical solution we deliver.</p>
-        </div>
-        <div class="row">
-            <?php if (!empty($values)): ?>
-                <?php foreach ($values as $value): ?>
-                    <div class="col-lg-3 col-md-6 mb-4">
-                        <div class="value-item">
-                            <div class="value-icon-box">
-                                <?php if (!empty($value['icon'])): ?>
-                                    <?php if (strpos($value['icon'], 'material') !== false): ?>
-                                        <span class="material-symbols-outlined" style="font-size: 2.2rem;"><?= $value['icon'] ?></span>
-                                    <?php else: ?>
-                                        <i class="<?= $value['icon'] ?> icon-render" style="font-size: 2.2rem;"></i>
-                                    <?php endif; ?>
-                                <?php else: ?>
-                                    <span class="material-symbols-outlined" style="font-size: 2.2rem;">rocket_launch</span>
-                                <?php endif; ?>
-                            </div>
-                            <h4 class="value-title"><?= stripslashes($value['title']); ?></h4>
-                            <p class="value-description"><?= stripslashes($value['details']); ?></p>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <!-- Fallback to default if no values found -->
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="value-item">
-                        <div class="value-icon-box"><span class="material-symbols-outlined" style="font-size: 2.2rem;">rocket_launch</span></div>
-                        <h4 class="value-title">Innovation</h4>
-                        <p class="value-description">Pushing boundaries with cutting-edge tech.</p>
-                    </div>
-                </div>
-            <?php endif; ?>
-        </div>
-    </div>
-</section>
+
 
 <?php include ROOT_PATH . '/views/layout/newsletter.php'; ?>

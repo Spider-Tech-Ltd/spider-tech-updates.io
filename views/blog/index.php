@@ -91,11 +91,14 @@
 
     .blog-wrapper {
         background-color: var(--bg-light);
-        padding-top: 80px;
-        padding-bottom: 100px;
+        padding: 0;
         display: block;
         width: 100%;
         clear: both;
+    }
+
+    .blog-content {
+        padding: 80px 0 100px;
     }
 
     @media (max-width: 991px) {
@@ -103,8 +106,8 @@
             padding: 120px 0 60px;
         }
 
-        .blog-wrapper {
-            padding-top: 60px;
+        .blog-content {
+            padding: 60px 0 80px;
         }
     }
 
@@ -497,20 +500,37 @@
 
 <div id="progress-bar" class="reading-progress"></div>
 <main class="blog-wrapper" x-data="blogManager()" @popstate.window="handlePopState($event)" @scroll.window.passive="updateProgress()">
-    <div class="container" x-show="view === 'index'" x-cloak>
-
-        <!-- Hero Section -->
-        <div class="blog-hero">
-            <span class="hero-eyebrow-pill">
-                <span class="material-symbols-outlined">auto_awesome</span>
-                Industrial Knowledge Base
-            </span>
-            <h1>Technical Intelligence & <br><span>Global Impact</span></h1>
-            <p>Exploring the industrial frontier through rigorous technical research, engineering analysis, and data-driven case studies.</p>
+    
+    <!-- Professional Page Header -->
+    <section class="page-header" x-show="view === 'index'" x-cloak>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <span class="tag-eyebrow" style="background: rgba(244,130,33,0.15); color: #f48221; margin-bottom: 20px; display: inline-flex; align-items: center; border: 1px solid rgba(244,130,33,0.3); padding: 6px 16px; border-radius: 50px; font-size: 13px; font-weight: 700; text-transform: uppercase;">
+                        <span class="material-symbols-outlined" style="font-size: 16px; margin-right: 6px;">auto_awesome</span>
+                        Industrial Knowledge Base
+                    </span>
+                    <h1 class="page-title">Technical Intelligence & <br><span>Global Impact</span></h1>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 1.05rem; max-width: 650px; line-height: 1.6; margin-bottom: 20px;">Exploring the industrial frontier through rigorous technical research, engineering analysis, and data-driven case studies.</p>
+                    <div class="breadcrumb-custom">
+                        <div class="breadcrumb-item-custom">
+                            <a href="<?= BASE_URL ?>/home"> Home</a>
+                        </div>
+                        <div class="breadcrumb-separator"></div>
+                        <div class="breadcrumb-item-custom active">
+                            Research & Insights
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <!-- Filter Navigation -->
-        <div class="filter-container">
+    <!-- Main Content Area -->
+    <div class="blog-content" x-show="view === 'index'" x-cloak>
+        <div class="container">
+            <!-- Filter Navigation -->
+            <div class="filter-container">
             <div class="filter-pill" :class="{ 'active': currentCategory === 'all' }" @click="setCategory('all')">All Research</div>
             <?php foreach ($categories as $category): ?>
                 <div class="filter-pill" :class="{ 'active': currentCategory === '<?= $category['slug'] ?>' }" @click="setCategory('<?= $category['slug'] ?>')"><?= htmlspecialchars($category['name']) ?></div>
@@ -546,7 +566,9 @@
         <div x-show="!loading && blogs.length === 0" class="text-center py-5">
             <p class="text-muted">No research articles found in this category.</p>
         </div>
-    </div>
+        
+        </div> <!-- End container -->
+    </div> <!-- End blog-content -->
 
     <!-- Detail View Container -->
     <div id="article-detail-container" x-show="view === 'detail'" x-cloak>

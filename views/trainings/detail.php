@@ -208,11 +208,17 @@
                 <h1 class="hero-title"><?= $training ? htmlspecialchars($training['training_name']) : 'Training Detail'; ?></h1>
 
                 <div class="breadcrumb-custom">
-                    <a href="<?= BASE_URL ?>/" title="Home">Home</a>
-                    <span>/</span>
-                    <a href="<?= BASE_URL ?>/trainings" title="Trainings">Trainings</a>
-                    <span>/</span>
-                    <span style="color: #999;">Detail</span>
+                    <div class="breadcrumb-item-custom">
+                        <a href="<?= BASE_URL ?>/" title="Home">Home</a>
+                    </div>
+                    <div class="breadcrumb-separator"></div>
+                    <div class="breadcrumb-item-custom">
+                        <a href="<?= BASE_URL ?>/trainings" title="Trainings">Trainings</a>
+                    </div>
+                    <div class="breadcrumb-separator"></div>
+                    <div class="breadcrumb-item-custom active">
+                        Detail
+                    </div>
                 </div>
             </div>
         </div>

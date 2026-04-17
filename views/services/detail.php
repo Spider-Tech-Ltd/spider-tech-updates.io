@@ -170,6 +170,14 @@
         margin-top: 80px;
     }
 
+    .cta-box h3 {
+        color: #ffffff !important;
+    }
+
+    .cta-box h3 span {
+        color: var(--primary-orange) !important;
+    }
+
     .cta-box::after {
         content: '';
         position: absolute;
