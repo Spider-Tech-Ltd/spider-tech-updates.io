@@ -1,7 +1,10 @@
   <style>
-    /* Global Overrides for modern feel */
-    body {
-      font-family: 'Work Sans', sans-serif;
+    :root {
+      --primary-orange: #f48221;
+      --dark-bg: #111111;
+      --text-body: #374151;
+      --text-muted: #888888;
+      --card-bg: #ffffff;
     }
 
     .fill-1 {
@@ -9,7 +12,7 @@
     }
 
     .text-orange {
-      color: #f48221 !important;
+      color: var(--primary-orange) !important;
     }
 
     .gap-1 {
@@ -32,111 +35,270 @@
       margin-left: -0.5rem;
     }
 
-    .training-hero {
+    /* Page Header High-Fidelity */
+    .page-header {
+      background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
+      background-color: var(--dark-bg);
+      padding: 140px 0 80px;
       position: relative;
-      background-color: #f4f4f4;
-      padding: 140px 16px 80px;
       overflow: hidden;
-      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .training-hero::before {
+    .page-header::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at center, rgba(244, 130, 33, 0.08) 0%, transparent 68%);
+      background: radial-gradient(circle at 70% 30%, rgba(244, 130, 33, 0.05) 0%, transparent 60%);
       pointer-events: none;
-      z-index: 0;
     }
 
-    .hero-blob {
-      position: absolute;
+    .page-title {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.5rem, 5vw, 3.8rem);
+      color: #ffffff;
+      margin-bottom: 1rem;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+    }
+
+    .page-title span {
+      color: var(--primary-orange);
+    }
+
+    /* Professional Breadcrumbs */
+    .breadcrumb-custom {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .breadcrumb-item-custom {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .breadcrumb-item-custom a {
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      transition: color 0.3s ease, transform 0.2s ease;
+    }
+
+    .breadcrumb-item-custom a:hover {
+      color: #f48221;
+      transform: translateX(2px);
+    }
+
+    .breadcrumb-item-custom.active {
+      color: #f48221;
+      font-weight: 700;
+    }
+
+    .breadcrumb-item-custom.active span {
+      color: #f48221;
+    }
+
+    .breadcrumb-separator {
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
       border-radius: 50%;
-      background-color: rgba(244, 130, 33, 0.06);
-      filter: blur(60px);
-      pointer-events: none;
     }
 
-    .hero-blob-left {
-      width: 280px;
-      height: 280px;
-      top: 20%;
-      left: -80px;
+    @media (max-width: 991px) {
+      .page-header {
+        padding: 120px 0 60px;
+      }
     }
 
-    .hero-blob-right {
-      width: 320px;
-      height: 320px;
-      bottom: 15%;
-      right: -80px;
-    }
-
-    .hero-inner {
-      position: relative;
-      z-index: 1;
+    .training-hero {
+      background: #ffffff;
+      padding: 90px 0 70px;
     }
 
     .hero-eyebrow-pill {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      padding: 6px 18px;
-      border-radius: 50px;
-      background-color: rgba(244, 130, 33, 0.12);
-      border: 1px solid rgba(244, 130, 33, 0.25);
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      gap: 0.5rem;
+      background: rgba(244, 130, 33, 0.1);
       color: #f48221;
-      margin-bottom: 28px;
+      padding: 0.75rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1.5rem;
     }
 
     .hero-title {
-      font-size: 3.5rem;
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(2.7rem, 4vw, 4rem);
       font-weight: 800;
-      line-height: 1.1;
-      margin: 0 auto 1.5rem;
+      line-height: 1.05;
+      margin-bottom: 1.2rem;
       color: #111111;
-      max-width: 800px;
+    }
+
+    .hero-title span {
+      color: var(--primary-orange);
     }
 
     .hero-subtitle {
-      font-size: 1.1rem;
+      font-family: 'Open Sans', sans-serif;
       color: #555555;
-      max-width: 600px;
-      margin: 0 auto 24px;
-      line-height: 1.7;
+      font-size: 1.15rem;
+      line-height: 1.75;
+      max-width: 760px;
+      margin: 0 auto;
     }
 
     .hero-btn-primary {
-      height: 48px;
-      padding: 0 32px;
-      background-color: #f48221;
-      color: #ffffff;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 600;
-      font-size: 0.95rem;
-      border: none;
-      border-radius: 50px;
-      white-space: nowrap;
-      cursor: pointer;
-      box-shadow: 0 4px 20px rgba(244, 130, 33, 0.28);
-      transition: background-color 0.2s ease, transform 0.1s ease;
-      text-decoration: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      padding: 0.95rem 2.25rem;
+      border-radius: 9999px;
+      background: #f48221;
+      color: #ffffff;
+      font-weight: 700;
+      text-decoration: none !important;
+      transition: transform 0.2s ease, background 0.2s ease;
+      box-shadow: 0 14px 30px rgba(244, 130, 33, 0.18);
     }
 
     .hero-btn-primary:hover {
-      background-color: #e6751c;
-      color: #ffffff;
-      text-decoration: none;
+      background: #e6751c;
+      transform: translateY(-2px);
     }
 
-    .hero-btn-primary:active {
-      transform: scale(0.98);
+    /* Synchronized Training Card - Industrial Grade */
+    .research-card {
+        background: #fff;
+        border-radius: 24px;
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: 8px;
+        cursor: pointer;
+        text-decoration: none !important;
+    }
+
+    .research-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+        border-color: rgba(244, 130, 33, 0.2);
+    }
+
+    .card-img-wrap {
+        position: relative;
+        aspect-ratio: 16/10;
+        border-radius: 20px;
+        overflow: hidden;
+        background: var(--dark-bg);
+    }
+
+    .card-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+
+    .research-card:hover .card-img-wrap img {
+        transform: scale(1.1);
+    }
+
+    .card-img-wrap::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(17, 24, 39, 0.6), transparent);
+        z-index: 1;
+    }
+
+    .card-category {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        z-index: 2;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 4px 12px;
+        border-radius: 50px;
+    }
+
+    .card-body-content {
+        padding: 30px 25px 35px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-body-content h3 {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 1.4rem;
+        line-height: 1.3;
+        color: var(--dark-bg);
+        margin-bottom: 1rem;
+        transition: color 0.3s ease;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .research-card:hover .card-body-content h3 {
+        color: var(--primary-orange);
+    }
+
+    .card-body-content p {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: #555;
+        margin-bottom: 1.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .read-link {
+        margin-top: auto;
+        font-weight: 700;
+        font-size: 13px;
+        color: var(--primary-orange);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .read-link i {
+        font-size: 18px;
+        transition: transform 0.3s;
+    }
+
+    .research-card:hover .read-link i {
+        transform: translateX(5px);
     }
 
     .industry-standard-badge {
@@ -157,262 +319,55 @@
       margin-bottom: 0.5rem;
     }
 
-    .training-card {
-      background-color: #ffffff;
-      border-radius: 1.5rem;
-      padding: 0.25rem;
-      transition: all 0.3s ease;
-      height: 100%;
-      border: 1px solid #e9ecef;
-      margin-bottom: 30px;
-      display: flex;
-      flex-direction: column;
-      min-height: 460px;
-      overflow: hidden;
-    }
-
-    .training-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-    }
-
-    .section-header {
-      margin-top: 24px;
-      margin-bottom: 28px;
-    }
-
-    .section-header h2 {
-      font-size: 1.9rem;
-      margin-bottom: 0.35rem;
-      font-weight: 700;
-      color: #111111;
-    }
-
-    .section-header p {
-      margin-bottom: 0;
-      font-size: 0.95rem;
-      color: #6d6d6d;
-    }
-
-    .card-img-wrap {
-      aspect-ratio: 16/9;
-      border-radius: 1.25rem;
-      overflow: hidden;
-      margin-bottom: 1.5rem;
-    }
-
-    .card-img-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-
-    .training-card:hover .card-img-wrap img {
-      transform: scale(1.05);
-    }
-
-    .card-content {
-      padding: 0 1.5rem 1rem;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
-
-    .card-category {
-      font-size: 0.65rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #f48221;
-      margin-bottom: 0;
-      display: block;
-    }
-
-    .card-provider {
-      font-size: 0.65rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #aaaaaa;
-    }
-
-    .card-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin-bottom: 0.75rem;
-      color: #111111;
-      transition: color 0.3s ease;
-      line-height: 1.2;
-      max-height: 3.6rem;
-      overflow: hidden;
-      word-break: break-word;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      line-clamp: 2;
-      -webkit-box-orient: vertical;
-    }
-
-    .training-card:hover .card-title {
-      color: #f48221;
-    }
-
-    .card-desc {
-      font-size: 0.875rem;
-      color: #555555;
-      line-height: 1.6;
-      margin-bottom: 1.5rem;
-    }
-
-    .card-footer {
-      padding-top: 1.125rem !important;
-      border-top: 1px solid #f1f1f1;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: auto;
-    }
-
-    .course-meta {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-
-    .meta-item {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 0.75rem;
-      color: #666;
-      background: #f9f9f9;
-      padding: 4px 8px;
-      border-radius: 4px;
-    }
-
-    .meta-item .material-symbols-outlined {
-      font-size: 14px;
-      color: #f48221;
-    }
-
-    .register-btn {
-      color: #f48221;
-      font-weight: 700;
-      font-size: 0.875rem;
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
-      text-decoration: none !important;
-      transition: color 0.2s;
-    }
-
-    .register-btn:hover {
-      color: #f48221;
-    }
-
-    .register-btn span {
-      transition: transform 0.3s ease;
-    }
-
-    .register-btn:hover span {
-      transform: translateX(4px);
-    }
-
-    .featured-card {
-      background: linear-gradient(135deg, #f48221 0%, #964900 100%);
-      border: none;
-      padding: 2rem;
-      color: #ffffff;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .featured-badge {
-      background: rgba(255, 255, 255, 0.3);
-      backdrop-filter: blur(10px);
-      padding: 6px 16px;
-      border-radius: 9999px;
-      font-size: 0.65rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      display: inline-block;
-      color: #ffffff;
-    }
-
-    .featured-title {
-      font-size: 2.3rem;
-      font-weight: 800;
-      margin-bottom: 1rem;
-      line-height: 1.2;
-      letter-spacing: -0.02em;
-      color: #ffffff;
-      word-break: break-word;
-      max-height: 5.2rem;
-      overflow: hidden;
-    }
-
-    .featured-desc {
-      font-size: 1rem;
-      color: #ffffff;
-      opacity: 0.9;
-      margin-bottom: 3rem;
-      line-height: 1.5;
-      max-width: 100%;
-    }
-
-    .featured-btn {
-      background: #ffffff;
-      color: #f48221;
-      padding: 1rem 2rem;
-      border-radius: 9999px;
-      text-align: center;
-      font-weight: 700;
-      text-decoration: none !important;
-      transition: all 0.2s ease;
-      font-size: 1.1rem;
-    }
-
-    .featured-btn:hover {
-      transform: scale(1.02);
-      color: #e6751c;
-    }
-
     @media (max-width: 992px) {
       .hero-title {
-        font-size: 3rem;
+        font-size: 2.7rem;
       }
 
       .training-hero {
-        padding: 60px 0;
+        padding: 60px 0 50px;
       }
     }
   </style>
 
+
+
+  <!-- ====== Page Header ====== -->
+  <section class="page-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <h1 class="page-title">Training <span>Programs</span></h1>
+          <div class="breadcrumb-custom">
+            <div class="breadcrumb-item-custom">
+              <a href="<?= BASE_URL ?>/">Home</a>
+            </div>
+            <div class="breadcrumb-separator"></div>
+            <div class="breadcrumb-item-custom active">
+              Training
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
   <!-- ====== Hero Section Start ====== -->
   <section class="training-hero">
-    <div class="hero-blob hero-blob-left"></div>
-    <div class="hero-blob hero-blob-right"></div>
-    <div class="container hero-inner">
+    <div class="container">
       <div class="row justify-content-center">
-        <div class="col-lg-10">
+        <div class="col-lg-10 text-center">
           <span class="hero-eyebrow-pill">
             <span class="material-symbols-outlined" style="font-size: 16px;">auto_awesome</span>
             Professional Growth
           </span>
-          <h1 class="hero-title">Our Training Programs</h1>
+          <h1 class="hero-title">Our Training <span>Programs</span></h1>
           <p class="hero-subtitle">Elevate your technical and interpersonal skills through curated, high-impact paths from Spider Technologies.</p>
-          <div class="row justify-content-center mt-4">
-            <div class="col-md-8 col-lg-6 text-center">
-              <a href="#services" class="hero-btn-primary w-100">Browse Programs</a>
-            </div>
+          <div class="mt-5">
+            <a href="#services" class="hero-btn-primary">Browse Programs</a>
           </div>
-          <div class="row justify-content-center mt-4">
+          <div class="row justify-content-center mt-5">
             <div class="col-lg-6">
               <div class="industry-standard-badge text-left">
                 <div class="badge-label">
@@ -430,85 +385,77 @@
   <!-- ====== Hero Section End ====== -->
 
   <!-- ====== Trainings Start ====== -->
-  <section id="services" class="index-2 padding">
+  <section id="services" class="section-padding bg-light">
     <div class="container">
-      <div class="section-header text-center mb-4">
-        <h2>Fast-track your career with practical tech training</h2>
-        <p class="text-muted">Build role-ready skills with curriculum vetted by Spider Technologies and partners.</p>
+      <div class="row justify-content-center mb-5">
+        <div class="col-lg-8 text-center">
+          <span class="tag-eyebrow">Upskill with confidence</span>
+          <h2 class="section-title">Fast-track your career with practical tech training</h2>
+          <p class="section-subtitle">Build role-ready skills with curriculum vetted by Spider Technologies and partners.</p>
+        </div>
       </div>
-      <div class="row">
-        <?php
-        $counter = 0;
-        if (!empty($trainings)) {
-          foreach ($trainings as $training) {
-            $counter++;
-            if ($counter == 1) {
-        ?>
-              <div class="col-lg-4 col-md-12 mb-4">
-                <div class="training-card featured-card h-100">
-                  <div class="d-flex justify-content-between align-items-start mb-4">
-                    <div class="featured-badge">Featured Program</div>
-                    <span class="material-symbols-outlined fill-1">star</span>
-                  </div>
-                  <h3 class="featured-title"><?= htmlspecialchars(strip_tags($training['training_name'])); ?></h3>
-                  <p class="featured-desc"><?= nl2br(htmlspecialchars(strip_tags($training['training_description']))); ?></p>
-                  <div class="mt-auto pt-4">
-                    <div class="d-flex gap-2 mb-4">
-                      <span class="px-3 py-1 bg-white-20 font-weight-bold" style="background: rgba(255,255,255,0.2); font-size: 11px; border-radius: 9999px;">TRAINING</span>
-                      <span class="px-3 py-1 bg-white-20 font-weight-bold" style="background: rgba(255,255,255,0.2); font-size: 11px; border-radius: 9999px;">24 WEEKS</span>
-                    </div>
-                    <a href="<?= BASE_URL ?>/trainings/detail?id=<?= stripslashes($training['id']); ?>" class="featured-btn w-100 d-block text-center">View Program</a>
-                  </div>
-                </div>
-              </div>
-            <?php } else { ?>
-              <div class="col-lg-4 col-md-6 mb-4">
-                <div class="training-card">
+
+      <div class="row g-4">
+        <?php if (!empty($trainings)): ?>
+          <?php foreach ($trainings as $index => $training): ?>
+            <?php
+            $is_featured = $index === 0;
+            $iconName = 'school';
+            if (!empty($training['training_icon']) && preg_match('/^[a-z0-9_]+$/i', $training['training_icon'])) {
+              $iconName = $training['training_icon'];
+            }
+            $imageSrc = '';
+            if (!empty($training['image_url'])) {
+              $imageSrc = $training['image_url'];
+            } elseif (!empty($training['training_image'])) {
+              $imageSrc = $training['training_image'];
+            }
+            if (!empty($imageSrc)) {
+              $imageSrc = str_replace('\\', '/', $imageSrc);
+              if (preg_match('#^https?://#i', $imageSrc)) {
+                $imageSrc = htmlspecialchars($imageSrc);
+              } else {
+                $imageSrc = BASE_URL . '/' . ltrim($imageSrc, '/.');
+              }
+            }
+            ?>
+            <div class="col-lg-4 col-md-6 mb-4 d-flex">
+              <a href="<?= BASE_URL ?>/trainings/detail?id=<?= stripslashes($training['id']); ?>" class="research-card">
+                <?php if (!empty($imageSrc)): ?>
                   <div class="card-img-wrap">
-                    <img src="<?= (strpos($training['training_image'], 'http') === 0) ? htmlspecialchars($training['training_image']) : BASE_URL . '/' . ltrim(substr($training['training_image'], 3), '/'); ?>" alt="<?= htmlspecialchars(strip_tags($training['training_name'])); ?>">
+                    <img src="<?= htmlspecialchars($imageSrc) ?>" alt="<?= htmlspecialchars(strip_tags($training['training_name'])) ?>">
+                    <div class="card-category">[ <?= $is_featured ? 'Featured' : 'Program' ?> ]</div>
                   </div>
-                  <div class="card-content">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                      <span class="card-category">Program</span>
-                      <span class="card-provider">Spider Tech</span>
-                    </div>
-                    <h3 class="card-title"><?= htmlspecialchars(strip_tags($training['training_name'])); ?></h3>
-                    <div class="course-meta">
-                      <div class="meta-item">
-                        <span class="material-symbols-outlined">schedule</span>
-                        <span><?= isset($training['duration_minutes']) ? round($training['duration_minutes'] / 60, 1) . 'h' : '2h 14min'; ?></span>
-                      </div>
-                      <div class="meta-item">
-                        <span class="material-symbols-outlined">school</span>
-                        <span><?= isset($training['students_enrolled']) ? number_format($training['students_enrolled']) . '+' : '41K+'; ?></span>
-                      </div>
-                      <div class="meta-item">
-                        <span class="material-symbols-outlined">star</span>
-                        <span><?= isset($training['rating']) ? $training['rating'] : '4.9'; ?>/5</span>
-                      </div>
-                    </div>
-                    <p class="card-desc"><?= nl2br(htmlspecialchars(strip_tags($training['training_description']))); ?></p>
-                    <div class="card-footer bg-transparent p-0">
-                      <div class="text-muted small d-flex align-items-center gap-1">
-                        <span class="material-symbols-outlined text-orange" style="font-size: 16px;">bolt</span>
-                        Intensive
-                      </div>
-                      <a href="<?= BASE_URL ?>/trainings/detail?id=<?= stripslashes($training['id']); ?>" class="register-btn">
-                        View Details
-                        <span class="material-symbols-outlined">arrow_forward</span>
-                      </a>
-                    </div>
+                <?php endif; ?>
+                <div class="card-body-content">
+                  <h3><?= htmlspecialchars(strip_tags($training['training_name'])) ?></h3>
+                  <p><?= strip_tags($training['training_description']) ?></p>
+                  
+                  <div style="display: flex; gap: 15px; margin-bottom: 20px; font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 1px;">
+                      <span style="display: flex; align-items: center; gap: 5px;"><span class="material-symbols-outlined" style="font-size: 16px; color: #f48221;">school</span> <?= isset($training['students_enrolled']) ? number_format($training['students_enrolled']) . '+' : '41K+' ?></span>
+                      <span style="display: flex; align-items: center; gap: 5px;"><span class="material-symbols-outlined" style="font-size: 16px; color: #f48221;">star</span> <?= isset($training['rating']) ? $training['rating'] : '4.9' ?></span>
                   </div>
+
+                  <span class="read-link">
+                    View Details <i class="material-symbols-outlined">trending_flat</i>
+                  </span>
                 </div>
-              </div>
-            <?php } ?>
-        <?php
-          }
-        } else {
-          echo '<div class="col-12"><p class="empty">No trainings found!</p></div>';
-        }
-        ?>
+              </a>
+            </div>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <div class="col-12">
+            <div class="empty-state">
+              <span class="material-symbols-outlined">folder_open</span>
+              <p>No trainings found!</p>
+            </div>
+          </div>
+        <?php endif; ?>
       </div>
     </div>
   </section>
   <!-- ====== Trainings End ====== -->
+
+
+  <!-- Include Modular Newsletter -->
+  <?php include ROOT_PATH . '/views/layout/newsletter.php'; ?>
