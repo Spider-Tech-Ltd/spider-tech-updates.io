@@ -6,12 +6,12 @@
     }
 
     .page-header {
-        background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
+        background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
         background-color: var(--dark-bg);
         padding: 140px 0 80px;
         position: relative;
         overflow: hidden;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .page-header::before {
@@ -49,7 +49,7 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        color: rgba(255,255,255,0.6);
+        color: rgba(255, 255, 255, 0.6);
         font-size: 0.9rem;
         font-weight: 600;
         text-transform: uppercase;
@@ -57,7 +57,7 @@
     }
 
     .breadcrumb-item-custom a {
-        color: rgba(255,255,255,0.6);
+        color: rgba(255, 255, 255, 0.6);
         text-decoration: none;
         transition: color 0.3s;
     }
@@ -70,9 +70,9 @@
         color: var(--primary-orange);
     }
 
-    .breadcrumb-item-custom + .breadcrumb-item-custom::before {
+    .breadcrumb-item-custom+.breadcrumb-item-custom::before {
         content: '/';
-        color: rgba(255,255,255,0.2);
+        color: rgba(255, 255, 255, 0.2);
     }
 
     /* Common Section Styles */
@@ -116,7 +116,7 @@
     .about-img-main {
         width: 100%;
         border-radius: 30px;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
     }
 
     .about-experience-card {
@@ -175,7 +175,7 @@
 
     .mission-vision-card:hover {
         transform: translateY(-10px);
-        box-shadow: 0 25px 60px rgba(0,0,0,0.06);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.06);
         border-color: rgba(244, 130, 33, 0.2);
     }
 
@@ -226,7 +226,7 @@
         align-items: center;
         justify-content: center;
         margin: 0 auto 1.5rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         border: 1px solid #f8f9fa;
         transition: all 0.3s ease;
     }
@@ -253,7 +253,58 @@
         margin-bottom: 0;
     }
 
+    .about-feature-grid {
+        margin-top: 3rem;
+    }
 
+    .about-feature-card {
+        background: #ffffff;
+        border: 1px solid #f0f0f0;
+        border-radius: 24px;
+        padding: 30px 25px;
+        height: 100%;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .about-feature-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.06);
+        border-color: rgba(244, 130, 33, 0.2);
+    }
+
+    .about-feature-icon {
+        width: 65px;
+        height: 65px;
+        border-radius: 20px;
+        background: rgba(244, 130, 33, 0.12);
+        color: var(--primary-orange);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+    }
+
+    .about-feature-title {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 800;
+        font-size: 1.15rem;
+        color: var(--dark-bg);
+        margin-bottom: 0.6rem;
+    }
+
+    .about-feature-desc {
+        color: var(--text-muted);
+        line-height: 1.8;
+        margin-bottom: 0;
+        flex: 1;
+    }
+
+    .about-feature-section {
+        padding: 60px 0 100px;
+    }
 </style>
 
 <section class="page-header">
@@ -295,16 +346,59 @@
                 <div class="section-subtitle">
                     <?= stripslashes($about[0]['details'] ?? 'Spider Tech Limited is a premier technology firm dedicated to bridging the digital divide through advanced engineering.'); ?>
                 </div>
-                <?php if(isset($about[1])): ?>
-                <p class="text-muted mb-4" style="line-height: 1.7;">
-                    <?= stripslashes($about[1]['details']); ?>
-                </p>
+                <?php if (isset($about[1])): ?>
+                    <p class="text-muted mb-4" style="line-height: 1.7;">
+                        <?= stripslashes($about[1]['details']); ?>
+                    </p>
                 <?php endif; ?>
-                <?php if(isset($about[2])): ?>
-                <p class="text-muted mb-0" style="line-height: 1.7;">
-                    <?= stripslashes($about[2]['details']); ?>
-                </p>
+                <?php if (isset($about[2])): ?>
+                    <p class="text-muted mb-0" style="line-height: 1.7;">
+                        <?= stripslashes($about[2]['details']); ?>
+                    </p>
                 <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="about-feature-section bg-white">
+    <div class="container">
+        <div class="row about-feature-grid">
+            <div class="col-md-6 col-lg-6 mb-4">
+                <div class="about-feature-card">
+                    <div class="about-feature-icon">
+                        <span class="material-symbols-outlined">verified</span>
+                    </div>
+                    <h4 class="about-feature-title">We are Professional</h4>
+                    <p class="about-feature-desc">Delivering top-notch IT solutions with unmatched expertise and dedication. Trust us for innovative and reliable services.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-6 mb-4">
+                <div class="about-feature-card">
+                    <div class="about-feature-icon">
+                        <span class="material-symbols-outlined">workspace_premium</span>
+                    </div>
+                    <h4 class="about-feature-title">High-Ranking Company</h4>
+                    <p class="about-feature-desc">Offering IT solutions with a focus on excellence and dependability, making us your top choice for technology services.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-6 mb-4">
+                <div class="about-feature-card">
+                    <div class="about-feature-icon">
+                        <span class="material-symbols-outlined">badge</span>
+                    </div>
+                    <h4 class="about-feature-title">Licensed and Certified</h4>
+                    <p class="about-feature-desc">Our company is serviced by licensed professionals and experts, ensuring quality delivery of service across every engagement.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-6 mb-4">
+                <div class="about-feature-card">
+                    <div class="about-feature-icon">
+                        <span class="material-symbols-outlined">leaderboard</span>
+                    </div>
+                    <h4 class="about-feature-title">Leading Provider</h4>
+                    <p class="about-feature-desc">We excel as a top provider, offering outstanding IT solutions with exceptional performance and trustworthiness.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -317,8 +411,8 @@
             <div class="col-lg-6 mb-4 mb-lg-0">
                 <div class="mission-vision-card">
                     <div class="card-icon-box">
-                        <?php if(!empty($mission[0]['icon'])): ?>
-                            <?php if(strpos($mission[0]['icon'], 'material') !== false): ?>
+                        <?php if (!empty($mission[0]['icon'])): ?>
+                            <?php if (strpos($mission[0]['icon'], 'material') !== false): ?>
                                 <span class="material-symbols-outlined"><?= $mission[0]['icon'] ?></span>
                             <?php else: ?>
                                 <i class="<?= $mission[0]['icon'] ?> icon-render" style="font-size: 2.2rem;"></i>
@@ -334,8 +428,8 @@
             <div class="col-lg-6">
                 <div class="mission-vision-card">
                     <div class="card-icon-box">
-                        <?php if(!empty($vision[0]['icon'])): ?>
-                            <?php if(strpos($vision[0]['icon'], 'material') !== false): ?>
+                        <?php if (!empty($vision[0]['icon'])): ?>
+                            <?php if (strpos($vision[0]['icon'], 'material') !== false): ?>
                                 <span class="material-symbols-outlined"><?= $vision[0]['icon'] ?></span>
                             <?php else: ?>
                                 <i class="<?= $vision[0]['icon'] ?> icon-render" style="font-size: 2.2rem;"></i>
@@ -362,33 +456,33 @@
             <p class="section-subtitle">The fundamental principles that guide every decision and technical solution we deliver.</p>
         </div>
         <div class="row">
-            <?php if(!empty($values)): ?>
-                <?php foreach($values as $value): ?>
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="value-item">
-                        <div class="value-icon-box">
-                            <?php if(!empty($value['icon'])): ?>
-                                <?php if(strpos($value['icon'], 'material') !== false): ?>
-                                    <span class="material-symbols-outlined" style="font-size: 2.2rem;"><?= $value['icon'] ?></span>
+            <?php if (!empty($values)): ?>
+                <?php foreach ($values as $value): ?>
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <div class="value-item">
+                            <div class="value-icon-box">
+                                <?php if (!empty($value['icon'])): ?>
+                                    <?php if (strpos($value['icon'], 'material') !== false): ?>
+                                        <span class="material-symbols-outlined" style="font-size: 2.2rem;"><?= $value['icon'] ?></span>
+                                    <?php else: ?>
+                                        <i class="<?= $value['icon'] ?> icon-render" style="font-size: 2.2rem;"></i>
+                                    <?php endif; ?>
                                 <?php else: ?>
-                                    <i class="<?= $value['icon'] ?> icon-render" style="font-size: 2.2rem;"></i>
+                                    <span class="material-symbols-outlined" style="font-size: 2.2rem;">rocket_launch</span>
                                 <?php endif; ?>
-                            <?php else: ?>
-                                <span class="material-symbols-outlined" style="font-size: 2.2rem;">rocket_launch</span>
-                            <?php endif; ?>
+                            </div>
+                            <h4 class="value-title"><?= stripslashes($value['title']); ?></h4>
+                            <p class="value-description"><?= stripslashes($value['details']); ?></p>
                         </div>
-                        <h4 class="value-title"><?= stripslashes($value['title']); ?></h4>
-                        <p class="value-description"><?= stripslashes($value['details']); ?></p>
                     </div>
-                </div>
                 <?php endforeach; ?>
             <?php else: ?>
                 <!-- Fallback to default if no values found -->
                 <div class="col-lg-3 col-md-6 mb-4">
                     <div class="value-item">
-                         <div class="value-icon-box"><span class="material-symbols-outlined" style="font-size: 2.2rem;">rocket_launch</span></div>
-                         <h4 class="value-title">Innovation</h4>
-                         <p class="value-description">Pushing boundaries with cutting-edge tech.</p>
+                        <div class="value-icon-box"><span class="material-symbols-outlined" style="font-size: 2.2rem;">rocket_launch</span></div>
+                        <h4 class="value-title">Innovation</h4>
+                        <p class="value-description">Pushing boundaries with cutting-edge tech.</p>
                     </div>
                 </div>
             <?php endif; ?>

@@ -6,9 +6,21 @@
         --text-muted: #888888;
     }
 
+    /* Reading Progress Bar */
+    .reading-progress {
+        height: 4px;
+        background: var(--primary-orange);
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        width: 0%;
+        transition: width 0.1s ease-out;
+    }
+
     /* Professional Page Header High-Fidelity */
     .page-header {
-        background: linear-gradient(rgba(17,17,17,0.85), rgba(17,17,17,0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
+        background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
         background-color: var(--dark-bg);
         padding: 140px 0 80px;
         position: relative;
@@ -85,7 +97,7 @@
     }
 
     .reading-container {
-        max-width: 900px;
+        max-width: 850px;
         margin: 0 auto;
     }
 
@@ -260,50 +272,57 @@
     .gallery-item:hover .gallery-overlay { opacity: 1; }
 
     /* Action Buttons */
-    .btn-action-primary {
+    .cta-button {
         background: var(--primary-orange);
         color: #fff;
         padding: 16px 40px;
         border-radius: 50px;
+        font-family: 'Poppins', sans-serif;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 1px;
         display: inline-flex;
         align-items: center;
         gap: 12px;
-        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        transition: all 0.4s;
         text-decoration: none !important;
-        font-size: 0.9rem;
+        font-size: 1rem;
+        box-shadow: 0 10px 25px rgba(244, 130, 33, 0.3);
     }
 
-    .btn-action-primary:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 15px 30px rgba(244, 130, 33, 0.3);
+    .cta-button:hover {
+        background: #e6751c;
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(244, 130, 33, 0.4);
         color: #fff;
     }
 
-    .btn-action-secondary {
+    .cta-button-secondary {
         background: #fff;
         color: var(--dark-bg);
         border: 1px solid rgba(0,0,0,0.1);
         padding: 14px 35px;
         border-radius: 50px;
+        font-family: 'Poppins', sans-serif;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 1px;
         display: inline-flex;
         align-items: center;
         gap: 10px;
-        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        transition: all 0.4s;
         text-decoration: none !important;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
     }
 
-    .btn-action-secondary:hover {
+    .cta-button-secondary:hover {
         background: #f9fafb;
         transform: translateX(-5px);
     }
 </style>
+
+<!-- Reading Progress Bar -->
+<div id="progress-bar" class="reading-progress"></div>
 
 <?php if($event): ?>
 <!-- ====== Page Header ====== -->
@@ -335,7 +354,7 @@
         <div class="reading-container">
 
             <div class="mb-5">
-                <a href="<?= BASE_URL ?>/events" class="btn-action-secondary">
+                <a href="<?= BASE_URL ?>/events" class="cta-button-secondary">
                     <span class="material-symbols-outlined" style="font-size: 20px;">keyboard_backspace</span>
                     Back to Archives
                 </a>
@@ -392,7 +411,7 @@
             <?php if (strtolower(trim(stripslashes($event['event_status']))) === "upcoming"): ?>
             <div class="mt-5 p-5 bg-white border rounded-4 text-center">
                 <h3 class="mb-4" style="font-weight: 800; letter-spacing: -1px;">Join us at this session!</h3>
-                <a href="<?= BASE_URL ?>/trainings" class="btn-action-primary">
+                <a href="<?= BASE_URL ?>/trainings" class="cta-button">
                     Secure Your Spot
                     <span class="material-symbols-outlined">how_to_reg</span>
                 </a>
@@ -431,10 +450,30 @@
         <span class="material-symbols-outlined" style="font-size: 5rem; color: #ddd; margin-bottom: 2rem;">release_alert</span>
         <h3 class="section-title">Event Not Found</h3>
         <p class="section-subtitle mx-auto">The event you are searching for might have been archived or removed from our records.</p>
-        <a href="<?= BASE_URL ?>/events" class="btn-action-primary mt-4">
+        <a href="<?= BASE_URL ?>/events" class="cta-button mt-4">
             Browse All Events
             <span class="material-symbols-outlined">grid_view</span>
         </a>
     </div>
 </div>
 <?php endif; ?>
+
+<script>
+    // Reading Progress Tracking
+    (function() {
+        const progressBar = document.getElementById('progress-bar');
+        if (!progressBar) return;
+
+        const updateProgress = () => {
+            const h = document.documentElement,
+                  b = document.body,
+                  st = 'scrollTop',
+                  sh = 'scrollHeight';
+            const percent = (h[st]||b[st]) / ((h[sh]||b[sh]) - h.clientHeight) * 100;
+            progressBar.style.width = percent + '%';
+        };
+
+        window.addEventListener('scroll', updateProgress, { passive: true });
+        updateProgress();
+    })();
+</script>

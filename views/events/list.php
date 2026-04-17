@@ -1,3 +1,4 @@
+<style>
     :root {
         --primary-orange: #f48221;
         --dark-bg: #111111;
@@ -7,18 +8,26 @@
     }
 
     /* Global Overrides for modern feel - Matching Trainings Page */
-    .text-orange { color: var(--primary-orange) !important; }
-    .gap-2 { gap: 0.5rem; }
-    .gap-3 { gap: 1rem; }
+    .text-orange {
+        color: var(--primary-orange) !important;
+    }
+
+    .gap-2 {
+        gap: 0.5rem;
+    }
+
+    .gap-3 {
+        gap: 1rem;
+    }
 
     /* Page Header High-Fidelity */
     .page-header {
-        background: linear-gradient(rgba(17,17,17,0.85), rgba(17,17,17,0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
+        background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
         background-color: var(--dark-bg);
         padding: 140px 0 80px;
         position: relative;
         overflow: hidden;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .page-header::before {
@@ -55,7 +64,7 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        color: rgba(255,255,255,0.5);
+        color: rgba(255, 255, 255, 0.5);
         font-size: 0.85rem;
         font-weight: 600;
         text-transform: uppercase;
@@ -63,7 +72,7 @@
     }
 
     .breadcrumb-item-custom a {
-        color: rgba(255,255,255,0.5);
+        color: rgba(255, 255, 255, 0.5);
         text-decoration: none;
         transition: color 0.3s ease;
     }
@@ -79,13 +88,18 @@
     .breadcrumb-separator {
         width: 4px;
         height: 4px;
-        background: rgba(255,255,255,0.2);
+        background: rgba(255, 255, 255, 0.2);
         border-radius: 50%;
     }
 
     @media (max-width: 991px) {
-        .page-header { padding: 120px 0 60px; }
-        .section-padding { padding: 80px 0; }
+        .page-header {
+            padding: 120px 0 60px;
+        }
+
+        .section-padding {
+            padding: 80px 0;
+        }
     }
 
     /* Section Styles */
@@ -111,8 +125,9 @@
         font-size: 2.8rem;
         font-weight: 800;
         color: var(--dark-bg);
-        margin-bottom: 15px;
+        margin-bottom: 25px;
         letter-spacing: -1.5px;
+        line-height: 1.2;
     }
 
     .section-title span {
@@ -130,7 +145,6 @@
     .event-card {
         background-color: var(--card-bg);
         border-radius: 30px;
-        padding: 10px;
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         height: 100%;
         border: 1px solid #f0f0f0;
@@ -142,11 +156,12 @@
 
     .event-card:hover {
         transform: translateY(-12px);
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.06);
         border-color: rgba(244, 130, 33, 0.2);
     }
 
     .card-img-wrap {
+        margin: 10px;
         aspect-ratio: 16/10;
         border-radius: 24px;
         overflow: hidden;
@@ -166,15 +181,15 @@
 
     .card-date-badge {
         position: absolute;
-        top: 24px;
-        left: 24px;
+        top: 20px;
+        right: 20px;
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(10px);
         padding: 12px 16px;
         border-radius: 16px;
         text-align: center;
         min-width: 65px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         z-index: 2;
     }
 
@@ -216,8 +231,17 @@
         width: fit-content;
     }
 
-    .status-upcoming { background: rgba(40, 167, 69, 0.08); color: #28a745; border: 1px solid rgba(40, 167, 69, 0.1); }
-    .status-past { background: rgba(108, 117, 125, 0.08); color: #6c757d; border: 1px solid rgba(108, 117, 125, 0.1); }
+    .status-upcoming {
+        background: rgba(40, 167, 69, 0.08);
+        color: #28a745;
+        border: 1px solid rgba(40, 167, 69, 0.1);
+    }
+
+    .status-past {
+        background: rgba(108, 117, 125, 0.08);
+        color: #6c757d;
+        border: 1px solid rgba(108, 117, 125, 0.1);
+    }
 
     .card-title {
         font-family: 'Poppins', sans-serif;
@@ -227,9 +251,14 @@
         color: var(--dark-bg);
         line-height: 1.3;
         display: -webkit-box;
-        -webkit-line-clamp: 2;
+        -webkit-line-clamp: 1;
         -webkit-box-orient: vertical;
         overflow: hidden;
+        transition: color 0.3s;
+    }
+
+    .event-card:hover .card-title {
+        color: var(--primary-orange);
     }
 
     .card-desc {
@@ -278,7 +307,7 @@
         position: relative;
         overflow: hidden;
         text-align: center;
-        box-shadow: 0 40px 80px rgba(0,0,0,0.1);
+        box-shadow: 0 40px 80px rgba(0, 0, 0, 0.1);
     }
 
     .premium-cta::before {
@@ -286,8 +315,12 @@
         position: absolute;
         inset: 0;
         background: radial-gradient(circle at 10% 20%, rgba(244, 130, 33, 0.1) 0%, transparent 40%),
-                    radial-gradient(circle at 90% 80%, rgba(244, 130, 33, 0.1) 0%, transparent 40%);
+            radial-gradient(circle at 90% 80%, rgba(244, 130, 33, 0.1) 0%, transparent 40%);
         pointer-events: none;
+    }
+
+    .premium-cta h2 {
+        color: #fff;
     }
 
     .cta-button {
@@ -295,15 +328,17 @@
         color: #fff;
         padding: 16px 40px;
         border-radius: 50px;
+        font-family: 'Poppins', sans-serif;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 1px;
         display: inline-flex;
         align-items: center;
         gap: 12px;
-        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        transition: all 0.4s;
         text-decoration: none !important;
-        font-size: 0.9rem;
+        font-size: 1rem;
+        box-shadow: 0 10px 25px rgba(244, 130, 33, 0.3);
     }
 
     .cta-button:hover {
@@ -330,7 +365,7 @@
         text-align: center;
         padding: 100px 40px;
         background: #ffffff;
-        border: 2px dashed rgba(0,0,0,0.06);
+        border: 2px dashed rgba(0, 0, 0, 0.06);
         border-radius: 30px;
         margin: 20px 0;
     }
@@ -386,35 +421,35 @@
         </div>
 
         <div class="row g-4">
-            <?php if(!empty($upcoming_events)): ?>
-                <?php foreach($upcoming_events as $event):
+            <?php if (!empty($upcoming_events)): ?>
+                <?php foreach ($upcoming_events as $event):
                     $date = strtotime($event['event_date']);
                     $day = date('d', $date);
                     $month = date('M', $date);
                 ?>
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="event-card">
-                        <div class="card-img-wrap">
-                            <img src="<?= BASE_URL . '/' . ltrim(substr($event['event_img'], 3), '/'); ?>" alt="<?= htmlspecialchars($event['event_title']); ?>">
-                            <div class="card-date-badge">
-                                <span class="day"><?= $day ?></span>
-                                <span class="month"><?= $month ?></span>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="event-card">
+                            <div class="card-img-wrap">
+                                <img src="<?= BASE_URL . '/' . ltrim(substr($event['event_img'], 3), '/'); ?>" alt="<?= htmlspecialchars($event['event_title']); ?>">
+                                <div class="card-date-badge">
+                                    <span class="day"><?= $day ?></span>
+                                    <span class="month"><?= $month ?></span>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <span class="card-status-pill status-upcoming">
+                                    <span class="material-symbols-outlined" style="font-size: 14px;">bolt</span>
+                                    Upcoming
+                                </span>
+                                <h3 class="card-title"><?= stripslashes($event['event_title']); ?></h3>
+                                <div class="card-desc"><?= strip_tags(stripslashes($event['event_content'])); ?></div>
+                                <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="view-btn">
+                                    View Event Details
+                                    <span class="material-symbols-outlined">trending_flat</span>
+                                </a>
                             </div>
                         </div>
-                        <div class="card-content">
-                            <span class="card-status-pill status-upcoming">
-                                <span class="material-symbols-outlined" style="font-size: 14px;">bolt</span>
-                                Upcoming
-                            </span>
-                            <h3 class="card-title"><?= stripslashes($event['event_title']); ?></h3>
-                            <div class="card-desc"><?= strip_tags(stripslashes($event['event_content'])); ?></div>
-                            <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="view-btn">
-                                View Event Details
-                                <span class="material-symbols-outlined">trending_flat</span>
-                            </a>
-                        </div>
                     </div>
-                </div>
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="col-12">
@@ -442,35 +477,35 @@
         </div>
 
         <div class="row g-4">
-            <?php if(!empty($past_events)): ?>
-                <?php foreach($past_events as $event):
+            <?php if (!empty($past_events)): ?>
+                <?php foreach ($past_events as $event):
                     $date = strtotime($event['event_date']);
                     $day = date('d', $date);
                     $month = date('M', $date);
                 ?>
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="event-card">
-                        <div class="card-img-wrap">
-                            <img src="<?= BASE_URL . '/' . ltrim(substr($event['event_img'], 3), '/'); ?>" alt="<?= htmlspecialchars($event['event_title']); ?>">
-                            <div class="card-date-badge">
-                                <span class="day"><?= $day ?></span>
-                                <span class="month"><?= $month ?></span>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="event-card">
+                            <div class="card-img-wrap">
+                                <img src="<?= BASE_URL . '/' . ltrim(substr($event['event_img'], 3), '/'); ?>" alt="<?= htmlspecialchars($event['event_title']); ?>">
+                                <div class="card-date-badge">
+                                    <span class="day"><?= $day ?></span>
+                                    <span class="month"><?= $month ?></span>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <span class="card-status-pill status-past">
+                                    <span class="material-symbols-outlined" style="font-size: 14px;">history</span>
+                                    Completed
+                                </span>
+                                <h3 class="card-title"><?= stripslashes($event['event_title']); ?></h3>
+                                <div class="card-desc"><?= strip_tags(stripslashes($event['event_content'])); ?></div>
+                                <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="view-btn">
+                                    View Recap
+                                    <span class="material-symbols-outlined">trending_flat</span>
+                                </a>
                             </div>
                         </div>
-                        <div class="card-content">
-                            <span class="card-status-pill status-past">
-                                <span class="material-symbols-outlined" style="font-size: 14px;">history</span>
-                                Completed
-                            </span>
-                            <h3 class="card-title"><?= stripslashes($event['event_title']); ?></h3>
-                            <div class="card-desc"><?= strip_tags(stripslashes($event['event_content'])); ?></div>
-                            <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="view-btn">
-                                View Recap
-                                <span class="material-symbols-outlined">trending_flat</span>
-                            </a>
-                        </div>
                     </div>
-                </div>
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="col-12">
@@ -490,7 +525,7 @@
             <div class="row justify-content-center">
                 <div class="col-lg-8">
                     <span class="tag-eyebrow tag-eyebrow-light">Ready to Accelerate?</span>
-                    <h2 class="section-title text-white">Unlock Your <span>Tech Potential</span></h2>
+                    <h2 class="section-title">Unlock Your <span>Tech Potential</span></h2>
                     <p class="section-subtitle mx-auto text-white opacity-75 mb-5">
                         Beyond our community events, we offer specialized, high-impact training programs designed to fast-track your professional growth in the digital landscape.
                     </p>

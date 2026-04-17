@@ -11,12 +11,12 @@
 
     /* Page Header High-Fidelity */
     .page-header {
-        background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
+        background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
         background-color: var(--dark-bg);
         padding: 140px 0 80px;
         position: relative;
         overflow: hidden;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .page-header::before {
@@ -53,7 +53,7 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        color: rgba(255,255,255,0.5);
+        color: rgba(255, 255, 255, 0.5);
         font-size: 0.85rem;
         font-weight: 600;
         text-transform: uppercase;
@@ -61,7 +61,7 @@
     }
 
     .breadcrumb-item-custom a {
-        color: rgba(255,255,255,0.5);
+        color: rgba(255, 255, 255, 0.5);
         text-decoration: none;
         transition: color 0.3s ease;
     }
@@ -77,7 +77,7 @@
     .breadcrumb-separator {
         width: 4px;
         height: 4px;
-        background: rgba(255,255,255,0.2);
+        background: rgba(255, 255, 255, 0.2);
         border-radius: 50%;
     }
 
@@ -99,8 +99,13 @@
     }
 
     @media (max-width: 991px) {
-        .page-header { padding: 120px 0 60px; }
-        .blog-wrapper { padding-top: 60px; }
+        .page-header {
+            padding: 120px 0 60px;
+        }
+
+        .blog-wrapper {
+            padding-top: 60px;
+        }
     }
 
     /* Filter Pills */
@@ -143,7 +148,7 @@
         background: #fff;
         border-radius: 24px;
         overflow: hidden;
-        border: 1px solid rgba(0,0,0,0.06);
+        border: 1px solid rgba(0, 0, 0, 0.06);
         transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         height: 100%;
         display: flex;
@@ -196,7 +201,7 @@
         text-transform: uppercase;
         letter-spacing: 2px;
         z-index: 2;
-        background: rgba(255,255,255,0.1);
+        background: rgba(255, 255, 255, 0.1);
         backdrop-filter: blur(10px);
         padding: 4px 12px;
         border-radius: 50px;
@@ -240,232 +245,254 @@
 
     .read-link {
 
-    .read-link i {
-        font-size: 18px;
-        transition: transform 0.3s;
-    }
+        .read-link i {
+            font-size: 18px;
+            transition: transform 0.3s;
+        }
 
-    .research-card:hover .read-link i {
-        transform: translateX(5px);
-    }
+        .research-card:hover .read-link i {
+            transform: translateX(5px);
+        }
 
-    /* Back Button Branding */
-    .btn-insights-back {
-        background-color: var(--primary-orange);
-        color: #fff;
-        border: none;
-        border-radius: 50px;
-        padding: 12px 35px;
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 14px rgba(244, 130, 33, 0.25);
-    }
+        /* Back Button Branding */
+        .btn-insights-back {
+            background-color: var(--primary-orange);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 35px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px rgba(244, 130, 33, 0.25);
+        }
 
-    .btn-insights-back:hover {
-        background-color: #db7015;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(244, 130, 33, 0.35);
-        color: #fff;
-    }
+        .btn-insights-back:hover {
+            background-color: #db7015;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(244, 130, 33, 0.35);
+            color: #fff;
+        }
 
-    /* Detail View Styling */
-    .reading-progress {
-        height: 4px;
-        background: var(--primary-orange);
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 1000;
-        width: 0%;
-        transition: width 0.1s ease-out;
-    }
+        /* Detail View Styling */
+        .reading-progress {
+            height: 4px;
+            background: var(--primary-orange);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            width: 0%;
+            transition: width 0.1s ease-out;
+        }
 
-    .article-main {
-        padding-top: 120px;
-        padding-bottom: 100px;
-    }
+        .article-main {
+            padding-top: 120px;
+            padding-bottom: 100px;
+        }
 
-    .hero-wrap {
-        position: relative;
-        height: 450px;
-        border-radius: 30px;
-        overflow: hidden;
-        margin-bottom: 60px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    }
-    .hero-wrap img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    .hero-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(to top, rgba(17,24,39,0.9), transparent);
-        padding: 40px;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-    }
-    .hero-overlay h1 {
-        color: #fff;
-        font-size: 48px;
-        font-weight: 700;
-        line-height: 1.2;
-        max-width: 900px;
-    }
-    .hero-overlay .badge {
-        background: var(--primary-orange);
-        color: #fff;
-        padding: 6px 20px;
-        border-radius: 50px;
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        width: fit-content;
-        margin-bottom: 20px;
-    }
+        .hero-wrap {
+            position: relative;
+            height: 450px;
+            border-radius: 30px;
+            overflow: hidden;
+            margin-bottom: 60px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
 
-    .reading-container {
-        max-width: 850px;
-        margin: 0 auto;
-    }
+        .hero-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-    .article-meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 30px 0;
-        border-bottom: 1px solid #eee;
-        margin-bottom: 50px;
-    }
-    .author-box {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-    .author-icon {
-        width: 45px;
-        height: 45px;
-        background: #f3f4f6;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary-orange);
-    }
-    .author-info h6 {
-        margin: 0;
-        font-weight: 700;
-        font-size: 14px;
-    }
-    .author-info span {
-        font-size: 11px;
-        color: #999;
-        text-transform: uppercase;
-        font-weight: 600;
-    }
-    .meta-stats {
-        display: flex;
-        gap: 30px;
-        font-size: 11px;
-        font-weight: 700;
-        color: #999;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(17, 24, 39, 0.9), transparent);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
 
-    .article-content {
-        font-size: 18px;
-        line-height: 1.8;
-        color: #374151;
-    }
-    .article-content p {
-        margin-bottom: 25px;
-    }
-    .article-content h2 {
-        font-size: 32px;
-        font-weight: 700;
-        color: var(--primary-dark);
-        margin-top: 50px;
-        margin-bottom: 20px;
-    }
-    .abstract {
-        font-size: 20px;
-        color: #4b5563;
-        font-style: italic;
-        border-left: 4px solid #eee;
-        padding-left: 25px;
-        margin-bottom: 40px;
-        font-weight: 300;
-    }
-    .callout {
-        background: #fffcf9;
-        border-left: 4px solid var(--primary-orange);
-        padding: 35px;
-        border-radius: 0 15px 15px 0;
-        margin: 40px 0;
-    }
-    .callout h5 {
-        color: var(--primary-orange);
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 10px;
-    }
-    .article-img {
-        width: 100%;
-        border-radius: 20px;
-        margin: 40px 0;
-    }
+        .hero-overlay h1 {
+            color: #fff;
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1.2;
+            max-width: 900px;
+        }
 
-    .related-section {
-        margin-top: 80px;
-        padding-top: 60px;
-        border-top: 1px solid #eee;
-    }
-    .related-section h4 {
-        margin-bottom: 30px;
-        font-weight: 700;
-    }
-    .related-card {
-        border: 1px solid #eee;
-        padding: 30px;
-        border-radius: 20px;
-        transition: all 0.3s;
-        height: 100%;
-        display: block;
-        text-decoration: none !important;
-    }
-    .related-card:hover {
-        border-color: rgba(244,130,33,0.3);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-        transform: translateY(-5px);
-    }
-    .related-card .tag {
-        color: var(--primary-orange);
-        font-size: 10px;
-        font-weight: 700;
-        text-transform: uppercase;
-        margin-bottom: 12px;
-        display: block;
-    }
-    .related-card h5 {
-        font-size: 18px;
-        color: var(--primary-dark);
-        font-weight: 700;
-    }
+        .hero-overlay .badge {
+            background: var(--primary-orange);
+            color: #fff;
+            padding: 6px 20px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            width: fit-content;
+            margin-bottom: 20px;
+        }
 
-    [x-cloak] { display: none !important; }
+        .reading-container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 0;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 50px;
+        }
+
+        .author-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .author-icon {
+            width: 45px;
+            height: 45px;
+            background: #f3f4f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-orange);
+        }
+
+        .author-info h6 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .author-info span {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .meta-stats {
+            display: flex;
+            gap: 30px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .article-content {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #374151;
+        }
+
+        .article-content p {
+            margin-bottom: 25px;
+        }
+
+        .article-content h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+
+        .abstract {
+            font-size: 20px;
+            color: #4b5563;
+            font-style: italic;
+            border-left: 4px solid #eee;
+            padding-left: 25px;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .callout {
+            background: #fffcf9;
+            border-left: 4px solid var(--primary-orange);
+            padding: 35px;
+            border-radius: 0 15px 15px 0;
+            margin: 40px 0;
+        }
+
+        .callout h5 {
+            color: var(--primary-orange);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .article-img {
+            width: 100%;
+            border-radius: 20px;
+            margin: 40px 0;
+        }
+
+        .related-section {
+            margin-top: 80px;
+            padding-top: 60px;
+            border-top: 1px solid #eee;
+        }
+
+        .related-section h4 {
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .related-card {
+            border: 1px solid #eee;
+            padding: 30px;
+            border-radius: 20px;
+            transition: all 0.3s;
+            height: 100%;
+            display: block;
+            text-decoration: none !important;
+        }
+
+        .related-card:hover {
+            border-color: rgba(244, 130, 33, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            transform: translateY(-5px);
+        }
+
+        .related-card .tag {
+            color: var(--primary-orange);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .related-card h5 {
+            font-size: 18px;
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+
+        [x-cloak] {
+            display: none !important;
+        }
 </style>
 
 <div id="progress-bar" class="reading-progress"></div>
@@ -528,80 +555,92 @@
 </main>
 
 <script>
-document.addEventListener('alpine:init', () => {
-    Alpine.data('blogManager', () => ({
-        view: '<?= isset($blog) ? 'detail' : 'index' ?>',
-        currentCategory: 'all',
-        blogs: <?= json_encode($blogs) ?>,
-        loading: false,
-        detailContent: '',
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('blogManager', () => ({
+            view: '<?= isset($blog) ? 'detail' : 'index' ?>',
+            currentCategory: 'all',
+            blogs: <?= json_encode($blogs) ?>,
+            loading: false,
+            detailContent: '',
 
-        init() {
-            if (this.view === 'detail') {
-                // If we started on a detail page (SSR), we'll need to handle it
-                // but for now, we assume it's already rendered by PHP in the detail view.
-            }
-        },
-
-        async setCategory(slug) {
-            this.currentCategory = slug;
-            this.loading = true;
-            try {
-                const response = await fetch(`<?= BASE_URL ?>/blog?category=${slug}`, {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                });
-                const data = await response.json();
-                if (data.success) {
-                    this.blogs = data.blogs;
+            init() {
+                if (this.view === 'detail') {
+                    // If we started on a detail page (SSR), we'll need to handle it
+                    // but for now, we assume it's already rendered by PHP in the detail view.
                 }
-            } catch (error) {
-                console.error('Error fetching blogs:', error);
-            } finally {
-                this.loading = false;
-            }
-        },
+            },
 
-        async loadArticle(slug) {
-            this.loading = true;
-            try {
-                const response = await fetch(`<?= BASE_URL ?>/blog/${slug}`, {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                });
-                const html = await response.text();
-                this.detailContent = html;
-                this.view = 'detail';
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                history.pushState({ view: 'detail', slug: slug }, '', `<?= BASE_URL ?>/blog/${slug}`);
-            } catch (error) {
-                console.error('Error loading article:', error);
-            } finally {
-                this.loading = false;
-            }
-        },
+            async setCategory(slug) {
+                this.currentCategory = slug;
+                this.loading = true;
+                try {
+                    const response = await fetch(`<?= BASE_URL ?>/blog?category=${slug}`, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        this.blogs = data.blogs;
+                    }
+                } catch (error) {
+                    console.error('Error fetching blogs:', error);
+                } finally {
+                    this.loading = false;
+                }
+            },
 
-        handlePopState(event) {
-            if (event.state && event.state.view === 'detail') {
-                this.loadArticle(event.state.slug);
-            } else {
-                this.view = 'index';
-                this.detailContent = '';
-                history.replaceState({ view: 'index' }, '', `<?= BASE_URL ?>/blog`);
-            }
-        },
+            async loadArticle(slug) {
+                this.loading = true;
+                try {
+                    const response = await fetch(`<?= BASE_URL ?>/blog/${slug}`, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                    const html = await response.text();
+                    this.detailContent = html;
+                    this.view = 'detail';
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                    history.pushState({
+                        view: 'detail',
+                        slug: slug
+                    }, '', `<?= BASE_URL ?>/blog/${slug}`);
+                } catch (error) {
+                    console.error('Error loading article:', error);
+                } finally {
+                    this.loading = false;
+                }
+            },
 
-        updateProgress() {
-            if (this.view !== 'detail') return;
-            const h = document.documentElement,
-                  b = document.body,
-                  st = 'scrollTop',
-                  sh = 'scrollHeight';
-            const percent = (h[st]||b[st]) / ((h[sh]||b[sh]) - h.clientHeight) * 100;
-            const progressBar = document.getElementById('progress-bar');
-            if (progressBar) progressBar.style.width = percent + '%';
-        },
+            handlePopState(event) {
+                if (event.state && event.state.view === 'detail') {
+                    this.loadArticle(event.state.slug);
+                } else {
+                    this.view = 'index';
+                    this.detailContent = '';
+                    history.replaceState({
+                        view: 'index'
+                    }, '', `<?= BASE_URL ?>/blog`);
+                }
+            },
 
-    }));
-});
+            updateProgress() {
+                if (this.view !== 'detail') return;
+                const h = document.documentElement,
+                    b = document.body,
+                    st = 'scrollTop',
+                    sh = 'scrollHeight';
+                const percent = (h[st] || b[st]) / ((h[sh] || b[sh]) - h.clientHeight) * 100;
+                const progressBar = document.getElementById('progress-bar');
+                if (progressBar) progressBar.style.width = percent + '%';
+            },
+
+        }));
+    });
 </script>
 
 <!-- Include Modular Newsletter -->

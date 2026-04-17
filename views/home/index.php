@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Home Page Redesign
  * Modern MVC structure with Alpine.js and Bootstrap 4
@@ -8,10 +9,18 @@
 foreach ($banners as &$banner) {
     if (strpos($banner['banner_title'], 'Homepage slider') !== false) {
         switch ($banner['banner_id']) {
-            case 1: $banner['banner_title'] = "Innovating the <span>Future of Tech</span>"; break;
-            case 2: $banner['banner_title'] = "Empowering <span>Digital Transformation</span>"; break;
-            case 3: $banner['banner_title'] = "Scaling <span>African Excellence</span>"; break;
-            default: $banner['banner_title'] = "Master the <span>Industrial Tech</span> of Tomorrow"; break;
+            case 1:
+                $banner['banner_title'] = "Give Wings to your <span>Business</span>";
+                break;
+            case 2:
+                $banner['banner_title'] = "Innovating the <span>Future of Tech</span>";
+                break;
+            case 3:
+                $banner['banner_title'] = "Empowering <span>Digital Transformation</span>";
+                break;
+            default:
+                $banner['banner_title'] = "Think Big, Grow your <span>Business</span>";
+                break;
         }
     }
 }
@@ -61,8 +70,9 @@ foreach ($banners as &$banner) {
         z-index: 10;
         display: flex;
         align-items: center;
-        background: linear-gradient(to right, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
-        padding-top: 80px; /* Reduced to bring stats more into view */
+        background: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.2) 60%, transparent 100%);
+        padding-top: 80px;
+        /* Reduced to bring stats more into view */
     }
 
     .hero-content {
@@ -96,7 +106,8 @@ foreach ($banners as &$banner) {
         font-size: clamp(2.5rem, 5vw, 4.5rem);
         line-height: 1.1;
         margin-bottom: 1.5rem;
-        color: rgba(255,255,255,0.85); /* Match description color for readability */
+        color: rgba(255, 255, 255, 0.85);
+        /* Match description color for readability */
     }
 
     .hero-title span {
@@ -106,8 +117,9 @@ foreach ($banners as &$banner) {
     .hero-desc {
         font-family: 'Open Sans', sans-serif;
         font-size: 1.2rem;
-        color: rgba(255,255,255,0.85);
-        margin-bottom: 1.5rem; /* Reduced for tighter layout */
+        color: rgba(255, 255, 255, 0.85);
+        margin-bottom: 1.5rem;
+        /* Reduced for tighter layout */
         max-width: 650px;
         line-height: 1.7;
     }
@@ -115,7 +127,8 @@ foreach ($banners as &$banner) {
     .hero-btns {
         display: flex;
         gap: 1.25rem;
-        margin-bottom: 3rem; /* Reduced to pull stats up */
+        margin-bottom: 3rem;
+        /* Reduced to pull stats up */
     }
 
     .btn-pill {
@@ -163,7 +176,7 @@ foreach ($banners as &$banner) {
     .hero-stats {
         display: flex;
         gap: 4.5rem;
-        border-top: 1px solid rgba(255,255,255,0.2);
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
         padding-top: 1.5rem;
     }
 
@@ -183,7 +196,7 @@ foreach ($banners as &$banner) {
     .hero-stat-label {
         font-size: 0.75rem;
         text-transform: uppercase;
-        color: rgba(255,255,255,0.6);
+        color: rgba(255, 255, 255, 0.6);
         letter-spacing: 1.5px;
         margin-top: 8px;
     }
@@ -235,7 +248,7 @@ foreach ($banners as &$banner) {
     .about-img-main {
         width: 100%;
         border-radius: 30px;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
     }
 
     .about-experience-card {
@@ -280,7 +293,7 @@ foreach ($banners as &$banner) {
 
     .service-card-new:hover {
         transform: translateY(-12px);
-        box-shadow: 0 25px 50px rgba(0,0,0,0.08);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
         border-color: rgba(244, 130, 33, 0.2);
     }
 
@@ -323,7 +336,7 @@ foreach ($banners as &$banner) {
         background: #fff;
         border-radius: 24px;
         overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
         border: 1px solid #f0f0f0;
         transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         height: 100%;
@@ -331,7 +344,7 @@ foreach ($banners as &$banner) {
 
     .event-card-horizontal:hover {
         transform: translateY(-5px);
-        box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
         border-color: rgba(244, 130, 33, 0.2);
     }
 
@@ -460,14 +473,16 @@ foreach ($banners as &$banner) {
         transition: gap 0.3s;
     }
 
-    .view-btn-p:hover { gap: 12px; }
+    .view-btn-p:hover {
+        gap: 12px;
+    }
 
     /* Testimonials Slider - High Fidelity Refinement */
     .testimonial-slide-new {
         background: #fff;
         padding: 35px;
         border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
         margin: 10px;
         border: 1px solid #f2f2f2;
         transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
@@ -480,7 +495,7 @@ foreach ($banners as &$banner) {
 
     .testimonial-slide-new:hover {
         border-color: rgba(244, 130, 33, 0.3);
-        box-shadow: 0 15px 40px rgba(0,0,0,0.06);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.06);
         transform: translateY(-5px);
     }
 
@@ -553,20 +568,53 @@ foreach ($banners as &$banner) {
 
 
     @media (max-width: 991px) {
-        .hero-stats { gap: 2.5rem; }
-        .hero-title { font-size: 3.2rem; }
-        .event-img-h { height: 250px; min-height: auto; }
-        .newsletter-section { padding: 60px 30px; }
-        .hero-btns { flex-direction: column; }
+        .hero-stats {
+            gap: 2.5rem;
+        }
+
+        .hero-title {
+            font-size: 3.2rem;
+        }
+
+        .event-img-h {
+            height: 250px;
+            min-height: auto;
+        }
+
+        .newsletter-section {
+            padding: 60px 30px;
+        }
+
+        .hero-btns {
+            flex-direction: column;
+        }
     }
 
     @media (max-width: 576px) {
-        .hero-stats { display: none; }
-        .hero-btns .btn-pill { width: 100%; }
-        .hero-content { text-align: center; }
-        .hero-eyebrow { justify-content: center; }
-        .hero-eyebrow::after { display: none; }
-        .hero-desc { margin-left: auto; margin-right: auto; }
+        .hero-stats {
+            display: none;
+        }
+
+        .hero-btns .btn-pill {
+            width: 100%;
+        }
+
+        .hero-content {
+            text-align: center;
+        }
+
+        .hero-eyebrow {
+            justify-content: center;
+        }
+
+        .hero-eyebrow::after {
+            display: none;
+        }
+
+        .hero-desc {
+            margin-left: auto;
+            margin-right: auto;
+        }
     }
 </style>
 
@@ -589,12 +637,12 @@ foreach ($banners as &$banner) {
     <div class="hero-overlay">
         <div class="container">
             <div class="hero-content" x-show="true" x-transition:enter="animate__animated animate__fadeInUp">
-                <span class="hero-eyebrow">Innovation at Scale</span>
+                <span class="hero-eyebrow">Precision and Speed</span>
 
                 <h1 class="hero-title" x-html="slides[activeSlide].banner_title"></h1>
 
                 <p class="hero-desc">
-                    Empowering African Tech Innovators since 2020. We build, nurture, and scale the next generation of digital solutions to solve real-world industrial challenges.
+                    We are team of passionate tech enthusiats committed to elavating your technological ambision to greater heights.
                 </p>
 
                 <div class="hero-btns">
@@ -672,15 +720,15 @@ foreach ($banners as &$banner) {
         </div>
         <div class="row">
             <?php foreach (array_slice($services, 0, 6) as $service): ?>
-            <div class="col-lg-4 col-md-6 mb-4">
-                <a href="<?= BASE_URL ?>/services/detail?id=<?= $service['id']; ?>" class="service-card-new">
-                    <div class="service-icon-box">
-                        <i class="<?= $service['service_icon']; ?>"></i>
-                    </div>
-                    <h3 class="service-title"><?= $service['service_name']; ?></h3>
-                    <p class="service-text"><?= $service['service_description']; ?></p>
-                </a>
-            </div>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <a href="<?= BASE_URL ?>/services/detail?id=<?= $service['id']; ?>" class="service-card-new">
+                        <div class="service-icon-box">
+                            <i class="<?= $service['service_icon']; ?>"></i>
+                        </div>
+                        <h3 class="service-title"><?= $service['service_name']; ?></h3>
+                        <p class="service-text"><?= $service['service_description']; ?></p>
+                    </a>
+                </div>
             <?php endforeach; ?>
         </div>
         <div class="section-footer">
@@ -691,55 +739,56 @@ foreach ($banners as &$banner) {
 
 <!-- ====== Upcoming Events Section ====== -->
 <?php if (!empty($upcoming_events)): ?>
-<section class="section-padding">
-    <div class="container">
-        <div class="section-header">
-            <h2 class="section-title">Join Our <span>Latest Events</span></h2>
-            <p class="section-subtitle">Stay ahead with our technical workshops, seminars, and networking sessions.</p>
-        </div>
+    <section class="section-padding">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Join Our <span>Latest Events</span></h2>
+                <p class="section-subtitle">Stay ahead in tech with curated events designed to help you learn, connect, and grow explore new trends, gain insights, and build valuable connections.
+                </p>
+            </div>
 
-        <div class="owl-carousel owl-theme" id="event-carousel">
-            <?php foreach ($upcoming_events as $event): ?>
-            <div class="item p-3">
-                <div class="event-card-horizontal">
-                    <div class="row no-gutters">
-                        <div class="col-md-5">
-                            <img src="<?= BASE_URL . '/' . ltrim(substr($event['event_img'], 3), '/'); ?>" class="event-img-h w-100" alt="Event Image">
-                        </div>
-                        <div class="col-md-7">
-                            <div class="event-content-h">
-                                <span class="event-tag">Upcoming Event</span>
-                                <h3 class="service-title mb-4" style="font-size: 1.8rem;">
-                                    <?= stripslashes($event['event_title']); ?>
-                                </h3>
-                                <div class="event-meta-h">
-                                    <div class="meta-item-h">
-                                        <span class="material-symbols-outlined">calendar_today</span>
-                                        <span><?= date_format(date_create($event['event_date']), "M j, Y"); ?></span>
-                                    </div>
-                                    <div class="meta-item-h">
-                                        <span class="material-symbols-outlined">schedule</span>
-                                        <span><?= stripslashes($event['event_time']); ?></span>
-                                    </div>
+            <div class="owl-carousel owl-theme" id="event-carousel">
+                <?php foreach ($upcoming_events as $event): ?>
+                    <div class="item p-3">
+                        <div class="event-card-horizontal">
+                            <div class="row no-gutters">
+                                <div class="col-md-5">
+                                    <img src="<?= BASE_URL . '/' . ltrim(substr($event['event_img'], 3), '/'); ?>" class="event-img-h w-100" alt="Event Image">
                                 </div>
-                                <div class="text-muted mb-5 line-clamp-2" style="font-size: 0.95rem; line-height: 1.6;">
-                                    <?= substr(strip_tags(stripslashes($event['event_detail'])), 0, 150); ?>...
-                                </div>
-                                <div class="mt-auto">
-                                    <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="btn-pill btn-orange">
-                                        Register Now
-                                        <span class="material-symbols-outlined">arrow_forward</span>
-                                    </a>
+                                <div class="col-md-7">
+                                    <div class="event-content-h">
+                                        <span class="event-tag">Upcoming Event</span>
+                                        <h3 class="service-title mb-4" style="font-size: 1.8rem;">
+                                            <?= stripslashes($event['event_title']); ?>
+                                        </h3>
+                                        <div class="event-meta-h">
+                                            <div class="meta-item-h">
+                                                <span class="material-symbols-outlined">calendar_today</span>
+                                                <span><?= date_format(date_create($event['event_date']), "M j, Y"); ?></span>
+                                            </div>
+                                            <div class="meta-item-h">
+                                                <span class="material-symbols-outlined">schedule</span>
+                                                <span><?= stripslashes($event['event_time']); ?></span>
+                                            </div>
+                                        </div>
+                                        <div class="text-muted mb-5 line-clamp-2" style="font-size: 0.95rem; line-height: 1.6;">
+                                            <?= substr(strip_tags(stripslashes($event['event_detail'])), 0, 150); ?>...
+                                        </div>
+                                        <div class="mt-auto">
+                                            <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="btn-pill btn-orange">
+                                                Register Now
+                                                <span class="material-symbols-outlined">arrow_forward</span>
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                <?php endforeach; ?>
             </div>
-            <?php endforeach; ?>
         </div>
-    </div>
-</section>
+    </section>
 <?php endif; ?>
 
 <!-- ====== Projects Showcase ====== -->
@@ -747,25 +796,25 @@ foreach ($banners as &$banner) {
     <div class="container">
         <div class="section-header">
             <h2 class="section-title">Featured <span>Projects</span></h2>
-            <p class="section-subtitle">Take a look at some of our most impactful digital transformations and technical implementations.</p>
+            <p class="section-subtitle">We design innovative digital solutions leveraging cutting-edge technology.</p>
         </div>
         <div class="row">
             <?php foreach ($projects as $project): ?>
-            <div class="col-lg-4 col-md-6 mb-4">
-                <a href="<?= BASE_URL ?>/projects/detail?id=<?= $project['project_id']; ?>" class="project-card-new">
-                    <div class="card-img-wrap">
-                        <img src="<?= BASE_URL . '/' . ltrim(substr($project['project_pic'], 3), '/'); ?>" alt="<?= stripslashes($project['project_name']); ?>">
-                    </div>
-                    <div class="card-content-p">
-                        <span class="card-category-p"><?= $project['service_name']; ?></span>
-                        <h4 class="card-title-p"><?= stripslashes($project['project_name']); ?></h4>
-                        <div class="view-btn-p">
-                            View Project Details
-                            <span class="material-symbols-outlined" style="font-size: 1.1rem;">arrow_forward</span>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <a href="<?= BASE_URL ?>/projects/detail?id=<?= $project['project_id']; ?>" class="project-card-new">
+                        <div class="card-img-wrap">
+                            <img src="<?= BASE_URL . '/' . ltrim(substr($project['project_pic'], 3), '/'); ?>" alt="<?= stripslashes($project['project_name']); ?>">
                         </div>
-                    </div>
-                </a>
-            </div>
+                        <div class="card-content-p">
+                            <span class="card-category-p"><?= $project['service_name']; ?></span>
+                            <h4 class="card-title-p"><?= stripslashes($project['project_name']); ?></h4>
+                            <div class="view-btn-p">
+                                View Project Details
+                                <span class="material-symbols-outlined" style="font-size: 1.1rem;">arrow_forward</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
             <?php endforeach; ?>
         </div>
         <div class="section-footer">
@@ -783,25 +832,25 @@ foreach ($banners as &$banner) {
         </div>
         <div class="owl-carousel owl-theme" id="testimonial-carousel">
             <?php foreach ($testimonials as $testimonial): ?>
-            <div class="item">
-                <div class="testimonial-slide-new">
-                    <div class="quote-icon">
-                        <i class="fa-solid fa-quote-left"></i>
-                    </div>
-                    <p class="testimonial-text">
-                        "<?= stripslashes($testimonial['testimonial']); ?>"
-                    </p>
-                    <div class="client-info-v2">
-                        <div class="client-avatar-v2">
-                            <span class="material-symbols-outlined">account_circle</span>
+                <div class="item">
+                    <div class="testimonial-slide-new">
+                        <div class="quote-icon">
+                            <i class="fa-solid fa-quote-left"></i>
                         </div>
-                        <div>
-                            <h5 class="client-name-v2"><?= stripslashes($testimonial['name']); ?></h5>
-                            <p class="client-job-v2"><?= stripslashes($testimonial['title']); ?>, <?= stripslashes($testimonial['organization']); ?></p>
+                        <p class="testimonial-text">
+                            "<?= stripslashes($testimonial['testimonial']); ?>"
+                        </p>
+                        <div class="client-info-v2">
+                            <div class="client-avatar-v2">
+                                <span class="material-symbols-outlined">account_circle</span>
+                            </div>
+                            <div>
+                                <h5 class="client-name-v2"><?= stripslashes($testimonial['name']); ?></h5>
+                                <p class="client-job-v2"><?= stripslashes($testimonial['title']); ?>, <?= stripslashes($testimonial['organization']); ?></p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
             <?php endforeach; ?>
         </div>
     </div>
@@ -810,35 +859,41 @@ foreach ($banners as &$banner) {
 <?php include ROOT_PATH . '/views/layout/newsletter.php'; ?>
 
 <script>
-$(document).ready(function() {
-    // Initialize Event Carousel
-    $("#event-carousel").owlCarousel({
-        items: 1,
-        loop: true,
-        autoplay: true,
-        autoplayTimeout: 5000,
-        dots: true,
-        nav: false,
-        margin: 30
+    $(document).ready(function() {
+        // Initialize Event Carousel
+        $("#event-carousel").owlCarousel({
+            items: 1,
+            loop: true,
+            autoplay: true,
+            autoplayTimeout: 5000,
+            dots: true,
+            nav: false,
+            margin: 30
+        });
+
+        // Initialize Testimonial Carousel - Smooth Glide
+        $("#testimonial-carousel").owlCarousel({
+            loop: true,
+            margin: 20,
+            nav: false,
+            dots: true,
+            autoplay: true,
+            autoplayTimeout: 6000,
+            smartSpeed: 1000,
+            autoplayHoverPause: true,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                768: {
+                    items: 2
+                },
+                1200: {
+                    items: 3
+                }
+            }
+        });
+
+
     });
-
-    // Initialize Testimonial Carousel - Smooth Glide
-    $("#testimonial-carousel").owlCarousel({
-        loop: true,
-        margin: 20,
-        nav: false,
-        dots: true,
-        autoplay: true,
-        autoplayTimeout: 6000,
-        smartSpeed: 1000,
-        autoplayHoverPause: true,
-        responsive: {
-            0: { items: 1 },
-            768: { items: 2 },
-            1200: { items: 3 }
-        }
-    });
-
-
-});
 </script>
