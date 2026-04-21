@@ -8,91 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="<?= BASE_URL ?>/css/bootstrap.min.css" />
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <style>
-        body { background-color: #f8f9fa; font-family: 'Open Sans', sans-serif; }
-        .auth-card {
-            background-color: #ffffff;
-            border: 1px solid #e9ecef;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            max-width: 450px;
-            margin: 80px auto;
-        }
-        .auth-heading { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1.8rem; color: #111111; margin-bottom: 8px; text-align: center; }
-        .auth-subtext { font-size: 1rem; color: #555555; margin-bottom: 32px; text-align: center; }
-        .form-group { margin-bottom: 20px; position: relative; }
-        .form-group label { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.9rem; color: #111111; display: block; margin-bottom: 8px; }
-        .auth-input { height: 56px; border-radius: 50px; padding: 0 24px; border: 1px solid #e9ecef; font-size: 1rem; width: 100%; }
-        .auth-input:focus { border-color: #f48221; outline: none; box-shadow: 0 0 0 4px rgba(244, 130, 33, 0.1); }
-        .password-toggle { position: absolute; right: 20px; top: 45px; cursor: pointer; color: #797979; user-select: none; z-index: 5; }
-
-        /* Password Guide */
-        .pw-guide {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #e9ecef;
-        }
-        .pw-guide-title {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            font-size: 0.8rem;
-            color: #111;
-            margin-bottom: 10px;
-            display: block;
-        }
-        .pw-guide-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-        .pw-guide-item {
-            font-size: 0.75rem;
-            color: #797979;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .pw-guide-item.valid { color: #2f855a; }
-        .pw-guide-item.valid .material-symbols-outlined { color: #2f855a; font-variation-settings: 'FILL' 1; }
-        .pw-guide-item.invalid { color: #ef4444; }
-        .pw-guide-item.invalid .material-symbols-outlined { color: #ef4444; }
-        .pw-guide-item .material-symbols-outlined { font-size: 14px; transition: all 0.2s ease; }
-
-        .auth-btn { background-color: #f48221; color: #ffffff; height: 56px; border-radius: 50px; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1rem; width: 100%; border: none; transition: background-color 0.3s; cursor: pointer; margin-top: 10px; }
-        .auth-btn:hover { background-color: #e6751c; }
-        .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-        /* Strength Meter */
-        .strength-meter {
-            height: 4px;
-            background: #e9ecef;
-            border-radius: 2px;
-            margin-top: 8px;
-            overflow: hidden;
-            position: relative;
-        }
-        .strength-bar {
-            height: 100%;
-            transition: width 0.3s ease, background-color 0.3s ease;
-        }
-        .strength-text {
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-top: 4px;
-            display: block;
-            text-align: right;
-        }
-
-        .alert { padding: 15px; border-radius: 12px; margin-bottom: 20px; font-size: 0.9rem; }
-        .alert-danger { background-color: #fff5f5; color: #e53e3e; border: 1px solid #feb2b2; }
-    </style>
 </head>
 <body x-data="resetForm()">
 <div class="container">
@@ -110,7 +25,7 @@
             <div class="form-group">
                 <label>New Password</label>
                 <input :type="showPw1 ? 'text' : 'password'" name="password" class="auth-input"
-                       placeholder="Enter new password" required x-model="password" style="padding-right: 56px;">
+                       placeholder="Enter new password" required x-model="password" class="pr-56">
                 <span class="material-symbols-outlined password-toggle" @click="showPw1 = !showPw1"
                       x-text="showPw1 ? 'visibility_off' : 'visibility'"></span>
             </div>
@@ -151,7 +66,7 @@
             <div class="form-group">
                 <label>Confirm Password</label>
                 <input :type="showPw2 ? 'text' : 'password'" name="confirm_password" class="auth-input"
-                       placeholder="Confirm new password" required x-model="confirm_password" style="padding-right: 56px;">
+                       placeholder="Confirm new password" required x-model="confirm_password" class="pr-56">
                 <span class="material-symbols-outlined password-toggle" @click="showPw2 = !showPw2"
                       x-text="showPw2 ? 'visibility_off' : 'visibility'"></span>
             </div>

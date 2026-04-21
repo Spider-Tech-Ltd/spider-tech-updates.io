@@ -1,5 +1,5 @@
 <!-- Reading Progress Bar -->
-<div id="progress-bar-inner" class="reading-progress" style="width: 0%;"></div>
+<div id="progress-bar-inner" class="reading-progress w-0"></div>
 
 <div class="container">
 
@@ -45,7 +45,7 @@
                 <?php foreach ($related_blogs as $related): ?>
                 <div class="col-md-6 mb-4">
                     <!-- Use loadArticle for SPA navigation -->
-                    <div class="related-card" @click="loadArticle('<?= $related['slug'] ?>')" style="cursor: pointer;">
+                    <div class="related-card" @click="loadArticle('<?= $related['slug'] ?>')" class="cursor-pointer">
                         <span class="tag"><?= htmlspecialchars($related['category_name']) ?></span>
                         <h5><?= htmlspecialchars($related['title']) ?></h5>
                     </div>

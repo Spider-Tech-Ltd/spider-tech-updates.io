@@ -1,137 +1,3 @@
-<style>
-  /* ====== Modern Footer Reset & Base ====== */
-  .site-footer {
-    background-color: #ffffff;
-    padding: 80px 0 40px 0;
-    font-family: 'Open Sans', sans-serif;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    color: #555555;
-  }
-
-  .footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-  }
-
-  .footer-grid {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
-    gap: 40px;
-    margin-bottom: 60px;
-  }
-
-  /* Column Typography */
-  .footer-col h4 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    color: #111111;
-    margin-bottom: 24px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .footer-col p {
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin-bottom: 24px;
-  }
-
-  /* Footer Links */
-  .footer-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .footer-links li {
-    margin-bottom: 12px;
-  }
-  .footer-links a {
-    color: #555555;
-    text-decoration: none !important;
-    font-size: 0.9rem;
-    transition: color 0.3s;
-  }
-  .footer-links a:hover {
-    color: #f48221;
-  }
-
-  /* Branding & Social */
-  .footer-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-    text-decoration: none !important;
-  }
-
-  .footer-logo-img {
-    height: 35px;
-    width: auto;
-  }
-
-  .social-links {
-    display: flex;
-    gap: 12px;
-  }
-  .social-icon {
-    width: 36px;
-    height: 36px;
-    border: 1px solid #e9ecef;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #555555;
-    transition: all 0.3s;
-    text-decoration: none !important;
-  }
-  .social-icon:hover {
-    background-color: #f48221;
-    border-color: #f48221;
-    color: #ffffff;
-    transform: translateY(-3px);
-  }
-
-  /* Contact Specifics */
-  .contact-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-    font-size: 0.9rem;
-  }
-  .contact-item i {
-    color: #f48221;
-    font-size: 1.1rem;
-  }
-  .contact-item span {
-    font-weight: 600;
-    color: #111111;
-  }
-
-  /* Bottom Bar */
-  .footer-bottom {
-    border-top: 1px solid #edf2f7;
-    padding-top: 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.85rem;
-    color: #718096;
-  }
-  .heart-icon { color: #f48221; }
-
-  /* Responsive Adjustments */
-  @media (max-width: 992px) {
-    .footer-grid { grid-template-columns: 1fr 1fr; }
-  }
-  @media (max-width: 576px) {
-    .footer-grid { grid-template-columns: 1fr; gap: 40px; }
-    .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
-  }
-</style>
 
 <footer class="site-footer">
   <div class="footer-container">
@@ -179,18 +45,18 @@
       <!-- Col 4: Support -->
       <div class="footer-col">
         <h4>Support</h4>
-        <ul class="footer-links" style="margin-bottom: 24px;">
+        <ul class="footer-links mb-24">
           <li><a href="#">Privacy Policy</a></li>
           <li><a href="#">Terms & Conditions</a></li>
           <li><a href="<?= BASE_URL ?>/faq">FAQ's</a></li>
         </ul>
         <div class="contact-item">
-          <span class="material-symbols-outlined" style="font-size: 18px; color: #f48221;">mail</span>
-          <a href="mailto:<?= $contact['contact_email'] ?? ''; ?>" style="color: #111111; font-weight: 600; text-decoration: none;"><?= $contact['contact_email'] ?? ''; ?></a>
+          <span class="material-symbols-outlined fs-18 text-orange">mail</span>
+          <a href="mailto:<?= $contact['contact_email'] ?? ''; ?>" class="text-dark fw-bold text-decoration-none"><?= $contact['contact_email'] ?? ''; ?></a>
         </div>
         <div class="contact-item">
-          <span class="material-symbols-outlined" style="font-size: 18px; color: #f48221;">call</span>
-          <span style="font-weight: 600; color: #111111;"><?= $contact['contact_pno'] ?? ''; ?></span>
+          <span class="material-symbols-outlined fs-18 text-orange">call</span>
+          <span class="text-dark fw-bold"><?= $contact['contact_pno'] ?? ''; ?></span>
         </div>
       </div>
 
