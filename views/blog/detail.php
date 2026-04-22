@@ -25,12 +25,12 @@
 
     /* Page Header High-Fidelity */
     .page-header {
-        background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
+        background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
         background-color: var(--dark-bg);
         padding: 140px 0 80px;
         position: relative;
         overflow: hidden;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .page-header::before {
@@ -67,7 +67,7 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        color: rgba(255,255,255,0.5);
+        color: rgba(255, 255, 255, 0.5);
         font-size: 0.85rem;
         font-weight: 600;
         text-transform: uppercase;
@@ -75,7 +75,7 @@
     }
 
     .breadcrumb-item-custom a {
-        color: rgba(255,255,255,0.5);
+        color: rgba(255, 255, 255, 0.5);
         text-decoration: none;
         transition: color 0.3s ease;
     }
@@ -91,7 +91,7 @@
     .breadcrumb-separator {
         width: 4px;
         height: 4px;
-        background: rgba(255,255,255,0.2);
+        background: rgba(255, 255, 255, 0.2);
         border-radius: 50%;
     }
 
@@ -107,7 +107,7 @@
         border-radius: 30px;
         overflow: hidden;
         margin-bottom: 60px;
-        box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
     }
 
     .article-featured-image img {
@@ -129,13 +129,14 @@
         text-transform: uppercase;
         letter-spacing: 2px;
         z-index: 2;
-        box-shadow: 0 4px 15px rgba(244,130,33,0.3);
+        box-shadow: 0 4px 15px rgba(244, 130, 33, 0.3);
     }
 
     /* Centralized Reading Flow */
     .reading-container {
         max-width: 850px;
         margin: 0 auto;
+        margin-block-start: 6rem !important;
     }
 
     /* Article Meta */
@@ -147,11 +148,13 @@
         border-bottom: 1px solid #eee;
         margin-bottom: 50px;
     }
+
     .author-box {
         display: flex;
         align-items: center;
         gap: 15px;
     }
+
     .author-icon {
         width: 45px;
         height: 45px;
@@ -162,17 +165,20 @@
         justify-content: center;
         color: var(--primary-orange);
     }
+
     .author-info h6 {
         margin: 0;
         font-weight: 700;
         font-size: 14px;
     }
+
     .author-info span {
         font-size: 11px;
         color: #999;
         text-transform: uppercase;
         font-weight: 600;
     }
+
     .meta-stats {
         display: flex;
         gap: 30px;
@@ -189,9 +195,11 @@
         line-height: 1.8;
         color: var(--text-body);
     }
+
     .article-content p {
         margin-bottom: 25px;
     }
+
     .article-content h2 {
         font-size: 32px;
         font-weight: 700;
@@ -199,6 +207,7 @@
         margin-top: 50px;
         margin-bottom: 20px;
     }
+
     .abstract {
         font-size: 20px;
         color: #4b5563;
@@ -208,6 +217,7 @@
         margin-bottom: 40px;
         font-weight: 300;
     }
+
     .callout {
         background: #fffcf9;
         border-left: 4px solid var(--primary-orange);
@@ -215,6 +225,7 @@
         border-radius: 0 15px 15px 0;
         margin: 40px 0;
     }
+
     .callout h5 {
         color: var(--primary-orange);
         font-weight: 700;
@@ -223,6 +234,7 @@
         gap: 10px;
         margin-bottom: 10px;
     }
+
     .article-img {
         width: 100%;
         border-radius: 20px;
@@ -235,10 +247,12 @@
         padding-top: 60px;
         border-top: 1px solid #eee;
     }
+
     .related-section h4 {
         margin-bottom: 30px;
         font-weight: 700;
     }
+
     .related-card {
         border: 1px solid #eee;
         padding: 30px;
@@ -248,11 +262,13 @@
         display: block;
         text-decoration: none !important;
     }
+
     .related-card:hover {
-        border-color: rgba(244,130,33,0.3);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        border-color: rgba(244, 130, 33, 0.3);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
         transform: translateY(-5px);
     }
+
     .related-card .tag {
         color: var(--primary-orange);
         font-size: 10px;
@@ -261,6 +277,7 @@
         margin-bottom: 12px;
         display: block;
     }
+
     .related-card h5 {
         font-size: 18px;
         color: var(--primary-dark);
@@ -292,6 +309,24 @@
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(244, 130, 33, 0.35);
         color: #fff;
+    }
+
+    .hero-wrap {
+        position: relative;
+        margin-block: 2rem;
+        max-width: 100%;
+        height: 65vh;
+
+        >img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 2rem;
+        }
+
+        >div:first-of-type>h1 {
+            margin-block-end: 1rem;
+        }
     }
 </style>
 
@@ -334,26 +369,26 @@
 
             <!-- Related Area -->
             <?php if (!empty($related_blogs)): ?>
-            <div class="related-section">
-                <h4>Related Research</h4>
-                <div class="row">
-                    <?php foreach ($related_blogs as $related): ?>
-                    <div class="col-md-6 mb-4">
-                        <a href="<?= BASE_URL ?>/blog/<?= $related['slug'] ?>" class="related-card">
-                            <span class="tag"><?= htmlspecialchars($related['category_name']) ?></span>
-                            <h5><?= htmlspecialchars($related['title']) ?></h5>
-                        </a>
+                <div class="related-section">
+                    <h4>Related Research</h4>
+                    <div class="row">
+                        <?php foreach ($related_blogs as $related): ?>
+                            <div class="col-md-6 mb-4">
+                                <a href="<?= BASE_URL ?>/blog/<?= $related['slug'] ?>" class="related-card">
+                                    <span class="tag"><?= htmlspecialchars($related['category_name']) ?></span>
+                                    <h5><?= htmlspecialchars($related['title']) ?></h5>
+                                </a>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
-                    <?php endforeach; ?>
                 </div>
-            </div>
             <?php endif; ?>
 
             <!-- Back Link -->
             <div class="mt-5 text-center">
-                 <a href="<?= BASE_URL ?>/blog" class="btn-insights-back">
+                <a href="<?= BASE_URL ?>/blog" class="btn-insights-back">
                     <span class="material-symbols-outlined">arrow_back</span> Back to Insights
-                 </a>
+                </a>
             </div>
 
         </div>
@@ -368,14 +403,16 @@
 
         const updateProgress = () => {
             const h = document.documentElement,
-                  b = document.body,
-                  st = 'scrollTop',
-                  sh = 'scrollHeight';
-            const percent = (h[st]||b[st]) / ((h[sh]||b[sh]) - h.clientHeight) * 100;
+                b = document.body,
+                st = 'scrollTop',
+                sh = 'scrollHeight';
+            const percent = (h[st] || b[st]) / ((h[sh] || b[sh]) - h.clientHeight) * 100;
             progressBar.style.width = percent + '%';
         };
 
-        window.addEventListener('scroll', updateProgress, { passive: true });
+        window.addEventListener('scroll', updateProgress, {
+            passive: true
+        });
         updateProgress();
     })();
 </script>

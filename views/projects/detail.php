@@ -8,12 +8,12 @@
 
     /* Page Header High-Fidelity */
     .page-header {
-        background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
+        background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
         background-color: var(--dark-bg);
         padding: 140px 0 80px;
         position: relative;
         overflow: hidden;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .page-header::before {
@@ -50,7 +50,7 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        color: rgba(255,255,255,0.5);
+        color: rgba(255, 255, 255, 0.5);
         font-size: 0.85rem;
         font-weight: 600;
         text-transform: uppercase;
@@ -58,7 +58,7 @@
     }
 
     .breadcrumb-item-custom a {
-        color: rgba(255,255,255,0.5);
+        color: rgba(255, 255, 255, 0.5);
         text-decoration: none;
         transition: color 0.3s ease;
     }
@@ -74,7 +74,7 @@
     .breadcrumb-separator {
         width: 4px;
         height: 4px;
-        background: rgba(255,255,255,0.2);
+        background: rgba(255, 255, 255, 0.2);
         border-radius: 50%;
     }
 
@@ -89,7 +89,7 @@
         border-radius: 40px;
         overflow: hidden;
         margin-bottom: 60px;
-        box-shadow: 0 30px 70px rgba(0,0,0,0.15);
+        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.15);
     }
 
     .project-hero-wrap img {
@@ -101,7 +101,7 @@
     .project-hero-overlay {
         position: absolute;
         inset: 0;
-        background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 60%);
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
@@ -127,7 +127,7 @@
         background: #fff;
         border: 1px solid #f0f0f0;
         border-radius: 30px;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.03);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.03);
     }
 
     .meta-item {
@@ -153,7 +153,8 @@
         gap: 10px;
     }
 
-    .meta-value i, .meta-value .material-symbols-outlined {
+    .meta-value i,
+    .meta-value .material-symbols-outlined {
         color: var(--primary-orange);
         font-size: 1.2rem;
     }
@@ -171,7 +172,8 @@
         margin-bottom: 80px;
     }
 
-    .project-narrative h2, .project-narrative h3 {
+    .project-narrative h2,
+    .project-narrative h3 {
         font-weight: 800;
         margin-top: 50px;
         margin-bottom: 25px;
@@ -187,6 +189,10 @@
         color: #fff;
         position: relative;
         overflow: hidden;
+
+        >h2 {
+            color: #f0f0f0;
+        }
     }
 
     .showcase-cta::after {
@@ -230,10 +236,22 @@
     }
 
     @media (max-width: 991px) {
-        .project-hero-wrap { height: 400px; }
-        .project-hero-overlay { padding: 30px; }
-        .showcase-cta { padding: 60px 30px; }
-        .meta-grid { padding: 30px; grid-template-columns: 1fr 1fr; }
+        .project-hero-wrap {
+            height: 400px;
+        }
+
+        .project-hero-overlay {
+            padding: 30px;
+        }
+
+        .showcase-cta {
+            padding: 60px 30px;
+        }
+
+        .meta-grid {
+            padding: 30px;
+            grid-template-columns: 1fr 1fr;
+        }
     }
 </style>
 
@@ -264,78 +282,78 @@
 <!-- ====== Project Detail Showcase ====== -->
 <section class="section-padding">
     <div class="container">
-        <?php if($project): ?>
-        
-        <!-- Hero Visual -->
-        <div class="project-hero-wrap">
-             <img src="<?= BASE_URL . '/' . ltrim(substr($project['project_pic'], 3), '/'); ?>" alt="<?= htmlspecialchars($project['project_name']); ?>">
-             <div class="project-hero-overlay">
-                 <h2 class="project-main-title"><?= stripslashes($project['project_name']); ?></h2>
-             </div>
-        </div>
+        <?php if ($project): ?>
 
-        <div class="reading-flow">
-            <!-- Metadata Grid -->
-            <div class="meta-grid">
-                <div class="meta-item">
-                    <span class="meta-label">Client</span>
-                    <span class="meta-value">
-                        <span class="material-symbols-outlined">workspace_premium</span>
-                        Spider Tech Partners
-                    </span>
-                </div>
-                <div class="meta-item">
-                    <span class="meta-label">Category</span>
-                    <span class="meta-value">
-                        <span class="material-symbols-outlined">category</span>
-                         <?= htmlspecialchars($project['service_name']); ?>
-                    </span>
-                </div>
-                <div class="meta-item">
-                    <span class="meta-label">Launch Date</span>
-                    <span class="meta-value">
-                        <span class="material-symbols-outlined">event_available</span>
-                        2024
-                    </span>
-                </div>
-                <div class="meta-item">
-                    <span class="meta-label">Industry</span>
-                    <span class="meta-value">
-                        <span class="material-symbols-outlined">public</span>
-                        Tech Innovation
-                    </span>
+            <!-- Hero Visual -->
+            <div class="project-hero-wrap">
+                <img src="<?= BASE_URL . '/' . ltrim(substr($project['project_pic'], 3), '/'); ?>" alt="<?= htmlspecialchars($project['project_name']); ?>">
+                <div class="project-hero-overlay">
+                    <h2 class="project-main-title"><?= stripslashes($project['project_name']); ?></h2>
                 </div>
             </div>
 
-            <!-- Project Content -->
-            <div class="project-narrative">
-                <?= stripslashes($project['project_description']); ?>
-            </div>
+            <div class="reading-flow">
+                <!-- Metadata Grid -->
+                <div class="meta-grid">
+                    <div class="meta-item">
+                        <span class="meta-label">Client</span>
+                        <span class="meta-value">
+                            <span class="material-symbols-outlined">workspace_premium</span>
+                            Spider Tech Partners
+                        </span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Category</span>
+                        <span class="meta-value">
+                            <span class="material-symbols-outlined">category</span>
+                            <?= htmlspecialchars($project['service_name']); ?>
+                        </span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Launch Date</span>
+                        <span class="meta-value">
+                            <span class="material-symbols-outlined">event_available</span>
+                            2024
+                        </span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Industry</span>
+                        <span class="meta-value">
+                            <span class="material-symbols-outlined">public</span>
+                            Tech Innovation
+                        </span>
+                    </div>
+                </div>
 
-            <!-- Bottom CTA -->
-            <div class="showcase-cta">
-                 <h2 style="font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 2.5rem; margin-bottom: 1.5rem;">Have a Similar <span>Challenge?</span></h2>
-                 <p style="color: rgba(255,255,255,0.6); line-height: 1.8; font-size: 1.1rem; margin-bottom: 2.5rem;">
-                     We specialize in solving complex industrial problems through advanced digital engineering. Let's discuss your next breakthrough.
-                 </p>
-                 <div class="d-flex flex-wrap justify-content-center gap-4">
-                     <a href="<?= BASE_URL ?>/contact" class="btn-pill btn-orange">
-                         Start a Project
-                         <span class="material-symbols-outlined">rocket_launch</span>
-                     </a>
-                     <a href="<?= BASE_URL ?>/projects" class="btn-pill" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1);">
-                         <span class="material-symbols-outlined" style="margin-right: 8px;">grid_view</span>
-                         Back to Showcase
-                     </a>
-                 </div>
+                <!-- Project Content -->
+                <div class="project-narrative">
+                    <?= stripslashes($project['project_description']); ?>
+                </div>
+
+                <!-- Bottom CTA -->
+                <div class="showcase-cta">
+                    <h2 style="font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 2.5rem; margin-bottom: 1.5rem;">Have a Similar <span>Challenge?</span></h2>
+                    <p style="color: rgba(255,255,255,0.6); line-height: 1.8; font-size: 1.1rem; margin-bottom: 2.5rem;">
+                        We specialize in solving complex industrial problems through advanced digital engineering. Let's discuss your next breakthrough.
+                    </p>
+                    <div class="d-flex flex-wrap justify-content-center gap-4">
+                        <a href="<?= BASE_URL ?>/contact" class="btn-pill btn-orange">
+                            Start a Project
+                            <span class="material-symbols-outlined">rocket_launch</span>
+                        </a>
+                        <a href="<?= BASE_URL ?>/projects" class="btn-pill" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1);">
+                            <span class="material-symbols-outlined" style="margin-right: 8px;">grid_view</span>
+                            Back to Showcase
+                        </a>
+                    </div>
+                </div>
             </div>
-        </div>
 
         <?php else: ?>
-        <div class="text-center py-5">
-            <h2 class="text-muted">Project not found.</h2>
-            <a href="<?= BASE_URL ?>/projects" class="btn-pill btn-orange mt-4">Back to Showcase</a>
-        </div>
+            <div class="text-center py-5">
+                <h2 class="text-muted">Project not found.</h2>
+                <a href="<?= BASE_URL ?>/projects" class="btn-pill btn-orange mt-4">Back to Showcase</a>
+            </div>
         <?php endif; ?>
     </div>
 </section>
