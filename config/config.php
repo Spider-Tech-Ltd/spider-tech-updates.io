@@ -1,5 +1,16 @@
 <?php
 
+$is_production = ($_SERVER['HTTP_HOST'] !== 'localhost' && $_SERVER['HTTP_HOST'] !== '127.0.0.1');
+
+if ($is_production) {
+    error_reporting(0);
+    ini_set('display_errors', 0);
+    // Use the real company email details here later
+} else {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+}
+
 define('ROOT_PATH', dirname(__DIR__));
 
 // Dynamic BASE_URL calculation
