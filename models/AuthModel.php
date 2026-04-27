@@ -96,24 +96,33 @@ class AuthModel
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+
     public function storeResetCode($email, $code, $expiry)
     {
         $query = "UPDATE `members` SET reset_token = :code, reset_expiry = :expiry WHERE email = :email";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':code', $code);
-        $stmt->bindParam(':expiry', $expiry);
+        $stmt->bindValue(':expiry', (int)$expiry, PDO::PARAM_INT); // Explicitly bind as Integer
         $stmt->bindParam(':email', $email);
         return $stmt->execute();
     }
 
     public function verifyResetCode($email, $code)
     {
-        $query = "SELECT * FROM `members` WHERE email = :email AND reset_token = :code AND reset_expiry > NOW() LIMIT 1";
+        $query = "SELECT reset_token, reset_expiry FROM `members` WHERE email = :email AND reset_token = :code LIMIT 1";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':code', $code);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
+            // Double check both matching token AND valid time
+            if ($row['reset_token'] === $code && time() < (int)$row['reset_expiry']) {
+                return $row;
+            }
+        }
+        return false;
     }
 
     public function updatePassword($email, $passwordHash)

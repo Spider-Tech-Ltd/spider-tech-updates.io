@@ -550,7 +550,7 @@
                     </div>
                     <div>
                         <p class="contact-info-label">Our Location</p>
-                        <p class="contact-info-value">Abinsa House, Kaduna, Nigeria</p>
+                        <p class="contact-info-value">Abinsa House, Zaria Road Kano, Nigeria</p>
                     </div>
                 </div>
             </div>
@@ -616,8 +616,8 @@
 
 <!-- ====== Form Submission Script ====== -->
 <script type="text/javascript">
-    $(document).ready(function () {
-        $("#contactForm").submit(function (e) {
+    $(document).ready(function() {
+        $("#contactForm").submit(function(e) {
             e.preventDefault();
             var btn = $("#sendContact");
             var msg = $("#contactMessage");
@@ -628,7 +628,7 @@
                 url: '<?= BASE_URL ?>/includes/contact-form-function.php',
                 type: 'POST',
                 data: $(this).serialize() + '&send=1',
-                success: function (data) {
+                success: function(data) {
                     btn.prop('disabled', false).html('Send Message <span class="material-symbols-outlined">send</span>');
                     msg.html(data).fadeIn().delay(6000).fadeOut();
                     if (data.indexOf('alert-success') !== -1) {
@@ -636,7 +636,7 @@
                         if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
                     }
                 },
-                error: function () {
+                error: function() {
                     btn.prop('disabled', false).html('Send Message <span class="material-symbols-outlined">send</span>');
                     msg.html('<div class="alert alert-danger">Something went wrong. Please try again.</div>').fadeIn().delay(6000).fadeOut();
                 }

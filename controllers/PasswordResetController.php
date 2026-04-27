@@ -22,26 +22,28 @@ class PasswordResetController extends BaseController
             if (!CSRF::validateToken($_POST['csrf_token'] ?? '')) {
                 $error = "Invalid CSRF token.";
             } else {
-                $email = $_POST['email'] ?? '';
+                $email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
                 $member = $this->authModel->findByEmail($email);
 
                 if ($member) {
+                    // Generate 6-digit code
                     $code = sprintf("%06d", mt_rand(100000, 999999));
-                    $expiry = date('Y-m-d H:i:s', strtotime('+1 hour'));
+
+                    // Use Unix Timestamp (Seconds since 1970)
+                    $expiry = time() + 3600;
 
                     if ($this->authModel->storeResetCode($email, $code, $expiry)) {
                         if ($this->sendResetEmail($email, $member['name'], $code)) {
                             $_SESSION['reset_email'] = $email;
                             $this->redirect('forum/verify-reset-code');
                         } else {
-                            $error = "Failed to send reset code. Please try again later.";
+                            $error = "Failed to send reset code. Please check your SMTP settings.";
                         }
                     } else {
-                        $error = "An error occurred. Please try again.";
+                        $error = "An error occurred while saving the reset code.";
                     }
                 } else {
-                    // Security: don't reveal if email exists, but we'll show success for consistency
-                    $error = "If your email is in our system, you will receive a 6-digit reset code.";
+                    $error = "If your email is in our system, you will receive a reset code.";
                 }
             }
         }
@@ -66,12 +68,13 @@ class PasswordResetController extends BaseController
             if (!CSRF::validateToken($_POST['csrf_token'] ?? '')) {
                 $error = "Invalid CSRF token.";
             } else {
-                $code = $_POST['code'] ?? '';
+                $code = trim($_POST['code'] ?? '');
+
                 if ($this->authModel->verifyResetCode($email, $code)) {
                     $_SESSION['reset_verified'] = true;
                     $this->redirect('forum/reset-password');
                 } else {
-                    $error = "Invalid or expired reset code.";
+                    $error = "Invalid or expired reset code. Please try again.";
                 }
             }
         }
