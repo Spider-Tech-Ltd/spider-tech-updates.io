@@ -67,7 +67,7 @@
                         <div class="list-item-custom">
                             <img src="<?= $avatar ?>" class="avatar-sm" alt="">
                             <div class="flex-grow-1 ms-3">
-                                <div class="fw-600 fs-09"><?= htmlspecialchars($rm['full_name']) ?></div>
+                                <div class="fw-600 fs-09"><?= htmlspecialchars($rm['name']) ?></div>
                                 <div class="text-muted fs-07"><?= htmlspecialchars($rm['email']) ?></div>
                             </div>
                             <div class="text-muted fs-07"><?= date('M d', strtotime($rm['created_at'])) ?></div>

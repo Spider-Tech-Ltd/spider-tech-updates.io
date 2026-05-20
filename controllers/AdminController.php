@@ -141,7 +141,6 @@ class AdminController extends AdminBaseController {
     }
 
     public function addBlog() {
-        $adminModel = new AdminModel();
         $categories = $this->db->query("SELECT * FROM blog_categories")->fetchAll(PDO::FETCH_ASSOC);
         $this->renderAdmin('forms/blog_form', ['mode' => 'add', 'categories' => $categories]);
     }
@@ -180,5 +179,27 @@ class AdminController extends AdminBaseController {
         $adminModel = new AdminModel();
         if ($adminModel->deleteRecord($type, $id)) { echo json_encode(['status' => 'success', 'message' => ucfirst($type) . ' deleted successfully.']); }
         else { echo json_encode(['status' => 'error', 'message' => 'Failed to delete record.']); }
+    }
+
+    public function storeRecord() {
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403);
+            exit;
+        }
+
+        $type = $_POST['type'] ?? null;
+        if (!$type) {
+            echo json_encode(['status' => 'error', 'message' => 'Missing record type.']);
+            exit;
+        }
+
+        $adminModel = new AdminModel();
+        $success = $adminModel->storeRecord($type, $_POST);
+
+        if ($success) {
+            echo json_encode(['status' => 'success', 'message' => ucfirst($type) . ' saved successfully.']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Failed to save record.']);
+        }
     }
 }
