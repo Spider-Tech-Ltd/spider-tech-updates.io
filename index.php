@@ -51,6 +51,22 @@ $routes = [
     'forum/forgot-password' => ['PasswordResetController', 'forgotPassword'],
     'forum/verify-reset-code' => ['PasswordResetController', 'verifyResetCode'],
     'forum/reset-password' => ['PasswordResetController', 'resetPassword'],
+
+    // Admin Routes
+    'admin/login' => ['AdminController', 'login'],
+    'admin/logout' => ['AdminController', 'logout'],
+    'admin/dashboard' => ['AdminController', 'dashboard'],
+    'admin/services' => ['AdminController', 'services'],
+    'admin/projects' => ['AdminController', 'projects'],
+    'admin/events' => ['AdminController', 'events'],
+    'admin/trainings' => ['AdminController', 'trainings'],
+    'admin/blog' => ['AdminController', 'blog'],
+    'admin/members' => ['AdminController', 'members'],
+    'admin/applications' => ['AdminController', 'applications'],
+    'admin/faq' => ['AdminController', 'faq'],
+    'admin/testimonials' => ['AdminController', 'testimonials'],
+    'admin/banners' => ['AdminController', 'banners'],
+    'admin/settings' => ['AdminController', 'settings'],
 ];
 
 foreach ($routes as $path => $route) {

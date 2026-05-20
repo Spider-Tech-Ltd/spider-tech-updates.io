@@ -1,9 +1,9 @@
 <?php
 require_once __DIR__ . '/config/config.php';
-require_once __DIR__ . '/utils/Database.php';
+require_once __DIR__ . '/config/database.php';
 
 try {
-    $db = Database::getInstance()->getConnection();
+    $db = (new Database())->getConnection();
     
     $stmt = $db->query("SHOW CREATE TABLE feeds");
     $feed_schema = $stmt->fetch(PDO::FETCH_ASSOC);
