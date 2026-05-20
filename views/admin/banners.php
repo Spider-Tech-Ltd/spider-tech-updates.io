@@ -32,7 +32,7 @@
                             <span class="text-muted fs-08">ID: #<?= $banner['banner_id'] ?></span>
                             <div class="action-btns">
                                 <button class="btn-action edit"><span class="material-symbols-outlined">edit</span></button>
-                                <button class="btn-action delete"><span class="material-symbols-outlined">delete</span></button>
+                                <button class="btn-action delete" onclick="deleteItem(<?= $banner['banner_id'] ?>, 'banner')"><span class="material-symbols-outlined">delete</span></button>
                             </div>
                         </div>
                     </div>

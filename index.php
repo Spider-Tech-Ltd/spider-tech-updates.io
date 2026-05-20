@@ -67,6 +67,8 @@ $routes = [
     'admin/testimonials' => ['AdminController', 'testimonials'],
     'admin/banners' => ['AdminController', 'banners'],
     'admin/settings' => ['AdminController', 'settings'],
+    'admin/delete' => ['AdminController', 'deleteRecord'],
+    'admin/store' => ['AdminController', 'storeRecord'],
 ];
 
 foreach ($routes as $path => $route) {

@@ -103,16 +103,67 @@ class AdminController extends AdminBaseController {
     }
 
     public function faq() {
-        $this->renderAdmin('faq');
+        $adminModel = new AdminModel();
+        $faqs = $adminModel->getAllFAQs();
+        $this->renderAdmin('faq', ['faqs' => $faqs]);
     }
 
     public function testimonials() {
-        $this->renderAdmin('testimonials');
+        $adminModel = new AdminModel();
+        $testimonials = $adminModel->getAllTestimonials();
+        $this->renderAdmin('testimonials', ['testimonials' => $testimonials]);
     }
 
     public function settings() {
         $adminModel = new AdminModel();
         $admins = $adminModel->getAllAdmins();
         $this->renderAdmin('settings', ['admins' => $admins]);
+    }
+
+    // CRUD Handlers
+    public function deleteRecord() {
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403);
+            exit;
+        }
+
+        $id = $_POST['id'] ?? null;
+        $type = $_POST['type'] ?? null;
+
+        if (!$id || !$type) {
+            echo json_encode(['status' => 'error', 'message' => 'Missing parameters.']);
+            exit;
+        }
+
+        $adminModel = new AdminModel();
+        $success = $adminModel->deleteRecord($type, $id);
+
+        if ($success) {
+            echo json_encode(['status' => 'success', 'message' => ucfirst($type) . ' deleted successfully.']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Failed to delete record.']);
+        }
+    }
+
+    public function storeRecord() {
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403);
+            exit;
+        }
+
+        $type = $_POST['type'] ?? null;
+        if (!$type) {
+            echo json_encode(['status' => 'error', 'message' => 'Missing record type.']);
+            exit;
+        }
+
+        $adminModel = new AdminModel();
+        $success = $adminModel->storeRecord($type, $_POST);
+
+        if ($success) {
+            echo json_encode(['status' => 'success', 'message' => ucfirst($type) . ' created successfully.']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Failed to save record.']);
+        }
     }
 }

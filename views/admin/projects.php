@@ -43,7 +43,7 @@
                         <td class="text-end">
                             <div class="action-btns">
                                 <button class="btn-action edit"><span class="material-symbols-outlined">edit</span></button>
-                                <button class="btn-action delete"><span class="material-symbols-outlined">delete</span></button>
+                                <button class="btn-action delete" onclick="deleteItem(<?= $project['project_id'] ?>, 'project')"><span class="material-symbols-outlined">delete</span></button>
                             </div>
                         </td>
                     </tr>

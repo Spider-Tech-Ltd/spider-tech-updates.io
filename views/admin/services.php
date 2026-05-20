@@ -4,7 +4,7 @@
             <h1>Service Management</h1>
             <p>Manage the list of services offered by Spider Tech.</p>
         </div>
-        <button class="btn btn-primary-custom">
+        <button class="btn btn-primary-custom" onclick="openModal('serviceModal')">
             <span class="material-symbols-outlined">add</span>
             <span>Add Service</span>
         </button>
@@ -32,7 +32,7 @@
                         <td class="text-end">
                             <div class="action-btns">
                                 <button class="btn-action edit" title="Edit"><span class="material-symbols-outlined">edit</span></button>
-                                <button class="btn-action delete" title="Delete"><span class="material-symbols-outlined">delete</span></button>
+                                <button class="btn-action delete" title="Delete" onclick="deleteItem(<?= $service['id'] ?>, 'service')"><span class="material-symbols-outlined">delete</span></button>
                             </div>
                         </td>
                     </tr>
@@ -40,5 +40,40 @@
                 </tbody>
             </table>
         </div>
+    </div>
+</div>
+
+<!-- Add/Edit Service Modal -->
+<div class="modal-custom" id="serviceModal">
+    <div class="modal-content-custom">
+        <div class="modal-header-custom">
+            <h5 class="poppins m-0">Service Details</h5>
+            <button class="btn-action" onclick="closeModal('serviceModal')"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <form id="serviceForm" onsubmit="submitForm(event, 'service', 'serviceModal')">
+            <input type="hidden" name="type" value="service">
+            <div class="modal-body-custom">
+                <div class="mb-3">
+                    <label class="form-label-custom">Service Name</label>
+                    <input type="text" name="service_name" class="form-control-custom" placeholder="e.g. Software Development" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-custom">Service Icon (FontAwesome class)</label>
+                    <input type="text" name="service_icon" class="form-control-custom" placeholder="e.g. fas fa-laptop-code" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-custom">Short Description</label>
+                    <textarea name="service_description" class="form-control-custom" rows="3" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-custom">Full Details (HTML supported)</label>
+                    <textarea name="service_detail" class="form-control-custom" rows="5"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer-custom">
+                <button type="button" class="btn btn-light" onclick="closeModal('serviceModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary-custom">Save Service</button>
+            </div>
+        </form>
     </div>
 </div>

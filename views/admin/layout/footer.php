@@ -1,7 +1,74 @@
 </main> <!-- End of .admin-main-content -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
     </div> <!-- End of .admin-wrapper -->
 
     <script>
+        async function deleteItem(id, type) {
+            if (!confirm(`Are you sure you want to delete this ${type}? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch('<?= BASE_URL ?>/admin/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: `id=${id}&type=${type}`
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    showToast(data.message);
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('An unexpected error occurred.', 'error');
+            }
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        async function submitForm(event, type, modalId) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('<?= BASE_URL ?>/admin/store', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    showToast(data.message);
+                    closeModal(modalId);
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('An unexpected error occurred.', 'error');
+            }
+        }
+
         function showToast(message, type = 'success') {
             Toastify({
                 text: message,
@@ -16,12 +83,25 @@
         document.addEventListener('DOMContentLoaded', function() {
             const sidebar = document.getElementById('adminSidebar');
             const toggle = document.getElementById('sidebarToggle');
+            const overlay = document.getElementById('sidebarOverlay');
 
             if (toggle && sidebar) {
                 toggle.addEventListener('click', () => {
-                    sidebar.classList.toggle('collapsed');
-                    document.querySelector('.admin-main-content').classList.toggle('expanded');
-                    document.querySelector('.admin-header').classList.toggle('expanded');
+                    if (window.innerWidth <= 991) {
+                        sidebar.classList.toggle('show');
+                        overlay.classList.toggle('show');
+                    } else {
+                        sidebar.classList.toggle('collapsed');
+                        document.querySelector('.admin-main-content').classList.toggle('expanded');
+                        document.querySelector('.admin-header').classList.toggle('expanded');
+                    }
+                });
+            }
+
+            if (overlay) {
+                overlay.addEventListener('click', () => {
+                    sidebar.classList.remove('show');
+                    overlay.classList.remove('show');
                 });
             }
         });
