@@ -53,7 +53,7 @@
 
 <div class="row gy-4 gx-4 mb-5">
     <!-- Recent Members -->
-    <div class="col-lg-6">
+    <div class="col-lg-6 mb-lg-0">
         <div class="admin-card">
             <div class="card-header-custom">
                 <h5 class="m-0 poppins">Recent Members</h5>
@@ -62,7 +62,13 @@
             <div class="card-body-custom">
                 <div class="list-group list-group-flush">
                     <?php foreach ($recent_members as $rm):
-                        $avatar = $rm['avatar'] ? BASE_URL . '/uploads/avatars/' . $rm['avatar'] : BASE_URL . '/images/testimonials.png';
+                        $avatarPath = $rm['avatar'];
+                        if ($avatarPath) {
+                            // Check if it's already an absolute-ish path or just a filename
+                            $avatar = (strpos($avatarPath, 'uploads/') !== false) ? BASE_URL . '/' . ltrim($avatarPath, '/') : BASE_URL . '/uploads/avatars/' . $avatarPath;
+                        } else {
+                            $avatar = BASE_URL . '/images/testimonials.png';
+                        }
                     ?>
                         <div class="list-item-custom">
                             <img src="<?= $avatar ?>" class="avatar-sm" alt="">
@@ -89,7 +95,7 @@
                 <div class="list-group list-group-flush">
                     <?php foreach ($recent_applications as $ra): ?>
                         <div class="list-item-custom">
-                            <div class="stat-icon-sm bg-soft-blue text-blue me-3">
+                            <div class="stat-icon-sm bg-soft-blue text-blue me-4">
                                 <span class="material-symbols-outlined fs-1rem"><?= ($ra['type'] == 'DSE') ? 'business_center' : 'school' ?></span>
                             </div>
                             <div class="flex-grow-1">
