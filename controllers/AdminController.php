@@ -35,7 +35,8 @@ class AdminController extends AdminBaseController {
 
     public function dashboard() {
         $adminModel = new AdminModel();
-        $this->renderAdmin('dashboard', ['stats' => $adminModel->getDashboardStats()]);
+        $data = $adminModel->getDashboardData();
+        $this->renderAdmin('dashboard', $data);
     }
 
     public function services() {

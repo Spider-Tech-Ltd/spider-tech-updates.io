@@ -29,6 +29,23 @@ class AdminModel {
         return false;
     }
 
+    public function getDashboardData() {
+        $data = ['stats' => $this->getDashboardStats()];
+
+        // Latest 5 members
+        $data['recent_members'] = $this->db->query("SELECT full_name, email, avatar, created_at FROM members ORDER BY created_at DESC LIMIT 5")->fetchAll(PDO::FETCH_ASSOC);
+
+        // Latest 5 applications (combined DSE and Bootcamp)
+        $data['recent_applications'] = $this->db->query("
+            (SELECT firstname, lastname, email, apply_date, 'DSE' as type FROM dse_application)
+            UNION ALL
+            (SELECT firstname, lastname, email, apply_date, 'Bootcamp' as type FROM bootcamp_application)
+            ORDER BY apply_date DESC LIMIT 5
+        ")->fetchAll(PDO::FETCH_ASSOC);
+
+        return $data;
+    }
+
     public function getDashboardStats() {
         $stats = [];
         $queries = [

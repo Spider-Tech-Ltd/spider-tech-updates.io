@@ -315,6 +315,29 @@ h1, h2, h3, h4, h5, h6, .poppins {
     color: var(--primary-orange);
 }
 
+.list-item-custom {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.list-item-custom:last-child {
+    border-bottom: none;
+}
+
+.stat-icon-sm {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fs-1rem { font-size: 1rem !important; }
+.fs-07 { font-size: 0.7rem; }
+
 .login-footer {
     text-align: center;
     margin-top: 30px;

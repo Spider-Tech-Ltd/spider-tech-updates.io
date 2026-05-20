@@ -51,7 +51,61 @@
     </div>
 </div>
 
-<div class="row g-4">
+<div class="row gy-4 gx-4 mb-5">
+    <!-- Recent Members -->
+    <div class="col-lg-6">
+        <div class="admin-card">
+            <div class="card-header-custom">
+                <h5 class="m-0 poppins">Recent Members</h5>
+                <a href="<?= BASE_URL ?>/admin/members" class="btn btn-sm btn-light fs-07">View All</a>
+            </div>
+            <div class="card-body-custom">
+                <div class="list-group list-group-flush">
+                    <?php foreach ($recent_members as $rm):
+                        $avatar = $rm['avatar'] ? BASE_URL . '/uploads/avatars/' . $rm['avatar'] : BASE_URL . '/images/testimonials.png';
+                    ?>
+                        <div class="list-item-custom">
+                            <img src="<?= $avatar ?>" class="avatar-sm" alt="">
+                            <div class="flex-grow-1 ms-3">
+                                <div class="fw-600 fs-09"><?= htmlspecialchars($rm['full_name']) ?></div>
+                                <div class="text-muted fs-07"><?= htmlspecialchars($rm['email']) ?></div>
+                            </div>
+                            <div class="text-muted fs-07"><?= date('M d', strtotime($rm['created_at'])) ?></div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Applications -->
+    <div class="col-lg-6">
+        <div class="admin-card">
+            <div class="card-header-custom">
+                <h5 class="m-0 poppins">Latest Applications</h5>
+                <a href="<?= BASE_URL ?>/admin/applications" class="btn btn-sm btn-light fs-07">Review All</a>
+            </div>
+            <div class="card-body-custom">
+                <div class="list-group list-group-flush">
+                    <?php foreach ($recent_applications as $ra): ?>
+                        <div class="list-item-custom">
+                            <div class="stat-icon-sm bg-soft-blue text-blue me-3">
+                                <span class="material-symbols-outlined fs-1rem"><?= ($ra['type'] == 'DSE') ? 'business_center' : 'school' ?></span>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="fw-600 fs-09"><?= htmlspecialchars($ra['firstname'] . ' ' . $ra['lastname']) ?></div>
+                                <div class="text-muted fs-07"><?= $ra['type'] ?> Program</div>
+                            </div>
+                            <div class="text-muted fs-07"><?= date('M d', strtotime($ra['apply_date'])) ?></div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row gy-4 gx-4">
     <!-- Activity Chart -->
     <div class="col-lg-8">
         <div class="admin-card">
