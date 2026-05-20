@@ -4,10 +4,10 @@
             <h1>Insights & Blog</h1>
             <p>Manage articles, news, and insights.</p>
         </div>
-        <button class="btn btn-primary-custom">
+        <a href="<?= BASE_URL ?>/admin/blog/add" class="btn btn-primary-custom">
             <span class="material-symbols-outlined">add</span>
             <span>New Post</span>
-        </button>
+        </a>
     </div>
 </div>
 
@@ -43,7 +43,7 @@
                         <td><span class="badge <?= $statusClass ?>"><?= ucfirst($blog['status']) ?></span></td>
                         <td class="text-end">
                             <div class="action-btns">
-                                <button class="btn-action edit"><span class="material-symbols-outlined">edit</span></button>
+                                <a href="<?= BASE_URL ?>/admin/blog/edit/<?= $blog['uuid'] ?>" class="btn-action edit"><span class="material-symbols-outlined">edit</span></a>
                                 <button class="btn-action delete" onclick="deleteItem('<?= $blog['uuid'] ?>', 'blog')"><span class="material-symbols-outlined">delete</span></button>
                             </div>
                         </td>
@@ -59,5 +59,6 @@
                 </tbody>
             </table>
         </div>
+        <?php include ROOT_PATH . '/views/admin/layout/pagination.php'; ?>
     </div>
 </div>

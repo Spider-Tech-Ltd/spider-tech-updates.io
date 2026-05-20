@@ -4,10 +4,10 @@
             <h1>Trainings & Bootcamps</h1>
             <p>Manage training programs and educational sessions.</p>
         </div>
-        <button class="btn btn-primary-custom">
+        <a href="<?= BASE_URL ?>/admin/trainings/add" class="btn btn-primary-custom">
             <span class="material-symbols-outlined">add</span>
             <span>Add Training</span>
-        </button>
+        </a>
     </div>
 </div>
 
@@ -41,7 +41,7 @@
                         <td><i class="<?= $training['training_icon'] ?> text-orange"></i></td>
                         <td class="text-end">
                             <div class="action-btns">
-                                <button class="btn-action edit"><span class="material-symbols-outlined">edit</span></button>
+                                <a href="<?= BASE_URL ?>/admin/trainings/edit/<?= $training['id'] ?>" class="btn-action edit"><span class="material-symbols-outlined">edit</span></a>
                                 <button class="btn-action delete" onclick="deleteItem(<?= $training['id'] ?>, 'training')"><span class="material-symbols-outlined">delete</span></button>
                             </div>
                         </td>
@@ -50,5 +50,6 @@
                 </tbody>
             </table>
         </div>
+        <?php include ROOT_PATH . '/views/admin/layout/pagination.php'; ?>
     </div>
 </div>

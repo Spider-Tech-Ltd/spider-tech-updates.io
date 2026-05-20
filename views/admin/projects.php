@@ -4,10 +4,10 @@
             <h1>Project Portfolio</h1>
             <p>Manage the showcase of completed projects.</p>
         </div>
-        <button class="btn btn-primary-custom">
+        <a href="<?= BASE_URL ?>/admin/projects/add" class="btn btn-primary-custom">
             <span class="material-symbols-outlined">add</span>
             <span>Add Project</span>
-        </button>
+        </a>
     </div>
 </div>
 
@@ -42,7 +42,7 @@
                         <td><?= $project['project_year'] ?></td>
                         <td class="text-end">
                             <div class="action-btns">
-                                <button class="btn-action edit"><span class="material-symbols-outlined">edit</span></button>
+                                <a href="<?= BASE_URL ?>/admin/projects/edit/<?= $project['project_id'] ?>" class="btn-action edit"><span class="material-symbols-outlined">edit</span></a>
                                 <button class="btn-action delete" onclick="deleteItem(<?= $project['project_id'] ?>, 'project')"><span class="material-symbols-outlined">delete</span></button>
                             </div>
                         </td>
@@ -51,5 +51,6 @@
                 </tbody>
             </table>
         </div>
+        <?php include ROOT_PATH . '/views/admin/layout/pagination.php'; ?>
     </div>
 </div>

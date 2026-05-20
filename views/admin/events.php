@@ -4,10 +4,10 @@
             <h1>Events Management</h1>
             <p>Organize and manage upcoming and past events.</p>
         </div>
-        <button class="btn btn-primary-custom">
+        <a href="<?= BASE_URL ?>/admin/events/add" class="btn btn-primary-custom">
             <span class="material-symbols-outlined">add</span>
             <span>Add Event</span>
-        </button>
+        </a>
     </div>
 </div>
 
@@ -43,7 +43,7 @@
                         <td><span class="badge <?= $statusClass ?>"><?= ucfirst($event['event_status']) ?></span></td>
                         <td class="text-end">
                             <div class="action-btns">
-                                <button class="btn-action edit"><span class="material-symbols-outlined">edit</span></button>
+                                <a href="<?= BASE_URL ?>/admin/events/edit/<?= $event['event_id'] ?>" class="btn-action edit"><span class="material-symbols-outlined">edit</span></a>
                                 <button class="btn-action delete" onclick="deleteItem(<?= $event['event_id'] ?>, 'event')"><span class="material-symbols-outlined">delete</span></button>
                             </div>
                         </td>
@@ -52,5 +52,6 @@
                 </tbody>
             </table>
         </div>
+        <?php include ROOT_PATH . '/views/admin/layout/pagination.php'; ?>
     </div>
 </div>

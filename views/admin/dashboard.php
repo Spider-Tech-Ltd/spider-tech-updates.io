@@ -4,7 +4,7 @@
 </div>
 
 <!-- Stats Grid -->
-<div class="row g-4 mb-5">
+<div class="row gy-4 gx-4 mb-5">
     <div class="col-xl-3 col-md-6">
         <div class="stat-card">
             <div class="stat-icon bg-soft-orange text-orange">
@@ -72,8 +72,8 @@
                 <h5 class="m-0 poppins">Quick Actions</h5>
             </div>
             <div class="card-body-custom">
-                <div class="d-grid gap-3">
-                    <a href="<?= BASE_URL ?>/admin/blog/new" class="quick-action-btn">
+                <div class="gap-vertical-3">
+                    <a href="<?= BASE_URL ?>/admin/blog/add" class="quick-action-btn">
                         <span class="material-symbols-outlined">add_circle</span>
                         <span>Post New Article</span>
                     </a>

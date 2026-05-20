@@ -29,12 +29,6 @@ class AdminModel {
         return false;
     }
 
-    public function createAdmin($username, $password, $privilege = 'Admin') {
-        $hash = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $this->db->prepare("INSERT INTO admin_tb (admin_name, admin_password, privilege, lastlogin) VALUES (?, ?, ?, NOW())");
-        return $stmt->execute([$username, $hash, $privilege]);
-    }
-
     public function getDashboardStats() {
         $stats = [];
         $queries = [
@@ -54,95 +48,95 @@ class AdminModel {
         return $stats;
     }
 
-    public function getAllServices() {
-        return $this->db->query("SELECT * FROM services_tb ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
+    public function getPaginated($table, $page = 1, $limit = 6, $orderBy = 'id DESC') {
+        $offset = ($page - 1) * $limit;
+        $allowedTables = ['services_tb', 'projects_tb', 'events', 'trainings_tb', 'blogs', 'members', 'faq_tb', 'testimonials_tb', 'banners_tb'];
+        if (!in_array($table, $allowedTables)) return ['data' => [], 'total_pages' => 0];
+
+        $total = $this->db->query("SELECT COUNT(*) FROM $table")->fetchColumn();
+        $totalPages = ceil($total / $limit);
+
+        $sql = "SELECT * FROM $table ORDER BY $orderBy LIMIT :limit OFFSET :offset";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return [
+            'data' => $stmt->fetchAll(PDO::FETCH_ASSOC),
+            'total_pages' => $totalPages,
+            'current_page' => $page
+        ];
     }
 
-    public function getAllProjects() {
-        return $this->db->query("
-            SELECT p.*, s.service_name
-            FROM projects_tb p
-            LEFT JOIN services_tb s ON p.service_id = s.id
-            ORDER BY p.project_id DESC
-        ")->fetchAll(PDO::FETCH_ASSOC);
+    public function getById($table, $pk, $id) {
+        $stmt = $this->db->prepare("SELECT * FROM $table WHERE $pk = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getAllEvents() {
-        return $this->db->query("SELECT * FROM events ORDER BY event_date DESC")->fetchAll(PDO::FETCH_ASSOC);
-    }
+    public function getPaginatedProjects($page = 1, $limit = 6) {
+        $offset = ($page - 1) * $limit;
+        $total = $this->db->query("SELECT COUNT(*) FROM projects_tb")->fetchColumn();
+        $totalPages = ceil($total / $limit);
 
-    public function getAllTrainings() {
-        return $this->db->query("SELECT * FROM trainings_tb ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
-    }
+        $sql = "SELECT p.*, s.service_name
+                FROM projects_tb p
+                LEFT JOIN services_tb s ON p.service_id = s.id
+                ORDER BY p.project_id DESC LIMIT :limit OFFSET :offset";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
 
-    public function getAllBlogs() {
-        try {
-            return $this->db->query("
-                SELECT b.*, bc.name as category_name
-                FROM blogs b
-                LEFT JOIN blog_categories bc ON b.category_id = bc.uuid
-                ORDER BY b.created_at DESC
-            ")->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
-            return [];
-        }
-    }
-
-    public function getAllMembers() {
-        return $this->db->query("SELECT * FROM members ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getDSEApplications() {
-        return $this->db->query("SELECT * FROM dse_application ORDER BY apply_date DESC")->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getBootcampApplications() {
-        return $this->db->query("SELECT * FROM bootcamp_application ORDER BY apply_date DESC")->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getAllBanners() {
-        return $this->db->query("SELECT * FROM banners_tb ORDER BY banner_id DESC")->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getAllAdmins() {
-        return $this->db->query("SELECT * FROM admin_tb ORDER BY admin_id ASC")->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getAllFAQs() {
-        return $this->db->query("SELECT * FROM faq_tb ORDER BY faq_id DESC")->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getAllTestimonials() {
-        return $this->db->query("SELECT * FROM testimonials_tb ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
+        return [
+            'data' => $stmt->fetchAll(PDO::FETCH_ASSOC),
+            'total_pages' => $totalPages,
+            'current_page' => $page
+        ];
     }
 
     public function storeRecord($type, $data) {
         $allowedTypes = [
-            'service' => [
-                'table' => 'services_tb',
-                'fields' => ['service_name', 'service_icon', 'service_description', 'service_detail']
-            ],
-            'faq' => [
-                'table' => 'faq_tb',
-                'fields' => ['faq_question', 'faq_answer']
-            ]
+            'service' => ['table' => 'services_tb', 'pk' => 'id', 'fields' => ['service_name', 'service_icon', 'service_description', 'service_detail']],
+            'project' => ['table' => 'projects_tb', 'pk' => 'project_id', 'fields' => ['project_name', 'service_id', 'project_year', 'project_description']],
+            'banner' => ['table' => 'banners_tb', 'pk' => 'banner_id', 'fields' => ['banner_title']],
+            'faq' => ['table' => 'faq_tb', 'pk' => 'faq_id', 'fields' => ['faq_question', 'faq_answer']],
+            'testimonial' => ['table' => 'testimonials_tb', 'pk' => 'id', 'fields' => ['name', 'organization', 'title', 'testimonial']],
+            'event' => ['table' => 'events', 'pk' => 'event_id', 'fields' => ['event_title', 'event_content', 'event_detail', 'event_date', 'event_time', 'event_address', 'event_status']],
+            'training' => ['table' => 'trainings_tb', 'pk' => 'id', 'fields' => ['training_name', 'training_description', 'training_details', 'training_icon']],
+            'blog' => ['table' => 'blogs', 'pk' => 'uuid', 'fields' => ['category_id', 'title', 'slug', 'summary', 'content', 'status']]
         ];
-
         if (!isset($allowedTypes[$type])) return false;
 
         $table = $allowedTypes[$type]['table'];
+        $pk = $allowedTypes[$type]['pk'];
         $fields = $allowedTypes[$type]['fields'];
+        $actionMode = $data['action_mode'] ?? 'store';
 
-        $placeholders = implode(',', array_fill(0, count($fields), '?'));
-        $fieldNames = implode(',', $fields);
-
-        $values = [];
-        foreach ($fields as $field) {
-            $values[] = $data[$field] ?? '';
+        if ($actionMode === 'update') {
+            $id = $data['id'] ?? null;
+            if (!$id) return false;
+            $sets = []; $values = [];
+            foreach ($fields as $field) {
+                if (isset($data[$field])) { $sets[] = "$field = ?"; $values[] = $data[$field]; }
+            }
+            $values[] = $id;
+            $setSql = implode(',', $sets);
+            $stmt = $this->db->prepare("UPDATE $table SET $setSql WHERE $pk = ?");
+            return $stmt->execute($values);
+        } else {
+            $placeholders = implode(',', array_fill(0, count($fields), '?'));
+            $fieldNames = implode(',', $fields);
+            $values = [];
+            foreach ($fields as $field) { $values[] = $data[$field] ?? ''; }
+            $stmt = $this->db->prepare("INSERT INTO $table ($fieldNames) VALUES ($placeholders)");
+            return $stmt->execute($values);
         }
+    }
 
-        $stmt = $this->db->prepare("INSERT INTO $table ($fieldNames) VALUES ($placeholders)");
-        return $stmt->execute($values);
+    public function getAllAdmins() {
+        return $this->db->query("SELECT * FROM admin_tb ORDER BY admin_id ASC")->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function deleteRecord($type, $id) {
@@ -155,16 +149,11 @@ class AdminModel {
             'banner' => ['table' => 'banners_tb', 'pk' => 'banner_id'],
             'member' => ['table' => 'members', 'pk' => 'member_id'],
             'faq' => ['table' => 'faq_tb', 'pk' => 'faq_id'],
-            'testimonial' => ['table' => 'testimonials_tb', 'pk' => 'id'],
-            'dse_app' => ['table' => 'dse_application', 'pk' => 'id'],
-            'bootcamp_app' => ['table' => 'bootcamp_application', 'pk' => 'id']
+            'testimonial' => ['table' => 'testimonials_tb', 'pk' => 'id']
         ];
-
         if (!isset($allowedTypes[$type])) return false;
-
         $table = $allowedTypes[$type]['table'];
         $pk = $allowedTypes[$type]['pk'];
-
         $stmt = $this->db->prepare("DELETE FROM $table WHERE $pk = ?");
         return $stmt->execute([$id]);
     }

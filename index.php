@@ -69,6 +69,24 @@ $routes = [
     'admin/settings' => ['AdminController', 'settings'],
     'admin/delete' => ['AdminController', 'deleteRecord'],
     'admin/store' => ['AdminController', 'storeRecord'],
+
+    // Module Specific Form Routes
+    'admin/services/add' => ['AdminController', 'addService'],
+    'admin/services/edit/{id}' => ['AdminController', 'editService'],
+    'admin/projects/add' => ['AdminController', 'addProject'],
+    'admin/projects/edit/{id}' => ['AdminController', 'editProject'],
+    'admin/events/add' => ['AdminController', 'addEvent'],
+    'admin/events/edit/{id}' => ['AdminController', 'editEvent'],
+    'admin/trainings/add' => ['AdminController', 'addTraining'],
+    'admin/trainings/edit/{id}' => ['AdminController', 'editTraining'],
+    'admin/blog/add' => ['AdminController', 'addBlog'],
+    'admin/blog/edit/{id}' => ['AdminController', 'editBlog'],
+    'admin/banners/add' => ['AdminController', 'addBanner'],
+    'admin/banners/edit/{id}' => ['AdminController', 'editBanner'],
+    'admin/faq/add' => ['AdminController', 'addFAQ'],
+    'admin/faq/edit/{id}' => ['AdminController', 'editFAQ'],
+    'admin/testimonials/add' => ['AdminController', 'addTestimonial'],
+    'admin/testimonials/edit/{id}' => ['AdminController', 'editTestimonial'],
 ];
 
 foreach ($routes as $path => $route) {

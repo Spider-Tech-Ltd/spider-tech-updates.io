@@ -56,5 +56,6 @@
                 </tbody>
             </table>
         </div>
+        <?php include ROOT_PATH . '/views/admin/layout/pagination.php'; ?>
     </div>
 </div>

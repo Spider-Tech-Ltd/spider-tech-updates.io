@@ -40,7 +40,7 @@
             document.getElementById(modalId).classList.remove('show');
         }
 
-        async function submitForm(event, type, modalId) {
+        async function submitForm(event, type, callbackOrModal) {
             event.preventDefault();
             const form = event.target;
             const formData = new FormData(form);
@@ -58,8 +58,14 @@
 
                 if (data.status === 'success') {
                     showToast(data.message);
-                    closeModal(modalId);
-                    setTimeout(() => window.location.reload(), 1000);
+                    if (typeof window[callbackOrModal] === 'function') {
+                        setTimeout(() => window[callbackOrModal](), 1000);
+                    } else if (document.getElementById(callbackOrModal)) {
+                        closeModal(callbackOrModal);
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        setTimeout(() => window.location.reload(), 1000);
+                    }
                 } else {
                     showToast(data.message, 'error');
                 }
