@@ -5,7 +5,7 @@
 
 <!-- Stats Grid -->
 <div class="row gy-4 gx-4 mb-5">
-    <div class="col-xl-3 col-md-6">
+    <div class="col-xl-3 col-md-6 mb-3">
         <div class="stat-card">
             <div class="stat-icon bg-soft-orange text-orange">
                 <span class="material-symbols-outlined">group</span>
@@ -16,7 +16,7 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-3 col-md-6">
+    <div class="col-xl-3 col-md-6 mb-3">
         <div class="stat-card">
             <div class="stat-icon bg-soft-blue text-blue">
                 <span class="material-symbols-outlined">work</span>
@@ -27,7 +27,7 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-3 col-md-6">
+    <div class="col-xl-3 col-md-6 mb-3">
         <div class="stat-card">
             <div class="stat-icon bg-soft-green text-green">
                 <span class="material-symbols-outlined">assignment_ind</span>
@@ -38,7 +38,7 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-3 col-md-6">
+    <div class="col-xl-3 col-md-6 mb-3">
         <div class="stat-card">
             <div class="stat-icon bg-soft-purple text-purple">
                 <span class="material-symbols-outlined">calendar_month</span>
@@ -73,7 +73,7 @@
                         <div class="list-item-custom">
                             <img src="<?= $avatar ?>" class="avatar-sm" alt="">
                             <div class="flex-grow-1 ms-3">
-                                <div class="fw-600 fs-09"><?= htmlspecialchars($rm['name']) ?></div>
+                                <div class="fw-600 fs-09"><?= htmlspecialchars($rm['full_name']) ?></div>
                                 <div class="text-muted fs-07"><?= htmlspecialchars($rm['email']) ?></div>
                             </div>
                             <div class="text-muted fs-07"><?= date('M d', strtotime($rm['created_at'])) ?></div>
@@ -152,51 +152,51 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const ctx = document.getElementById('contentChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Services', 'Projects', 'Events', 'Trainings', 'Testimonials', 'FAQs'],
-            datasets: [{
-                label: 'Total Records',
-                data: [
-                    <?= $stats['total_services'] ?>,
-                    <?= $stats['total_projects'] ?>,
-                    <?= $stats['total_events'] ?>,
-                    <?= $stats['total_trainings'] ?>,
-                    <?= $stats['total_testimonials'] ?>,
-                    <?= $stats['total_faq'] ?>
-                ],
-                backgroundColor: 'rgba(244, 130, 33, 0.7)',
-                borderColor: 'rgba(244, 130, 33, 1)',
-                borderWidth: 1,
-                borderRadius: 5
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        drawBorder: false,
-                        color: 'rgba(0,0,0,0.05)'
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('contentChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Services', 'Projects', 'Events', 'Trainings', 'Testimonials', 'FAQs'],
+                datasets: [{
+                    label: 'Total Records',
+                    data: [
+                        <?= $stats['total_services'] ?>,
+                        <?= $stats['total_projects'] ?>,
+                        <?= $stats['total_events'] ?>,
+                        <?= $stats['total_trainings'] ?>,
+                        <?= $stats['total_testimonials'] ?>,
+                        <?= $stats['total_faq'] ?>
+                    ],
+                    backgroundColor: 'rgba(244, 130, 33, 0.7)',
+                    borderColor: 'rgba(244, 130, 33, 1)',
+                    borderWidth: 1,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            drawBorder: false,
+                            color: 'rgba(0,0,0,0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
                     }
                 },
-                x: {
-                    grid: {
+                plugins: {
+                    legend: {
                         display: false
                     }
                 }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                }
             }
-        }
+        });
     });
-});
 </script>
