@@ -39,7 +39,7 @@
                         <td>
                             <div class="fw-600"><?= htmlspecialchars($blog['title']) ?></div>
                         </td>
-                        <td><?= htmlspecialchars($blog['category_name']) ?></td>
+                        <td><?= htmlspecialchars($blog['name']) ?></td>
                         <td><span class="badge <?= $statusClass ?>"><?= ucfirst($blog['status']) ?></span></td>
                         <td class="text-end">
                             <div class="action-btns">

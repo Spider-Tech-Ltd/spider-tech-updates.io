@@ -108,22 +108,25 @@ h1, h2, h3, h4, h5, h6, .poppins {
     align-items: center;
     gap: 12px;
     cursor: pointer;
+    user-select: none;
 }
 
 .form-switch-custom input {
-    width: 40px;
-    height: 20px;
+    width: 46px;
+    height: 22px;
     appearance: none;
     background: #e0e0e0;
     border-radius: 20px;
     position: relative;
     outline: none;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid #dcdcdc;
 }
 
 .form-switch-custom input:checked {
     background: var(--primary-orange);
+    border-color: var(--primary-orange-hover);
 }
 
 .form-switch-custom input::before {
@@ -134,12 +137,13 @@ h1, h2, h3, h4, h5, h6, .poppins {
     background: #fff;
     border-radius: 50%;
     top: 2px;
-    left: 2px;
-    transition: all 0.3s;
+    left: 3px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .form-switch-custom input:checked::before {
-    left: 22px;
+    left: 25px;
 }
 
 /* --- Pagination --- */
