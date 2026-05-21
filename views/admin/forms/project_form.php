@@ -8,8 +8,8 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-8">
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-7">
         <div class="admin-card">
             <div class="card-body-custom">
                 <form onsubmit="submitForm(event, 'project', 'projectRedirect')">
@@ -42,6 +42,15 @@
                             <label class="form-label-custom">Year</label>
                             <input type="number" name="project_year" class="form-control-custom" value="<?= $item['project_year'] ?? date('Y') ?>" required>
                         </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label-custom">Visibility on Home</label>
+                        <label class="form-switch-custom">
+                            <input type="hidden" name="show_on_home" value="0">
+                            <input type="checkbox" name="show_on_home" value="1" <?= (!isset($item) || $item['show_on_home']) ? 'checked' : '' ?>>
+                            <span class="fs-08 text-muted">Display in homepage project gallery</span>
+                        </label>
                     </div>
 
                     <div class="mb-4">

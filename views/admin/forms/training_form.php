@@ -8,8 +8,8 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-8">
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-7">
         <div class="admin-card">
             <div class="card-body-custom">
                 <form onsubmit="submitForm(event, 'training', 'trainingRedirect')">
@@ -26,9 +26,19 @@
                         <input type="text" name="training_name" class="form-control-custom" value="<?= $item['training_name'] ?? '' ?>" required>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label-custom">Icon Class</label>
-                        <input type="text" name="training_icon" class="form-control-custom" value="<?= $item['training_icon'] ?? 'fas fa-graduation-cap' ?>" required>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label-custom">Icon Class</label>
+                            <input type="text" name="training_icon" class="form-control-custom" value="<?= $item['training_icon'] ?? 'fas fa-graduation-cap' ?>" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-custom">Show on Home</label>
+                            <label class="form-switch-custom mt-2">
+                                <input type="hidden" name="show_on_home" value="0">
+                                <input type="checkbox" name="show_on_home" value="1" <?= (!isset($item) || $item['show_on_home']) ? 'checked' : '' ?>>
+                                <span class="fs-08 text-muted">Feature on homepage</span>
+                            </label>
+                        </div>
                     </div>
 
                     <div class="mb-4">

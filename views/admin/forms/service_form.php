@@ -8,8 +8,8 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-8">
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-7">
         <div class="admin-card">
             <div class="card-body-custom">
                 <form onsubmit="submitForm(event, 'service', 'serviceRedirect')">
@@ -29,6 +29,15 @@
                     <div class="mb-4">
                         <label class="form-label-custom">Icon Class (FontAwesome)</label>
                         <input type="text" name="service_icon" class="form-control-custom" value="<?= $item['service_icon'] ?? '' ?>" placeholder="fas fa-laptop-code" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label-custom">Visibility on Home</label>
+                        <label class="form-switch-custom">
+                            <input type="hidden" name="show_on_home" value="0">
+                            <input type="checkbox" name="show_on_home" value="1" <?= (!isset($item) || $item['show_on_home']) ? 'checked' : '' ?>>
+                            <span class="fs-08 text-muted">Show this service on the homepage</span>
+                        </label>
                     </div>
 
                     <div class="mb-4">
