@@ -14,7 +14,7 @@ class HomeModel {
     }
 
     public function getBanners() {
-        $query = "SELECT * FROM `banners_tb` WHERE banner_id IN (1, 2, 3, 4)";
+        $query = "SELECT * FROM `banners_tb` ORDER BY banner_id DESC LIMIT 5";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -37,7 +37,7 @@ class HomeModel {
     public function getProjects() {
         $query = "SELECT p.*, s.service_name
                   FROM projects_tb p
-                  INNER JOIN services_tb s ON p.service_id = s.id
+                  LEFT JOIN services_tb s ON p.service_id = s.id
                   WHERE p.show_on_home = 1
                   ORDER BY p.sort_order ASC, p.project_id DESC LIMIT 6";
         $stmt = $this->conn->prepare($query);

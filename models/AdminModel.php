@@ -158,7 +158,13 @@ class AdminModel {
             if (!$id) return false;
             $sets = []; $values = [];
             foreach ($fields as $field) {
-                if (isset($data[$field])) { $sets[] = "$field = ?"; $values[] = $data[$field]; }
+                if (isset($data[$field])) {
+                    $sets[] = "$field = ?";
+                    $values[] = $data[$field];
+                } elseif ($field === 'show_on_home') {
+                    $sets[] = "show_on_home = ?";
+                    $values[] = 0;
+                }
             }
             $values[] = $id;
             $setSql = implode(',', $sets);
