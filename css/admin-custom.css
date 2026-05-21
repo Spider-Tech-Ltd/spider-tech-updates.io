@@ -103,6 +103,45 @@ h1, h2, h3, h4, h5, h6, .poppins {
     box-shadow: 0 0 0 3px rgba(244, 130, 33, 0.1);
 }
 
+.form-switch-custom {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.form-switch-custom input {
+    width: 40px;
+    height: 20px;
+    appearance: none;
+    background: #e0e0e0;
+    border-radius: 20px;
+    position: relative;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.form-switch-custom input:checked {
+    background: var(--primary-orange);
+}
+
+.form-switch-custom input::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: all 0.3s;
+}
+
+.form-switch-custom input:checked::before {
+    left: 22px;
+}
+
 /* --- Pagination --- */
 .pagination-custom {
     display: flex;
@@ -768,8 +807,9 @@ h1, h2, h3, h4, h5, h6, .poppins {
     background: #fff;
     border-radius: 20px;
     box-shadow: var(--shadow);
-    height: 100%;
+    height: auto;
     overflow: hidden;
+    margin-bottom: 24px;
 }
 
 .card-header-custom {
@@ -782,6 +822,7 @@ h1, h2, h3, h4, h5, h6, .poppins {
 
 .card-body-custom {
     padding: 25px;
+    height: auto;
 }
 
 .gap-vertical-3 {

@@ -8,8 +8,8 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-8">
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-7">
         <div class="admin-card">
             <div class="card-body-custom">
                 <form onsubmit="submitForm(event, 'event', 'eventRedirect')">
@@ -37,17 +37,27 @@
                         </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label-custom">Location / Address</label>
-                        <input type="text" name="event_address" class="form-control-custom" value="<?= $item['event_address'] ?? '' ?>" required>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label-custom">Status</label>
+                            <select name="event_status" class="form-control-custom" required>
+                                <option value="Upcoming" <?= (isset($item) && $item['event_status'] == 'Upcoming') ? 'selected' : '' ?>>Upcoming</option>
+                                <option value="Past" <?= (isset($item) && $item['event_status'] == 'Past') ? 'selected' : '' ?>>Past</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-custom">Show on Home</label>
+                            <label class="form-switch-custom mt-2">
+                                <input type="hidden" name="show_on_home" value="0">
+                                <input type="checkbox" name="show_on_home" value="1" <?= (!isset($item) || $item['show_on_home']) ? 'checked' : '' ?>>
+                                <span class="fs-08 text-muted">Feature on homepage</span>
+                            </label>
+                        </div>
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label-custom">Status</label>
-                        <select name="event_status" class="form-control-custom" required>
-                            <option value="Upcoming" <?= (isset($item) && $item['event_status'] == 'Upcoming') ? 'selected' : '' ?>>Upcoming</option>
-                            <option value="Past" <?= (isset($item) && $item['event_status'] == 'Past') ? 'selected' : '' ?>>Past</option>
-                        </select>
+                        <label class="form-label-custom">Location / Address</label>
+                        <input type="text" name="event_address" class="form-control-custom" value="<?= $item['event_address'] ?? '' ?>" required>
                     </div>
 
                     <div class="mb-4">
