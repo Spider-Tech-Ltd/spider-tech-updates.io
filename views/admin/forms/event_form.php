@@ -56,6 +56,11 @@
                     </div>
 
                     <div class="mb-4">
+                        <label class="form-label-custom">Display Order</label>
+                        <input type="number" name="sort_order" class="form-control-custom" value="<?= $item['sort_order'] ?? 0 ?>" min="0">
+                    </div>
+
+                    <div class="mb-4">
                         <label class="form-label-custom">Location / Address</label>
                         <input type="text" name="event_address" class="form-control-custom" value="<?= $item['event_address'] ?? '' ?>" required>
                     </div>

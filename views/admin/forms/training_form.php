@@ -42,6 +42,11 @@
                     </div>
 
                     <div class="mb-4">
+                        <label class="form-label-custom">Display Order</label>
+                        <input type="number" name="sort_order" class="form-control-custom" value="<?= $item['sort_order'] ?? 0 ?>" min="0">
+                    </div>
+
+                    <div class="mb-4">
                         <label class="form-label-custom">Short Summary</label>
                         <textarea name="training_description" class="form-control-custom" rows="3" required><?= $item['training_description'] ?? '' ?></textarea>
                     </div>

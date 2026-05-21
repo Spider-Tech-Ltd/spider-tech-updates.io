@@ -31,13 +31,19 @@
                         <input type="text" name="service_icon" class="form-control-custom" value="<?= $item['service_icon'] ?? '' ?>" placeholder="fas fa-laptop-code" required>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label-custom">Visibility on Home</label>
-                        <label class="form-switch-custom">
-                            <input type="hidden" name="show_on_home" value="0">
-                            <input type="checkbox" name="show_on_home" value="1" <?= (!isset($item) || $item['show_on_home']) ? 'checked' : '' ?>>
-                            <span class="fs-08 text-muted">Show this service on the homepage</span>
-                        </label>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label-custom">Visibility on Home</label>
+                            <label class="form-switch-custom mt-2">
+                                <input type="hidden" name="show_on_home" value="0">
+                                <input type="checkbox" name="show_on_home" value="1" <?= (!isset($item) || $item['show_on_home']) ? 'checked' : '' ?>>
+                                <span class="fs-08 text-muted">Feature on homepage</span>
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-custom">Display Order</label>
+                            <input type="number" name="sort_order" class="form-control-custom" value="<?= $item['sort_order'] ?? 0 ?>" min="0">
+                        </div>
                     </div>
 
                     <div class="mb-4">

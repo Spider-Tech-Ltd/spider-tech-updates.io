@@ -28,21 +28,25 @@ class HomeModel {
     }
 
     public function getServices() {
-        $query = "SELECT * FROM `services_tb` WHERE `show_on_home` = 1 LIMIT 6";
+        $query = "SELECT * FROM `services_tb` WHERE `show_on_home` = 1 ORDER BY sort_order ASC, id DESC LIMIT 6";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getProjects() {
-        $query = "SELECT p.*, s.service_name FROM projects_tb p INNER JOIN services_tb s ON p.service_id = s.id WHERE p.show_on_home = 1 LIMIT 6";
+        $query = "SELECT p.*, s.service_name
+                  FROM projects_tb p
+                  INNER JOIN services_tb s ON p.service_id = s.id
+                  WHERE p.show_on_home = 1
+                  ORDER BY p.sort_order ASC, p.project_id DESC LIMIT 6";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getUpcomingEvents() {
-        $query = "SELECT * FROM `events` WHERE `event_status` = 'upcoming' AND `show_on_home` = 1";
+        $query = "SELECT * FROM `events` WHERE `event_status` = 'upcoming' AND `show_on_home` = 1 ORDER BY sort_order ASC, event_date ASC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
