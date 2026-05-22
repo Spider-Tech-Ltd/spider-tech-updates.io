@@ -753,7 +753,7 @@ foreach ($banners as &$banner) {
                         <div class="event-card-horizontal">
                             <div class="row no-gutters">
                                 <div class="col-md-5">
-                                    <img src="<?= BASE_URL . '/' . ltrim(substr($event['event_img'], 3), '/'); ?>" class="event-img-h w-100" alt="Event Image">
+                                    <img src="<?= BASE_URL . '/' . ltrim($event['event_img'], './'); ?>" class="event-img-h w-100" alt="Event Image">
                                 </div>
                                 <div class="col-md-7">
                                     <div class="event-content-h">
@@ -803,7 +803,7 @@ foreach ($banners as &$banner) {
                 <div class="col-lg-4 col-md-6 mb-4">
                     <a href="<?= BASE_URL ?>/projects/detail?id=<?= $project['project_id']; ?>" class="project-card-new">
                         <div class="card-img-wrap">
-                            <img src="<?= BASE_URL . '/' . ltrim(substr($project['project_pic'], 3), '/'); ?>" alt="<?= stripslashes($project['project_name']); ?>">
+                            <img src="<?= BASE_URL . '/' . ltrim($project['project_pic'], './'); ?>" alt="<?= stripslashes($project['project_name']); ?>">
                         </div>
                         <div class="card-content-p">
                             <span class="card-category-p"><?= $project['service_name']; ?></span>
