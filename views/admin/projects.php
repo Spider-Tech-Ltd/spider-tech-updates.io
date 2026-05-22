@@ -27,7 +27,8 @@
                 <tbody>
                     <?php
                     foreach ($projects as $project):
-                        $imagePath = str_replace('../', BASE_URL . '/', $project['project_pic']);
+                        $pic = $project['project_pic'];
+                        $imagePath = (strpos($pic, '../') === 0) ? BASE_URL . '/' . ltrim(substr($pic, 3), '/') : BASE_URL . '/' . ltrim($pic, '/');
                     ?>
                     <tr>
                         <td>

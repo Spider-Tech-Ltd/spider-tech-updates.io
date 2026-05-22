@@ -26,7 +26,8 @@
                 <tbody>
                     <?php
                     foreach ($trainings as $training):
-                        $imagePath = str_replace('../', BASE_URL . '/', $training['training_image']);
+                        $pic = $training['training_image'];
+                        $imagePath = (strpos($pic, '../') === 0) ? BASE_URL . '/' . ltrim(substr($pic, 3), '/') : BASE_URL . '/' . ltrim($pic, '/');
                     ?>
                     <tr>
                         <td>
