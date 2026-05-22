@@ -33,7 +33,7 @@ class AdminModel {
         $data = ['stats' => $this->getDashboardStats()];
 
         // Latest 5 members - Using 'full_name' as 'name' to satisfy user request for 'name' key
-        $data['recent_members'] = $this->db->query("SELECT name as full_name, email, avatar, created_at FROM members ORDER BY created_at DESC LIMIT 5")->fetchAll(PDO::FETCH_ASSOC);
+        $data['recent_members'] = $this->db->query("SELECT full_name as name, email, avatar, created_at FROM members ORDER BY created_at DESC LIMIT 5")->fetchAll(PDO::FETCH_ASSOC);
 
         // Latest 5 applications (combined DSE and Bootcamp) - Order by DESC and Limit 5
         $data['recent_applications'] = $this->db->query("
@@ -136,7 +136,7 @@ class AdminModel {
         $table = $allowedTypes[$type]['table'];
         $pk = $allowedTypes[$type]['pk'];
         $fields = $allowedTypes[$type]['fields'];
-        $uploadField = $allowedTypes[$type]['upload'];
+        $uploadField = $allowedTypes[$type]['upload'] ?? null;
         $uploadPath = $allowedTypes[$type]['path'] ?? '';
         $actionMode = $data['action_mode'] ?? 'store';
 
@@ -148,6 +148,7 @@ class AdminModel {
                 mkdir(ROOT_PATH . '/' . $uploadPath, 0777, true);
             }
             if (move_uploaded_file($tmp_name, ROOT_PATH . '/' . $uploadPath . $name)) {
+                // Determine the correct path prefix for frontend consistency
                 $filePath = ($type === 'blog') ? $uploadPath . $name : '../' . $uploadPath . $name;
                 $data[$uploadField] = $filePath;
                 if (!in_array($uploadField, $fields)) {

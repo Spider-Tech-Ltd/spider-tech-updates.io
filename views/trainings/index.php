@@ -415,7 +415,7 @@
               if (preg_match('#^https?://#i', $imageSrc)) {
                 $imageSrc = htmlspecialchars($imageSrc);
               } else {
-                $imageSrc = BASE_URL . '/' . ltrim($imageSrc, '/.');
+                $imageSrc = BASE_URL . '/' . ltrim($imageSrc, './');
               }
             }
             ?>
