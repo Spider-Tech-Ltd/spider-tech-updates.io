@@ -28,7 +28,7 @@
                     <?php
                     foreach ($projects as $project):
                         $pic = $project['project_pic'];
-                        $imagePath = (strpos($pic, '../') === 0) ? BASE_URL . '/' . ltrim(substr($pic, 3), '/') : BASE_URL . '/' . ltrim($pic, '/');
+                        $imagePath = (empty($pic)) ? BASE_URL . '/images/placeholder-banner.jpg' : ( (preg_match('#^https?://#i', $pic)) ? $pic : BASE_URL . '/' . ltrim($pic, './') );
                     ?>
                     <tr>
                         <td>

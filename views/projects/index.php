@@ -314,7 +314,7 @@
                         <span class="project-category-tag"><?= htmlspecialchars($project['service_name']); ?></span>
                         <?php
                             $pic = $project['project_pic'];
-                            $finalPic = BASE_URL . '/' . ltrim($pic, './');
+                            $finalPic = (empty($pic)) ? BASE_URL . '/images/placeholder-banner.jpg' : ( (preg_match('#^https?://#i', $pic)) ? $pic : BASE_URL . '/' . ltrim($pic, './') );
                         ?>
                         <img src="<?= $finalPic ?>" alt="<?= htmlspecialchars($project['project_name']); ?>">
                     </div>

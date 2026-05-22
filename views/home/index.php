@@ -753,7 +753,8 @@ foreach ($banners as &$banner) {
                         <div class="event-card-horizontal">
                             <div class="row no-gutters">
                                 <div class="col-md-5">
-                                    <img src="<?= BASE_URL . '/' . ltrim($event['event_img'], './'); ?>" class="event-img-h w-100" alt="Event Image">
+                                    <?php $ePic = (empty($event['event_img'])) ? BASE_URL . '/images/placeholder-banner.jpg' : ( (preg_match('#^https?://#i', $event['event_img'])) ? $event['event_img'] : BASE_URL . '/' . ltrim($event['event_img'], './') ); ?>
+                                    <img src="<?= $ePic ?>" class="event-img-h w-100" alt="Event Image">
                                 </div>
                                 <div class="col-md-7">
                                     <div class="event-content-h">
@@ -803,7 +804,8 @@ foreach ($banners as &$banner) {
                 <div class="col-lg-4 col-md-6 mb-4">
                     <a href="<?= BASE_URL ?>/projects/detail?id=<?= $project['project_id']; ?>" class="project-card-new">
                         <div class="card-img-wrap">
-                            <img src="<?= BASE_URL . '/' . ltrim($project['project_pic'], './'); ?>" alt="<?= stripslashes($project['project_name']); ?>">
+                            <?php $pPic = (empty($project['project_pic'])) ? BASE_URL . '/images/placeholder-banner.jpg' : ( (preg_match('#^https?://#i', $project['project_pic'])) ? $project['project_pic'] : BASE_URL . '/' . ltrim($project['project_pic'], './') ); ?>
+                            <img src="<?= $pPic ?>" alt="<?= stripslashes($project['project_name']); ?>">
                         </div>
                         <div class="card-content-p">
                             <span class="card-category-p"><?= $project['service_name']; ?></span>
