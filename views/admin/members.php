@@ -23,7 +23,12 @@
                 <tbody>
                     <?php
                     foreach ($members as $member):
-                        $avatar = $member['avatar'] ? BASE_URL . '/uploads/avatars/' . $member['avatar'] : BASE_URL . '/images/testimonials.png';
+                        $avatarPath = $member['avatar'];
+                        if ($avatarPath) {
+                            $avatar = (strpos($avatarPath, 'uploads/') !== false) ? BASE_URL . '/' . ltrim($avatarPath, '/') : BASE_URL . '/uploads/forum/avatars/' . $avatarPath;
+                        } else {
+                            $avatar = BASE_URL . '/images/testimonials.png';
+                        }
                         $isVerified = $member['is_verified'];
                     ?>
                     <tr>
@@ -31,7 +36,7 @@
                             <div class="d-flex align-items-center gap-3">
                                 <img src="<?= $avatar ?>" class="avatar-sm" alt="">
                                 <div>
-                                    <div class="fw-600"><?= htmlspecialchars($member['full_name']) ?></div>
+                                    <div class="fw-600"><?= htmlspecialchars($member['name']) ?></div>
                                     <div class="text-muted fs-07">UUID: <?= substr($member['uuid'], 0, 8) ?>...</div>
                                 </div>
                             </div>

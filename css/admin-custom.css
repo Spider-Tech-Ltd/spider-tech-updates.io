@@ -766,6 +766,16 @@ h1, h2, h3, h4, h5, h6, .poppins {
     margin-bottom: 5px;
 }
 
+.content-header .btn-primary-custom,
+.content-header .btn-action {
+    text-decoration: none !important;
+}
+
+.content-header .btn-primary-custom:hover,
+.content-header .btn-action:hover {
+    text-decoration: none !important;
+}
+
 .content-header p {
     color: var(--text-muted);
     font-size: 0.95rem;

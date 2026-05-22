@@ -21,13 +21,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($admins as $adm): ?>
-                            <tr>
-                                <td><span class="fw-600"><?= htmlspecialchars($adm['admin_name']) ?></span></td>
-                                <td><span class="badge badge-soft-blue"><?= $adm['privilege'] ?: 'Admin' ?></span></td>
-                                <td class="text-muted fs-08"><?= $adm['lastlogin'] ?></td>
-                            </tr>
-                            <?php endforeach; ?>
+                            <?php if (isset($admins) && is_array($admins)): ?>
+                                <?php foreach ($admins as $adm): ?>
+                                <tr>
+                                    <td><span class="fw-600"><?= htmlspecialchars($adm['admin_name'] ?? 'N/A') ?></span></td>
+                                    <td><span class="badge badge-soft-blue"><?= ($adm['privilege'] ?? '') ?: 'Admin' ?></span></td>
+                                    <td class="text-muted fs-08"><?= $adm['lastlogin'] ?? 'Never' ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr><td colspan="3" class="text-center py-4">No admin accounts found</td></tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
