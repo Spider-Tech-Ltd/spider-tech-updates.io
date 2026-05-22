@@ -12,7 +12,7 @@
     <div class="col-lg-8 col-xl-7">
         <div class="admin-card">
             <div class="card-body-custom">
-                <form onsubmit="submitForm(event, 'training', 'trainingRedirect')">
+                <form onsubmit="submitForm(event, 'training', 'trainingRedirect')" enctype="multipart/form-data">
                     <input type="hidden" name="type" value="training">
                     <?php if ($mode == 'edit'): ?>
                         <input type="hidden" name="id" value="<?= $item['id'] ?>">

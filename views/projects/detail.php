@@ -288,7 +288,7 @@
             <div class="project-hero-wrap">
                 <?php
                     $pic = $project['project_pic'];
-                    $finalPic = (strpos($pic, '../') === 0) ? BASE_URL . '/' . ltrim(substr($pic, 3), '/') : BASE_URL . '/' . ltrim($pic, '/');
+                    $finalPic = BASE_URL . '/' . ltrim($pic, './');
                 ?>
                 <img src="<?= $finalPic ?>" alt="<?= htmlspecialchars($project['project_name']); ?>">
                 <div class="project-hero-overlay">
