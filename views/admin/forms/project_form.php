@@ -68,8 +68,8 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label-custom">Description (HTML Supported)</label>
-                        <textarea name="project_description" class="form-control-custom" rows="8"><?= $item['project_description'] ?? '' ?></textarea>
+                        <label class="form-label-custom">Description (Rich Text Editor)</label>
+                        <textarea name="project_description" class="form-control-custom rich-editor" rows="8"><?= $item['project_description'] ?? '' ?></textarea>
                     </div>
 
                     <div class="d-flex justify-content-end gap-3 mt-5">

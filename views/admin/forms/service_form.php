@@ -52,8 +52,8 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label-custom">Full Details (HTML)</label>
-                        <textarea name="service_detail" class="form-control-custom" rows="8"><?= $item['service_detail'] ?? '' ?></textarea>
+                        <label class="form-label-custom">Full Details (Rich Text Editor)</label>
+                        <textarea name="service_detail" class="form-control-custom rich-editor" rows="8"><?= $item['service_detail'] ?? '' ?></textarea>
                     </div>
 
                     <hr class="my-4 opacity-05">
