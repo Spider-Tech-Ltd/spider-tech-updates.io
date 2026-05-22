@@ -148,8 +148,11 @@ class AdminModel {
                 mkdir(ROOT_PATH . '/' . $uploadPath, 0777, true);
             }
             if (move_uploaded_file($tmp_name, ROOT_PATH . '/' . $uploadPath . $name)) {
-                $data[$uploadField] = ($type === 'blog') ? $uploadPath . $name : '../' . $uploadPath . $name;
-                $fields[] = $uploadField;
+                $filePath = ($type === 'blog') ? $uploadPath . $name : '../' . $uploadPath . $name;
+                $data[$uploadField] = $filePath;
+                if (!in_array($uploadField, $fields)) {
+                    $fields[] = $uploadField;
+                }
             }
         }
 

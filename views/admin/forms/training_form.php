@@ -52,6 +52,16 @@
                     </div>
 
                     <div class="mb-4">
+                        <label class="form-label-custom">Training Cover Image</label>
+                        <input type="file" name="training_image" class="form-control-custom" <?= ($mode == 'add') ? 'required' : '' ?>>
+                        <?php if ($mode == 'edit' && $item['training_image']): ?>
+                            <div class="mt-3 table-img-wrapper" style="width: 150px; height: 100px;">
+                                <img src="<?= str_replace('../', BASE_URL . '/', $item['training_image']) ?>" alt="">
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="mb-4">
                         <label class="form-label-custom">Training Details (HTML)</label>
                         <textarea name="training_details" class="form-control-custom" rows="8"><?= $item['training_details'] ?? '' ?></textarea>
                     </div>

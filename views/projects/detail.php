@@ -286,7 +286,11 @@
 
             <!-- Hero Visual -->
             <div class="project-hero-wrap">
-                <img src="<?= BASE_URL . '/' . ltrim(substr($project['project_pic'], 3), '/'); ?>" alt="<?= htmlspecialchars($project['project_name']); ?>">
+                <?php
+                    $pic = $project['project_pic'];
+                    $finalPic = (strpos($pic, '../') === 0) ? BASE_URL . '/' . ltrim(substr($pic, 3), '/') : BASE_URL . '/' . ltrim($pic, '/');
+                ?>
+                <img src="<?= $finalPic ?>" alt="<?= htmlspecialchars($project['project_name']); ?>">
                 <div class="project-hero-overlay">
                     <h2 class="project-main-title"><?= stripslashes($project['project_name']); ?></h2>
                 </div>
