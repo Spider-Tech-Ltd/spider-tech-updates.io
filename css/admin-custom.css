@@ -103,6 +103,26 @@ h1, h2, h3, h4, h5, h6, .poppins {
     box-shadow: 0 0 0 3px rgba(244, 130, 33, 0.1);
 }
 
+/* --- CKEditor High-Fidelity Customization --- */
+.ck-editor__main .ck-content {
+    min-height: 250px;
+    border-radius: 0 0 12px 12px !important;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.8;
+}
+
+.ck-toolbar {
+    border-radius: 12px 12px 0 0 !important;
+    background-color: #f8f9fa !important;
+    border-color: #eee !important;
+}
+
+.ck.ck-editor__editable_inline:focus {
+    border-color: var(--primary-orange) !important;
+    box-shadow: 0 0 0 3px rgba(244, 130, 33, 0.1) !important;
+}
+
 .form-switch-custom {
     display: flex;
     align-items: center;

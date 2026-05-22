@@ -40,9 +40,37 @@
             document.getElementById(modalId).classList.remove('show');
         }
 
+        // --- CKEditor Initializer ---
+        const editors = {};
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.rich-editor').forEach(el => {
+                ClassicEditor
+                    .create(el, {
+                        toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', 'insertTable', '|', 'undo', 'redo'],
+                    })
+                    .then(editor => {
+                        editors[el.name] = editor;
+                    })
+                    .catch(error => {
+                        console.error('CKEditor Init Error:', error);
+                    });
+            });
+        });
+
         async function submitForm(event, type, callbackOrModal) {
             event.preventDefault();
             const form = event.target;
+
+            // Sync CKEditor data back to textareas
+            if (typeof editors !== 'undefined') {
+                for (const name in editors) {
+                    const textarea = form.querySelector(`[name="${name}"]`);
+                    if (textarea) {
+                        textarea.value = editors[name].getData();
+                    }
+                }
+            }
+
             const formData = new FormData(form);
 
             try {

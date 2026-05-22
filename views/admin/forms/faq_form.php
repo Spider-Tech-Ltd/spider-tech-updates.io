@@ -27,8 +27,8 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label-custom">Answer (HTML Supported)</label>
-                        <textarea name="faq_answer" class="form-control-custom" rows="10" required><?= $item['faq_answer'] ?? '' ?></textarea>
+                        <label class="form-label-custom">Answer (Rich Text Editor)</label>
+                        <textarea name="faq_answer" class="form-control-custom rich-editor" rows="10"><?= $item['faq_answer'] ?? '' ?></textarea>
                     </div>
 
                     <div class="d-flex justify-content-end gap-3 mt-5">

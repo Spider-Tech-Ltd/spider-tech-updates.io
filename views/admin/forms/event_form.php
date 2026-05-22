@@ -71,8 +71,8 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label-custom">Full Event Details (HTML)</label>
-                        <textarea name="event_detail" class="form-control-custom" rows="8"><?= $item['event_detail'] ?? '' ?></textarea>
+                        <label class="form-label-custom">Full Event Details (Rich Text Editor)</label>
+                        <textarea name="event_detail" class="form-control-custom rich-editor" rows="8"><?= $item['event_detail'] ?? '' ?></textarea>
                     </div>
 
                     <div class="d-flex justify-content-end gap-3 mt-5">
