@@ -1,16 +1,13 @@
 <?php
-class AdminModel
-{
+class AdminModel {
     private $db;
 
-    public function __construct()
-    {
+    public function __construct() {
         $database = new Database();
         $this->db = $database->getConnection();
     }
 
-    public function authenticate($username, $password)
-    {
+    public function authenticate($username, $password) {
         $stmt = $this->db->prepare("SELECT * FROM admin_tb WHERE admin_name = ?");
         $stmt->execute([$username]);
         $admin = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -32,11 +29,10 @@ class AdminModel
         return false;
     }
 
-    public function getDashboardData()
-    {
+    public function getDashboardData() {
         $data = ['stats' => $this->getDashboardStats()];
 
-        // Latest 5 members - Using 'full_name' as 'name' to satisfy user request for 'name' key
+        // Latest 5 members - Using 'name' as 'full_name' for backward compatibility in views
         $data['recent_members'] = $this->db->query("SELECT name as full_name, email, avatar, created_at FROM members ORDER BY created_at DESC LIMIT 5")->fetchAll(PDO::FETCH_ASSOC);
 
         // Latest 5 applications (combined DSE and Bootcamp) - Order by DESC and Limit 5
@@ -50,8 +46,7 @@ class AdminModel
         return $data;
     }
 
-    public function getDashboardStats()
-    {
+    public function getDashboardStats() {
         $stats = [];
         $queries = [
             'total_services' => "SELECT COUNT(*) FROM services_tb",
@@ -70,8 +65,7 @@ class AdminModel
         return $stats;
     }
 
-    public function getPaginated($table, $page = 1, $limit = 6, $orderBy = 'id DESC')
-    {
+    public function getPaginated($table, $page = 1, $limit = 6, $orderBy = 'id DESC') {
         $offset = ($page - 1) * $limit;
         $allowedTables = ['services_tb', 'projects_tb', 'events', 'trainings_tb', 'blogs', 'members', 'faq_tb', 'testimonials_tb', 'banners_tb'];
         if (!in_array($table, $allowedTables)) return ['data' => [], 'total_pages' => 0];
@@ -99,15 +93,13 @@ class AdminModel
         ];
     }
 
-    public function getById($table, $pk, $id)
-    {
+    public function getById($table, $pk, $id) {
         $stmt = $this->db->prepare("SELECT * FROM $table WHERE $pk = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getPaginatedProjects($page = 1, $limit = 6)
-    {
+    public function getPaginatedProjects($page = 1, $limit = 6) {
         $offset = ($page - 1) * $limit;
         $total = $this->db->query("SELECT COUNT(*) FROM projects_tb")->fetchColumn();
         $totalPages = ceil($total / $limit);
@@ -128,8 +120,7 @@ class AdminModel
         ];
     }
 
-    public function storeRecord($type, $data)
-    {
+    public function storeRecord($type, $data) {
         $allowedTypes = [
             'service' => ['table' => 'services_tb', 'pk' => 'id', 'fields' => ['service_name', 'service_icon', 'service_description', 'service_detail', 'show_on_home', 'sort_order'], 'upload' => null],
             'project' => ['table' => 'projects_tb', 'pk' => 'project_id', 'fields' => ['project_name', 'service_id', 'project_year', 'project_description', 'show_on_home', 'sort_order'], 'upload' => 'project_pic', 'path' => 'images/pictures/'],
@@ -169,8 +160,7 @@ class AdminModel
         if ($actionMode === 'update') {
             $id = $data['id'] ?? null;
             if (!$id) return false;
-            $sets = [];
-            $values = [];
+            $sets = []; $values = [];
             foreach ($fields as $field) {
                 if (isset($data[$field])) {
                     $sets[] = "$field = ?";
@@ -193,21 +183,17 @@ class AdminModel
             $placeholders = implode(',', array_fill(0, count($fields), '?'));
             $fieldNames = implode(',', $fields);
             $values = [];
-            foreach ($fields as $field) {
-                $values[] = $data[$field] ?? '';
-            }
+            foreach ($fields as $field) { $values[] = $data[$field] ?? ''; }
             $stmt = $this->db->prepare("INSERT INTO $table ($fieldNames) VALUES ($placeholders)");
             return $stmt->execute($values);
         }
     }
 
-    public function getAllAdmins()
-    {
-        return $this->db->query("SELECT * FROM admin_tb ORDER BY admin_id ASC")->fetchAll(PDO::FETCH_ASSOC);
+    public function getAllAdmins() {
+        return $this->db->query("SELECT * FROM admin_tb ORDER BY admin_name ASC")->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function deleteRecord($type, $id)
-    {
+    public function deleteRecord($type, $id) {
         $allowedTypes = [
             'service' => ['table' => 'services_tb', 'pk' => 'id'],
             'project' => ['table' => 'projects_tb', 'pk' => 'project_id'],
