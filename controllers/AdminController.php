@@ -95,9 +95,14 @@ class AdminController extends AdminBaseController {
 
     public function applications() {
         $adminModel = new AdminModel();
+        $program = $_GET['program'] ?? 'all';
+        $page = $this->getPage();
+        $result = $adminModel->getUnifiedApplications($program, $page, 10);
+
         $this->renderAdmin('applications', [
-            'dse_apps' => $adminModel->getPaginated('dse_application', 1, 10, 'apply_date DESC')['data'],
-            'bootcamp_apps' => $adminModel->getPaginated('bootcamp_application', 1, 10, 'apply_date DESC')['data']
+            'applications' => $result['data'],
+            'pagination' => $result,
+            'current_program' => $program
         ]);
     }
 

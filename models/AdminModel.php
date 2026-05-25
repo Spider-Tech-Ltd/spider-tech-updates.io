@@ -46,6 +46,40 @@ class AdminModel {
         return $data;
     }
 
+    public function getUnifiedApplications($program = 'all', $page = 1, $limit = 10) {
+        $offset = ($page - 1) * $limit;
+        $params = [];
+
+        $dse_sql = "SELECT id, firstname, lastname, email, phone_no, apply_date, 'DSE' as program, business_name FROM dse_application";
+        $bootcamp_sql = "SELECT id, firstname, lastname, email, phone_no, apply_date, 'Bootcamp' as program, business_name FROM bootcamp_application";
+
+        if ($program === 'DSE') {
+            $sql = "($dse_sql) ORDER BY apply_date DESC LIMIT :limit OFFSET :offset";
+            $count_sql = "SELECT COUNT(*) FROM dse_application";
+        } elseif ($program === 'Bootcamp') {
+            $sql = "($bootcamp_sql) ORDER BY apply_date DESC LIMIT :limit OFFSET :offset";
+            $count_sql = "SELECT COUNT(*) FROM bootcamp_application";
+        } else {
+            $sql = "($dse_sql) UNION ALL ($bootcamp_sql) ORDER BY apply_date DESC LIMIT :limit OFFSET :offset";
+            $count_sql = "SELECT (SELECT COUNT(*) FROM dse_application) + (SELECT COUNT(*) FROM bootcamp_application)";
+        }
+
+        $total = $this->db->query($count_sql)->fetchColumn();
+        $totalPages = ceil($total / $limit);
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return [
+            'data' => $stmt->fetchAll(PDO::FETCH_ASSOC),
+            'total_pages' => $totalPages,
+            'current_page' => $page,
+            'total_records' => $total
+        ];
+    }
+
     public function getDashboardStats() {
         $stats = [];
         $queries = [
