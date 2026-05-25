@@ -93,6 +93,31 @@ class AdminController extends AdminBaseController {
         $this->renderAdmin('testimonials', ['testimonials' => $result['data'], 'pagination' => $result]);
     }
 
+    public function memberDetails($id) {
+        if (!$this->isAjax()) { http_response_code(403); exit; }
+        $adminModel = new AdminModel();
+        $member = $adminModel->getById('members', 'member_id', $id);
+        if ($member) {
+            echo json_encode(['status' => 'success', 'data' => $member]);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Member not found.']);
+        }
+        exit;
+    }
+
+    public function toggleMemberStatus() {
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(403); exit; }
+        $id = $_POST['id'] ?? null;
+        if (!$id) { echo json_encode(['status' => 'error', 'message' => 'Missing member ID.']); exit; }
+        $adminModel = new AdminModel();
+        if ($adminModel->toggleMemberStatus($id)) {
+            echo json_encode(['status' => 'success', 'message' => 'Member status updated successfully.']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Failed to update member status.']);
+        }
+        exit;
+    }
+
     public function applications() {
         $adminModel = new AdminModel();
         $programId = $_GET['program'] ?? 'all';

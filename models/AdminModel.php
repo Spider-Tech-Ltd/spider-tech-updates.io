@@ -95,7 +95,7 @@ class AdminModel {
             'total_events' => "SELECT COUNT(*) FROM events",
             'total_trainings' => "SELECT COUNT(*) FROM trainings_tb",
             'total_members' => "SELECT COUNT(*) FROM members",
-            'total_applicants' => "SELECT COUNT(*) FROM dse_application",
+            'total_applicants' => "SELECT COUNT(*) FROM training_registrations",
             'total_faq' => "SELECT COUNT(*) FROM faq_tb",
             'total_testimonials' => "SELECT COUNT(*) FROM testimonials_tb"
         ];
@@ -232,6 +232,14 @@ class AdminModel {
 
     public function getAllAdmins() {
         return $this->db->query("SELECT * FROM admin_tb ORDER BY admin_name ASC")->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function toggleMemberStatus($id) {
+        $member = $this->getById('members', 'member_id', $id);
+        if (!$member) return false;
+        $newStatus = ($member['status'] === 'Suspended') ? 'Active' : 'Suspended';
+        $stmt = $this->db->prepare("UPDATE members SET status = ? WHERE member_id = ?");
+        return $stmt->execute([$newStatus, $id]);
     }
 
     public function deleteRecord($type, $id) {

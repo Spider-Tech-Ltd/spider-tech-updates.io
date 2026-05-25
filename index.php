@@ -69,6 +69,8 @@ $routes = [
     'admin/settings' => ['AdminController', 'settings'],
     'admin/delete' => ['AdminController', 'deleteRecord'],
     'admin/store' => ['AdminController', 'storeRecord'],
+    'admin/members/details/{id}' => ['AdminController', 'memberDetails'],
+    'admin/members/toggle-status' => ['AdminController', 'toggleMemberStatus'],
 
     // Module Specific Form Routes
     'admin/services/add' => ['AdminController', 'addService'],
