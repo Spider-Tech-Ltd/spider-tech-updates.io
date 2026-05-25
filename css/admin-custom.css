@@ -336,6 +336,18 @@ h1, h2, h3, h4, h5, h6, .poppins {
     font-weight: 600;
 }
 
+.badge-soft-yellow {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+    font-weight: 600;
+}
+
+.badge-soft-purple {
+    background: rgba(111, 66, 193, 0.1);
+    color: #6f42c1;
+    font-weight: 600;
+}
+
 /* --- Banner Management --- */
 .banner-manage-card {
     background: #fff;

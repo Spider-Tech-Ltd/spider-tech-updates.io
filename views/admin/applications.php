@@ -24,6 +24,7 @@
             <table class="table table-custom mb-0">
                 <thead>
                     <tr>
+                        <th>#</th>
                         <th>Applicant</th>
                         <th>Program</th>
                         <th>Phone</th>
@@ -39,7 +40,9 @@
                         </td>
                     </tr>
                     <?php else: ?>
-                        <?php foreach ($applications as $app):
+                        <?php
+                        $i = ($pagination['current_page'] - 1) * 10 + 1;
+                        foreach ($applications as $app):
                             $userData = json_decode($app['user_data'], true);
                             // Extract name - handle different possible keys
                             $firstName = $userData['firstname'] ?? $userData['first_name'] ?? '';
@@ -49,12 +52,21 @@
                             $phone = $userData['phone'] ?? $userData['phone_no'] ?? $userData['phone_number'] ?? 'N/A';
                         ?>
                         <tr>
+                            <td class="text-muted fs-08"><?= $i++ ?></td>
                             <td>
                                 <div class="fw-600"><?= htmlspecialchars($fullName) ?></div>
                                 <div class="text-muted fs-08"><?= htmlspecialchars($email) ?></div>
                             </td>
                             <td>
-                                <span class="badge badge-soft-blue">
+                                <?php
+                                    $pName = strtolower($app['program_name'] ?? '');
+                                    $badgeClass = 'badge-soft-muted';
+                                    if (strpos($pName, 'dse') !== false) $badgeClass = 'badge-soft-orange';
+                                    elseif (strpos($pName, 'jobberman') !== false) $badgeClass = 'badge-soft-blue';
+                                    elseif (strpos($pName, 'we code') !== false) $badgeClass = 'badge-soft-yellow';
+                                    elseif (strpos($pName, 'bootcamp') !== false) $badgeClass = 'badge-soft-green';
+                                ?>
+                                <span class="badge <?= $badgeClass ?>">
                                     <?= htmlspecialchars($app['program_name'] ?: 'Unknown Program') ?>
                                 </span>
                             </td>
