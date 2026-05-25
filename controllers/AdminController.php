@@ -95,14 +95,16 @@ class AdminController extends AdminBaseController {
 
     public function applications() {
         $adminModel = new AdminModel();
-        $program = $_GET['program'] ?? 'all';
+        $programId = $_GET['program'] ?? 'all';
         $page = $this->getPage();
-        $result = $adminModel->getUnifiedApplications($program, $page, 10);
+        $result = $adminModel->getUnifiedApplications($programId, $page, 10);
+        $programs = $adminModel->getAllPrograms();
 
         $this->renderAdmin('applications', [
             'applications' => $result['data'],
             'pagination' => $result,
-            'current_program' => $program
+            'current_program' => $programId,
+            'programs' => $programs
         ]);
     }
 

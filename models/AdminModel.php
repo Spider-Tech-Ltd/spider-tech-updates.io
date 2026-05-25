@@ -35,39 +35,42 @@ class AdminModel {
         // Latest 5 members - Using 'name' as 'full_name' for backward compatibility in views
         $data['recent_members'] = $this->db->query("SELECT name as full_name, email, avatar, created_at FROM members ORDER BY created_at DESC LIMIT 5")->fetchAll(PDO::FETCH_ASSOC);
 
-        // Latest 5 applications (combined DSE and Bootcamp) - Order by DESC and Limit 5
+        // Latest 5 applications from training_registrations
         $data['recent_applications'] = $this->db->query("
-            (SELECT firstname, lastname, email, apply_date, 'DSE' as type FROM dse_application ORDER BY apply_date DESC LIMIT 5)
-            UNION ALL
-            (SELECT firstname, lastname, email, apply_date, 'Bootcamp' as type FROM bootcamp_application ORDER BY apply_date DESC LIMIT 5)
-            ORDER BY apply_date DESC LIMIT 5
+            SELECT tr.*, t.training_name as type
+            FROM training_registrations tr
+            LEFT JOIN trainings_tb t ON tr.program_id = t.id
+            ORDER BY tr.created_at DESC LIMIT 5
         ")->fetchAll(PDO::FETCH_ASSOC);
 
         return $data;
     }
 
-    public function getUnifiedApplications($program = 'all', $page = 1, $limit = 10) {
+    public function getUnifiedApplications($programId = 'all', $page = 1, $limit = 10) {
         $offset = ($page - 1) * $limit;
+
+        $where = "";
         $params = [];
-
-        $dse_sql = "SELECT id, firstname, lastname, email, phone_no, apply_date, 'DSE' as program, business_name FROM dse_application";
-        $bootcamp_sql = "SELECT id, firstname, lastname, email, phone_no, apply_date, 'Bootcamp' as program, business_name FROM bootcamp_application";
-
-        if ($program === 'DSE') {
-            $sql = "($dse_sql) ORDER BY apply_date DESC LIMIT :limit OFFSET :offset";
-            $count_sql = "SELECT COUNT(*) FROM dse_application";
-        } elseif ($program === 'Bootcamp') {
-            $sql = "($bootcamp_sql) ORDER BY apply_date DESC LIMIT :limit OFFSET :offset";
-            $count_sql = "SELECT COUNT(*) FROM bootcamp_application";
-        } else {
-            $sql = "($dse_sql) UNION ALL ($bootcamp_sql) ORDER BY apply_date DESC LIMIT :limit OFFSET :offset";
-            $count_sql = "SELECT (SELECT COUNT(*) FROM dse_application) + (SELECT COUNT(*) FROM bootcamp_application)";
+        if ($programId !== 'all') {
+            $where = " WHERE tr.program_id = :program_id";
+            $params[':program_id'] = $programId;
         }
 
-        $total = $this->db->query($count_sql)->fetchColumn();
+        $countSql = "SELECT COUNT(*) FROM training_registrations tr" . $where;
+        $stmt = $this->db->prepare($countSql);
+        foreach ($params as $key => $val) { $stmt->bindValue($key, $val); }
+        $stmt->execute();
+        $total = $stmt->fetchColumn();
         $totalPages = ceil($total / $limit);
 
+        $sql = "SELECT tr.*, t.training_name as program_name
+                FROM training_registrations tr
+                LEFT JOIN trainings_tb t ON tr.program_id = t.id
+                $where
+                ORDER BY tr.created_at DESC LIMIT :limit OFFSET :offset";
+
         $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) { $stmt->bindValue($key, $val); }
         $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
         $stmt->execute();
@@ -78,6 +81,10 @@ class AdminModel {
             'current_page' => $page,
             'total_records' => $total
         ];
+    }
+
+    public function getAllPrograms() {
+        return $this->db->query("SELECT id, training_name FROM trainings_tb ORDER BY training_name ASC")->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getDashboardStats() {

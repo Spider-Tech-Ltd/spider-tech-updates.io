@@ -93,16 +93,21 @@
             </div>
             <div class="card-body-custom">
                 <div class="list-group list-group-flush">
-                    <?php foreach ($recent_applications as $ra): ?>
+                                    <?php foreach ($recent_applications as $app):
+                                        $userData = json_decode($app['user_data'], true);
+                                        $firstName = $userData['firstname'] ?? $userData['first_name'] ?? '';
+                                        $lastName = $userData['lastname'] ?? $userData['last_name'] ?? '';
+                                        $fullName = $userData['full_name'] ?? $userData['name'] ?? trim($firstName . ' ' . $lastName);
+                                    ?>
                         <div class="list-item-custom">
                             <div class="stat-icon-sm bg-soft-blue text-blue me-4">
-                                <span class="material-symbols-outlined fs-1rem"><?= ($ra['type'] == 'DSE') ? 'business_center' : 'school' ?></span>
+                                            <span class="material-symbols-outlined">assignment_ind</span>
                             </div>
                             <div class="flex-grow-1">
-                                <div class="fw-600 fs-09"><?= htmlspecialchars($ra['firstname'] . ' ' . $ra['lastname']) ?></div>
-                                <div class="text-muted fs-07"><?= $ra['type'] ?> Program</div>
+                                            <div class="fw-600 fs-09"><?= htmlspecialchars($fullName) ?></div>
+                                            <div class="text-muted fs-07"><?= htmlspecialchars($app['type']) ?></div>
                             </div>
-                            <div class="text-muted fs-07"><?= date('M d', strtotime($ra['apply_date'])) ?></div>
+                                        <div class="text-muted fs-07"><?= date('M d', strtotime($app['created_at'])) ?></div>
                         </div>
                     <?php endforeach; ?>
                 </div>
