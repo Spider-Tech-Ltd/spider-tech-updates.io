@@ -96,7 +96,7 @@ class AdminController extends AdminBaseController {
     public function memberDetails($id) {
         if (!$this->isAjax()) { http_response_code(403); exit; }
         $adminModel = new AdminModel();
-        $member = $adminModel->getById('members', 'member_id', $id);
+        $member = $adminModel->getById('members', 'id', $id);
         if ($member) {
             echo json_encode(['status' => 'success', 'data' => $member]);
         } else {

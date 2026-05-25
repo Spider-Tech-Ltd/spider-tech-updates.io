@@ -235,10 +235,10 @@ class AdminModel {
     }
 
     public function toggleMemberStatus($id) {
-        $member = $this->getById('members', 'member_id', $id);
+        $member = $this->getById('members', 'id', $id);
         if (!$member) return false;
         $newStatus = ($member['status'] === 'Suspended') ? 'Active' : 'Suspended';
-        $stmt = $this->db->prepare("UPDATE members SET status = ? WHERE member_id = ?");
+        $stmt = $this->db->prepare("UPDATE members SET status = ? WHERE id = ?");
         return $stmt->execute([$newStatus, $id]);
     }
 
@@ -250,7 +250,7 @@ class AdminModel {
             'training' => ['table' => 'trainings_tb', 'pk' => 'id'],
             'blog' => ['table' => 'blogs', 'pk' => 'uuid'],
             'banner' => ['table' => 'banners_tb', 'pk' => 'banner_id'],
-            'member' => ['table' => 'members', 'pk' => 'member_id'],
+            'member' => ['table' => 'members', 'pk' => 'id'],
             'faq' => ['table' => 'faq_tb', 'pk' => 'faq_id'],
             'testimonial' => ['table' => 'testimonials_tb', 'pk' => 'id']
         ];

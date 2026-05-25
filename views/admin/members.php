@@ -57,10 +57,10 @@
                         <td><?= date('M d, Y', strtotime($member['created_at'])) ?></td>
                         <td class="text-end">
                             <div class="action-btns">
-                                <button class="btn-action edit" title="View Details" onclick="viewMemberDetails(<?= $member['member_id'] ?>)">
+                                <button class="btn-action edit" title="View Details" onclick="viewMemberDetails(<?= $member['id'] ?>)">
                                     <span class="material-symbols-outlined">visibility</span>
                                 </button>
-                                <button class="btn-action delete" title="<?= $status === 'Suspended' ? 'Activate' : 'Suspend' ?>" onclick="confirmToggleStatus(<?= $member['member_id'] ?>, '<?= $status ?>')">
+                                <button class="btn-action delete" title="<?= $status === 'Suspended' ? 'Activate' : 'Suspend' ?>" onclick="confirmToggleStatus(<?= $member['id'] ?>, '<?= $status ?>')">
                                     <span class="material-symbols-outlined"><?= $status === 'Suspended' ? 'person' : 'person_off' ?></span>
                                 </button>
                             </div>
@@ -115,7 +115,7 @@ async function viewMemberDetails(id) {
                     </div>
                     <div class="col-md-6 border-bottom pb-2">
                         <label class="text-muted fs-07 fw-700 d-block text-uppercase">Member ID</label>
-                        <div class="fs-09">${m.member_id}</div>
+                        <div class="fs-09">${m.id}</div>
                     </div>
                     <div class="col-md-6 border-bottom pb-2">
                         <label class="text-muted fs-07 fw-700 d-block text-uppercase">Joined Date</label>
