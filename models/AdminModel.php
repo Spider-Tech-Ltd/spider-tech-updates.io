@@ -203,12 +203,15 @@ class AdminModel {
             if (!$id) return false;
             $sets = []; $values = [];
             foreach ($fields as $field) {
-                if (isset($data[$field])) {
+                if ($field === 'show_on_home') {
+                    $sets[] = "show_on_home = ?";
+                    $values[] = isset($data['show_on_home']) ? (int)$data['show_on_home'] : 0;
+                } elseif ($field === 'sort_order') {
+                    $sets[] = "sort_order = ?";
+                    $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
+                } elseif (isset($data[$field])) {
                     $sets[] = "$field = ?";
                     $values[] = $data[$field];
-                } elseif ($field === 'show_on_home') {
-                    $sets[] = "show_on_home = ?";
-                    $values[] = 0;
                 }
             }
             $values[] = $id;
@@ -224,7 +227,15 @@ class AdminModel {
             $placeholders = implode(',', array_fill(0, count($fields), '?'));
             $fieldNames = implode(',', $fields);
             $values = [];
-            foreach ($fields as $field) { $values[] = $data[$field] ?? ''; }
+            foreach ($fields as $field) {
+                if ($field === 'show_on_home') {
+                    $values[] = isset($data['show_on_home']) ? (int)$data['show_on_home'] : 1; // Default to showing on home for new entries
+                } elseif ($field === 'sort_order') {
+                    $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
+                } else {
+                    $values[] = $data[$field] ?? '';
+                }
+            }
             $stmt = $this->db->prepare("INSERT INTO $table ($fieldNames) VALUES ($placeholders)");
             return $stmt->execute($values);
         }

@@ -86,18 +86,19 @@ class HomeModel {
             'locations' => 1
         ];
 
-        // Get members count for "Happy Clients"
-        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM members");
-        $stmt->execute();
-        $stats['clients'] = $stmt->fetchColumn();
+        try {
+            // Get members count for "Happy Clients"
+            $stmt = $this->conn->prepare("SELECT COUNT(*) FROM members");
+            $stmt->execute();
+            $stats['clients'] = (int)$stmt->fetchColumn();
 
-        // Get actual projects count
-        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM projects_tb");
-        $stmt->execute();
-        $stats['projects'] = $stmt->fetchColumn();
-
-        // If counts are very low, we might want to add a base number to make it look established
-        // but the prompt says database driven.
+            // Get actual projects count
+            $stmt = $this->conn->prepare("SELECT COUNT(*) FROM projects_tb");
+            $stmt->execute();
+            $stats['projects'] = (int)$stmt->fetchColumn();
+        } catch (PDOException $e) {
+            error_log("HomeModel::getStats error: " . $e->getMessage());
+        }
 
         return $stats;
     }
