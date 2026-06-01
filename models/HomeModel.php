@@ -28,21 +28,33 @@ class HomeModel {
     }
 
     public function getServices() {
-        $query = "SELECT * FROM `services_tb` WHERE `show_on_home` = 1 ORDER BY sort_order ASC, id DESC LIMIT 6";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Fallback for when columns don't exist yet (prevent total page crash)
+        try {
+            $query = "SELECT * FROM `services_tb` WHERE `show_on_home` = 1 ORDER BY sort_order ASC, id DESC LIMIT 6";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return $this->conn->query("SELECT * FROM `services_tb` ORDER BY id DESC LIMIT 6")->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
 
-    public function getProjects() {
-        $query = "SELECT p.*, s.service_name
-                  FROM projects_tb p
-                  LEFT JOIN services_tb s ON p.service_id = s.id
-                  WHERE p.show_on_home = 1
-                  ORDER BY p.sort_order ASC, p.project_id DESC LIMIT 6";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function getProjects($limit = 6, $onlyFeatured = true) {
+        try {
+            $where = $onlyFeatured ? " WHERE p.show_on_home = 1 " : "";
+            $limitSql = $limit ? " LIMIT $limit " : "";
+            $query = "SELECT p.*, s.service_name
+                      FROM projects_tb p
+                      LEFT JOIN services_tb s ON p.service_id = s.id
+                      $where
+                      ORDER BY p.sort_order ASC, p.project_id DESC $limitSql";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            $limitSql = $limit ? " LIMIT $limit " : "";
+            return $this->conn->query("SELECT p.*, s.service_name FROM projects_tb p LEFT JOIN services_tb s ON p.service_id = s.id ORDER BY p.project_id DESC $limitSql")->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
 
     public function getUpcomingEvents() {

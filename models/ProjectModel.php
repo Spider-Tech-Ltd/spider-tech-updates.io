@@ -7,10 +7,14 @@ class ProjectModel {
     }
 
     public function getAllProjects() {
-        $query = "SELECT * FROM projects_tb p INNER JOIN services_tb s ON p.service_id = s.id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $query = "SELECT p.*, s.service_name FROM projects_tb p LEFT JOIN services_tb s ON p.service_id = s.id ORDER BY p.sort_order ASC, p.project_id DESC";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return $this->conn->query("SELECT p.*, s.service_name FROM projects_tb p LEFT JOIN services_tb s ON p.service_id = s.id ORDER BY p.project_id DESC")->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
 
     public function getProjectById($id) {

@@ -7,10 +7,14 @@ class ServiceModel {
     }
 
     public function getAllServices() {
-        $query = "SELECT * FROM `services_tb`";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $query = "SELECT * FROM `services_tb` ORDER BY sort_order ASC, id DESC";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return $this->conn->query("SELECT * FROM `services_tb` ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
 
     public function getServiceById($id) {

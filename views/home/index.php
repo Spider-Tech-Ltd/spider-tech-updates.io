@@ -719,14 +719,14 @@ foreach ($banners as &$banner) {
             <p class="section-subtitle">We provide high-impact technical solutions designed to scale your business and empower your workforce.</p>
         </div>
         <div class="row">
-            <?php foreach (array_slice($services, 0, 6) as $service): ?>
+            <?php foreach ($services as $service): ?>
                 <div class="col-lg-4 col-md-6 mb-4">
                     <a href="<?= BASE_URL ?>/services/detail?id=<?= $service['id']; ?>" class="service-card-new">
                         <div class="service-icon-box">
                             <i class="<?= $service['service_icon']; ?>"></i>
                         </div>
-                        <h3 class="service-title"><?= $service['service_name']; ?></h3>
-                        <p class="service-text"><?= $service['service_description']; ?></p>
+                        <h3 class="service-title"><?= htmlspecialchars($service['service_name']); ?></h3>
+                        <p class="service-text"><?= htmlspecialchars($service['service_description']); ?></p>
                     </a>
                 </div>
             <?php endforeach; ?>

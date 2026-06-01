@@ -198,46 +198,51 @@ class AdminModel {
             }
         }
 
-        if ($actionMode === 'update') {
-            $id = $data['id'] ?? null;
-            if (!$id) return false;
-            $sets = []; $values = [];
-            foreach ($fields as $field) {
-                if ($field === 'show_on_home') {
-                    $sets[] = "show_on_home = ?";
-                    $values[] = isset($data['show_on_home']) ? (int)$data['show_on_home'] : 0;
-                } elseif ($field === 'sort_order') {
-                    $sets[] = "sort_order = ?";
-                    $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
-                } elseif (isset($data[$field])) {
-                    $sets[] = "$field = ?";
-                    $values[] = $data[$field];
+        try {
+            if ($actionMode === 'update') {
+                $id = $data['id'] ?? null;
+                if (!$id) return false;
+                $sets = []; $values = [];
+                foreach ($fields as $field) {
+                    if ($field === 'show_on_home') {
+                        $sets[] = "show_on_home = ?";
+                        $values[] = isset($data['show_on_home']) ? (int)$data['show_on_home'] : 0;
+                    } elseif ($field === 'sort_order') {
+                        $sets[] = "sort_order = ?";
+                        $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
+                    } elseif (isset($data[$field])) {
+                        $sets[] = "$field = ?";
+                        $values[] = $data[$field];
+                    }
                 }
-            }
-            $values[] = $id;
-            $setSql = implode(',', $sets);
-            $stmt = $this->db->prepare("UPDATE $table SET $setSql WHERE $pk = ?");
-            return $stmt->execute($values);
-        } else {
-            // Generate UUID for blog if new
-            if ($type === 'blog') {
-                $fields[] = 'uuid';
-                $data['uuid'] = Utils::generateUUID();
-            }
-            $placeholders = implode(',', array_fill(0, count($fields), '?'));
-            $fieldNames = implode(',', $fields);
-            $values = [];
-            foreach ($fields as $field) {
-                if ($field === 'show_on_home') {
-                    $values[] = isset($data['show_on_home']) ? (int)$data['show_on_home'] : 1;
-                } elseif ($field === 'sort_order') {
-                    $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
-                } else {
-                    $values[] = $data[$field] ?? '';
+                $values[] = $id;
+                $setSql = implode(',', $sets);
+                $stmt = $this->db->prepare("UPDATE $table SET $setSql WHERE $pk = ?");
+                return $stmt->execute($values);
+            } else {
+                // Generate UUID for blog if new
+                if ($type === 'blog') {
+                    $fields[] = 'uuid';
+                    $data['uuid'] = Utils::generateUUID();
                 }
+                $placeholders = implode(',', array_fill(0, count($fields), '?'));
+                $fieldNames = implode(',', $fields);
+                $values = [];
+                foreach ($fields as $field) {
+                    if ($field === 'show_on_home') {
+                        $values[] = isset($data['show_on_home']) ? (int)$data['show_on_home'] : 1;
+                    } elseif ($field === 'sort_order') {
+                        $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
+                    } else {
+                        $values[] = $data[$field] ?? '';
+                    }
+                }
+                $stmt = $this->db->prepare("INSERT INTO $table ($fieldNames) VALUES ($placeholders)");
+                return $stmt->execute($values);
             }
-            $stmt = $this->db->prepare("INSERT INTO $table ($fieldNames) VALUES ($placeholders)");
-            return $stmt->execute($values);
+        } catch (PDOException $e) {
+            error_log("AdminModel::storeRecord error for $type: " . $e->getMessage());
+            throw $e; // Re-throw to be caught by Controller
         }
     }
 
