@@ -214,8 +214,10 @@ class AdminController extends AdminBaseController {
     }
 
     public function storeRecord() {
+        header('Content-Type: application/json');
         if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(403);
+            echo json_encode(['status' => 'error', 'message' => 'Forbidden access.']);
             exit;
         }
 
@@ -225,13 +227,25 @@ class AdminController extends AdminBaseController {
             exit;
         }
 
-        $adminModel = new AdminModel();
-        $success = $adminModel->storeRecord($type, $_POST);
+        try {
+            $adminModel = new AdminModel();
+            $success = $adminModel->storeRecord($type, $_POST);
 
-        if ($success) {
-            echo json_encode(['status' => 'success', 'message' => ucfirst($type) . ' saved successfully.']);
-        } else {
-            echo json_encode(['status' => 'error', 'message' => 'Failed to save record.']);
+            if ($success) {
+                echo json_encode(['status' => 'success', 'message' => ucfirst($type) . ' saved successfully.']);
+            } else {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Failed to save ' . $type . ' record.',
+                    'debug' => 'Model returned false. Check for duplicate keys or missing columns.'
+                ]);
+            }
+        } catch (Exception $e) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Server Error: ' . $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
         }
     }
 }

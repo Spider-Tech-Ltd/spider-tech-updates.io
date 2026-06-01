@@ -19,6 +19,7 @@
                 });
 
                 const data = await response.json();
+                console.log('Submission Response:', data);
 
                 if (data.status === 'success') {
                     showToast(data.message);
@@ -95,7 +96,8 @@
                         setTimeout(() => window.location.reload(), 1000);
                     }
                 } else {
-                    showToast(data.message, 'error');
+                    console.error('Error details:', data);
+                    showToast(data.message || 'Validation or database error.', 'error');
                 }
             } catch (error) {
                 console.error('Error:', error);

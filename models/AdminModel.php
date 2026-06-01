@@ -229,7 +229,7 @@ class AdminModel {
             $values = [];
             foreach ($fields as $field) {
                 if ($field === 'show_on_home') {
-                    $values[] = isset($data['show_on_home']) ? (int)$data['show_on_home'] : 1; // Default to showing on home for new entries
+                    $values[] = isset($data['show_on_home']) ? (int)$data['show_on_home'] : 1;
                 } elseif ($field === 'sort_order') {
                     $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
                 } else {

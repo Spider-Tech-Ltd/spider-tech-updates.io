@@ -1,6 +1,7 @@
 <?php
 
-$is_production = ($_SERVER['HTTP_HOST'] !== 'localhost' && $_SERVER['HTTP_HOST'] !== '127.0.0.1');
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$is_production = ($host !== 'localhost' && $host !== '127.0.0.1');
 
 if ($is_production) {
     error_reporting(0);
