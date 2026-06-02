@@ -13,12 +13,13 @@ class ProjectModel {
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
+            // Fallback for when sort_order might be missing
             return $this->conn->query("SELECT p.*, s.service_name FROM projects_tb p LEFT JOIN services_tb s ON p.service_id = s.id ORDER BY p.project_id DESC")->fetchAll(PDO::FETCH_ASSOC);
         }
     }
 
     public function getProjectById($id) {
-        $query = "SELECT * FROM projects_tb p INNER JOIN services_tb s ON p.service_id = s.id WHERE p.project_id = ? LIMIT 1";
+        $query = "SELECT p.*, s.service_name FROM projects_tb p LEFT JOIN services_tb s ON p.service_id = s.id WHERE p.project_id = ? LIMIT 1";
         $stmt = $this->conn->prepare($query);
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);

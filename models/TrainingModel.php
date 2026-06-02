@@ -7,10 +7,14 @@ class TrainingModel {
     }
 
     public function getAllTrainings() {
-        $query = "SELECT * FROM `trainings_tb`";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $query = "SELECT * FROM `trainings_tb` WHERE `show_on_home` = 1 ORDER BY sort_order ASC, id DESC";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return $this->conn->query("SELECT * FROM `trainings_tb` ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
 
     public function getTrainingById($id) {

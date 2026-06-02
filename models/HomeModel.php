@@ -17,7 +17,17 @@ class HomeModel {
         $query = "SELECT * FROM `banners_tb` ORDER BY banner_id DESC LIMIT 5";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $banners = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($banners as &$banner) {
+            if (!empty($banner['banner_image'])) {
+                $path = $banner['banner_image'];
+                if (!preg_match('#^https?://#i', $path) && strpos($path, 'images/') === false) {
+                    $banner['banner_image'] = 'images/banners/' . $path;
+                }
+            }
+        }
+        return $banners;
     }
 
     public function getAboutInfo() {
@@ -58,10 +68,14 @@ class HomeModel {
     }
 
     public function getUpcomingEvents() {
-        $query = "SELECT * FROM `events` WHERE `event_status` = 'upcoming' AND `show_on_home` = 1 ORDER BY sort_order ASC, event_date ASC";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $query = "SELECT * FROM `events` WHERE LOWER(`event_status`) = 'upcoming' AND `show_on_home` = 1 ORDER BY sort_order ASC, event_date ASC";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return $this->conn->query("SELECT * FROM `events` WHERE LOWER(`event_status`) = 'upcoming' ORDER BY event_date ASC")->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
 
     public function getLatestEvents() {
