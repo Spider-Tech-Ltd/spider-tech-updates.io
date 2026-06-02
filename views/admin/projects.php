@@ -28,26 +28,26 @@
                     <?php
                     foreach ($projects as $project):
                         $pic = $project['project_pic'];
-                        $imagePath = (empty($pic)) ? BASE_URL . '/images/placeholder-banner.jpg' : ( (preg_match('#^https?://#i', $pic)) ? $pic : BASE_URL . '/' . ltrim($pic, './') );
+                        $imagePath = (empty($pic)) ? BASE_URL . '/images/placeholder-banner.jpg' : ((preg_match('#^https?://#i', $pic)) ? $pic : BASE_URL . '/' . ltrim($pic, './'));
                     ?>
-                    <tr>
-                        <td>
-                            <div class="table-img-wrapper">
-                                <img src="<?= $imagePath ?>" alt="<?= htmlspecialchars($project['project_name']) ?>">
-                            </div>
-                        </td>
-                        <td>
-                            <div class="fw-600"><?= htmlspecialchars($project['project_name']) ?></div>
-                        </td>
-                        <td><span class="badge badge-soft-blue"><?= htmlspecialchars($project['service_name']) ?></span></td>
-                        <td><?= $project['project_year'] ?></td>
-                        <td class="text-end">
-                            <div class="action-btns">
-                                <a href="<?= BASE_URL ?>/admin/projects/edit/<?= $project['project_id'] ?>" class="btn-action edit"><span class="material-symbols-outlined">edit</span></a>
-                                <button class="btn-action delete" onclick="deleteItem(<?= $project['project_id'] ?>, 'project')"><span class="material-symbols-outlined">delete</span></button>
-                            </div>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td>
+                                <div class="table-img-wrapper">
+                                    <img src="<?= $imagePath ?>" alt="<?= htmlspecialchars($project['project_name']) ?>">
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fw-600"><?= htmlspecialchars($project['project_name']) ?></div>
+                            </td>
+                            <td><span class="badge badge-soft-blue"><?= htmlspecialchars($project['service_name']) ?></span></td>
+                            <td><?= $project['project_year'] ?></td>
+                            <td class="text-end">
+                                <div class="action-btns">
+                                    <a href="<?= BASE_URL ?>/admin/projects/edit/<?= $project['project_id'] ?>" class="btn-action edit"><span class="material-symbols-outlined">edit</span></a>
+                                    <button class="btn-action delete" onclick="deleteItem(<?= $project['project_id'] ?>, 'project')"><span class="material-symbols-outlined">delete</span></button>
+                                </div>
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
