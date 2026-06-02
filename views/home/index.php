@@ -629,7 +629,7 @@ foreach ($banners as &$banner) {
     <!-- Slides -->
     <template x-for="(slide, index) in slides" :key="index">
         <div class="hero-slide" :class="{ 'active': activeSlide === index }">
-            <img :src="'<?= BASE_URL ?>/images/banners/' + slide.banner_image" alt="Slider Image">
+            <img :src="slide.banner_image.startsWith('http') ? slide.banner_image : '<?= BASE_URL ?>/' + slide.banner_image" alt="Slider Image">
         </div>
     </template>
 

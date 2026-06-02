@@ -14,20 +14,32 @@ class HomeModel {
     }
 
     public function getBanners() {
-        $query = "SELECT * FROM `banners_tb` ORDER BY banner_id DESC LIMIT 5";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        $banners = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $query = "SELECT * FROM `banners_tb` ORDER BY banner_id DESC LIMIT 5";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            $banners = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        foreach ($banners as &$banner) {
-            if (!empty($banner['banner_image'])) {
-                $path = $banner['banner_image'];
-                if (!preg_match('#^https?://#i', $path) && strpos($path, 'images/') === false) {
-                    $banner['banner_image'] = 'images/banners/' . $path;
+            foreach ($banners as &$banner) {
+                if (!empty($banner['banner_image'])) {
+                    $path = $banner['banner_image'];
+                    // If it's not an external URL and doesn't already contain a path prefix
+                    if (!preg_match('#^https?://#i', $path) && strpos($path, '/') === false) {
+                        // Check multiple possible locations for legacy images
+                        if (file_exists(ROOT_PATH . '/images/banners/' . $path)) {
+                            $banner['banner_image'] = 'images/banners/' . $path;
+                        } elseif (file_exists(ROOT_PATH . '/img/' . $path)) {
+                            $banner['banner_image'] = 'img/' . $path;
+                        } else {
+                            $banner['banner_image'] = 'images/banners/' . $path;
+                        }
+                    }
                 }
             }
+            return $banners;
+        } catch (PDOException $e) {
+            return [];
         }
-        return $banners;
     }
 
     public function getAboutInfo() {
