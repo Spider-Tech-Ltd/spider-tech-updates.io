@@ -1,13 +1,16 @@
 <?php
-class AdminModel {
+class AdminModel
+{
     private $db;
 
-    public function __construct() {
+    public function __construct()
+    {
         $database = new Database();
         $this->db = $database->getConnection();
     }
 
-    public function authenticate($username, $password) {
+    public function authenticate($username, $password)
+    {
         $stmt = $this->db->prepare("SELECT * FROM admin_tb WHERE admin_name = ?");
         $stmt->execute([$username]);
         $admin = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -29,7 +32,8 @@ class AdminModel {
         return false;
     }
 
-    public function getDashboardData() {
+    public function getDashboardData()
+    {
         $data = ['stats' => $this->getDashboardStats()];
 
         // Latest 5 members - Using 'name' as 'full_name' for backward compatibility in views
@@ -46,7 +50,8 @@ class AdminModel {
         return $data;
     }
 
-    public function getUnifiedApplications($programId = 'all', $page = 1, $limit = 10) {
+    public function getUnifiedApplications($programId = 'all', $page = 1, $limit = 10)
+    {
         $offset = ($page - 1) * $limit;
 
         $where = "";
@@ -58,7 +63,9 @@ class AdminModel {
 
         $countSql = "SELECT COUNT(*) FROM training_registrations tr" . $where;
         $stmt = $this->db->prepare($countSql);
-        foreach ($params as $key => $val) { $stmt->bindValue($key, $val); }
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val);
+        }
         $stmt->execute();
         $total = $stmt->fetchColumn();
         $totalPages = ceil($total / $limit);
@@ -70,7 +77,9 @@ class AdminModel {
                 ORDER BY tr.created_at DESC LIMIT :limit OFFSET :offset";
 
         $stmt = $this->db->prepare($sql);
-        foreach ($params as $key => $val) { $stmt->bindValue($key, $val); }
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val);
+        }
         $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
         $stmt->execute();
@@ -83,11 +92,13 @@ class AdminModel {
         ];
     }
 
-    public function getAllPrograms() {
+    public function getAllPrograms()
+    {
         return $this->db->query("SELECT id, training_name FROM trainings_tb ORDER BY training_name ASC")->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getDashboardStats() {
+    public function getDashboardStats()
+    {
         $stats = [];
         $queries = [
             'total_services' => "SELECT COUNT(*) FROM services_tb",
@@ -106,7 +117,8 @@ class AdminModel {
         return $stats;
     }
 
-    public function getPaginated($table, $page = 1, $limit = 6, $orderBy = 'id DESC') {
+    public function getPaginated($table, $page = 1, $limit = 6, $orderBy = 'id DESC')
+    {
         $offset = ($page - 1) * $limit;
         $allowedTables = ['services_tb', 'projects_tb', 'events', 'trainings_tb', 'blogs', 'members', 'faq_tb', 'testimonials_tb', 'banners_tb'];
         if (!in_array($table, $allowedTables)) return ['data' => [], 'total_pages' => 0];
@@ -134,13 +146,15 @@ class AdminModel {
         ];
     }
 
-    public function getById($table, $pk, $id) {
+    public function getById($table, $pk, $id)
+    {
         $stmt = $this->db->prepare("SELECT * FROM $table WHERE $pk = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getPaginatedProjects($page = 1, $limit = 6) {
+    public function getPaginatedProjects($page = 1, $limit = 6)
+    {
         $offset = ($page - 1) * $limit;
         $total = $this->db->query("SELECT COUNT(*) FROM projects_tb")->fetchColumn();
         $totalPages = ceil($total / $limit);
@@ -161,7 +175,8 @@ class AdminModel {
         ];
     }
 
-    public function storeRecord($type, $data) {
+    public function storeRecord($type, $data)
+    {
         $allowedTypes = [
             'service' => ['table' => 'services_tb', 'pk' => 'id', 'fields' => ['service_name', 'service_icon', 'service_description', 'service_detail', 'show_on_home', 'sort_order'], 'upload' => null],
             'project' => ['table' => 'projects_tb', 'pk' => 'project_id', 'fields' => ['project_name', 'service_id', 'project_year', 'project_description', 'show_on_home', 'sort_order'], 'upload' => 'project_pic', 'path' => 'images/pictures/'],
@@ -189,8 +204,8 @@ class AdminModel {
                 mkdir(ROOT_PATH . '/' . $uploadPath, 0777, true);
             }
             if (move_uploaded_file($tmp_name, ROOT_PATH . '/' . $uploadPath . $name)) {
-                // Determine the correct path prefix for frontend consistency
-                $filePath = ($type === 'blog') ? $uploadPath . $name : '../' . $uploadPath . $name;
+                // FIXED: Store a clean absolute root-relative path (without "../")
+                $filePath = $uploadPath . $name;
                 $data[$uploadField] = $filePath;
                 if (!in_array($uploadField, $fields)) {
                     $fields[] = $uploadField;
@@ -202,11 +217,13 @@ class AdminModel {
             if ($actionMode === 'update') {
                 $id = $data['id'] ?? null;
                 if (!$id) return false;
-                $sets = []; $values = [];
+                $sets = [];
+                $values = [];
                 foreach ($fields as $field) {
                     if ($field === 'show_on_home') {
                         $sets[] = "show_on_home = ?";
-                        $values[] = isset($data['show_on_home']) ? (int)$data['show_on_home'] : 0;
+                        // Safeguard checkbox state checking
+                        $values[] = (isset($data['show_on_home']) && $data['show_on_home']) ? 1 : 0;
                     } elseif ($field === 'sort_order') {
                         $sets[] = "sort_order = ?";
                         $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
@@ -230,7 +247,7 @@ class AdminModel {
                 $values = [];
                 foreach ($fields as $field) {
                     if ($field === 'show_on_home') {
-                        $values[] = isset($data['show_on_home']) ? (int)$data['show_on_home'] : 1;
+                        $values[] = (isset($data['show_on_home']) && $data['show_on_home']) ? 1 : 0;
                     } elseif ($field === 'sort_order') {
                         $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
                     } else {
@@ -242,15 +259,17 @@ class AdminModel {
             }
         } catch (PDOException $e) {
             error_log("AdminModel::storeRecord error for $type: " . $e->getMessage());
-            throw $e; // Re-throw to be caught by Controller
+            throw $e;
         }
     }
 
-    public function getAllAdmins() {
+    public function getAllAdmins()
+    {
         return $this->db->query("SELECT * FROM admin_tb ORDER BY admin_name ASC")->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function toggleMemberStatus($id) {
+    public function toggleMemberStatus($id)
+    {
         $member = $this->getById('members', 'id', $id);
         if (!$member) return false;
         $newStatus = ($member['status'] === 'Suspended') ? 'Active' : 'Suspended';
@@ -258,7 +277,8 @@ class AdminModel {
         return $stmt->execute([$newStatus, $id]);
     }
 
-    public function deleteRecord($type, $id) {
+    public function deleteRecord($type, $id)
+    {
         $allowedTypes = [
             'service' => ['table' => 'services_tb', 'pk' => 'id'],
             'project' => ['table' => 'projects_tb', 'pk' => 'project_id'],

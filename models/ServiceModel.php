@@ -8,7 +8,8 @@ class ServiceModel {
 
     public function getAllServices() {
         try {
-            $query = "SELECT * FROM `services_tb` ORDER BY sort_order ASC, id DESC";
+            // Include show_on_home if it exists, otherwise fallback via catch
+            $query = "SELECT * FROM `services_tb` WHERE `show_on_home` = 1 ORDER BY sort_order ASC, id DESC";
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
