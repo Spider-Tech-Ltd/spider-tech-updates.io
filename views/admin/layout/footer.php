@@ -2,34 +2,99 @@
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
     </div> <!-- End of .admin-wrapper -->
 
+    <!-- Global Delete Confirmation Modal (Alpine.js) -->
+    <div class="modal-custom" :class="{ 'show': deleteModal.open }" x-cloak>
+        <div class="modal-content-custom" style="max-width: 400px;" @click.away="deleteModal.open = false">
+            <div class="modal-body-custom text-center py-5">
+                <div class="mb-4">
+                    <span class="material-symbols-outlined text-danger" style="font-size: 64px;">warning</span>
+                </div>
+                <h3 class="fw-700 mb-3">Are you sure?</h3>
+                <p class="text-muted mb-4">You are about to delete this <span x-text="deleteModal.type"></span>. This action is permanent and cannot be undone.</p>
+
+                <div class="d-flex justify-content-center gap-3">
+                    <button @click="deleteModal.open = false" class="btn btn-light px-4">Cancel</button>
+                    <button @click="confirmDelete()" class="btn btn-danger px-4" :disabled="deleteModal.loading">
+                        <span x-show="!deleteModal.loading">Yes, Delete</span>
+                        <span x-show="deleteModal.loading">Deleting...</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        async function deleteItem(id, type) {
-            if (!confirm(`Are you sure you want to delete this ${type}? This action cannot be undone.`)) {
-                return;
-            }
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('globalUI', () => ({
+                deleteModal: {
+                    open: false,
+                    id: null,
+                    type: null,
+                    loading: false
+                },
+                async confirmDelete() {
+                    this.deleteModal.loading = true;
+                    try {
+                        const response = await fetch('<?= BASE_URL ?>/admin/delete', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: `id=${this.deleteModal.id}&type=${this.deleteModal.type}`
+                        });
 
-            try {
-                const response = await fetch('<?= BASE_URL ?>/admin/delete', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: `id=${id}&type=${type}`
-                });
-
-                const data = await response.json();
-                console.log('Submission Response:', data);
-
-                if (data.status === 'success') {
-                    showToast(data.message);
-                    setTimeout(() => window.location.reload(), 1000);
-                } else {
-                    showToast(data.message, 'error');
+                        const data = await response.json();
+                        if (data.status === 'success') {
+                            showToast(data.message);
+                            setTimeout(() => window.location.reload(), 1000);
+                        } else {
+                            showToast(data.message, 'error');
+                            this.deleteModal.loading = false;
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showToast('An unexpected error occurred.', 'error');
+                        this.deleteModal.loading = false;
+                    }
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('An unexpected error occurred.', 'error');
+            }));
+        });
+
+        function deleteItem(id, type) {
+            // Access Alpine data using the proxy if available
+            const alpineRoot = document.querySelector('[x-data="globalUI"]');
+            if (alpineRoot && window.Alpine) {
+                const data = Alpine.$data(alpineRoot);
+                data.deleteModal.id = id;
+                data.deleteModal.type = type;
+                data.deleteModal.open = true;
+            } else {
+                // Fallback to traditional confirm if Alpine is not ready
+                if (confirm(`Are you sure you want to delete this ${type}?`)) {
+                    // This is a simplified fallback that mimics the old behavior
+                    const formData = new URLSearchParams();
+                    formData.append('id', id);
+                    formData.append('type', type);
+
+                    fetch('<?= BASE_URL ?>/admin/delete', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: formData
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            showToast(data.message);
+                            setTimeout(() => window.location.reload(), 1000);
+                        } else {
+                            showToast(data.message, 'error');
+                        }
+                    });
+                }
             }
         }
 

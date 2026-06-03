@@ -227,6 +227,8 @@ h1, h2, h3, h4, h5, h6, .poppins {
     box-shadow: 0 5px 15px rgba(244, 130, 33, 0.3);
 }
 
+[x-cloak] { display: none !important; }
+
 .btn-sm-custom {
     padding: 5px 15px !important;
 }
