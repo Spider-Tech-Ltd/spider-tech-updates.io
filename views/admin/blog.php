@@ -28,16 +28,21 @@
                     <?php
                     foreach ($blogs as $blog):
                         // Check multiple locations for the image
-                        $rawPath = ltrim($blog['image_path'] ?? '', './');
+                        $rawPath = $blog['image_path'] ?? '';
                         $imagePath = BASE_URL . '/assets/img/no-image.png';
 
                         if (!empty($rawPath)) {
-                            if (file_exists(ROOT_PATH . '/' . $rawPath)) {
-                                $imagePath = BASE_URL . '/' . $rawPath;
-                            } elseif (file_exists(ROOT_PATH . '/images/blog/' . basename($rawPath))) {
-                                $imagePath = BASE_URL . '/images/blog/' . basename($rawPath);
+                            if (strpos($rawPath, 'http') === 0) {
+                                $imagePath = $rawPath;
                             } else {
-                                $imagePath = BASE_URL . '/' . $rawPath;
+                                $cleanPath = ltrim($rawPath, './');
+                                if (file_exists(ROOT_PATH . '/' . $cleanPath)) {
+                                    $imagePath = BASE_URL . '/' . $cleanPath;
+                                } elseif (file_exists(ROOT_PATH . '/images/blog/' . basename($cleanPath))) {
+                                    $imagePath = BASE_URL . '/images/blog/' . basename($cleanPath);
+                                } else {
+                                    $imagePath = BASE_URL . '/' . $cleanPath;
+                                }
                             }
                         }
 

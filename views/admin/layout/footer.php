@@ -3,7 +3,10 @@
     </div> <!-- End of .admin-wrapper -->
 
     <!-- Global Delete Confirmation Modal (Alpine.js) -->
-    <div class="modal-custom" :class="{ 'show': deleteModal.open }" x-cloak>
+    <div class="modal-custom"
+         :class="{ 'show': deleteModal.open }"
+         x-cloak
+         @open-delete-modal.window="deleteModal.id = $event.detail.id; deleteModal.type = $event.detail.type; deleteModal.open = true;">
         <div class="modal-content-custom" style="max-width: 400px;" @click.away="deleteModal.open = false">
             <div class="modal-body-custom text-center py-5">
                 <div class="mb-4">
@@ -62,13 +65,11 @@
         });
 
         function deleteItem(id, type) {
-            // Access Alpine data using the proxy if available
-            const alpineRoot = document.querySelector('[x-data="globalUI"]');
-            if (alpineRoot && window.Alpine) {
-                const data = Alpine.$data(alpineRoot);
-                data.deleteModal.id = id;
-                data.deleteModal.type = type;
-                data.deleteModal.open = true;
+            // Dispatch a window event that Alpine.js is listening for
+            if (window.Alpine) {
+                window.dispatchEvent(new CustomEvent('open-delete-modal', {
+                    detail: { id, type }
+                }));
             } else {
                 // Fallback to traditional confirm if Alpine is not ready
                 if (confirm(`Are you sure you want to delete this ${type}?`)) {
