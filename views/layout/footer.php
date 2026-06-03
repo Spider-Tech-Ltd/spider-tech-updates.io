@@ -144,11 +144,26 @@
         </a>
         <p>Empowering African Tech Innovators since 2020. We build, nurture, and scale the next generation of digital solutions.</p>
         <div class="social-links">
-          <a target="_blank" href="https://web.facebook.com/people/Spider-Hub-Spider-Technologies-Limited/61561284852721/" class="social-icon" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-          <a href="javascript:void(0)" class="social-icon" title="Twitter"><i class="fab fa-twitter"></i></a>
-          <a target="_blank" href="https://www.youtube.com/channel/UCBg_EHRiMiwkJyCuva84zNw" class="social-icon" title="Youtube"><i class="fab fa-youtube"></i></a>
-          <a href="javascript:void(0)" class="social-icon" title="Linkedin"><i class="fab fa-linkedin-in"></i></a>
-          <a target="_blank" href="https://www.instagram.com/spidertech.hub?igsh=bGhnbWU3OHE5cWtp" class="social-icon" title="Instagram"><i class="fab fa-instagram"></i></a>
+          <?php
+            $gm = new GeneralModel($this->db);
+            $socialLinks = $gm->getSocialLinks();
+            foreach ($socialLinks as $sl):
+              if (!empty($sl['url']) && $sl['url'] !== '#'):
+          ?>
+            <a target="_blank" href="<?= htmlspecialchars($sl['url']) ?>" class="social-icon" title="<?= $sl['platform'] ?>">
+              <i class="<?= $sl['icon_class'] ?>"></i>
+            </a>
+          <?php
+              endif;
+            endforeach;
+            if (empty($socialLinks)):
+          ?>
+            <a target="_blank" href="https://web.facebook.com/people/Spider-Hub-Spider-Technologies-Limited/61561284852721/" class="social-icon" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="javascript:void(0)" class="social-icon" title="Twitter"><i class="fab fa-twitter"></i></a>
+            <a target="_blank" href="https://www.youtube.com/channel/UCBg_EHRiMiwkJyCuva84zNw" class="social-icon" title="Youtube"><i class="fab fa-youtube"></i></a>
+            <a href="javascript:void(0)" class="social-icon" title="Linkedin"><i class="fab fa-linkedin-in"></i></a>
+            <a target="_blank" href="https://www.instagram.com/spidertech.hub?igsh=bGhnbWU3OHE5cWtp" class="social-icon" title="Instagram"><i class="fab fa-instagram"></i></a>
+          <?php endif; ?>
         </div>
       </div>
 
