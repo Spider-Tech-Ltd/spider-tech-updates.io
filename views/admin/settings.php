@@ -31,10 +31,28 @@
 
                     <div class="mb-3">
                         <label class="form-label-custom">New Password (Leave blank to keep current)</label>
-                        <input type="password" name="new_password" class="form-control-custom" placeholder="Enter new password">
+                        <div class="input-group-custom">
+                            <input :type="showPassword ? 'text' : 'password'" name="new_password" x-model="password" class="form-control-custom" placeholder="Enter new password">
+                            <span class="password-toggle" @click="showPassword = !showPassword">
+                                <span class="material-symbols-outlined fs-1rem" x-text="showPassword ? 'visibility_off' : 'visibility'"></span>
+                            </span>
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary-custom w-100 mt-3" :disabled="loading">
+                    <div class="mb-3">
+                        <label class="form-label-custom">Confirm New Password</label>
+                        <div class="input-group-custom">
+                            <input :type="showConfirmPassword ? 'text' : 'password'" x-model="confirmPassword" class="form-control-custom" placeholder="Confirm new password">
+                            <span class="password-toggle" @click="showConfirmPassword = !showConfirmPassword">
+                                <span class="material-symbols-outlined fs-1rem" x-text="showConfirmPassword ? 'visibility_off' : 'visibility'"></span>
+                            </span>
+                        </div>
+                        <template x-if="password && confirmPassword && password !== confirmPassword">
+                            <small class="text-danger">Passwords do not match</small>
+                        </template>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-custom w-100 mt-3" :disabled="loading || (password && password !== confirmPassword)">
                         <span x-show="!loading">Update Profile</span>
                         <span x-show="loading">Updating...</span>
                     </button>
@@ -127,6 +145,10 @@ document.addEventListener('alpine:init', () => {
         loading: false,
         loadingSocial: false,
         profilePreview: null,
+        showPassword: false,
+        showConfirmPassword: false,
+        password: '',
+        confirmPassword: '',
 
         previewImage(e) {
             const file = e.target.files[0];
@@ -136,6 +158,10 @@ document.addEventListener('alpine:init', () => {
         },
 
         async updateProfile(e) {
+            if (this.password && this.password !== this.confirmPassword) {
+                showToast('Passwords do not match', 'error');
+                return;
+            }
             this.loading = true;
             const formData = new FormData(e.target);
 
