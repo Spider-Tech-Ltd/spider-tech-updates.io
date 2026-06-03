@@ -129,7 +129,7 @@ class AdminModel
         if ($table === 'blogs') {
             $sql = "SELECT b.*, bc.name
                     FROM blogs b
-                    LEFT JOIN blog_categories bc ON b.category_id = bc.uuid
+                    LEFT JOIN blog_categories bc ON b.category_id = bc.id
                     ORDER BY b.created_at DESC LIMIT :limit OFFSET :offset";
         } else {
             $sql = "SELECT * FROM $table ORDER BY $orderBy LIMIT :limit OFFSET :offset";
@@ -185,7 +185,7 @@ class AdminModel
             'testimonial' => ['table' => 'testimonials_tb', 'pk' => 'id', 'fields' => ['name', 'organization', 'title', 'testimonial'], 'upload' => 'image', 'path' => 'images/pictures/'],
             'event' => ['table' => 'events', 'pk' => 'event_id', 'fields' => ['event_title', 'event_content', 'event_detail', 'event_date', 'event_time', 'event_address', 'event_status', 'show_on_home', 'sort_order'], 'upload' => 'event_img', 'path' => 'images/pictures/'],
             'training' => ['table' => 'trainings_tb', 'pk' => 'id', 'fields' => ['training_name', 'training_description', 'training_details', 'training_icon', 'show_on_home', 'sort_order'], 'upload' => 'training_image', 'path' => 'images/pictures/'],
-            'blog' => ['table' => 'blogs', 'pk' => 'uuid', 'fields' => ['category_id', 'title', 'slug', 'summary', 'content', 'status'], 'upload' => 'image_path', 'path' => 'uploads/blog/']
+            'blog' => ['table' => 'blogs', 'pk' => 'uuid', 'fields' => ['category_id', 'title', 'slug', 'summary', 'content', 'status'], 'upload' => 'image_path', 'path' => 'images/blog/']
         ];
         if (!isset($allowedTypes[$type])) return false;
 
@@ -237,10 +237,13 @@ class AdminModel
                 $stmt = $this->db->prepare("UPDATE $table SET $setSql WHERE $pk = ?");
                 return $stmt->execute($values);
             } else {
-                // Generate UUID for blog if new
+                // Generate UUID and slug for blog if new
                 if ($type === 'blog') {
                     $fields[] = 'uuid';
                     $data['uuid'] = Utils::generateUUID();
+                    if (!isset($data['slug']) || empty($data['slug'])) {
+                        $data['slug'] = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $data['title'])));
+                    }
                 }
                 $placeholders = implode(',', array_fill(0, count($fields), '?'));
                 $fieldNames = implode(',', $fields);

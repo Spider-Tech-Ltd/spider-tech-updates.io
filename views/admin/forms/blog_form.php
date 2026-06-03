@@ -32,7 +32,7 @@
                             <select name="category_id" class="form-control-custom" required>
                                 <option value="">Select Category</option>
                                 <?php foreach ($categories as $cat): ?>
-                                    <option value="<?= $cat['uuid'] ?>" <?= (isset($item) && $item['category_id'] == $cat['uuid']) ? 'selected' : '' ?>>
+                                    <option value="<?= $cat['id'] ?>" <?= (isset($item) && $item['category_id'] == $cat['id']) ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($cat['name']) ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -41,8 +41,8 @@
                         <div class="col-md-6">
                             <label class="form-label-custom">Status</label>
                             <select name="status" class="form-control-custom" required>
-                                <option value="Published" <?= (isset($item) && $item['status'] == 'Published') ? 'selected' : '' ?>>Published</option>
-                                <option value="Draft" <?= (isset($item) && $item['status'] == 'Draft') ? 'selected' : '' ?>>Draft</option>
+                                <option value="published" <?= (isset($item) && strtolower($item['status']) == 'published') ? 'selected' : '' ?>>Published</option>
+                                <option value="draft" <?= (isset($item) && strtolower($item['status']) == 'draft') ? 'selected' : '' ?>>Draft</option>
                             </select>
                         </div>
                     </div>
@@ -50,6 +50,17 @@
                     <div class="mb-4">
                         <label class="form-label-custom">Summary (Meta Description)</label>
                         <textarea name="summary" class="form-control-custom" rows="3" required><?= $item['summary'] ?? '' ?></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label-custom">Featured Image</label>
+                        <?php if (isset($item['image_path']) && !empty($item['image_path'])): ?>
+                            <div class="mb-2">
+                                <img src="<?= BASE_URL . '/' . ltrim($item['image_path'], './') ?>" alt="Preview" style="max-height: 150px; border-radius: 8px;">
+                            </div>
+                        <?php endif; ?>
+                        <input type="file" name="image_path" class="form-control-custom" accept="image/*">
+                        <small class="text-muted">Recommended size: 1200x800px. Max 2MB.</small>
                     </div>
 
                     <div class="mb-4">

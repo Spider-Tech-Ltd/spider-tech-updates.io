@@ -27,7 +27,7 @@
                 <tbody>
                     <?php
                     foreach ($blogs as $blog):
-                        $imagePath = BASE_URL . '/' . $blog['image_path'];
+                        $imagePath = !empty($blog['image_path']) ? BASE_URL . '/' . ltrim($blog['image_path'], './') : BASE_URL . '/assets/img/no-image.png';
                         $statusClass = (strtolower($blog['status']) == 'published') ? 'badge-soft-green' : 'badge-soft-orange';
                     ?>
                     <tr>
@@ -39,7 +39,7 @@
                         <td>
                             <div class="fw-600"><?= htmlspecialchars($blog['title']) ?></div>
                         </td>
-                        <td><?= htmlspecialchars($blog['name']) ?></td>
+                        <td><?= htmlspecialchars($blog['name'] ?? 'Uncategorized') ?></td>
                         <td><span class="badge <?= $statusClass ?>"><?= ucfirst($blog['status']) ?></span></td>
                         <td class="text-end">
                             <div class="action-btns">
