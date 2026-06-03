@@ -40,7 +40,10 @@
                             <span class="profile-name"><?= $_SESSION['admin_name'] ?? 'Admin' ?></span>
                             <span class="profile-role"><?= $_SESSION['admin_privilege'] ?? 'Super Admin' ?></span>
                         </div>
-                        <img src="<?= BASE_URL ?>/images/testimonials.png" alt="Profile" class="profile-avatar">
+                        <?php
+                            $headerAvatar = !empty($_SESSION['admin_profile_pic']) ? BASE_URL . '/' . ltrim($_SESSION['admin_profile_pic'], './') : BASE_URL . '/img/member_dp.jpg';
+                        ?>
+                        <img src="<?= $headerAvatar ?>" alt="Profile" class="profile-avatar" onerror="this.src='<?= BASE_URL ?>/img/member_dp.jpg'">
                     </button>
                     <div x-show="open" @click.away="open = false" class="dropdown-menu-custom">
                         <a href="<?= BASE_URL ?>/admin/settings"><i class="fa fa-cog"></i> Settings</a>
