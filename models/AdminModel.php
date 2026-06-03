@@ -237,6 +237,17 @@ class AdminModel
                 $stmt = $this->db->prepare("UPDATE $table SET $setSql WHERE $pk = ?");
                 return $stmt->execute($values);
             } else {
+                // Duplicate Check for certain types
+                if ($type === 'service') {
+                    $checkStmt = $this->db->prepare("SELECT id FROM services_tb WHERE service_name = ?");
+                    $checkStmt->execute([$data['service_name'] ?? '']);
+                    if ($checkStmt->fetch()) return true; // Already exists, treat as success but don't insert
+                } elseif ($type === 'project') {
+                    $checkStmt = $this->db->prepare("SELECT project_id FROM projects_tb WHERE project_name = ? AND service_id = ?");
+                    $checkStmt->execute([$data['project_name'] ?? '', $data['service_id'] ?? '']);
+                    if ($checkStmt->fetch()) return true;
+                }
+
                 // Generate UUID for blog if new
                 if ($type === 'blog') {
                     $fields[] = 'uuid';
