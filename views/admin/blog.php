@@ -32,7 +32,7 @@
                         $imagePath = BASE_URL . '/assets/img/no-image.png';
 
                         if (!empty($rawPath)) {
-                            if (strpos($rawPath, 'http') === 0) {
+                            if (filter_var($rawPath, FILTER_VALIDATE_URL)) {
                                 $imagePath = $rawPath;
                             } else {
                                 $cleanPath = ltrim($rawPath, './');
@@ -41,6 +41,7 @@
                                 } elseif (file_exists(ROOT_PATH . '/images/blog/' . basename($cleanPath))) {
                                     $imagePath = BASE_URL . '/images/blog/' . basename($cleanPath);
                                 } else {
+                                    // Fallback to BASE_URL join if file_exists fails in this env
                                     $imagePath = BASE_URL . '/' . $cleanPath;
                                 }
                             }

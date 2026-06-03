@@ -3,23 +3,20 @@
     </div> <!-- End of .admin-wrapper -->
 
     <!-- Global Delete Confirmation Modal (Alpine.js) -->
-    <div class="modal-custom"
-         :class="{ 'show': deleteModal.open }"
-         x-cloak
-         @open-delete-modal.window="deleteModal.id = $event.detail.id; deleteModal.type = $event.detail.type; deleteModal.open = true;">
-        <div class="modal-content-custom" style="max-width: 400px;" @click.away="deleteModal.open = false">
+    <div x-data x-show="$store.deleteModal.open" class="modal-custom" :class="{ 'show': $store.deleteModal.open }" x-cloak>
+        <div class="modal-content-custom" style="max-width: 400px;" @click.away="$store.deleteModal.open = false">
             <div class="modal-body-custom text-center py-5">
                 <div class="mb-4">
                     <span class="material-symbols-outlined text-danger" style="font-size: 64px;">warning</span>
                 </div>
                 <h3 class="fw-700 mb-3">Are you sure?</h3>
-                <p class="text-muted mb-4">You are about to delete this <span x-text="deleteModal.type"></span>. This action is permanent and cannot be undone.</p>
+                <p class="text-muted mb-4">You are about to delete this <span x-text="$store.deleteModal.type"></span>. This action is permanent and cannot be undone.</p>
 
                 <div class="d-flex justify-content-center gap-3">
-                    <button @click="deleteModal.open = false" class="btn btn-light px-4">Cancel</button>
-                    <button @click="confirmDelete()" class="btn btn-danger px-4" :disabled="deleteModal.loading">
-                        <span x-show="!deleteModal.loading">Yes, Delete</span>
-                        <span x-show="deleteModal.loading">Deleting...</span>
+                    <button @click="$store.deleteModal.open = false" class="btn btn-light px-4">Cancel</button>
+                    <button @click="$store.deleteModal.confirm()" class="btn btn-danger px-4" :disabled="$store.deleteModal.loading">
+                        <span x-show="!$store.deleteModal.loading">Yes, Delete</span>
+                        <span x-show="$store.deleteModal.loading">Deleting...</span>
                     </button>
                 </div>
             </div>
@@ -28,15 +25,20 @@
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('globalUI', () => ({
-                deleteModal: {
-                    open: false,
-                    id: null,
-                    type: null,
-                    loading: false
+            Alpine.store('deleteModal', {
+                open: false,
+                id: null,
+                type: null,
+                loading: false,
+
+                show(id, type) {
+                    this.id = id;
+                    this.type = type;
+                    this.open = true;
                 },
-                async confirmDelete() {
-                    this.deleteModal.loading = true;
+
+                async confirm() {
+                    this.loading = true;
                     try {
                         const response = await fetch('<?= BASE_URL ?>/admin/delete', {
                             method: 'POST',
@@ -44,7 +46,7 @@
                                 'Content-Type': 'application/x-www-form-urlencoded',
                                 'X-Requested-With': 'XMLHttpRequest'
                             },
-                            body: `id=${this.deleteModal.id}&type=${this.deleteModal.type}`
+                            body: `id=${this.id}&type=${this.type}`
                         });
 
                         const data = await response.json();
@@ -53,23 +55,20 @@
                             setTimeout(() => window.location.reload(), 1000);
                         } else {
                             showToast(data.message, 'error');
-                            this.deleteModal.loading = false;
+                            this.loading = false;
                         }
                     } catch (error) {
                         console.error('Error:', error);
                         showToast('An unexpected error occurred.', 'error');
-                        this.deleteModal.loading = false;
+                        this.loading = false;
                     }
                 }
-            }));
+            });
         });
 
         function deleteItem(id, type) {
-            // Dispatch a window event that Alpine.js is listening for
-            if (window.Alpine) {
-                window.dispatchEvent(new CustomEvent('open-delete-modal', {
-                    detail: { id, type }
-                }));
+            if (window.Alpine && Alpine.store('deleteModal')) {
+                Alpine.store('deleteModal').show(id, type);
             } else {
                 // Fallback to traditional confirm if Alpine is not ready
                 if (confirm(`Are you sure you want to delete this ${type}?`)) {
