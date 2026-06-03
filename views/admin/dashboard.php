@@ -62,16 +62,17 @@
             <div class="card-body-custom">
                 <div class="list-group list-group-flush">
                     <?php foreach ($recent_members as $rm):
-                        $avatarPath = $rm['avatar'];
+                        $avatarPath = $rm['avatar'] ?? null;
+                        $defaultAvatar = BASE_URL . '/img/member_dp.jpg';
+
                         if ($avatarPath) {
-                            // Corrected path to uploads/forum/avatars/
                             $avatar = (strpos($avatarPath, 'uploads/') !== false) ? BASE_URL . '/' . ltrim($avatarPath, '/') : BASE_URL . '/uploads/forum/avatars/' . $avatarPath;
                         } else {
-                            $avatar = BASE_URL . '/images/testimonials.png';
+                            $avatar = $defaultAvatar;
                         }
                     ?>
                         <div class="list-item-custom">
-                            <img src="<?= $avatar ?>" class="avatar-sm" alt="">
+                            <img src="<?= $avatar ?>" class="avatar-sm" alt="" onerror="this.src='<?= $defaultAvatar ?>'">
                             <div class="flex-grow-1 ms-4">
                                 <div class="fw-600 fs-09"><?= htmlspecialchars($rm['full_name']) ?></div>
                                 <div class="text-muted fs-07"><?= htmlspecialchars($rm['email']) ?></div>
