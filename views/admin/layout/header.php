@@ -19,7 +19,7 @@
     <!-- CKEditor 5 for Rich Text Content -->
     <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
 </head>
-<body class="admin-body">
+<body class="admin-body" x-data="globalUI">
     <div class="admin-wrapper">
         <!-- Top Navigation Bar -->
         <header class="admin-header">

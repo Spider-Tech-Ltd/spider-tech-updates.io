@@ -27,8 +27,21 @@
                 <tbody>
                     <?php
                     foreach ($blogs as $blog):
-                        $imagePath = !empty($blog['image_path']) ? BASE_URL . '/' . ltrim($blog['image_path'], './') : BASE_URL . '/assets/img/no-image.png';
-                        $statusClass = (strtolower($blog['status']) == 'published') ? 'badge-soft-green' : 'badge-soft-orange';
+                        // Check multiple locations for the image
+                        $rawPath = ltrim($blog['image_path'] ?? '', './');
+                        $imagePath = BASE_URL . '/assets/img/no-image.png';
+
+                        if (!empty($rawPath)) {
+                            if (file_exists(ROOT_PATH . '/' . $rawPath)) {
+                                $imagePath = BASE_URL . '/' . $rawPath;
+                            } elseif (file_exists(ROOT_PATH . '/images/blog/' . basename($rawPath))) {
+                                $imagePath = BASE_URL . '/images/blog/' . basename($rawPath);
+                            } else {
+                                $imagePath = BASE_URL . '/' . $rawPath;
+                            }
+                        }
+
+                        $statusClass = (strtolower($blog['status'] ?? '') == 'published') ? 'badge-soft-green' : 'badge-soft-orange';
                     ?>
                     <tr>
                         <td>
