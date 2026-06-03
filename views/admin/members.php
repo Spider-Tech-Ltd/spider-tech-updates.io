@@ -24,10 +24,12 @@
                     <?php
                     foreach ($members as $member):
                         $avatarPath = $member['avatar'] ?? null;
+                        $defaultAvatar = BASE_URL . '/img/member_dp.jpg'; // Fallback for user icon
+
                         if ($avatarPath) {
                             $avatar = (strpos($avatarPath, 'uploads/') !== false) ? BASE_URL . '/' . ltrim($avatarPath, '/') : BASE_URL . '/uploads/forum/avatars/' . $avatarPath;
                         } else {
-                            $avatar = BASE_URL . '/images/testimonials.png';
+                            $avatar = $defaultAvatar;
                         }
                         $isVerified = $member['is_verified'];
                         $status = $member['status'] ?? 'Active';
@@ -36,7 +38,7 @@
                         <td>
                             <div class="d-flex align-items-center gap-3">
                                 <div class="table-img-wrapper" style="width: 40px; height: 40px; border-radius: 50%;">
-                                    <img src="<?= $avatar ?>" alt="" onerror="this.src='<?= BASE_URL ?>/images/testimonials.png'">
+                                    <img src="<?= $avatar ?>" alt="" onerror="this.src='<?= $defaultAvatar ?>'">
                                 </div>
                                 <div>
                                     <div class="fw-600"><?= htmlspecialchars($member['name']) ?></div>
@@ -100,11 +102,12 @@ async function viewMemberDetails(id) {
 
         if (result.status === 'success') {
             const m = result.data;
-            const avatar = m.avatar ? (m.avatar.includes('uploads/') ? `<?= BASE_URL ?>/${m.avatar.replace(/^\//, '')}` : `<?= BASE_URL ?>/uploads/forum/avatars/${m.avatar}`) : `<?= BASE_URL ?>/images/testimonials.png`;
+            const defaultAvatar = '<?= BASE_URL ?>/img/member_dp.jpg';
+            const avatar = m.avatar ? (m.avatar.includes('uploads/') ? `<?= BASE_URL ?>/${m.avatar.replace(/^\//, '')}` : `<?= BASE_URL ?>/uploads/forum/avatars/${m.avatar}`) : defaultAvatar;
 
             let html = `
                 <div class="text-center mb-4">
-                    <img src="${avatar}" class="avatar-sm mb-3" style="width: 100px; height: 100px;" onerror="this.src='<?= BASE_URL ?>/images/testimonials.png'">
+                    <img src="${avatar}" class="avatar-sm mb-3" style="width: 100px; height: 100px;" onerror="this.src='${defaultAvatar}'">
                     <h4 class="m-0">${m.name}</h4>
                     <p class="text-muted">@${m.username}</p>
                 </div>
@@ -150,26 +153,41 @@ function closeMemberModal() {
 }
 
 function confirmToggleStatus(id, currentStatus) {
-    const action = currentStatus === 'Suspended' ? 'activate' : 'suspend';
-    if (confirm(`Are you sure you want to ${action} this member's account?`)) {
-        const formData = new FormData();
-        formData.append('id', id);
+    const isSuspended = currentStatus === 'Suspended';
+    const action = isSuspended ? 'activate' : 'suspend';
 
-        fetch(`<?= BASE_URL ?>/admin/members/toggle-status`, {
-            method: 'POST',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-            body: formData
-        })
-        .then(res => res.json())
-        .then(result => {
-            if (result.status === 'success') {
-                showToast(result.message);
-                setTimeout(() => location.reload(), 1000);
-            } else {
-                showToast(result.message, 'error');
-            }
-        })
-        .catch(() => showToast('An error occurred.', 'error'));
+    if (window.Alpine && Alpine.store('actionModal')) {
+        Alpine.store('actionModal').show({
+            id: id,
+            title: (isSuspended ? 'Activate' : 'Suspend') + ' Member',
+            message: `Are you sure you want to ${action} this member's account?`,
+            confirmText: 'Yes, ' + (isSuspended ? 'Activate' : 'Suspend'),
+            variant: isSuspended ? 'warning' : 'danger',
+            icon: isSuspended ? 'person' : 'person_off',
+            actionUrl: '<?= BASE_URL ?>/admin/members/toggle-status'
+        });
+    } else {
+        // Fallback
+        if (confirm(`Are you sure you want to ${action} this member's account?`)) {
+            const formData = new FormData();
+            formData.append('id', id);
+
+            fetch(`<?= BASE_URL ?>/admin/members/toggle-status`, {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.status === 'success') {
+                    showToast(result.message);
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast(result.message, 'error');
+                }
+            })
+            .catch(() => showToast('An error occurred.', 'error'));
+        }
     }
 }
 
