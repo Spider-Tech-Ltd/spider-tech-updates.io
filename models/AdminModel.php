@@ -271,6 +271,51 @@ class AdminModel
         return $this->db->query("SELECT * FROM admin_tb ORDER BY admin_name ASC")->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function updateAdminProfile($adminId, $data, $files)
+    {
+        $sets = ["admin_name = ?"];
+        $params = [$data['admin_name']];
+
+        // Handle Password Update
+        if (!empty($data['new_password'])) {
+            $sets[] = "admin_password = ?";
+            $params[] = password_hash($data['new_password'], PASSWORD_DEFAULT);
+        }
+
+        // Handle Profile Picture
+        if (isset($files['profile_pic']) && $files['profile_pic']['error'] === UPLOAD_ERR_OK) {
+            $uploadPath = 'images/admin/';
+            if (!is_dir(ROOT_PATH . '/' . $uploadPath)) mkdir(ROOT_PATH . '/' . $uploadPath, 0777, true);
+
+            $name = time() . '_' . basename($files['profile_pic']['name']);
+            if (move_uploaded_file($files['profile_pic']['tmp_name'], ROOT_PATH . '/' . $uploadPath . $name)) {
+                $sets[] = "profile_pic = ?";
+                $params[] = $uploadPath . $name;
+                // Update session
+                $_SESSION['admin_profile_pic'] = $uploadPath . $name;
+            }
+        }
+
+        $params[] = $adminId;
+        $sql = "UPDATE admin_tb SET " . implode(', ', $sets) . " WHERE admin_id = ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute($params);
+    }
+
+    public function getSocialLinks()
+    {
+        return $this->db->query("SELECT * FROM social_links ORDER BY platform ASC")->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function updateSocialLinks($links)
+    {
+        $stmt = $this->db->prepare("UPDATE social_links SET url = ? WHERE platform = ?");
+        foreach ($links as $platform => $url) {
+            $stmt->execute([$url, $platform]);
+        }
+        return true;
+    }
+
     public function toggleMemberStatus($id)
     {
         $member = $this->getById('members', 'id', $id);
