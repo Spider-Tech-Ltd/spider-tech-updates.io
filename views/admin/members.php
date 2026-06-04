@@ -7,7 +7,12 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="col-lg-8">
 <div class="admin-card">
+    <div class="card-header-custom">
+        <h5 class="m-0 poppins">Active & Pending Members</h5>
+    </div>
     <div class="card-body-custom">
         <div class="table-responsive">
             <table class="table table-custom">
@@ -73,6 +78,45 @@
             </table>
         </div>
         <?php include ROOT_PATH . '/views/admin/layout/pagination.php'; ?>
+    </div>
+</div>
+    </div>
+
+    <!-- Suspension Reviews Section -->
+    <div class="col-lg-4">
+        <div class="admin-card">
+            <div class="card-header-custom bg-light">
+                <h5 class="m-0 poppins"><span class="material-symbols-outlined align-middle me-2">rate_review</span>Review Requests</h5>
+            </div>
+            <div class="card-body-custom">
+                <div class="gap-vertical-3">
+                    <?php if (empty($reviews)): ?>
+                        <div class="text-center py-4">
+                            <span class="text-muted fs-08">No pending review requests.</span>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php foreach ($reviews as $rev): ?>
+                        <div class="p-3 rounded-3 border bg-white shadow-sm">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <div class="fw-bold fs-09"><?= htmlspecialchars($rev['name']) ?></div>
+                                    <div class="text-muted fs-07">@<?= htmlspecialchars($rev['username']) ?></div>
+                                </div>
+                                <span class="badge badge-soft-orange fs-07">Pending</span>
+                            </div>
+                            <div class="text-dark fs-08 mb-3" style="line-height: 1.5;">
+                                "<?= htmlspecialchars($rev['reason']) ?>"
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-muted fs-07"><?= date('M d, H:i', strtotime($rev['created_at'])) ?></span>
+                                <button class="btn btn-sm btn-primary-custom py-1 px-3 fs-07" onclick="confirmToggleStatus(<?= $rev['member_id'] ?>, 'Suspended')">Reactivate</button>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

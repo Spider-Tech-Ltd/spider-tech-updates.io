@@ -133,4 +133,11 @@ class AuthModel
         $stmt->bindParam(':email', $email);
         return $stmt->execute();
     }
+
+    public function submitSuspensionReview($memberId, $reason)
+    {
+        $query = "INSERT INTO suspension_reviews (member_id, reason) VALUES (?, ?)";
+        $stmt = $this->db->prepare($query);
+        return $stmt->execute([$memberId, $reason]);
+    }
 }
