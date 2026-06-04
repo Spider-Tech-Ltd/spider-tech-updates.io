@@ -148,8 +148,10 @@ class AuthController extends BaseController
 
     public function suspended()
     {
+        $pendingReview = $this->authModel->getPendingReview($_SESSION['member_id'] ?? 0);
         $this->render('forum/suspended', [
-            'title' => 'Account Suspended - Spider Tech Forum'
+            'title' => 'Account Suspended - Spider Tech Forum',
+            'isUnderReview' => !empty($pendingReview)
         ], true);
     }
 

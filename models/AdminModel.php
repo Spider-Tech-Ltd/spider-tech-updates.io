@@ -339,9 +339,18 @@ class AdminModel
     {
         $member = $this->getById('members', 'id', $id);
         if (!$member) return false;
+
         $newStatus = ($member['status'] === 'Suspended') ? 'Active' : 'Suspended';
         $stmt = $this->db->prepare("UPDATE members SET status = ? WHERE id = ?");
-        return $stmt->execute([$newStatus, $id]);
+        $result = $stmt->execute([$newStatus, $id]);
+
+        if ($result && $newStatus === 'Active') {
+            // Automatically resolve any pending suspension reviews
+            $stmt = $this->db->prepare("UPDATE suspension_reviews SET status = 'Resolved' WHERE member_id = ? AND status = 'Pending'");
+            $stmt->execute([$id]);
+        }
+
+        return $result;
     }
 
     public function getSuspensionReviews()

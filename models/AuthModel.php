@@ -140,4 +140,12 @@ class AuthModel
         $stmt = $this->db->prepare($query);
         return $stmt->execute([$memberId, $reason]);
     }
+
+    public function getPendingReview($memberId)
+    {
+        $query = "SELECT * FROM suspension_reviews WHERE member_id = ? AND status = 'Pending' LIMIT 1";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([$memberId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }

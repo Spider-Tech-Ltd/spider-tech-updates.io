@@ -118,9 +118,14 @@
                             <div class="text-dark fs-08 mb-3" style="line-height: 1.5;">
                                 "<?= htmlspecialchars($rev['reason']) ?>"
                             </div>
-                            <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex justify-content-between align-items-center" x-data="{ localStatus: '<?= $rev['status'] ?>' }">
                                 <span class="text-muted fs-07"><?= date('M d, H:i', strtotime($rev['created_at'])) ?></span>
-                                <button class="btn btn-sm btn-primary-custom py-1 px-3 fs-07" onclick="confirmToggleStatus(<?= $rev['member_id'] ?>, 'Suspended')">Reactivate</button>
+                                <template x-if="localStatus === 'Pending'">
+                                    <button class="btn btn-sm btn-primary-custom py-1 px-3 fs-07" @click="reactivateMember(<?= $rev['member_id'] ?>, $el); localStatus = 'Resolved';">Reactivate</button>
+                                </template>
+                                <template x-if="localStatus === 'Resolved'">
+                                    <span class="badge badge-soft-green fs-07">Activated</span>
+                                </template>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -242,6 +247,37 @@ function confirmToggleStatus(id, currentStatus) {
             })
             .catch(() => showToast('An error occurred.', 'error'));
         }
+    }
+}
+
+async function reactivateMember(id, btn) {
+    const originalText = btn.innerText;
+    btn.disabled = true;
+    btn.innerText = 'Wait...';
+
+    const formData = new FormData();
+    formData.append('id', id);
+
+    try {
+        const response = await fetch(`<?= BASE_URL ?>/admin/members/toggle-status`, {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            body: formData
+        });
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            showToast('Member reactivated successfully.');
+            // Status update is handled by Alpine.js x-model/template in the widget
+        } else {
+            showToast(result.message, 'error');
+            btn.disabled = false;
+            btn.innerText = originalText;
+        }
+    } catch (error) {
+        showToast('An error occurred.', 'error');
+        btn.disabled = false;
+        btn.innerText = originalText;
     }
 }
 
