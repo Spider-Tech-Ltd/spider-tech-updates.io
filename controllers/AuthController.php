@@ -29,10 +29,13 @@ class AuthController extends BaseController
                 if ($member && password_verify($password, $member['password_hash'])) {
                     if ($member['is_verified'] == 0) {
                         $error = "Please verify your email address before signing in.";
+                    } elseif (($member['status'] ?? 'Active') === 'Suspended') {
+                        $this->redirect('forum/suspended');
                     } else {
                         $_SESSION['member_id'] = $member['id'];
                         $_SESSION['member_uuid'] = $member['uuid'];
                         $_SESSION['member_name'] = $member['name'];
+                        $_SESSION['member_status'] = $member['status'] ?? 'Active';
                         $_SESSION['terms_accepted'] = $member['terms_accepted'];
 
                         if ((int)$member['terms_accepted'] === 0) {
@@ -141,6 +144,13 @@ class AuthController extends BaseController
             'success' => $success,
             'csrf_token' => CSRF::generateToken()
         ], false);
+    }
+
+    public function suspended()
+    {
+        $this->render('forum/suspended', [
+            'title' => 'Account Suspended - Spider Tech Forum'
+        ], true);
     }
 
     public function logout()

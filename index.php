@@ -34,6 +34,7 @@ $routes = [
     'forum/sign-up' => ['AuthController', 'signUp'],
     'forum/logout' => ['AuthController', 'logout'],
     'forum/verify' => ['VerificationController', 'verify'],
+    'forum/suspended' => ['AuthController', 'suspended'],
     'forum/terms' => ['TermsController', 'index'],
     'forum/terms/accept' => ['TermsController', 'accept'],
     'forum/feed/like' => ['FeedController', 'like'],

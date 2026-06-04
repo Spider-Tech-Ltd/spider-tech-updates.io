@@ -6,7 +6,7 @@ class ProjectController extends BaseController
         // FIXED: Using ProjectModel instead of HomeModel for separation of concerns
         $projectModel = new ProjectModel($this->db);
         $homeModel = new HomeModel($this->db);
-,
+
         $data = [
             'projects' => $projectModel->getAllProjects(), // Explicitly calls getAllProjects
             'contact' => $homeModel->getContactDetails()

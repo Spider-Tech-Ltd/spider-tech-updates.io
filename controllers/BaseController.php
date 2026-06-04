@@ -15,6 +15,18 @@ class BaseController {
         // Track member activity if logged in
         if ($this->isLoggedIn()) {
             $this->trackActivity();
+            $this->checkSuspension();
+        }
+    }
+
+    private function checkSuspension() {
+        $currentUrl = $_GET['url'] ?? '';
+        if ($currentUrl === 'forum/suspended' || $currentUrl === 'forum/logout') {
+            return;
+        }
+
+        if (isset($_SESSION['member_status']) && $_SESSION['member_status'] === 'Suspended') {
+            $this->redirect('forum/suspended');
         }
     }
 
