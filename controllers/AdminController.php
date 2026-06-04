@@ -72,8 +72,13 @@ class AdminController extends AdminBaseController {
 
     public function members() {
         $adminModel = new AdminModel();
-        $result = $adminModel->getPaginated('members', $this->getPage(), 6, 'created_at DESC');
-        $this->renderAdmin('members', ['members' => $result['data'], 'pagination' => $result]);
+        $result = $adminModel->getPaginated('members', $this->getPage(), 10, 'created_at DESC');
+        $reviews = $adminModel->getSuspensionReviews();
+        $this->renderAdmin('members', [
+            'members' => $result['data'],
+            'pagination' => $result,
+            'reviews' => $reviews
+        ]);
     }
 
     public function banners() {

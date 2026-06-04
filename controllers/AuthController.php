@@ -153,6 +153,31 @@ class AuthController extends BaseController
         ], true);
     }
 
+    public function requestReview()
+    {
+        header('Content-Type: application/json');
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403); exit;
+        }
+
+        $reason = $_POST['reason'] ?? '';
+        if (empty($reason)) {
+            echo json_encode(['status' => 'error', 'message' => 'Please provide a reason for the review.']);
+            exit;
+        }
+
+        try {
+            if ($this->authModel->submitSuspensionReview($_SESSION['member_id'], $reason)) {
+                echo json_encode(['status' => 'success', 'message' => 'Your review request has been submitted.']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to submit review request.']);
+            }
+        } catch (Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()]);
+        }
+        exit;
+    }
+
     public function logout()
     {
         if (session_status() === PHP_SESSION_NONE) {

@@ -37,7 +37,19 @@ try {
         $stmt->execute($link);
     }
 
-    // 3. Admin profile_pic
+    // 3. Create suspension_reviews
+    echo "Creating suspension_reviews table...\n";
+    $db->exec("CREATE TABLE IF NOT EXISTS suspension_reviews (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        member_id INT NOT NULL,
+        reason TEXT NOT NULL,
+        status ENUM('Pending', 'Reviewed', 'Resolved') DEFAULT 'Pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+    // 4. Admin profile_pic
     echo "Ensuring profile_pic column exists in admin_tb...\n";
     $stmt = $db->query("SHOW COLUMNS FROM admin_tb LIKE 'profile_pic'");
     if ($stmt->rowCount() == 0) {

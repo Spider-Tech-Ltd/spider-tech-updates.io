@@ -325,6 +325,16 @@ class AdminModel
         return $stmt->execute([$newStatus, $id]);
     }
 
+    public function getSuspensionReviews()
+    {
+        return $this->db->query("
+            SELECT sr.*, m.name, m.username, m.email
+            FROM suspension_reviews sr
+            JOIN members m ON sr.member_id = m.id
+            ORDER BY sr.created_at DESC
+        ")->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function deleteRecord($type, $id)
     {
         $allowedTypes = [
