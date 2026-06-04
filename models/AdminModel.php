@@ -180,7 +180,7 @@ class AdminModel
         $allowedTypes = [
             'service' => ['table' => 'services_tb', 'pk' => 'id', 'fields' => ['service_name', 'service_icon', 'service_description', 'service_detail', 'show_on_home', 'sort_order'], 'upload' => null],
             'project' => ['table' => 'projects_tb', 'pk' => 'project_id', 'fields' => ['project_name', 'service_id', 'project_year', 'project_description', 'show_on_home', 'sort_order'], 'upload' => 'project_pic', 'path' => 'images/pictures/'],
-            'banner' => ['table' => 'banners_tb', 'pk' => 'banner_id', 'fields' => ['banner_title'], 'upload' => 'banner_image', 'path' => 'images/pictures/'],
+            'banner' => ['table' => 'banners_tb', 'pk' => 'banner_id', 'fields' => ['banner_title'], 'upload' => 'banner_image', 'path' => 'images/banners/'],
             'faq' => ['table' => 'faq_tb', 'pk' => 'faq_id', 'fields' => ['faq_question', 'faq_answer'], 'upload' => null],
             'testimonial' => ['table' => 'testimonials_tb', 'pk' => 'id', 'fields' => ['name', 'organization', 'title', 'testimonial'], 'upload' => 'image', 'path' => 'images/pictures/'],
             'event' => ['table' => 'events', 'pk' => 'event_id', 'fields' => ['event_title', 'event_content', 'event_detail', 'event_date', 'event_time', 'event_address', 'event_status', 'show_on_home', 'sort_order'], 'upload' => 'event_img', 'path' => 'images/pictures/'],
@@ -237,6 +237,17 @@ class AdminModel
                 $stmt = $this->db->prepare("UPDATE $table SET $setSql WHERE $pk = ?");
                 return $stmt->execute($values);
             } else {
+                // Duplicate Check for certain types
+                if ($type === 'service') {
+                    $checkStmt = $this->db->prepare("SELECT id FROM services_tb WHERE service_name = ?");
+                    $checkStmt->execute([$data['service_name'] ?? '']);
+                    if ($checkStmt->fetch()) return true; // Already exists, treat as success but don't insert
+                } elseif ($type === 'project') {
+                    $checkStmt = $this->db->prepare("SELECT project_id FROM projects_tb WHERE project_name = ? AND service_id = ?");
+                    $checkStmt->execute([$data['project_name'] ?? '', $data['service_id'] ?? '']);
+                    if ($checkStmt->fetch()) return true;
+                }
+
                 // Generate UUID for blog if new
                 if ($type === 'blog') {
                     $fields[] = 'uuid';

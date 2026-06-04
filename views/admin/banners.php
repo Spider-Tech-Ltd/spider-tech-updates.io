@@ -16,16 +16,21 @@
         <div class="row gy-4 gx-4">
             <?php
             foreach ($banners as $banner):
-                // Prioritize images/pictures/ based on DB dump inspection
-                $imageName = $banner['banner_image'];
-                $imagePath = BASE_URL . '/images/pictures/' . $imageName;
-
-                // Fallback checks
-                if (!file_exists(ROOT_PATH . '/images/pictures/' . $imageName)) {
-                    if (file_exists(ROOT_PATH . '/img/' . $imageName)) {
-                        $imagePath = BASE_URL . '/img/' . $imageName;
-                    } elseif (file_exists(ROOT_PATH . '/images/' . $imageName)) {
-                        $imagePath = BASE_URL . '/images/' . $imageName;
+                $path = $banner['banner_image'];
+                if (preg_match('#^https?://#i', $path)) {
+                    $imagePath = $path;
+                } elseif (strpos($path, '/') !== false) {
+                    $imagePath = BASE_URL . '/' . ltrim($path, './');
+                } else {
+                    // Legacy filename logic
+                    if (file_exists(ROOT_PATH . '/images/banners/' . $path)) {
+                        $imagePath = BASE_URL . '/images/banners/' . $path;
+                    } elseif (file_exists(ROOT_PATH . '/img/' . $path)) {
+                        $imagePath = BASE_URL . '/img/' . $path;
+                    } elseif (file_exists(ROOT_PATH . '/images/pictures/' . $path)) {
+                        $imagePath = BASE_URL . '/images/pictures/' . $path;
+                    } else {
+                        $imagePath = BASE_URL . '/images/banners/' . $path;
                     }
                 }
             ?>

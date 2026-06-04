@@ -29,9 +29,27 @@
                     <div class="mb-4">
                         <label class="form-label-custom">Banner Image</label>
                         <input type="file" name="banner_image" class="form-control-custom" <?= ($mode == 'add') ? 'required' : '' ?>>
-                        <?php if ($mode == 'edit' && $item['banner_image']): ?>
-                            <div class="mt-3 table-img-wrapper" style="width: 200px; height: 120px;">
-                                <img src="<?= BASE_URL ?>/images/pictures/<?= $item['banner_image'] ?>" alt="">
+                        <?php if ($mode == 'edit' && !empty($item['banner_image'])):
+                            $path = $item['banner_image'];
+                            if (preg_match('#^https?://#i', $path)) {
+                                $previewPath = $path;
+                            } elseif (strpos($path, '/') !== false) {
+                                $previewPath = BASE_URL . '/' . ltrim($path, './');
+                            } else {
+                                // Fallback logic for legacy filenames in banner form
+                                if (file_exists(ROOT_PATH . '/images/banners/' . $path)) {
+                                    $previewPath = BASE_URL . '/images/banners/' . $path;
+                                } elseif (file_exists(ROOT_PATH . '/img/' . $path)) {
+                                    $previewPath = BASE_URL . '/img/' . $path;
+                                } elseif (file_exists(ROOT_PATH . '/images/pictures/' . $path)) {
+                                    $previewPath = BASE_URL . '/images/pictures/' . $path;
+                                } else {
+                                    $previewPath = BASE_URL . '/images/banners/' . $path;
+                                }
+                            }
+                        ?>
+                            <div class="mt-3 table-img-wrapper" style="width: 300px; height: 180px;">
+                                <img src="<?= $previewPath ?>" alt="Banner Preview" style="object-fit: cover; width: 100%; height: 100%; border-radius: 8px;">
                             </div>
                         <?php endif; ?>
                     </div>
