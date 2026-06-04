@@ -72,12 +72,24 @@ class AdminController extends AdminBaseController {
 
     public function members() {
         $adminModel = new AdminModel();
-        $result = $adminModel->getPaginated('members', $this->getPage(), 10, 'created_at DESC');
+        $statusFilter = $_GET['status'] ?? 'all';
+        $filters = [];
+
+        if ($statusFilter === 'verified') {
+            $filters['is_verified'] = 1;
+        } elseif ($statusFilter === 'pending') {
+            $filters['is_verified'] = 0;
+        } elseif ($statusFilter === 'suspended') {
+            $filters['status'] = 'Suspended';
+        }
+
+        $result = $adminModel->getPaginated('members', $this->getPage(), 10, 'created_at DESC', $filters);
         $reviews = $adminModel->getSuspensionReviews();
         $this->renderAdmin('members', [
             'members' => $result['data'],
             'pagination' => $result,
-            'reviews' => $reviews
+            'reviews' => $reviews,
+            'current_status' => $statusFilter
         ]);
     }
 

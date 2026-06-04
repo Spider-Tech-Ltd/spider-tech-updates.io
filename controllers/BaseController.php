@@ -21,7 +21,9 @@ class BaseController {
 
     private function checkSuspension() {
         $currentUrl = $_GET['url'] ?? '';
-        if ($currentUrl === 'forum/suspended' || $currentUrl === 'forum/logout' || strpos($currentUrl, 'admin/') === 0) {
+        // Whitelist routes that suspended users MUST be able to access
+        $whitelist = ['forum/suspended', 'forum/logout', 'forum/request-review', 'forum/terms'];
+        if (in_array($currentUrl, $whitelist) || strpos($currentUrl, 'admin/') === 0) {
             return;
         }
 

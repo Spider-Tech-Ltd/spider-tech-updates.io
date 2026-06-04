@@ -1413,6 +1413,19 @@ footer .copyright a {
   border-radius: 20px;
   color: #fff;
 }
+
+.btn-outline-orange {
+  color: #f48221;
+  border-color: #f48221;
+  background-color: transparent;
+}
+
+.btn-outline-orange:hover,
+.btn-outline-orange:focus {
+  background-color: #f48221;
+  border-color: #f48221;
+  color: #fff;
+}
 .index-2 .separator ul li {
   display: inline-block;
   width: 3px;
