@@ -21,12 +21,29 @@ class BaseController {
 
     private function checkSuspension() {
         $currentUrl = $_GET['url'] ?? '';
-        if ($currentUrl === 'forum/suspended' || $currentUrl === 'forum/logout') {
+        if ($currentUrl === 'forum/suspended' || $currentUrl === 'forum/logout' || strpos($currentUrl, 'admin/') === 0) {
             return;
         }
 
-        if (isset($_SESSION['member_status']) && $_SESSION['member_status'] === 'Suspended') {
-            $this->redirect('forum/suspended');
+        // Fetch fresh status from DB to ensure immediate enforcement
+        try {
+            $stmt = $this->db->prepare("SELECT status FROM members WHERE id = ? LIMIT 1");
+            $stmt->execute([$_SESSION['member_id']]);
+            $member = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($member && $member['status'] === 'Suspended') {
+                // Member is suspended - update session and redirect
+                $_SESSION['member_status'] = 'Suspended';
+                $this->redirect('forum/suspended');
+            } else {
+                // Ensure session reflects active status
+                $_SESSION['member_status'] = 'Active';
+            }
+        } catch (PDOException $e) {
+            // Fallback to session check if DB fails
+            if (isset($_SESSION['member_status']) && $_SESSION['member_status'] === 'Suspended') {
+                $this->redirect('forum/suspended');
+            }
         }
     }
 
