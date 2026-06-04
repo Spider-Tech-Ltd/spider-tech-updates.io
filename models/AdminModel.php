@@ -146,7 +146,7 @@ class AdminModel
         if ($table === 'blogs') {
             $sql = "SELECT b.*, bc.name
                     FROM blogs b
-                    LEFT JOIN blog_categories bc ON b.category_id = bc.id
+                    LEFT JOIN blog_categories bc ON (b.category_id = bc.id OR b.category_id = bc.uuid)
                     $where
                     ORDER BY b.created_at DESC LIMIT :limit OFFSET :offset";
         } else {
@@ -246,6 +246,9 @@ class AdminModel
                     } elseif ($field === 'sort_order') {
                         $sets[] = "sort_order = ?";
                         $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
+                    } elseif ($field === 'category_id' && $type === 'blog') {
+                        $sets[] = "category_id = ?";
+                        $values[] = (int)$data['category_id'];
                     } elseif (isset($data[$field])) {
                         $sets[] = "$field = ?";
                         $values[] = $data[$field];
@@ -272,6 +275,8 @@ class AdminModel
                         $values[] = (isset($data['show_on_home']) && $data['show_on_home']) ? 1 : 0;
                     } elseif ($field === 'sort_order') {
                         $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
+                    } elseif ($field === 'category_id' && $type === 'blog') {
+                        $values[] = (int)$data['category_id'];
                     } else {
                         $values[] = $data[$field] ?? '';
                     }
