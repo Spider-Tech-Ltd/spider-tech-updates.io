@@ -1,6 +1,6 @@
 <div class="container py-5 mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-7 col-lg-6">
+        <div class="col-md-9 col-lg-8 col-xl-7">
             <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
                 <div class="card-body p-5 text-center">
                     <div class="mb-4">
