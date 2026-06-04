@@ -117,24 +117,43 @@ class AdminModel
         return $stats;
     }
 
-    public function getPaginated($table, $page = 1, $limit = 6, $orderBy = 'id DESC')
+    public function getPaginated($table, $page = 1, $limit = 6, $orderBy = 'id DESC', $filters = [])
     {
         $offset = ($page - 1) * $limit;
         $allowedTables = ['services_tb', 'projects_tb', 'events', 'trainings_tb', 'blogs', 'members', 'faq_tb', 'testimonials_tb', 'banners_tb'];
         if (!in_array($table, $allowedTables)) return ['data' => [], 'total_pages' => 0];
 
-        $total = $this->db->query("SELECT COUNT(*) FROM $table")->fetchColumn();
+        $where = "";
+        $params = [];
+        if (!empty($filters)) {
+            $conditions = [];
+            foreach ($filters as $column => $value) {
+                if ($value !== 'all') {
+                    $conditions[] = "$column = :$column";
+                    $params[":$column"] = $value;
+                }
+            }
+            if (!empty($conditions)) $where = " WHERE " . implode(' AND ', $conditions);
+        }
+
+        $totalSql = "SELECT COUNT(*) FROM $table" . $where;
+        $stmt = $this->db->prepare($totalSql);
+        foreach ($params as $k => $v) $stmt->bindValue($k, $v);
+        $stmt->execute();
+        $total = $stmt->fetchColumn();
         $totalPages = ceil($total / $limit);
 
         if ($table === 'blogs') {
             $sql = "SELECT b.*, bc.name
                     FROM blogs b
                     LEFT JOIN blog_categories bc ON b.category_id = bc.id
+                    $where
                     ORDER BY b.created_at DESC LIMIT :limit OFFSET :offset";
         } else {
-            $sql = "SELECT * FROM $table ORDER BY $orderBy LIMIT :limit OFFSET :offset";
+            $sql = "SELECT * FROM $table $where ORDER BY $orderBy LIMIT :limit OFFSET :offset";
         }
         $stmt = $this->db->prepare($sql);
+        foreach ($params as $k => $v) $stmt->bindValue($k, $v);
         $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
         $stmt->execute();

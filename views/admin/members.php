@@ -11,7 +11,17 @@
     <div class="col-lg-8">
 <div class="admin-card">
     <div class="card-header-custom">
-        <h5 class="m-0 poppins">Active & Pending Members</h5>
+        <h5 class="m-0 poppins">Community Members</h5>
+        <div class="d-flex gap-2">
+            <select class="form-select form-select-sm rounded-pill border-0 shadow-sm px-3"
+                    style="background-color: #f8f9fa; font-size: 0.75rem; width: auto;"
+                    onchange="location.href='<?= BASE_URL ?>/admin/members?status=' + this.value">
+                <option value="all" <?= ($current_status == 'all') ? 'selected' : '' ?>>All Members</option>
+                <option value="verified" <?= ($current_status == 'verified') ? 'selected' : '' ?>>Verified Only</option>
+                <option value="pending" <?= ($current_status == 'pending') ? 'selected' : '' ?>>Pending Only</option>
+                <option value="suspended" <?= ($current_status == 'suspended') ? 'selected' : '' ?>>Suspended Only</option>
+            </select>
+        </div>
     </div>
     <div class="card-body-custom">
         <div class="table-responsive">
