@@ -1,25 +1,11 @@
 <div class="container py-5 mt-5 pt-5" x-data="suspensionPage(<?= $isUnderReview ? 'true' : 'false' ?>)">
-    <!-- Status Modal -->
-    <div class="modal-custom" :class="{ 'show': statusModal.open }" x-cloak>
-        <div class="modal-content-custom" style="max-width: 450px;">
-            <div class="modal-body-custom text-center py-5">
-                <div class="mb-4">
-                    <span class="material-symbols-outlined"
-                          :class="statusModal.type === 'success' ? 'text-success' : 'text-danger'"
-                          style="font-size: 80px;"
-                          x-text="statusModal.type === 'success' ? 'check_circle' : 'error'"></span>
-                </div>
-                <h3 class="fw-bold mb-3" x-text="statusModal.title"></h3>
-                <p class="text-muted mb-4 fs-5" x-text="statusModal.message"></p>
-                <button @click="statusModal.open = false; if(statusModal.type === 'success') underReview = true;" class="btn btn-primary-custom px-5 py-2 rounded-pill">Got it</button>
-            </div>
-        </div>
-    </div>
-
     <div class="row justify-content-center">
         <div class="col-md-11 col-lg-10 col-xl-9">
-            <!-- Under Review Screen -->
-            <div class="card border-0 shadow-lg rounded-5 overflow-hidden" style="border: 1px solid rgba(244, 130, 31, 0.1) !important;" x-show="underReview" x-cloak>
+
+            <!-- 1. Account Under Review Block -->
+            <div class="card border-0 shadow-lg rounded-5 overflow-hidden"
+                 style="border: 1px solid rgba(244, 130, 31, 0.1) !important;"
+                 x-show="state === 'under_review'" x-cloak x-transition>
                 <div class="card-body p-5 text-center">
                     <div class="mb-4">
                         <div class="bg-soft-blue d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 120px; height: 120px;">
@@ -47,8 +33,10 @@
                 </div>
             </div>
 
-            <!-- Suspended Screen -->
-            <div class="card border-0 shadow-lg rounded-5 overflow-hidden" style="border: 1px solid rgba(220, 53, 69, 0.1) !important;" x-show="!underReview">
+            <!-- 2. Account Suspended Block -->
+            <div class="card border-0 shadow-lg rounded-5 overflow-hidden"
+                 style="border: 1px solid rgba(220, 53, 69, 0.1) !important;"
+                 x-show="state === 'suspended'" x-transition>
                 <div class="card-body p-5 text-center">
                     <div class="mb-4">
                         <div class="bg-danger d-inline-flex align-items-center justify-content-center rounded-circle mb-3 shadow-sm" style="width: 120px; height: 120px;">
@@ -77,35 +65,11 @@
                             </a>
                         </div>
                         <div class="col-md-6">
-                            <button @click="showReviewForm = !showReviewForm"
-                                    class="btn py-3 rounded-pill fw-bold w-100 d-flex align-items-center justify-content-center"
-                                    :class="showReviewForm ? 'btn-dark' : 'btn-outline-dark'">
+                            <button @click="state = 'appealing'"
+                                    class="btn btn-outline-dark py-3 rounded-pill fw-bold w-100 d-flex align-items-center justify-content-center">
                                 <span class="material-symbols-outlined me-2">rate_review</span>
-                                <span x-text="showReviewForm ? 'Close Appeal Form' : 'Request a Review'"></span>
+                                <span>Request a Review</span>
                             </button>
-                        </div>
-
-                        <!-- Review Form -->
-                        <div class="col-12 mt-4 text-start" x-show="showReviewForm" x-collapse x-cloak>
-                            <div class="bg-light p-4 rounded-4 border-0 shadow-sm" style="background-color: #fff9f2 !important;">
-                                <h5 class="fw-bold mb-3 text-dark">Submit an Appeal</h5>
-                                <p class="text-muted small mb-4">If you believe your account was suspended by mistake, please provide a brief explanation below. Our moderators will review your request shortly.</p>
-                                <form @submit.prevent="submitReview">
-                                    <div class="mb-4">
-                                        <label class="form-label fw-bold text-dark fs-09">Why should your account be reinstated?</label>
-                                        <textarea name="reason" class="form-control rounded-4 border-0 shadow-sm p-3" rows="4" required placeholder="Describe your situation..."></textarea>
-                                    </div>
-                                    <div class="text-end">
-                                        <button type="submit" class="btn btn-primary-custom px-5 py-2 rounded-pill shadow-sm" :disabled="loading">
-                                            <span x-show="!loading" class="d-flex align-items-center gap-2">
-                                                <span>Submit Appeal</span>
-                                                <span class="material-symbols-outlined fs-1rem">send</span>
-                                            </span>
-                                            <span x-show="loading">Submitting...</span>
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
                         </div>
 
                         <div class="col-md-6 mt-4">
@@ -121,12 +85,72 @@
                             </a>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <div class="mt-5 text-muted small">
-                        Spider Technologies Community Management
+            <!-- 3. Appeal Form Block -->
+            <div class="card border-0 shadow-lg rounded-5 overflow-hidden"
+                 x-show="state === 'appealing'" x-cloak x-transition>
+                <div class="card-body p-5">
+                    <div class="d-flex align-items-center mb-4">
+                        <button @click="state = 'suspended'" class="btn btn-light rounded-circle me-3 p-2 d-flex align-items-center justify-content-center">
+                            <span class="material-symbols-outlined">arrow_back</span>
+                        </button>
+                        <h2 class="fw-bold text-dark mb-0">Submit an Appeal</h2>
+                    </div>
+
+                    <div class="bg-light p-4 rounded-4 border-0 shadow-sm mb-4" style="background-color: #fff9f2 !important;">
+                        <p class="text-muted mb-0">If you believe your account was suspended by mistake, please provide a brief explanation below. Our moderators will review your request shortly.</p>
+                    </div>
+
+                    <form @submit.prevent="submitReview">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark fs-09">Why should your account be reinstated?</label>
+                            <textarea name="reason" class="form-control rounded-4 border p-3" rows="6" required placeholder="Describe your situation..."></textarea>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <button type="button" @click="state = 'suspended'" class="btn btn-light py-3 rounded-pill fw-bold w-100">Cancel</button>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-primary-custom py-3 rounded-pill fw-bold w-100 shadow-sm" :disabled="loading">
+                                    <span x-show="!loading" class="d-flex align-items-center justify-content-center gap-2">
+                                        <span>Submit Appeal</span>
+                                        <span class="material-symbols-outlined">send</span>
+                                    </span>
+                                    <span x-show="loading">Submitting...</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 4. Result Block (Success/Error) -->
+            <div class="card border-0 shadow-lg rounded-5 overflow-hidden"
+                 x-show="state === 'result'" x-cloak x-transition>
+                <div class="card-body p-5 text-center">
+                    <div class="mb-4">
+                        <span class="material-symbols-outlined"
+                              :class="result.type === 'success' ? 'text-success' : 'text-danger'"
+                              style="font-size: 100px;"
+                              x-text="result.type === 'success' ? 'check_circle' : 'error'"></span>
+                    </div>
+                    <h2 class="fw-bold mb-3" x-text="result.title"></h2>
+                    <p class="text-muted mb-5 fs-5" x-text="result.message"></p>
+
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <button @click="handleResultAction"
+                                    class="btn py-3 rounded-pill fw-bold w-100 shadow-sm"
+                                    :class="result.type === 'success' ? 'btn-primary-custom' : 'btn-dark'">
+                                <span x-text="result.type === 'success' ? 'Continue' : 'Try Again'"></span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
@@ -134,11 +158,9 @@
 <script>
 document.addEventListener('alpine:init', () => {
     Alpine.data('suspensionPage', (initialReviewState) => ({
-        showReviewForm: false,
+        state: initialReviewState ? 'under_review' : 'suspended',
         loading: false,
-        underReview: initialReviewState,
-        statusModal: {
-            open: false,
+        result: {
             type: 'success',
             title: '',
             message: ''
@@ -154,50 +176,41 @@ document.addEventListener('alpine:init', () => {
                     headers: { 'X-Requested-With': 'XMLHttpRequest' },
                     body: formData
                 });
-                const result = await response.json();
+                const data = await response.json();
 
-                if (result.status === 'success') {
-                    this.statusModal = {
-                        open: true,
+                if (data.status === 'success') {
+                    this.result = {
                         type: 'success',
                         title: 'Request Received',
-                        message: result.message
+                        message: data.message
                     };
-                    this.showReviewForm = false;
                     e.target.reset();
                 } else {
-                    this.statusModal = {
-                        open: true,
+                    this.result = {
                         type: 'error',
                         title: 'Submission Failed',
-                        message: result.message
+                        message: data.message
                     };
                 }
             } catch (error) {
-                this.statusModal = {
-                    open: true,
+                this.result = {
                     type: 'error',
                     title: 'System Error',
                     message: 'An unexpected error occurred while processing your request.'
                 };
             } finally {
                 this.loading = false;
+                this.state = 'result';
+            }
+        },
+
+        handleResultAction() {
+            if (this.result.type === 'success') {
+                this.state = 'under_review';
+            } else {
+                this.state = 'appealing';
             }
         }
     }));
 });
-
-function showToast(message, type = 'success') {
-    if (typeof Toastify !== 'undefined') {
-        Toastify({
-            text: message,
-            duration: 3000,
-            gravity: "top",
-            position: "right",
-            backgroundColor: type === 'success' ? "#28a745" : "#dc3545",
-        }).showToast();
-    } else {
-        alert(message);
-    }
-}
 </script>
