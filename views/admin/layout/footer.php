@@ -167,6 +167,9 @@
         async function submitForm(event, type, callbackOrModal) {
             event.preventDefault();
             const form = event.target;
+            const submitBtn = form.querySelector('button[type="submit"]');
+
+            if (form.dataset.submitting === 'true') return;
 
             // Sync CKEditor data back to textareas
             if (typeof editors !== 'undefined') {
@@ -179,6 +182,12 @@
             }
 
             const formData = new FormData(form);
+
+            // Disable button and show loading state
+            const originalBtnContent = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processing...';
+            form.dataset.submitting = 'true';
 
             try {
                 const response = await fetch('<?= BASE_URL ?>/admin/store', {
@@ -204,10 +213,20 @@
                 } else {
                     console.error('Error details:', data);
                     showToast(data.message || 'Validation or database error.', 'error');
+
+                    // Reset button on error
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnContent;
+                    delete form.dataset.submitting;
                 }
             } catch (error) {
                 console.error('Error:', error);
                 showToast('An unexpected error occurred.', 'error');
+
+                // Reset button on catch
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnContent;
+                delete form.dataset.submitting;
             }
         }
 
