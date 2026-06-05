@@ -21,25 +21,32 @@ class BaseController {
 
     private function checkSuspension() {
         $currentUrl = $_GET['url'] ?? '';
-        // Whitelist routes that suspended users MUST be able to access
-        $whitelist = ['forum/suspended', 'forum/logout', 'forum/request-review', 'forum/terms'];
+        // Whitelist routes that suspended or terms-pending users MUST be able to access
+        $whitelist = ['forum/suspended', 'forum/logout', 'forum/request-review', 'forum/terms', 'forum/terms/accept'];
         if (in_array($currentUrl, $whitelist) || strpos($currentUrl, 'admin/') === 0) {
             return;
         }
 
-        // Fetch fresh status from DB to ensure immediate enforcement
+        // Fetch fresh status and terms acceptance from DB to ensure immediate enforcement
         try {
-            $stmt = $this->db->prepare("SELECT status FROM members WHERE id = ? LIMIT 1");
+            $stmt = $this->db->prepare("SELECT status, terms_accepted FROM members WHERE id = ? LIMIT 1");
             $stmt->execute([$_SESSION['member_id']]);
             $member = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($member && $member['status'] === 'Suspended') {
-                // Member is suspended - update session and redirect
-                $_SESSION['member_status'] = 'Suspended';
-                $this->redirect('forum/suspended');
-            } else {
-                // Ensure session reflects active status
+            if ($member) {
+                // 1. Suspension Check
+                if ($member['status'] === 'Suspended') {
+                    $_SESSION['member_status'] = 'Suspended';
+                    $this->redirect('forum/suspended');
+                }
                 $_SESSION['member_status'] = 'Active';
+
+                // 2. Terms Check (for Active members)
+                if ((int)$member['terms_accepted'] === 0) {
+                    $_SESSION['terms_accepted'] = 0;
+                    $this->redirect('forum/terms');
+                }
+                $_SESSION['terms_accepted'] = 1;
             }
         } catch (PDOException $e) {
             // Fallback to session check if DB fails

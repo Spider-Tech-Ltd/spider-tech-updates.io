@@ -357,8 +357,15 @@ class AdminModel
         if (!$member) return false;
 
         $newStatus = ($member['status'] === 'Suspended') ? 'Active' : 'Suspended';
-        $stmt = $this->db->prepare("UPDATE members SET status = ? WHERE id = ?");
-        $result = $stmt->execute([$newStatus, $id]);
+
+        // When suspending, we reset terms_accepted to 0 so they must re-accept guidelines upon restoration
+        if ($newStatus === 'Suspended') {
+            $stmt = $this->db->prepare("UPDATE members SET status = ?, terms_accepted = 0 WHERE id = ?");
+            $result = $stmt->execute([$newStatus, $id]);
+        } else {
+            $stmt = $this->db->prepare("UPDATE members SET status = ? WHERE id = ?");
+            $result = $stmt->execute([$newStatus, $id]);
+        }
 
         if ($result && $newStatus === 'Active') {
             // Automatically resolve any pending suspension reviews

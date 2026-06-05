@@ -34,7 +34,7 @@
                                     Request a Review
                                 </button>
                                 <a href="<?= BASE_URL ?>/forum/terms" class="btn btn-system-pill-outline px-4 py-2 fw-bold">
-                                    Community Guidelines
+                                    Community Rules
                                 </a>
                             </div>
 
