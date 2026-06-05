@@ -32,7 +32,7 @@ class AuthController extends BaseController
                     } else {
                         $_SESSION['member_id'] = $member['id'];
                         $_SESSION['member_uuid'] = $member['uuid'];
-                        $_SESSION['member_name'] = $member['name'];
+                        $_SESSION['member_name'] = $member['name'] ?? $member['username'];
                         $_SESSION['member_status'] = $member['status'] ?? 'Active';
                         $_SESSION['terms_accepted'] = $member['terms_accepted'];
 

@@ -1,158 +1,126 @@
-<div class="container py-5 mt-5 pt-5" x-data="suspensionPage(<?= $isUnderReview ? 'true' : 'false' ?>)">
+<div class="container py-5 mt-5" x-data="suspensionPage(<?= $isUnderReview ? 'true' : 'false' ?>)">
     <div class="row justify-content-center">
-        <div class="col-md-11 col-lg-10 col-xl-9">
+        <div class="col-md-10 col-lg-8 col-xl-7">
 
             <!-- 1. Account Under Review Block -->
-            <div class="card border-0 shadow-lg rounded-5 overflow-hidden"
-                 style="border: 1px solid rgba(244, 130, 31, 0.1) !important;"
+            <div class="card border-0 shadow-sm rounded-5"
                  x-show="state === 'under_review'" x-cloak x-transition:enter="animate__animated animate__fadeIn">
                 <div class="card-body p-5 text-center">
                     <div class="mb-4">
-                        <div class="bg-soft-blue d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 120px; height: 120px;">
-                            <span class="material-symbols-outlined text-blue" style="font-size: 64px;">pending_actions</span>
+                         <div class="bg-primary d-inline-flex align-items-center justify-content-center rounded-2 mb-3 shadow-sm" style="width: 80px; height: 80px; background-color: #0d6efd !important;">
+                            <span class="material-symbols-outlined text-white" style="font-size: 48px;">pending_actions</span>
                         </div>
                     </div>
-                    <h1 class="fw-bold text-dark mb-3 display-5 poppins">Account Under Review</h1>
-                    <p class="text-muted fs-5 mb-4">
+                    <h1 class="fw-bold text-dark mb-3 display-6 poppins">Account Under Review</h1>
+                    <p class="text-muted fs-6 mb-5">
                         Thank you for your appeal. Your account status is currently being reviewed by our moderation team.
                     </p>
-                    <div class="bg-light p-4 rounded-4 border-0 shadow-sm mb-4 text-start border-start border-primary border-4">
-                        <p class="mb-0 text-dark">
-                            <strong>What happens next?</strong><br>
+                    <div class="bg-light p-4 rounded-3 mb-5 border-0">
+                        <p class="mb-2 fw-bold text-dark small text-uppercase" style="letter-spacing: 1px;">What happens next?</p>
+                        <p class="mb-0 text-muted small px-md-4">
                             We will investigate your request and get back to you via email. This process usually takes 24-48 hours. In the meantime, access to community features remains restricted.
                         </p>
                     </div>
-                    <div class="row g-4 justify-content-center">
-                        <div class="col-md-6">
-                            <a href="<?= BASE_URL ?>/forum/logout" class="btn btn-outline-dark py-3 rounded-pill fw-bold w-100 d-flex align-items-center justify-content-center">
-                                <span class="material-symbols-outlined me-2">logout</span>
-                                <span>Sign Out</span>
-                            </a>
-                        </div>
+                    <div class="d-flex justify-content-center">
+                        <a href="<?= BASE_URL ?>/forum/logout" class="btn btn-outline-dark px-5 py-2 rounded-2 fw-semibold d-flex align-items-center gap-2">
+                            <span class="material-symbols-outlined fs-5">logout</span>
+                            <span>Sign Out</span>
+                        </a>
                     </div>
                 </div>
             </div>
 
             <!-- 2. Account Suspended Block -->
-            <div class="card border-0 shadow-lg rounded-5 overflow-hidden"
-                 style="border: 1px solid rgba(220, 53, 69, 0.1) !important;"
+            <div class="card border-0 shadow-sm rounded-5"
                  x-show="state === 'suspended'" x-transition:enter="animate__animated animate__fadeIn">
                 <div class="card-body p-5 text-center">
                     <div class="mb-4">
-                        <div class="bg-danger d-inline-flex align-items-center justify-content-center rounded-circle mb-3 shadow-sm" style="width: 120px; height: 120px;">
-                            <span class="material-symbols-outlined text-white" style="font-size: 64px;">block</span>
+                        <div class="bg-danger d-inline-flex align-items-center justify-content-center rounded-2 mb-3 shadow-sm" style="width: 80px; height: 80px;">
+                            <span class="material-symbols-outlined text-white" style="font-size: 48px;">block</span>
                         </div>
                     </div>
 
-                    <h1 class="fw-bold text-dark mb-3 display-5 poppins">Account Suspended</h1>
+                    <h1 class="fw-bold text-dark mb-3 display-6 poppins">Account Suspended</h1>
 
-                    <p class="text-muted fs-5 mb-4">
+                    <p class="text-muted fs-6 mb-5 px-md-4">
                         We noticed some activity on your account that violates our community guidelines. As a result, your access to the Spider Tech forum has been temporarily suspended.
                     </p>
 
-                    <div class="bg-light p-4 rounded-4 mb-4 text-start border-start border-danger border-4">
-                        <p class="mb-0 text-dark">
-                            <strong>What does this mean?</strong><br>
+                    <div class="bg-light p-4 rounded-3 mb-5 border-0">
+                        <p class="mb-2 fw-bold text-dark small text-uppercase" style="letter-spacing: 1px;">What does this mean?</p>
+                        <p class="mb-0 text-muted small px-md-4">
                             You can no longer participate in discussions, post updates, or interact with other community members until your account is reviewed or the suspension period ends.
                         </p>
                     </div>
 
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <a href="<?= BASE_URL ?>/forum/terms" class="btn btn-outline-orange py-3 rounded-pill fw-bold w-100 d-flex align-items-center justify-content-center">
-                                <span class="material-symbols-outlined me-2">gavel</span>
-                                <span>Community Guidelines</span>
-                            </a>
-                        </div>
-                        <div class="col-md-6">
-                            <button @click="state = 'appealing'"
-                                    class="btn btn-outline-dark py-3 rounded-pill fw-bold w-100 d-flex align-items-center justify-content-center">
-                                <span class="material-symbols-outlined me-2">rate_review</span>
-                                <span>Request a Review</span>
-                            </button>
-                        </div>
-
-                        <div class="col-md-6 mt-4">
-                            <a href="mailto:support@spidertech.com.ng" class="btn btn-light py-3 rounded-pill fw-bold w-100 border d-flex align-items-center justify-content-center bg-white shadow-sm">
-                                <span class="material-symbols-outlined me-2 text-orange">mail</span>
-                                <span>Email Support</span>
-                            </a>
-                        </div>
-                        <div class="col-md-6 mt-4">
-                            <a href="<?= BASE_URL ?>/forum/logout" class="btn btn-danger py-3 rounded-pill fw-bold shadow-sm w-100 d-flex align-items-center justify-content-center">
-                                <span class="material-symbols-outlined me-2">logout</span>
-                                <span>Sign Out</span>
-                            </a>
-                        </div>
+                    <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-4">
+                        <button @click="state = 'appealing'"
+                                class="btn btn-link text-dark fw-bold text-decoration-none">
+                            Request a Review
+                        </button>
+                        <a href="<?= BASE_URL ?>/forum/terms" class="btn btn-outline-dark px-4 py-2 rounded-2 fw-semibold">
+                            Community Guidelines
+                        </a>
                     </div>
 
-                    <div class="mt-5 text-muted small">
-                        Spider Technologies Community Management
+                    <div class="mt-5 d-flex justify-content-center gap-4 border-top pt-4">
+                        <a href="mailto:support@spidertech.com.ng" class="text-decoration-none text-muted small d-flex align-items-center gap-2">
+                            <span class="material-symbols-outlined fs-6">mail</span>
+                            <span>Email Support</span>
+                        </a>
+                        <a href="<?= BASE_URL ?>/forum/logout" class="text-decoration-none text-danger small d-flex align-items-center gap-2">
+                            <span class="material-symbols-outlined fs-6">logout</span>
+                            <span>Sign Out</span>
+                        </a>
                     </div>
                 </div>
             </div>
 
             <!-- 3. Appeal Form Block -->
-            <div class="card border-0 shadow-lg rounded-5 overflow-hidden"
+            <div class="card border-0 shadow-sm rounded-5"
                  x-show="state === 'appealing'" x-cloak x-transition:enter="animate__animated animate__fadeIn">
                 <div class="card-body p-5">
-                    <div class="d-flex align-items-center mb-4">
-                        <button @click="state = 'suspended'" class="btn btn-light rounded-circle me-3 p-0 d-flex align-items-center justify-content-center hover-scale" style="width: 45px; height: 45px; transition: all 0.3s;">
-                            <span class="material-symbols-outlined">arrow_back</span>
-                        </button>
-                        <h2 class="fw-bold text-dark mb-0 poppins">Submit an Appeal</h2>
-                    </div>
-
-                    <div class="bg-light p-4 rounded-4 border-0 shadow-sm mb-4" style="background-color: #fff9f2 !important; border-left: 4px solid #f48221 !important;">
-                        <p class="text-muted mb-0">If you believe your account was suspended by mistake, please provide a brief explanation below. Our moderators will review your request shortly.</p>
+                    <div class="text-center mb-5">
+                        <h2 class="fw-bold text-dark mb-2 poppins">Submit an Appeal</h2>
+                        <p class="text-muted small">Provide details about why your account should be reinstated.</p>
                     </div>
 
                     <form @submit.prevent="submitReview">
                         <div class="mb-4">
-                            <label class="form-label fw-bold text-dark fs-09">Why should your account be reinstated?</label>
-                            <textarea name="reason" class="form-control rounded-4 border-0 shadow-sm p-3" rows="6" required placeholder="Describe your situation..." style="resize: none; background-color: #fdfdfd;"></textarea>
+                            <textarea name="reason" class="form-control rounded-3 border-light bg-light p-3" rows="5" required placeholder="Describe your situation..." style="resize: none;"></textarea>
                         </div>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <button type="button" @click="state = 'suspended'" class="btn btn-light py-3 rounded-pill fw-bold w-100 border hover-dark" style="transition: all 0.3s;">Cancel</button>
-                            </div>
-                            <div class="col-md-6">
-                                <button type="submit" class="btn btn-primary-custom py-3 rounded-pill fw-bold w-100 shadow-sm" :disabled="loading">
-                                    <span x-show="!loading" class="d-flex align-items-center justify-content-center gap-2">
-                                        <span>Submit Appeal</span>
-                                        <span class="material-symbols-outlined">send</span>
-                                    </span>
-                                    <span x-show="loading">Submitting...</span>
-                                </button>
-                            </div>
+                        <div class="d-grid gap-3">
+                            <button type="submit" class="btn btn-primary-custom py-3 rounded-2 fw-bold shadow-sm" :disabled="loading">
+                                <span x-show="!loading">Submit Appeal</span>
+                                <span x-show="loading">Submitting...</span>
+                            </button>
+                            <button type="button" @click="state = 'suspended'" class="btn btn-link text-muted text-decoration-none small">Cancel and go back</button>
                         </div>
                     </form>
                 </div>
             </div>
 
             <!-- 4. Result Block (Success/Error) -->
-            <div class="card border-0 shadow-lg rounded-5 overflow-hidden"
+            <div class="card border-0 shadow-sm rounded-5"
                  x-show="state === 'result'" x-cloak x-transition:enter="animate__animated animate__fadeIn">
                 <div class="card-body p-5 text-center">
                     <div class="mb-4">
-                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle p-4 mb-2" :class="result.type === 'success' ? 'bg-soft-green' : 'bg-soft-red'">
-                             <span class="material-symbols-outlined"
-                                  :class="result.type === 'success' ? 'text-success' : 'text-danger'"
-                                  style="font-size: 80px;"
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-2 mb-3 shadow-sm"
+                             :class="result.type === 'success' ? 'bg-success' : 'bg-danger'"
+                             style="width: 80px; height: 80px;">
+                             <span class="material-symbols-outlined text-white" style="font-size: 48px;"
                                   x-text="result.type === 'success' ? 'check_circle' : 'error'"></span>
                         </div>
                     </div>
                     <h2 class="fw-bold mb-3 poppins" x-text="result.title"></h2>
-                    <p class="text-muted mb-5 fs-5" x-text="result.message"></p>
+                    <p class="text-muted mb-5 fs-6" x-text="result.message"></p>
 
-                    <div class="row justify-content-center">
-                        <div class="col-md-6">
-                            <button @click="handleResultAction"
-                                    class="btn py-3 rounded-pill fw-bold w-100 shadow-sm"
-                                    :class="result.type === 'success' ? 'btn-primary-custom' : 'btn-dark'">
-                                <span x-text="result.type === 'success' ? 'Continue' : 'Try Again'"></span>
-                            </button>
-                        </div>
+                    <div class="d-flex justify-content-center">
+                        <button @click="handleResultAction"
+                                class="btn px-5 py-2 rounded-2 fw-bold shadow-sm"
+                                :class="result.type === 'success' ? 'btn-primary-custom' : 'btn-dark'">
+                            <span x-text="result.type === 'success' ? 'Continue' : 'Try Again'"></span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -163,69 +131,80 @@
 
 <style>
     .rounded-5 { border-radius: 2rem !important; }
-    .bg-soft-red { background-color: #fff5f5; }
-    .bg-soft-green { background-color: #f0fff4; }
-    .hover-scale:hover { transform: scale(1.1); background-color: #f8f9fa !important; }
-    .hover-dark:hover { background-color: #333 !important; color: #fff !important; }
-    .animate__animated { animation-duration: 0.5s; }
+    .bg-light { background-color: #f8f9fa !important; }
+    .animate__animated { animation-duration: 0.4s; }
+    .btn-primary-custom {
+        background-color: #f48221;
+        border-color: #f48221;
+        color: white;
+    }
+    .btn-primary-custom:hover {
+        background-color: #d9731d;
+        border-color: #d9731d;
+        color: white;
+    }
+    [x-cloak] { display: none !important; }
+    .poppins { font-family: 'Poppins', sans-serif; }
 </style>
 
 <script>
 document.addEventListener('alpine:init', () => {
-    Alpine.data('suspensionPage', (initialReviewState) => ({
-        state: initialReviewState ? 'under_review' : 'suspended',
-        loading: false,
-        result: {
-            type: 'success',
-            title: '',
-            message: ''
-        },
+    if (!Alpine.data('suspensionPage')) {
+        Alpine.data('suspensionPage', (initialReviewState) => ({
+            state: initialReviewState ? 'under_review' : 'suspended',
+            loading: false,
+            result: {
+                type: 'success',
+                title: '',
+                message: ''
+            },
 
-        async submitReview(e) {
-            this.loading = true;
-            const formData = new FormData(e.target);
+            async submitReview(e) {
+                this.loading = true;
+                const formData = new FormData(e.target);
 
-            try {
-                const response = await fetch('<?= BASE_URL ?>/forum/request-review', {
-                    method: 'POST',
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                    body: formData
-                });
-                const data = await response.json();
+                try {
+                    const response = await fetch('<?= BASE_URL ?>/forum/request-review', {
+                        method: 'POST',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                        body: formData
+                    });
+                    const data = await response.json();
 
-                if (data.status === 'success') {
-                    this.result = {
-                        type: 'success',
-                        title: 'Appeal Submitted',
-                        message: data.message
-                    };
-                    e.target.reset();
-                } else {
+                    if (data.status === 'success') {
+                        this.result = {
+                            type: 'success',
+                            title: 'Appeal Submitted',
+                            message: data.message
+                        };
+                        e.target.reset();
+                    } else {
+                        this.result = {
+                            type: 'error',
+                            title: 'Submission Failed',
+                            message: data.message
+                        };
+                    }
+                } catch (error) {
                     this.result = {
                         type: 'error',
-                        title: 'Submission Failed',
-                        message: data.message
+                        title: 'System Error',
+                        message: 'An unexpected error occurred while processing your request.'
                     };
+                } finally {
+                    this.loading = false;
+                    this.state = 'result';
                 }
-            } catch (error) {
-                this.result = {
-                    type: 'error',
-                    title: 'System Error',
-                    message: 'An unexpected error occurred while processing your request.'
-                };
-            } finally {
-                this.loading = false;
-                this.state = 'result';
-            }
-        },
+            },
 
-        handleResultAction() {
-            if (this.result.type === 'success') {
-                this.state = 'under_review';
-            } else {
-                this.state = 'appealing';
+            handleResultAction() {
+                if (this.result.type === 'success') {
+                    this.state = 'under_review';
+                } else {
+                    this.state = 'appealing';
+                }
             }
-        }
-    }));
+        }));
+    }
 });
 </script>
