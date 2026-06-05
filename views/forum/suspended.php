@@ -50,7 +50,7 @@
                         We noticed some activity on your account that violates our community guidelines. As a result, your access to the Spider Tech forum has been temporarily suspended.
                     </p>
 
-                    <div class="bg-light p-4 rounded-3 mb-4 text-start border-start border-danger border-4">
+                    <div class="bg-light p-4 rounded-4 mb-4 text-start border-start border-danger border-4">
                         <p class="mb-0 text-dark">
                             <strong>What does this mean?</strong><br>
                             You can no longer participate in discussions, post updates, or interact with other community members until your account is reviewed or the suspension period ends.
@@ -85,6 +85,10 @@
                             </a>
                         </div>
                     </div>
+
+                    <div class="mt-5 text-muted small">
+                        Spider Technologies Community Management
+                    </div>
                 </div>
             </div>
 
@@ -93,24 +97,24 @@
                  x-show="state === 'appealing'" x-cloak x-transition>
                 <div class="card-body p-5">
                     <div class="d-flex align-items-center mb-4">
-                        <button @click="state = 'suspended'" class="btn btn-light rounded-circle me-3 p-2 d-flex align-items-center justify-content-center">
+                        <button @click="state = 'suspended'" class="btn btn-light rounded-circle me-3 p-2 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
                             <span class="material-symbols-outlined">arrow_back</span>
                         </button>
                         <h2 class="fw-bold text-dark mb-0">Submit an Appeal</h2>
                     </div>
 
-                    <div class="bg-light p-4 rounded-4 border-0 shadow-sm mb-4" style="background-color: #fff9f2 !important;">
+                    <div class="bg-light p-4 rounded-4 border-0 shadow-sm mb-4" style="background-color: #fff9f2 !important; border-left: 4px solid #f48221 !important;">
                         <p class="text-muted mb-0">If you believe your account was suspended by mistake, please provide a brief explanation below. Our moderators will review your request shortly.</p>
                     </div>
 
                     <form @submit.prevent="submitReview">
                         <div class="mb-4">
                             <label class="form-label fw-bold text-dark fs-09">Why should your account be reinstated?</label>
-                            <textarea name="reason" class="form-control rounded-4 border p-3" rows="6" required placeholder="Describe your situation..."></textarea>
+                            <textarea name="reason" class="form-control rounded-4 border p-3 shadow-sm" rows="6" required placeholder="Describe your situation..." style="resize: none;"></textarea>
                         </div>
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <button type="button" @click="state = 'suspended'" class="btn btn-light py-3 rounded-pill fw-bold w-100">Cancel</button>
+                                <button type="button" @click="state = 'suspended'" class="btn btn-light py-3 rounded-pill fw-bold w-100 border">Cancel</button>
                             </div>
                             <div class="col-md-6">
                                 <button type="submit" class="btn btn-primary-custom py-3 rounded-pill fw-bold w-100 shadow-sm" :disabled="loading">
