@@ -31,6 +31,68 @@
 
     <script>
         document.addEventListener('alpine:init', () => {
+            Alpine.data('adminNotifications', () => ({
+                open: false,
+                notifications: [],
+                unreadCount: 0,
+                filter: 'unread',
+                loading: false,
+
+                init() {
+                    this.fetchNotifications();
+                    // Auto-refresh every 60 seconds
+                    setInterval(() => this.fetchNotifications(), 60000);
+                },
+
+                async fetchNotifications() {
+                    try {
+                        const response = await fetch('<?= BASE_URL ?>/admin/notifications?filter=' + this.filter);
+                        const res = await response.json();
+                        if (res.status === 'success') {
+                            this.notifications = res.data;
+                            this.unreadCount = res.unread_count;
+                        }
+                    } catch (error) {
+                        console.error('Failed to fetch notifications:', error);
+                    }
+                },
+
+                async markRead(id) {
+                    try {
+                        const formData = new FormData();
+                        formData.append('id', id);
+                        const response = await fetch('<?= BASE_URL ?>/admin/notifications/mark-read', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const res = await response.json();
+                        if (res.status === 'success') {
+                            this.fetchNotifications();
+                        }
+                    } catch (error) {
+                        console.error('Failed to mark notification as read:', error);
+                    }
+                },
+
+                getIcon(type) {
+                    const icons = {
+                        'Review Request': 'rate_review',
+                        'New Member': 'person_add',
+                        'New Application': 'assignment_ind',
+                        'System': 'settings_suggest'
+                    };
+                    return icons[type] || 'notifications';
+                },
+
+                formatDate(dateString) {
+                    if (!dateString) return '';
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                }
+            }));
+        });
+
+        document.addEventListener('alpine:init', () => {
             Alpine.store('actionModal', {
                 open: false,
                 id: null,

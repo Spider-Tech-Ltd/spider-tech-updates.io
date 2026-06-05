@@ -275,6 +275,30 @@ class AdminController extends AdminBaseController {
         else { echo json_encode(['status' => 'error', 'message' => 'Failed to delete record.']); }
     }
 
+    public function getNotifications() {
+        if (!$this->isAdminLoggedIn()) { exit; }
+        header('Content-Type: application/json');
+        $filter = $_GET['filter'] ?? 'all';
+        $adminModel = new AdminModel();
+        $notifications = $adminModel->getNotifications($filter);
+        $unreadCount = $adminModel->getUnreadNotificationCount();
+        echo json_encode(['status' => 'success', 'data' => $notifications, 'unread_count' => $unreadCount]);
+        exit;
+    }
+
+    public function markNotificationRead() {
+        if (!$this->isAdminLoggedIn()) { exit; }
+        header('Content-Type: application/json');
+        $id = $_POST['id'] ?? 0;
+        $adminModel = new AdminModel();
+        if ($adminModel->markNotificationRead($id)) {
+            echo json_encode(['status' => 'success']);
+        } else {
+            echo json_encode(['status' => 'error']);
+        }
+        exit;
+    }
+
     public function storeRecord() {
         header('Content-Type: application/json');
         if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {

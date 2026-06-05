@@ -107,6 +107,9 @@ class AuthController extends BaseController
                             } else {
                                 $success = "Registration successful, but we couldn't send the verification email. Please contact support.";
                             }
+                            // Trigger Admin Notification
+                            $adminModel = new AdminModel();
+                            $adminModel->addNotification('New Member', "$name has registered as a new member.", "admin/members");
                         } else {
                             $error = "An error occurred while setting up verification. Please try again.";
                         }
@@ -177,6 +180,14 @@ class AuthController extends BaseController
 
         try {
             if ($this->authModel->submitSuspensionReview($_SESSION['member_id'], $reason)) {
+                // Trigger Admin Notification
+                $adminModel = new AdminModel();
+                $memberName = $_SESSION['member_name'] ?? 'A member';
+                $adminModel->addNotification(
+                    'Review Request',
+                    "$memberName has submitted an appeal for account reinstatement.",
+                    "admin/members"
+                );
                 echo json_encode(['status' => 'success', 'message' => 'Your review request has been submitted.']);
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Failed to submit review request.']);

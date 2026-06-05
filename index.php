@@ -75,6 +75,8 @@ $routes = [
     'admin/store' => ['AdminController', 'storeRecord'],
     'admin/members/details/{id}' => ['AdminController', 'memberDetails'],
     'admin/members/toggle-status' => ['AdminController', 'toggleMemberStatus'],
+    'admin/notifications' => ['AdminController', 'getNotifications'],
+    'admin/notifications/mark-read' => ['AdminController', 'markNotificationRead'],
 
     // Module Specific Form Routes
     'admin/services/add' => ['AdminController', 'addService'],
