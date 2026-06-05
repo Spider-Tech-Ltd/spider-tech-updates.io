@@ -379,6 +379,39 @@ class AdminModel
         ")->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function addNotification($type, $message, $link = null)
+    {
+        $stmt = $this->db->prepare("INSERT INTO admin_notifications (type, message, link) VALUES (?, ?, ?)");
+        return $stmt->execute([$type, $message, $link]);
+    }
+
+    public function getNotifications($filter = 'all', $limit = 20)
+    {
+        $where = "";
+        if ($filter === 'unread') {
+            $where = " WHERE is_read = 0";
+        } elseif ($filter === 'read') {
+            $where = " WHERE is_read = 1";
+        }
+
+        $sql = "SELECT * FROM admin_notifications $where ORDER BY created_at DESC LIMIT :limit";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function markNotificationRead($id)
+    {
+        $stmt = $this->db->prepare("UPDATE admin_notifications SET is_read = 1 WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+
+    public function getUnreadNotificationCount()
+    {
+        return $this->db->query("SELECT COUNT(*) FROM admin_notifications WHERE is_read = 0")->fetchColumn();
+    }
+
     public function deleteRecord($type, $id)
     {
         $allowedTypes = [

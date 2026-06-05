@@ -139,6 +139,12 @@ class TrainingController extends BaseController {
             $result = $model->submitRegistration($program_id, $user_data_json);
 
             if ($result) {
+                // Trigger Admin Notification
+                $adminModel = new AdminModel();
+                $regData = json_decode($user_data_json, true);
+                $applicant = ($regData['firstname'] ?? '') . ' ' . ($regData['lastname'] ?? '');
+                $adminModel->addNotification('New Application', "$applicant has registered for a training program.", "admin/applications");
+
                 if ($this->isAjax()) {
                     header('Content-Type: application/json');
                     echo json_encode([

@@ -34,6 +34,60 @@
                 </div>
             </div>
             <div class="header-right">
+                <!-- Notifications Dropdown -->
+                <div class="admin-notifications" x-data="adminNotifications()" x-init="init()">
+                    <button @click="open = !open" class="notification-trigger" :class="{ 'has-unread': unreadCount > 0 }">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <template x-if="unreadCount > 0">
+                            <span class="notification-badge" x-text="unreadCount"></span>
+                        </template>
+                    </button>
+
+                    <div x-show="open" @click.away="open = false" class="dropdown-menu-custom notification-dropdown" x-cloak x-transition>
+                        <div class="dropdown-header-custom d-flex justify-content-between align-items-center p-3 border-bottom">
+                            <h6 class="mb-0 fw-bold poppins">Notifications</h6>
+                            <div class="notification-filters d-flex gap-2">
+                                <button @click="filter = 'all'; fetchNotifications()" class="btn btn-xs" :class="filter === 'all' ? 'btn-primary-custom btn-sm-custom' : 'btn-light text-muted'" style="font-size: 10px;">All</button>
+                                <button @click="filter = 'unread'; fetchNotifications()" class="btn btn-xs" :class="filter === 'unread' ? 'btn-primary-custom btn-sm-custom' : 'btn-light text-muted'" style="font-size: 10px;">Unread</button>
+                            </div>
+                        </div>
+
+                        <div class="notification-list" style="max-height: 350px; overflow-y: auto;">
+                            <template x-for="notif in notifications" :key="notif.id">
+                                <div class="notification-item p-3 border-bottom" :class="{ 'unread': !notif.is_read }">
+                                    <div class="d-flex gap-3">
+                                        <div class="notif-icon-circle flex-shrink-0">
+                                            <span class="material-symbols-outlined text-orange" x-text="getIcon(notif.type)"></span>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                                <span class="fw-bold fs-08 text-dark" x-text="notif.type"></span>
+                                                <span class="text-muted" style="font-size: 10px;" x-text="formatDate(notif.created_at)"></span>
+                                            </div>
+                                            <p class="mb-2 text-muted small" x-text="notif.message" style="line-height: 1.4;"></p>
+                                            <div class="d-flex gap-2 align-items-center">
+                                                <template x-if="notif.link">
+                                                    <a :href="'<?= BASE_URL ?>/' + notif.link" class="btn btn-link p-0 text-orange small fw-600" style="font-size: 11px; text-decoration: none;">View Detail</a>
+                                                </template>
+                                                <template x-if="!notif.is_read">
+                                                    <button @click="markRead(notif.id)" class="btn btn-link p-0 text-muted small" style="font-size: 11px; text-decoration: none;">Mark read</button>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <template x-if="notifications.length === 0">
+                                <div class="p-5 text-center">
+                                    <span class="material-symbols-outlined text-muted mb-2" style="font-size: 48px;">notifications_off</span>
+                                    <p class="text-muted small">No notifications found.</p>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="admin-profile-dropdown" x-data="{ open: false }">
                     <button @click="open = !open" class="profile-trigger">
                         <div class="profile-info">
