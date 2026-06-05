@@ -2,34 +2,140 @@
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
     </div> <!-- End of .admin-wrapper -->
 
+    <!-- Global Action Confirmation Modal (Alpine.js) -->
+    <div x-data x-show="$store.actionModal.open" class="modal-custom" :class="{ 'show': $store.actionModal.open }" x-cloak>
+        <div class="modal-content-custom" style="max-width: 400px;" @click.away="$store.actionModal.open = false">
+            <div class="modal-body-custom text-center py-5">
+                <div class="mb-4">
+                    <span class="material-symbols-outlined"
+                          :class="$store.actionModal.variant === 'danger' ? 'text-danger' : 'text-warning'"
+                          style="font-size: 64px;"
+                          x-text="$store.actionModal.icon">warning</span>
+                </div>
+                <h3 class="fw-700 mb-3" x-text="$store.actionModal.title">Are you sure?</h3>
+                <p class="text-muted mb-4" x-text="$store.actionModal.message"></p>
+
+                <div class="d-flex justify-content-center gap-3">
+                    <button @click="$store.actionModal.open = false" class="btn btn-light px-4">Cancel</button>
+                    <button @click="$store.actionModal.confirm()"
+                            class="btn px-4"
+                            :class="$store.actionModal.variant === 'danger' ? 'btn-danger' : 'btn-primary-custom'"
+                            :disabled="$store.actionModal.loading">
+                        <span x-show="!$store.actionModal.loading" x-text="$store.actionModal.confirmText">Confirm</span>
+                        <span x-show="$store.actionModal.loading">Processing...</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        async function deleteItem(id, type) {
-            if (!confirm(`Are you sure you want to delete this ${type}? This action cannot be undone.`)) {
-                return;
-            }
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('actionModal', {
+                open: false,
+                id: null,
+                type: null,
+                title: 'Are you sure?',
+                message: '',
+                confirmText: 'Confirm',
+                variant: 'danger',
+                icon: 'warning',
+                loading: false,
+                actionUrl: '<?= BASE_URL ?>/admin/delete',
+                callback: null,
 
-            try {
-                const response = await fetch('<?= BASE_URL ?>/admin/delete', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: `id=${id}&type=${type}`
-                });
+                show(options) {
+                    this.id = options.id;
+                    this.type = options.type || '';
+                    this.title = options.title || 'Are you sure?';
+                    this.message = options.message || '';
+                    this.confirmText = options.confirmText || 'Confirm';
+                    this.variant = options.variant || 'danger';
+                    this.icon = options.icon || 'warning';
+                    this.actionUrl = options.actionUrl || '<?= BASE_URL ?>/admin/delete';
+                    this.callback = options.callback || null;
+                    this.loading = false;
+                    this.open = true;
+                },
 
-                const data = await response.json();
-                console.log('Submission Response:', data);
+                async confirm() {
+                    this.loading = true;
+                    try {
+                        if (this.callback) {
+                            await this.callback(this.id);
+                            this.open = false;
+                            this.loading = false;
+                            return;
+                        }
 
-                if (data.status === 'success') {
-                    showToast(data.message);
-                    setTimeout(() => window.location.reload(), 1000);
-                } else {
-                    showToast(data.message, 'error');
+                        const formData = new URLSearchParams();
+                        formData.append('id', this.id);
+                        if (this.type) formData.append('type', this.type);
+
+                        const response = await fetch(this.actionUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: formData.toString()
+                        });
+
+                        const data = await response.json();
+                        if (data.status === 'success') {
+                            showToast(data.message);
+                            setTimeout(() => window.location.reload(), 1000);
+                        } else {
+                            showToast(data.message, 'error');
+                            this.loading = false;
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showToast('An unexpected error occurred.', 'error');
+                        this.loading = false;
+                    }
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('An unexpected error occurred.', 'error');
+            });
+        });
+
+        function deleteItem(id, type) {
+            if (window.Alpine && Alpine.store('actionModal')) {
+                Alpine.store('actionModal').show({
+                    id: id,
+                    type: type,
+                    title: 'Delete ' + type.charAt(0).toUpperCase() + type.slice(1),
+                    message: `You are about to delete this ${type}. This action is permanent and cannot be undone.`,
+                    confirmText: 'Yes, Delete',
+                    variant: 'danger',
+                    icon: 'warning',
+                    actionUrl: '<?= BASE_URL ?>/admin/delete'
+                });
+            } else {
+                // Fallback to traditional confirm if Alpine is not ready
+                if (confirm(`Are you sure you want to delete this ${type}?`)) {
+                    // This is a simplified fallback that mimics the old behavior
+                    const formData = new URLSearchParams();
+                    formData.append('id', id);
+                    formData.append('type', type);
+
+                    fetch('<?= BASE_URL ?>/admin/delete', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: formData
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            showToast(data.message);
+                            setTimeout(() => window.location.reload(), 1000);
+                        } else {
+                            showToast(data.message, 'error');
+                        }
+                    });
+                }
             }
         }
 

@@ -27,20 +27,41 @@
                 <tbody>
                     <?php
                     foreach ($blogs as $blog):
-                        $imagePath = BASE_URL . '/' . $blog['image_path'];
-                        $statusClass = (strtolower($blog['status']) == 'published') ? 'badge-soft-green' : 'badge-soft-orange';
+                        // Check multiple locations for the image
+                        $rawPath = $blog['image_path'] ?? '';
+                        $imagePath = BASE_URL . '/img/transparent.png';
+
+                        if (!empty($rawPath)) {
+                            if (filter_var($rawPath, FILTER_VALIDATE_URL)) {
+                                $imagePath = $rawPath;
+                            } else {
+                                $cleanPath = ltrim($rawPath, './');
+                                if (file_exists(ROOT_PATH . '/' . $cleanPath) && !is_dir(ROOT_PATH . '/' . $cleanPath)) {
+                                    $imagePath = BASE_URL . '/' . $cleanPath;
+                                } elseif (file_exists(ROOT_PATH . '/images/blog/' . basename($cleanPath)) && !is_dir(ROOT_PATH . '/images/blog/' . basename($cleanPath))) {
+                                    $imagePath = BASE_URL . '/images/blog/' . basename($cleanPath);
+                                } elseif (file_exists(ROOT_PATH . '/img/' . basename($cleanPath)) && !is_dir(ROOT_PATH . '/img/' . basename($cleanPath))) {
+                                    $imagePath = BASE_URL . '/img/' . basename($cleanPath);
+                                } else {
+                                    // Fallback to BASE_URL join
+                                    $imagePath = BASE_URL . '/' . $cleanPath;
+                                }
+                            }
+                        }
+
+                        $statusClass = (strtolower((string)($blog['status'] ?? '')) == 'published') ? 'badge-soft-green' : 'badge-soft-orange';
                     ?>
                     <tr>
                         <td>
                             <div class="table-img-wrapper">
-                                <img src="<?= $imagePath ?>" alt="<?= htmlspecialchars($blog['title']) ?>">
+                                <img src="<?= $imagePath ?>" alt="<?= htmlspecialchars((string)($blog['title'] ?? '')) ?>">
                             </div>
                         </td>
                         <td>
-                            <div class="fw-600"><?= htmlspecialchars($blog['title']) ?></div>
+                            <div class="fw-600"><?= htmlspecialchars((string)($blog['title'] ?? '')) ?></div>
                         </td>
-                        <td><?= htmlspecialchars($blog['name']) ?></td>
-                        <td><span class="badge <?= $statusClass ?>"><?= ucfirst($blog['status']) ?></span></td>
+                        <td><?= htmlspecialchars((string)($blog['name'] ?? 'Uncategorized')) ?></td>
+                        <td><span class="badge <?= $statusClass ?>"><?= ucfirst((string)($blog['status'] ?? '')) ?></span></td>
                         <td class="text-end">
                             <div class="action-btns">
                                 <a href="<?= BASE_URL ?>/admin/blog/edit/<?= $blog['uuid'] ?>" class="btn-action edit"><span class="material-symbols-outlined">edit</span></a>

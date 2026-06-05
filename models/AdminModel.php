@@ -117,24 +117,43 @@ class AdminModel
         return $stats;
     }
 
-    public function getPaginated($table, $page = 1, $limit = 6, $orderBy = 'id DESC')
+    public function getPaginated($table, $page = 1, $limit = 6, $orderBy = 'id DESC', $filters = [])
     {
         $offset = ($page - 1) * $limit;
         $allowedTables = ['services_tb', 'projects_tb', 'events', 'trainings_tb', 'blogs', 'members', 'faq_tb', 'testimonials_tb', 'banners_tb'];
         if (!in_array($table, $allowedTables)) return ['data' => [], 'total_pages' => 0];
 
-        $total = $this->db->query("SELECT COUNT(*) FROM $table")->fetchColumn();
+        $where = "";
+        $params = [];
+        if (!empty($filters)) {
+            $conditions = [];
+            foreach ($filters as $column => $value) {
+                if ($value !== 'all') {
+                    $conditions[] = "$column = :$column";
+                    $params[":$column"] = $value;
+                }
+            }
+            if (!empty($conditions)) $where = " WHERE " . implode(' AND ', $conditions);
+        }
+
+        $totalSql = "SELECT COUNT(*) FROM $table" . $where;
+        $stmt = $this->db->prepare($totalSql);
+        foreach ($params as $k => $v) $stmt->bindValue($k, $v);
+        $stmt->execute();
+        $total = $stmt->fetchColumn();
         $totalPages = ceil($total / $limit);
 
         if ($table === 'blogs') {
             $sql = "SELECT b.*, bc.name
                     FROM blogs b
-                    LEFT JOIN blog_categories bc ON b.category_id = bc.uuid
+                    LEFT JOIN blog_categories bc ON (b.category_id = bc.id OR b.category_id = bc.uuid)
+                    $where
                     ORDER BY b.created_at DESC LIMIT :limit OFFSET :offset";
         } else {
-            $sql = "SELECT * FROM $table ORDER BY $orderBy LIMIT :limit OFFSET :offset";
+            $sql = "SELECT * FROM $table $where ORDER BY $orderBy LIMIT :limit OFFSET :offset";
         }
         $stmt = $this->db->prepare($sql);
+        foreach ($params as $k => $v) $stmt->bindValue($k, $v);
         $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
         $stmt->execute();
@@ -185,7 +204,7 @@ class AdminModel
             'testimonial' => ['table' => 'testimonials_tb', 'pk' => 'id', 'fields' => ['name', 'organization', 'title', 'testimonial'], 'upload' => 'image', 'path' => 'images/pictures/'],
             'event' => ['table' => 'events', 'pk' => 'event_id', 'fields' => ['event_title', 'event_content', 'event_detail', 'event_date', 'event_time', 'event_address', 'event_status', 'show_on_home', 'sort_order'], 'upload' => 'event_img', 'path' => 'images/pictures/'],
             'training' => ['table' => 'trainings_tb', 'pk' => 'id', 'fields' => ['training_name', 'training_description', 'training_details', 'training_icon', 'show_on_home', 'sort_order'], 'upload' => 'training_image', 'path' => 'images/pictures/'],
-            'blog' => ['table' => 'blogs', 'pk' => 'uuid', 'fields' => ['category_id', 'title', 'slug', 'summary', 'content', 'status'], 'upload' => 'image_path', 'path' => 'uploads/blog/']
+            'blog' => ['table' => 'blogs', 'pk' => 'uuid', 'fields' => ['category_id', 'title', 'slug', 'summary', 'content', 'status'], 'upload' => 'image_path', 'path' => 'images/blog/']
         ];
         if (!isset($allowedTypes[$type])) return false;
 
@@ -227,6 +246,9 @@ class AdminModel
                     } elseif ($field === 'sort_order') {
                         $sets[] = "sort_order = ?";
                         $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
+                    } elseif ($field === 'category_id' && $type === 'blog') {
+                        $sets[] = "category_id = ?";
+                        $values[] = (int)$data['category_id'];
                     } elseif (isset($data[$field])) {
                         $sets[] = "$field = ?";
                         $values[] = $data[$field];
@@ -252,6 +274,9 @@ class AdminModel
                 if ($type === 'blog') {
                     $fields[] = 'uuid';
                     $data['uuid'] = Utils::generateUUID();
+                    if (!isset($data['slug']) || empty($data['slug'])) {
+                        $data['slug'] = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $data['title'])));
+                    }
                 }
                 $placeholders = implode(',', array_fill(0, count($fields), '?'));
                 $fieldNames = implode(',', $fields);
@@ -261,6 +286,8 @@ class AdminModel
                         $values[] = (isset($data['show_on_home']) && $data['show_on_home']) ? 1 : 0;
                     } elseif ($field === 'sort_order') {
                         $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
+                    } elseif ($field === 'category_id' && $type === 'blog') {
+                        $values[] = (int)$data['category_id'];
                     } else {
                         $values[] = $data[$field] ?? '';
                     }
@@ -279,13 +306,77 @@ class AdminModel
         return $this->db->query("SELECT * FROM admin_tb ORDER BY admin_name ASC")->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function updateAdminProfile($adminId, $data, $files)
+    {
+        $sets = ["admin_name = ?"];
+        $params = [$data['admin_name']];
+
+        // Handle Password Update
+        if (!empty($data['new_password'])) {
+            $sets[] = "admin_password = ?";
+            $params[] = password_hash($data['new_password'], PASSWORD_DEFAULT);
+        }
+
+        // Handle Profile Picture
+        if (isset($files['profile_pic']) && $files['profile_pic']['error'] === UPLOAD_ERR_OK) {
+            $uploadPath = 'images/admin/';
+            if (!is_dir(ROOT_PATH . '/' . $uploadPath)) mkdir(ROOT_PATH . '/' . $uploadPath, 0777, true);
+
+            $name = time() . '_' . basename($files['profile_pic']['name']);
+            if (move_uploaded_file($files['profile_pic']['tmp_name'], ROOT_PATH . '/' . $uploadPath . $name)) {
+                $sets[] = "profile_pic = ?";
+                $params[] = $uploadPath . $name;
+                // Update session
+                $_SESSION['admin_profile_pic'] = $uploadPath . $name;
+            }
+        }
+
+        $params[] = $adminId;
+        $sql = "UPDATE admin_tb SET " . implode(', ', $sets) . " WHERE admin_id = ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute($params);
+    }
+
+    public function getSocialLinks()
+    {
+        return $this->db->query("SELECT * FROM social_links ORDER BY platform ASC")->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function updateSocialLinks($links)
+    {
+        $stmt = $this->db->prepare("UPDATE social_links SET url = ? WHERE platform = ?");
+        foreach ($links as $platform => $url) {
+            $stmt->execute([$url, $platform]);
+        }
+        return true;
+    }
+
     public function toggleMemberStatus($id)
     {
         $member = $this->getById('members', 'id', $id);
         if (!$member) return false;
+
         $newStatus = ($member['status'] === 'Suspended') ? 'Active' : 'Suspended';
         $stmt = $this->db->prepare("UPDATE members SET status = ? WHERE id = ?");
-        return $stmt->execute([$newStatus, $id]);
+        $result = $stmt->execute([$newStatus, $id]);
+
+        if ($result && $newStatus === 'Active') {
+            // Automatically resolve any pending suspension reviews
+            $stmt = $this->db->prepare("UPDATE suspension_reviews SET status = 'Resolved' WHERE member_id = ? AND status = 'Pending'");
+            $stmt->execute([$id]);
+        }
+
+        return $result;
+    }
+
+    public function getSuspensionReviews()
+    {
+        return $this->db->query("
+            SELECT sr.*, m.name, m.username, m.email
+            FROM suspension_reviews sr
+            JOIN members m ON sr.member_id = m.id
+            ORDER BY sr.created_at DESC
+        ")->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function deleteRecord($type, $id)

@@ -29,10 +29,13 @@ class AuthController extends BaseController
                 if ($member && password_verify($password, $member['password_hash'])) {
                     if ($member['is_verified'] == 0) {
                         $error = "Please verify your email address before signing in.";
+                    } elseif (($member['status'] ?? 'Active') === 'Suspended') {
+                        $this->redirect('forum/suspended');
                     } else {
                         $_SESSION['member_id'] = $member['id'];
                         $_SESSION['member_uuid'] = $member['uuid'];
                         $_SESSION['member_name'] = $member['name'];
+                        $_SESSION['member_status'] = $member['status'] ?? 'Active';
                         $_SESSION['terms_accepted'] = $member['terms_accepted'];
 
                         if ((int)$member['terms_accepted'] === 0) {
@@ -141,6 +144,40 @@ class AuthController extends BaseController
             'success' => $success,
             'csrf_token' => CSRF::generateToken()
         ], false);
+    }
+
+    public function suspended()
+    {
+        $pendingReview = $this->authModel->getPendingReview($_SESSION['member_id'] ?? 0);
+        $this->render('forum/suspended', [
+            'title' => 'Account Suspended - Spider Tech Forum',
+            'isUnderReview' => !empty($pendingReview)
+        ], true);
+    }
+
+    public function requestReview()
+    {
+        header('Content-Type: application/json');
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403); exit;
+        }
+
+        $reason = $_POST['reason'] ?? '';
+        if (empty($reason)) {
+            echo json_encode(['status' => 'error', 'message' => 'Please provide a reason for the review.']);
+            exit;
+        }
+
+        try {
+            if ($this->authModel->submitSuspensionReview($_SESSION['member_id'], $reason)) {
+                echo json_encode(['status' => 'success', 'message' => 'Your review request has been submitted.']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to submit review request.']);
+            }
+        } catch (Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()]);
+        }
+        exit;
     }
 
     public function logout()

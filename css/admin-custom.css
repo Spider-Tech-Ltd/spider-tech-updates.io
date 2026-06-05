@@ -103,6 +103,27 @@ h1, h2, h3, h4, h5, h6, .poppins {
     box-shadow: 0 0 0 3px rgba(244, 130, 33, 0.1);
 }
 
+.input-group-custom {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    cursor: pointer;
+    color: var(--text-muted);
+    user-select: none;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.password-toggle:hover {
+    color: var(--primary-orange);
+}
+
 /* --- CKEditor High-Fidelity Customization --- */
 .ck-editor__main .ck-content {
     min-height: 250px;
@@ -226,6 +247,8 @@ h1, h2, h3, h4, h5, h6, .poppins {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(244, 130, 33, 0.3);
 }
+
+[x-cloak] { display: none !important; }
 
 .btn-sm-custom {
     padding: 5px 15px !important;
@@ -990,6 +1013,7 @@ h1, h2, h3, h4, h5, h6, .poppins {
     font-size: 0.9rem;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     transition: all 0.3s;
 }

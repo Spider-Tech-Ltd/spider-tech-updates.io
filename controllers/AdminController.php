@@ -16,6 +16,7 @@ class AdminController extends AdminBaseController {
                 $_SESSION['admin_id'] = $admin['admin_id'];
                 $_SESSION['admin_name'] = $admin['admin_name'];
                 $_SESSION['admin_privilege'] = $admin['privilege'];
+                $_SESSION['admin_profile_pic'] = $admin['profile_pic'] ?? null;
                 if ($this->isAjax()) { echo json_encode(['status' => 'success', 'redirect' => BASE_URL . '/admin/dashboard']); exit; }
                 $this->redirect('admin/dashboard');
             } else {
@@ -71,8 +72,25 @@ class AdminController extends AdminBaseController {
 
     public function members() {
         $adminModel = new AdminModel();
-        $result = $adminModel->getPaginated('members', $this->getPage(), 6, 'created_at DESC');
-        $this->renderAdmin('members', ['members' => $result['data'], 'pagination' => $result]);
+        $statusFilter = $_GET['status'] ?? 'all';
+        $filters = [];
+
+        if ($statusFilter === 'verified') {
+            $filters['is_verified'] = 1;
+        } elseif ($statusFilter === 'pending') {
+            $filters['is_verified'] = 0;
+        } elseif ($statusFilter === 'suspended') {
+            $filters['status'] = 'Suspended';
+        }
+
+        $result = $adminModel->getPaginated('members', $this->getPage(), 10, 'created_at DESC', $filters);
+        $reviews = $adminModel->getSuspensionReviews();
+        $this->renderAdmin('members', [
+            'members' => $result['data'],
+            'pagination' => $result,
+            'reviews' => $reviews,
+            'current_status' => $statusFilter
+        ]);
     }
 
     public function banners() {
@@ -135,7 +153,51 @@ class AdminController extends AdminBaseController {
 
     public function settings() {
         $adminModel = new AdminModel();
-        $this->renderAdmin('settings', ['admins' => $adminModel->getAllAdmins()]);
+        $currentAdmin = $adminModel->getById('admin_tb', 'admin_id', $_SESSION['admin_id']);
+        $socialLinks = $adminModel->getSocialLinks();
+        $this->renderAdmin('settings', [
+            'admins' => $adminModel->getAllAdmins(),
+            'currentAdmin' => $currentAdmin,
+            'socialLinks' => $socialLinks
+        ]);
+    }
+
+    public function updateProfile() {
+        header('Content-Type: application/json');
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403); exit;
+        }
+
+        try {
+            $adminModel = new AdminModel();
+            if ($adminModel->updateAdminProfile($_SESSION['admin_id'], $_POST, $_FILES)) {
+                echo json_encode(['status' => 'success', 'message' => 'Profile updated successfully.']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to update profile.']);
+            }
+        } catch (Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()]);
+        }
+        exit;
+    }
+
+    public function updateSocialLinks() {
+        header('Content-Type: application/json');
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403); exit;
+        }
+
+        try {
+            $adminModel = new AdminModel();
+            if ($adminModel->updateSocialLinks($_POST['links'] ?? [])) {
+                echo json_encode(['status' => 'success', 'message' => 'Social links updated successfully.']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to update social links.']);
+            }
+        } catch (Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()]);
+        }
+        exit;
     }
 
     // Module Add/Edit View Handlers
