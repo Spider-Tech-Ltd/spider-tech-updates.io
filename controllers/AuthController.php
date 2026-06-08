@@ -32,10 +32,13 @@ class AuthController extends BaseController
                     } else {
                         $_SESSION['member_id'] = $member['id'];
                         $_SESSION['member_uuid'] = $member['uuid'];
-                        $_SESSION['member_name'] = $member['name'];
+                        $_SESSION['member_name'] = $member['name'] ?? $member['username'];
+                        $_SESSION['member_status'] = $member['status'] ?? 'Active';
                         $_SESSION['terms_accepted'] = $member['terms_accepted'];
 
-                        if ((int)$member['terms_accepted'] === 0) {
+                        if ($_SESSION['member_status'] === 'Suspended') {
+                            $this->redirect('forum/suspended');
+                        } elseif ((int)$member['terms_accepted'] === 0) {
                             $this->redirect('forum/terms');
                         } else {
                             $this->redirect('forum/feed');
@@ -104,6 +107,9 @@ class AuthController extends BaseController
                             } else {
                                 $success = "Registration successful, but we couldn't send the verification email. Please contact support.";
                             }
+                            // Trigger Admin Notification
+                            $adminModel = new AdminModel();
+                            $adminModel->addNotification('New Member', "$name has registered as a new member.", "admin/members");
                         } else {
                             $error = "An error occurred while setting up verification. Please try again.";
                         }
@@ -141,6 +147,55 @@ class AuthController extends BaseController
             'success' => $success,
             'csrf_token' => CSRF::generateToken()
         ], false);
+    }
+
+    public function suspended()
+    {
+        $pendingReview = $this->authModel->getPendingReview($_SESSION['member_id'] ?? 0);
+        $this->render('forum/suspended', [
+            'title' => 'Account Suspended - Spider Tech Forum',
+            'isUnderReview' => !empty($pendingReview)
+        ], true);
+    }
+
+    public function requestReview()
+    {
+        header('Content-Type: application/json');
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403);
+            echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
+            exit;
+        }
+
+        if (!$this->isLoggedIn()) {
+            echo json_encode(['status' => 'error', 'message' => 'You must be logged in to submit a review.']);
+            exit;
+        }
+
+        $reason = $_POST['reason'] ?? '';
+        if (empty($reason)) {
+            echo json_encode(['status' => 'error', 'message' => 'Please provide a reason for the review.']);
+            exit;
+        }
+
+        try {
+            if ($this->authModel->submitSuspensionReview($_SESSION['member_id'], $reason)) {
+                // Trigger Admin Notification
+                $adminModel = new AdminModel();
+                $memberName = $_SESSION['member_name'] ?? 'A member';
+                $adminModel->addNotification(
+                    'Review Request',
+                    "$memberName has submitted an appeal for account reinstatement.",
+                    "admin/members"
+                );
+                echo json_encode(['status' => 'success', 'message' => 'Your review request has been submitted.']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to submit review request.']);
+            }
+        } catch (Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()]);
+        }
+        exit;
     }
 
     public function logout()

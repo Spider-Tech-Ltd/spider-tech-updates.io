@@ -1,16 +1,21 @@
 <?php
-class ProjectController extends BaseController {
-    public function index() {
+class ProjectController extends BaseController
+{
+    public function index()
+    {
+        // FIXED: Using ProjectModel instead of HomeModel for separation of concerns
         $projectModel = new ProjectModel($this->db);
         $homeModel = new HomeModel($this->db);
+
         $data = [
-            'projects' => $projectModel->getAllProjects(),
+            'projects' => $projectModel->getAllProjects(), // Explicitly calls getAllProjects
             'contact' => $homeModel->getContactDetails()
         ];
         $this->render("projects/index", $data);
     }
 
-    public function detail() {
+    public function detail()
+    {
         $id = $_GET['id'] ?? null;
         $projectModel = new ProjectModel($this->db);
         $homeModel = new HomeModel($this->db);
@@ -21,4 +26,3 @@ class ProjectController extends BaseController {
         $this->render("projects/detail", $data);
     }
 }
-?>

@@ -53,5 +53,14 @@ class GeneralModel {
     public function getBlogs() {
         return [];
     }
+
+    public function getSocialLinks() {
+        try {
+            $stmt = $this->conn->query("SELECT * FROM social_links ORDER BY platform ASC");
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return [];
+        }
+    }
 }
 ?>

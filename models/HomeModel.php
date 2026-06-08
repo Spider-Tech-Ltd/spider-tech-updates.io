@@ -14,10 +14,32 @@ class HomeModel {
     }
 
     public function getBanners() {
-        $query = "SELECT * FROM `banners_tb` WHERE banner_id IN (1, 2, 3, 4)";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $query = "SELECT * FROM `banners_tb` ORDER BY banner_id DESC LIMIT 5";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            $banners = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($banners as &$banner) {
+                if (!empty($banner['banner_image'])) {
+                    $path = $banner['banner_image'];
+                    // If it's not an external URL and doesn't already contain a path prefix
+                    if (!preg_match('#^https?://#i', $path) && strpos($path, '/') === false) {
+                        // Check multiple possible locations for legacy images
+                        if (file_exists(ROOT_PATH . '/images/banners/' . $path)) {
+                            $banner['banner_image'] = 'images/banners/' . $path;
+                        } elseif (file_exists(ROOT_PATH . '/img/' . $path)) {
+                            $banner['banner_image'] = 'img/' . $path;
+                        } else {
+                            $banner['banner_image'] = 'images/banners/' . $path;
+                        }
+                    }
+                }
+            }
+            return $banners;
+        } catch (PDOException $e) {
+            return [];
+        }
     }
 
     public function getAboutInfo() {
@@ -28,24 +50,44 @@ class HomeModel {
     }
 
     public function getServices() {
-        $query = "SELECT * FROM `services_tb`";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Fallback for when columns don't exist yet (prevent total page crash)
+        try {
+            $query = "SELECT * FROM `services_tb` WHERE `show_on_home` = 1 ORDER BY sort_order ASC, id DESC LIMIT 6";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return $this->conn->query("SELECT * FROM `services_tb` ORDER BY id DESC LIMIT 6")->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
 
-    public function getProjects() {
-        $query = "SELECT * FROM projects_tb p INNER JOIN services_tb s ON p.service_id = s.id LIMIT 6";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function getProjects($limit = 6, $onlyFeatured = true) {
+        try {
+            $where = $onlyFeatured ? " WHERE p.show_on_home = 1 " : "";
+            $limitSql = $limit ? " LIMIT $limit " : "";
+            $query = "SELECT p.*, s.service_name
+                      FROM projects_tb p
+                      LEFT JOIN services_tb s ON p.service_id = s.id
+                      $where
+                      ORDER BY p.sort_order ASC, p.project_id DESC $limitSql";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            $limitSql = $limit ? " LIMIT $limit " : "";
+            return $this->conn->query("SELECT p.*, s.service_name FROM projects_tb p LEFT JOIN services_tb s ON p.service_id = s.id ORDER BY p.project_id DESC $limitSql")->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
 
     public function getUpcomingEvents() {
-        $query = "SELECT * FROM `events` WHERE `event_status` = 'upcoming'";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $query = "SELECT * FROM `events` WHERE LOWER(`event_status`) = 'upcoming' AND `show_on_home` = 1 ORDER BY sort_order ASC, event_date ASC";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return $this->conn->query("SELECT * FROM `events` WHERE LOWER(`event_status`) = 'upcoming' ORDER BY event_date ASC")->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
 
     public function getLatestEvents() {
@@ -82,18 +124,19 @@ class HomeModel {
             'locations' => 1
         ];
 
-        // Get members count for "Happy Clients"
-        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM members");
-        $stmt->execute();
-        $stats['clients'] = $stmt->fetchColumn();
+        try {
+            // Get members count for "Happy Clients"
+            $stmt = $this->conn->prepare("SELECT COUNT(*) FROM members");
+            $stmt->execute();
+            $stats['clients'] = (int)$stmt->fetchColumn();
 
-        // Get actual projects count
-        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM projects_tb");
-        $stmt->execute();
-        $stats['projects'] = $stmt->fetchColumn();
-
-        // If counts are very low, we might want to add a base number to make it look established
-        // but the prompt says database driven.
+            // Get actual projects count
+            $stmt = $this->conn->prepare("SELECT COUNT(*) FROM projects_tb");
+            $stmt->execute();
+            $stats['projects'] = (int)$stmt->fetchColumn();
+        } catch (PDOException $e) {
+            error_log("HomeModel::getStats error: " . $e->getMessage());
+        }
 
         return $stats;
     }

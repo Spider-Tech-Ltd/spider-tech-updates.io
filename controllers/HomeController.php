@@ -10,7 +10,7 @@ class HomeController extends BaseController {
             'banners' => $model->getBanners(),
             'about' => $model->getAboutInfo(),
             'services' => $model->getServices(),
-            'projects' => $model->getProjects(),
+            'projects' => $model->getProjects(6, true),
             'upcoming_events' => $model->getUpcomingEvents(),
             'latest_events' => $model->getLatestEvents(),
             'testimonials' => $model->getTestimonials(),

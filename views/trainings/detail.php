@@ -244,7 +244,7 @@
                             if (preg_match('#^https?://#i', $detailImage)) {
                                 $detailImage = htmlspecialchars($detailImage);
                             } else {
-                                $detailImage = BASE_URL . '/' . ltrim($detailImage, '/.');
+                                $detailImage = BASE_URL . '/' . ltrim($detailImage, './');
                             }
                         }
                         ?>

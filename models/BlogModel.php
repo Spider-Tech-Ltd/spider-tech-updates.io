@@ -15,7 +15,7 @@ class BlogModel {
     public function getAllBlogs($category_slug = null) {
         $query = "SELECT b.*, c.name as category_name, c.slug as category_slug
                   FROM blogs b
-                  JOIN blog_categories c ON b.category_id = c.id
+                  JOIN blog_categories c ON (b.category_id = c.id OR b.category_id = c.uuid)
                   WHERE b.status = 'published'";
 
         $params = [];
@@ -34,7 +34,7 @@ class BlogModel {
     public function getBlogBySlug($slug) {
         $stmt = $this->db->prepare("SELECT b.*, c.name as category_name, c.slug as category_slug
                                     FROM blogs b
-                                    JOIN blog_categories c ON b.category_id = c.id
+                                    JOIN blog_categories c ON (b.category_id = c.id OR b.category_id = c.uuid)
                                     WHERE b.slug = :slug AND b.status = 'published'
                                     LIMIT 1");
         $stmt->execute([':slug' => $slug]);
@@ -44,7 +44,7 @@ class BlogModel {
     public function getRelatedBlogs($category_id, $exclude_id, $limit = 2) {
         $stmt = $this->db->prepare("SELECT b.*, c.name as category_name, c.slug as category_slug
                                     FROM blogs b
-                                    JOIN blog_categories c ON b.category_id = c.id
+                                    JOIN blog_categories c ON (b.category_id = c.id OR b.category_id = c.uuid)
                                     WHERE b.category_id = :category_id
                                     AND b.id != :exclude_id
                                     AND b.status = 'published'
