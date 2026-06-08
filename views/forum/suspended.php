@@ -1,203 +1,305 @@
-<div class="container py-5 mt-5 pt-5" x-data="suspensionPage(<?= $isUnderReview ? 'true' : 'false' ?>)">
-    <!-- Status Modal -->
-    <div class="modal-custom" :class="{ 'show': statusModal.open }" x-cloak>
-        <div class="modal-content-custom" style="max-width: 450px;">
-            <div class="modal-body-custom text-center py-5">
-                <div class="mb-4">
-                    <span class="material-symbols-outlined"
-                          :class="statusModal.type === 'success' ? 'text-success' : 'text-danger'"
-                          style="font-size: 80px;"
-                          x-text="statusModal.type === 'success' ? 'check_circle' : 'error'"></span>
-                </div>
-                <h3 class="fw-bold mb-3" x-text="statusModal.title"></h3>
-                <p class="text-muted mb-4 fs-5" x-text="statusModal.message"></p>
-                <button @click="statusModal.open = false; if(statusModal.type === 'success') underReview = true;" class="btn btn-primary-custom px-5 py-2 rounded-pill">Got it</button>
-            </div>
-        </div>
-    </div>
-
+<div class="container py-5 mt-5" x-data="suspensionPage(<?= $isUnderReview ? 'true' : 'false' ?>)">
     <div class="row justify-content-center">
-        <div class="col-md-11 col-lg-10 col-xl-9">
-            <!-- Under Review Screen -->
-            <div class="card border-0 shadow-lg rounded-5 overflow-hidden" style="border: 1px solid rgba(244, 130, 31, 0.1) !important;" x-show="underReview" x-cloak>
-                <div class="card-body p-5 text-center">
-                    <div class="mb-4">
-                        <div class="bg-soft-blue d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 120px; height: 120px;">
-                            <span class="material-symbols-outlined text-blue" style="font-size: 64px;">pending_actions</span>
+        <div class="col-md-10 col-lg-8 col-xl-7">
+
+            <!-- Main Suspension Card -->
+            <div class="card border-0 shadow-sm rounded-5 overflow-hidden" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);">
+                <div class="card-body p-0">
+
+                    <!-- 1. Account Suspended Block -->
+                    <div x-show="state === 'suspended'" x-collapse x-cloak>
+                        <div class="p-5 text-center">
+                            <div class="mb-4">
+                                <div class="bg-danger d-inline-flex align-items-center justify-content-center rounded-circle mb-3 shadow-sm" style="width: 80px; height: 80px;">
+                                    <span class="material-symbols-outlined text-white" style="font-size: 48px;">block</span>
+                                </div>
+                            </div>
+
+                            <h1 class="fw-bold text-dark mb-3 display-6 poppins">Account Suspended</h1>
+
+                            <p class="text-muted fs-6 mb-5 px-md-4">
+                                We noticed some activity on your account that violates our community guidelines. As a result, your access to the Spider Tech forum has been temporarily suspended.
+                            </p>
+
+                            <div class="bg-light p-4 rounded-4 mb-5 border-0 text-start">
+                                <p class="mb-2 fw-bold text-dark small text-uppercase" style="letter-spacing: 1px;">What does this mean?</p>
+                                <p class="mb-0 text-muted small px-md-2">
+                                    You can no longer participate in discussions, post updates, or interact with other community members until your account is reviewed or the suspension period ends.
+                                </p>
+                            </div>
+
+                            <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
+                                <button @click="state = 'appealing'"
+                                        class="btn btn-system-pill-primary px-4 py-2 fw-bold">
+                                    Request a Review
+                                </button>
+                                <a href="<?= BASE_URL ?>/forum/terms" class="btn btn-system-pill-outline px-4 py-2 fw-bold">
+                                    Community Rules
+                                </a>
+                            </div>
+
+                            <div class="mt-5 d-flex justify-content-center gap-4 border-top pt-4">
+                                <a href="mailto:support@spidertech.com.ng" class="text-decoration-none text-muted small d-flex align-items-center gap-2 hover-orange transition-all">
+                                    <span class="material-symbols-outlined fs-6">mail</span>
+                                    <span>Email Support</span>
+                                </a>
+                                <a href="<?= BASE_URL ?>/forum/logout" class="text-decoration-none text-danger small d-flex align-items-center gap-2 hover-opacity transition-all">
+                                    <span class="material-symbols-outlined fs-6">logout</span>
+                                    <span>Sign Out</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    <h1 class="fw-bold text-dark mb-3 display-5">Account Under Review</h1>
-                    <p class="text-muted fs-5 mb-4">
-                        Thank you for your appeal. Your account status is currently being reviewed by our moderation team.
-                    </p>
-                    <div class="bg-light p-4 rounded-4 border-0 shadow-sm mb-4 text-start border-start border-primary border-4">
-                        <p class="mb-0 text-dark">
-                            <strong>What happens next?</strong><br>
-                            We will investigate your request and get back to you via email. This process usually takes 24-48 hours. In the meantime, access to community features remains restricted.
-                        </p>
-                    </div>
-                    <div class="row g-4 justify-content-center">
-                        <div class="col-md-6">
-                            <a href="<?= BASE_URL ?>/forum/logout" class="btn btn-outline-dark py-3 rounded-pill fw-bold w-100 d-flex align-items-center justify-content-center">
-                                <span class="material-symbols-outlined me-2">logout</span>
-                                <span>Sign Out</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Suspended Screen -->
-            <div class="card border-0 shadow-lg rounded-5 overflow-hidden" style="border: 1px solid rgba(220, 53, 69, 0.1) !important;" x-show="!underReview">
-                <div class="card-body p-5 text-center">
-                    <div class="mb-4">
-                        <div class="bg-danger d-inline-flex align-items-center justify-content-center rounded-circle mb-3 shadow-sm" style="width: 120px; height: 120px;">
-                            <span class="material-symbols-outlined text-white" style="font-size: 64px;">block</span>
-                        </div>
-                    </div>
+                    <!-- 2. Appeal Form Block -->
+                    <div x-show="state === 'appealing'" x-collapse x-cloak>
+                        <div class="p-5">
+                            <div class="text-center mb-5">
+                                <div class="bg-soft-orange d-inline-flex align-items-center justify-content-center rounded-circle mb-3 shadow-sm" style="width: 70px; height: 70px;">
+                                    <span class="material-symbols-outlined text-orange" style="font-size: 36px;">rate_review</span>
+                                </div>
+                                <h2 class="fw-bold text-dark mb-2 poppins">Submit an Appeal</h2>
+                                <p class="text-muted small">Provide details about why your account should be reinstated.</p>
+                            </div>
 
-                    <h1 class="fw-bold text-dark mb-3 display-5">Account Suspended</h1>
-
-                    <p class="text-muted fs-5 mb-4">
-                        We noticed some activity on your account that violates our community guidelines. As a result, your access to the Spider Tech forum has been temporarily suspended.
-                    </p>
-
-                    <div class="bg-light p-4 rounded-3 mb-4 text-start border-start border-danger border-4">
-                        <p class="mb-0 text-dark">
-                            <strong>What does this mean?</strong><br>
-                            You can no longer participate in discussions, post updates, or interact with other community members until your account is reviewed or the suspension period ends.
-                        </p>
-                    </div>
-
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <a href="<?= BASE_URL ?>/forum/terms" class="btn btn-outline-orange py-3 rounded-pill fw-bold w-100 d-flex align-items-center justify-content-center">
-                                <span class="material-symbols-outlined me-2">gavel</span>
-                                <span>Community Guidelines</span>
-                            </a>
-                        </div>
-                        <div class="col-md-6">
-                            <button @click="showReviewForm = !showReviewForm"
-                                    class="btn py-3 rounded-pill fw-bold w-100 d-flex align-items-center justify-content-center"
-                                    :class="showReviewForm ? 'btn-dark' : 'btn-outline-dark'">
-                                <span class="material-symbols-outlined me-2">rate_review</span>
-                                <span x-text="showReviewForm ? 'Close Appeal Form' : 'Request a Review'"></span>
-                            </button>
-                        </div>
-
-                        <!-- Review Form -->
-                        <div class="col-12 mt-4 text-start" x-show="showReviewForm" x-collapse x-cloak>
-                            <div class="bg-light p-4 rounded-4 border-0 shadow-sm" style="background-color: #fff9f2 !important;">
-                                <h5 class="fw-bold mb-3 text-dark">Submit an Appeal</h5>
-                                <p class="text-muted small mb-4">If you believe your account was suspended by mistake, please provide a brief explanation below. Our moderators will review your request shortly.</p>
-                                <form @submit.prevent="submitReview">
-                                    <div class="mb-4">
-                                        <label class="form-label fw-bold text-dark fs-09">Why should your account be reinstated?</label>
-                                        <textarea name="reason" class="form-control rounded-4 border-0 shadow-sm p-3" rows="4" required placeholder="Describe your situation..."></textarea>
+                            <form @submit.prevent="submitReview" class="text-start">
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold text-dark small">Reason for Appeal</label>
+                                    <textarea name="reason" class="form-control rounded-4 border-0 bg-light p-3 shadow-none focus-orange" rows="5" required placeholder="Describe your situation..." style="resize: none;"></textarea>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <button type="button" @click="state = 'suspended'" class="btn btn-system-pill-outline py-2 fw-bold w-100">Cancel</button>
                                     </div>
-                                    <div class="text-end">
-                                        <button type="submit" class="btn btn-primary-custom px-5 py-2 rounded-pill shadow-sm" :disabled="loading">
-                                            <span x-show="!loading" class="d-flex align-items-center gap-2">
-                                                <span>Submit Appeal</span>
-                                                <span class="material-symbols-outlined fs-1rem">send</span>
-                                            </span>
+                                    <div class="col-md-6">
+                                        <button type="submit" class="btn btn-system-pill-primary py-2 fw-bold w-100" :disabled="loading">
+                                            <span x-show="!loading">Submit Appeal</span>
                                             <span x-show="loading">Submitting...</span>
                                         </button>
                                     </div>
-                                </form>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 3. Result Block (Success/Error) -->
+                    <div x-show="state === 'result'" x-collapse x-cloak>
+                        <div class="p-5 text-center">
+                            <div class="mb-4">
+                                <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3 shadow-sm"
+                                     :class="result.type === 'success' ? 'bg-success' : 'bg-danger'"
+                                     style="width: 80px; height: 80px;">
+                                     <span class="material-symbols-outlined text-white" style="font-size: 48px;"
+                                          x-text="result.type === 'success' ? 'check_circle' : 'error'"></span>
+                                </div>
+                            </div>
+                            <h2 class="fw-bold mb-3 poppins" x-text="result.title"></h2>
+                            <p class="text-muted mb-5 fs-6 px-md-4" x-text="result.message"></p>
+
+                            <div class="d-flex justify-content-center">
+                                <button @click="handleResultAction"
+                                        class="btn px-5 py-2 fw-bold"
+                                        :class="result.type === 'success' ? 'btn-system-pill-primary' : 'btn-system-pill-dark'">
+                                    <span x-text="result.type === 'success' ? 'Continue' : 'Try Again'"></span>
+                                </button>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="col-md-6 mt-4">
-                            <a href="mailto:support@spidertech.com.ng" class="btn btn-light py-3 rounded-pill fw-bold w-100 border d-flex align-items-center justify-content-center bg-white shadow-sm">
-                                <span class="material-symbols-outlined me-2 text-orange">mail</span>
-                                <span>Email Support</span>
-                            </a>
-                        </div>
-                        <div class="col-md-6 mt-4">
-                            <a href="<?= BASE_URL ?>/forum/logout" class="btn btn-danger py-3 rounded-pill fw-bold shadow-sm w-100 d-flex align-items-center justify-content-center">
-                                <span class="material-symbols-outlined me-2">logout</span>
-                                <span>Sign Out</span>
-                            </a>
+                    <!-- 4. Account Under Review Block -->
+                    <div x-show="state === 'under_review'" x-collapse x-cloak>
+                        <div class="p-5 text-center">
+                            <div class="mb-4">
+                                 <div class="bg-primary d-inline-flex align-items-center justify-content-center rounded-circle mb-3 shadow-sm" style="width: 80px; height: 80px; background-color: #0d6efd !important;">
+                                    <span class="material-symbols-outlined text-white" style="font-size: 48px;">pending_actions</span>
+                                </div>
+                            </div>
+                            <h1 class="fw-bold text-dark mb-3 display-6 poppins">Account Under Review</h1>
+                            <p class="text-muted fs-6 mb-5">
+                                Thank you for your appeal. Your account status is currently being reviewed by our moderation team.
+                            </p>
+                            <div class="bg-light p-4 rounded-4 mb-5 border-0 text-start">
+                                <p class="mb-2 fw-bold text-dark small text-uppercase" style="letter-spacing: 1px;">What happens next?</p>
+                                <p class="mb-0 text-muted small px-md-2">
+                                    We will investigate your request and get back to you via email. This process usually takes 24-48 hours. In the meantime, access to community features remains restricted.
+                                </p>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <a href="<?= BASE_URL ?>/forum/logout" class="btn btn-system-pill-outline px-5 py-2 fw-bold d-flex align-items-center gap-2">
+                                    <span class="material-symbols-outlined fs-5">logout</span>
+                                    <span>Sign Out</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mt-5 text-muted small">
-                        Spider Technologies Community Management
-                    </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
 
+<style>
+    .rounded-5 { border-radius: 2.5rem !important; }
+    .rounded-4 { border-radius: 1.2rem !important; }
+    .bg-light { background-color: #f8f9fa !important; }
+    .bg-soft-orange { background-color: #fff4e5; }
+    .text-orange { color: #f48221; }
+    .poppins { font-family: 'Poppins', sans-serif; }
+    .transition-all { transition: all 0.3s ease; }
+    [x-cloak] { display: none !important; }
+
+    /* ====== System Design Buttons (Industrial-Grade) ====== */
+    .btn-system-pill-primary {
+        background-color: #f48221;
+        color: #ffffff !important;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 12px 30px;
+        border-radius: 50px;
+        border: none;
+        box-shadow: 0 4px 14px rgba(244, 130, 33, 0.25);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 140px;
+    }
+
+    .btn-system-pill-primary:hover {
+        background-color: #e6751c;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(244, 130, 33, 0.35);
+    }
+
+    .btn-system-pill-outline {
+        background-color: transparent;
+        color: #111111 !important;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 12px 30px;
+        border-radius: 50px;
+        border: 1.5px solid rgba(17, 17, 17, 0.12);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 140px;
+    }
+
+    .btn-system-pill-outline:hover {
+        background: rgba(244, 130, 33, 0.07);
+        border-color: rgba(244, 130, 33, 0.3);
+        color: #f48221 !important;
+        transform: translateY(-2px);
+    }
+
+    .btn-system-pill-dark {
+        background-color: #111111;
+        color: #ffffff !important;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 12px 30px;
+        border-radius: 50px;
+        border: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 140px;
+    }
+
+    .btn-system-pill-dark:hover {
+        background-color: #333333;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .focus-orange:focus {
+        background-color: #ffffff !important;
+        border: 1px solid #f48221 !important;
+        box-shadow: 0 0 0 0.25rem rgba(244, 130, 33, 0.1);
+    }
+
+    .hover-orange:hover {
+        color: #f48221 !important;
+    }
+
+    .hover-opacity:hover {
+        opacity: 0.7;
+    }
+
+    /* Transition tweaks for x-collapse */
+    [x-collapse] {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+</style>
+
 <script>
 document.addEventListener('alpine:init', () => {
-    Alpine.data('suspensionPage', (initialReviewState) => ({
-        showReviewForm: false,
-        loading: false,
-        underReview: initialReviewState,
-        statusModal: {
-            open: false,
-            type: 'success',
-            title: '',
-            message: ''
-        },
+    if (!Alpine.data('suspensionPage')) {
+        Alpine.data('suspensionPage', (initialReviewState) => ({
+            state: initialReviewState ? 'under_review' : 'suspended',
+            loading: false,
+            result: {
+                type: 'success',
+                title: '',
+                message: ''
+            },
 
-        async submitReview(e) {
-            this.loading = true;
-            const formData = new FormData(e.target);
+            async submitReview(e) {
+                this.loading = true;
+                const formData = new FormData(e.target);
 
-            try {
-                const response = await fetch('<?= BASE_URL ?>/forum/request-review', {
-                    method: 'POST',
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                    body: formData
-                });
-                const result = await response.json();
+                try {
+                    const response = await fetch('<?= BASE_URL ?>/forum/request-review', {
+                        method: 'POST',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                        body: formData
+                    });
+                    const data = await response.json();
 
-                if (result.status === 'success') {
-                    this.statusModal = {
-                        open: true,
-                        type: 'success',
-                        title: 'Request Received',
-                        message: result.message
-                    };
-                    this.showReviewForm = false;
-                    e.target.reset();
-                } else {
-                    this.statusModal = {
-                        open: true,
+                    if (data.status === 'success') {
+                        this.result = {
+                            type: 'success',
+                            title: 'Appeal Submitted',
+                            message: data.message
+                        };
+                        e.target.reset();
+                    } else {
+                        this.result = {
+                            type: 'error',
+                            title: 'Submission Failed',
+                            message: data.message
+                        };
+                    }
+                } catch (error) {
+                    this.result = {
                         type: 'error',
-                        title: 'Submission Failed',
-                        message: result.message
+                        title: 'System Error',
+                        message: 'An unexpected error occurred while processing your request.'
                     };
+                } finally {
+                    this.loading = false;
+                    this.state = 'result';
                 }
-            } catch (error) {
-                this.statusModal = {
-                    open: true,
-                    type: 'error',
-                    title: 'System Error',
-                    message: 'An unexpected error occurred while processing your request.'
-                };
-            } finally {
-                this.loading = false;
-            }
-        }
-    }));
-});
+            },
 
-function showToast(message, type = 'success') {
-    if (typeof Toastify !== 'undefined') {
-        Toastify({
-            text: message,
-            duration: 3000,
-            gravity: "top",
-            position: "right",
-            backgroundColor: type === 'success' ? "#28a745" : "#dc3545",
-        }).showToast();
-    } else {
-        alert(message);
+            handleResultAction() {
+                if (this.result.type === 'success') {
+                    this.state = 'under_review';
+                } else {
+                    this.state = 'appealing';
+                }
+            }
+        }));
     }
-}
+});
 </script>
