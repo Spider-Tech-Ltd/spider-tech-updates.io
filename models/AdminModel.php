@@ -172,6 +172,32 @@ class AdminModel
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getEventMedia($id)
+    {
+        $query = "SELECT * FROM `events_media` WHERE event_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([$id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function deleteEventMedia($id)
+    {
+        // First get the file path to delete it from disk
+        $stmt = $this->db->prepare("SELECT event_pics_name FROM events_media WHERE event_pics_id = ?");
+        $stmt->execute([$id]);
+        $media = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($media) {
+            $filePath = ROOT_PATH . '/' . $media['event_pics_name'];
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+            $stmt = $this->db->prepare("DELETE FROM events_media WHERE event_pics_id = ?");
+            return $stmt->execute([$id]);
+        }
+        return false;
+    }
+
     public function getPaginatedProjects($page = 1, $limit = 6)
     {
         $offset = ($page - 1) * $limit;
@@ -257,7 +283,15 @@ class AdminModel
                 $values[] = $id;
                 $setSql = implode(',', $sets);
                 $stmt = $this->db->prepare("UPDATE $table SET $setSql WHERE $pk = ?");
-                return $stmt->execute($values);
+                $result = $stmt->execute($values);
+
+                if ($result && $type === 'event' && isset($_FILES['event_gallery'])) {
+                    if (strtolower($data['event_status'] ?? '') === 'past') {
+                        $this->handleGalleryUpload($id, $_FILES['event_gallery']);
+                    }
+                }
+
+                return $result;
             } else {
                 // Duplicate Check for certain types
                 if ($type === 'service') {
@@ -293,11 +327,43 @@ class AdminModel
                     }
                 }
                 $stmt = $this->db->prepare("INSERT INTO $table ($fieldNames) VALUES ($placeholders)");
-                return $stmt->execute($values);
+                $result = $stmt->execute($values);
+
+                if ($result && $type === 'event' && isset($_FILES['event_gallery'])) {
+                    if (strtolower($data['event_status'] ?? '') === 'past') {
+                        $newId = $this->db->lastInsertId();
+                        $this->handleGalleryUpload($newId, $_FILES['event_gallery']);
+                    }
+                }
+
+                return $result;
             }
         } catch (PDOException $e) {
             error_log("AdminModel::storeRecord error for $type: " . $e->getMessage());
             throw $e;
+        }
+    }
+
+    private function handleGalleryUpload($eventId, $files)
+    {
+        if (!isset($files['name']) || !is_array($files['name'])) return;
+
+        $uploadPath = 'images/pictures/';
+        if (!is_dir(ROOT_PATH . '/' . $uploadPath)) {
+            mkdir(ROOT_PATH . '/' . $uploadPath, 0777, true);
+        }
+
+        for ($i = 0; $i < count($files['name']); $i++) {
+            if ($files['error'][$i] === UPLOAD_ERR_OK) {
+                $tmp_name = $files['tmp_name'][$i];
+                $name = time() . '_' . $i . '_' . basename($files['name'][$i]);
+
+                if (move_uploaded_file($tmp_name, ROOT_PATH . '/' . $uploadPath . $name)) {
+                    $filePath = $uploadPath . $name;
+                    $stmt = $this->db->prepare("INSERT INTO events_media (event_id, event_pics_name) VALUES (?, ?)");
+                    $stmt->execute([$eventId, $filePath]);
+                }
+            }
         }
     }
 

@@ -8,7 +8,7 @@
     </div>
 </div>
 
-<div class="row justify-content-center">
+<div class="row justify-content-center" x-data="{ eventStatus: '<?= $item['event_status'] ?? 'Upcoming' ?>' }">
     <div class="col-lg-8 col-xl-7">
         <div class="admin-card">
             <div class="card-body-custom">
@@ -40,7 +40,7 @@
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <label class="form-label-custom">Status</label>
-                            <select name="event_status" class="form-control-custom" required>
+                            <select name="event_status" class="form-control-custom" required x-model="eventStatus">
                                 <option value="Upcoming" <?= (isset($item) && $item['event_status'] == 'Upcoming') ? 'selected' : '' ?>>Upcoming</option>
                                 <option value="Past" <?= (isset($item) && $item['event_status'] == 'Past') ? 'selected' : '' ?>>Past</option>
                             </select>
@@ -75,6 +75,51 @@
                         <textarea name="event_detail" class="form-control-custom rich-editor" rows="8"><?= $item['event_detail'] ?? '' ?></textarea>
                     </div>
 
+                    <div class="mb-4">
+                        <label class="form-label-custom">Event Featured Image</label>
+                        <input type="file" name="event_img" class="form-control-custom" accept="image/*">
+                        <?php if (isset($item['event_img']) && !empty($item['event_img'])): ?>
+                            <div class="mt-2">
+                                <img src="<?= str_replace('../', BASE_URL . '/', $item['event_img']) ?>" alt="" style="height: 100px; border-radius: 8px;">
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Gallery Section - Only for Past Events -->
+                    <div class="mb-4" x-show="eventStatus === 'Past'" x-transition x-cloak>
+                        <div class="p-4 border rounded-4 bg-light">
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <span class="material-symbols-outlined text-primary">collections</span>
+                                <h5 class="mb-0 fw-700">Event Gallery</h5>
+                            </div>
+                            <p class="text-muted fs-08 mb-4">Upload multiple images for this past event gallery.</p>
+
+                            <div class="mb-4">
+                                <label class="form-label-custom">Upload Images</label>
+                                <input type="file" name="event_gallery[]" class="form-control-custom" multiple accept="image/*">
+                            </div>
+
+                            <?php if (!empty($media ?? [])): ?>
+                                <label class="form-label-custom mb-3">Existing Gallery Images</label>
+                                <div class="row g-3">
+                                    <?php foreach (($media ?? []) as $m): ?>
+                                        <div class="col-4 col-md-3" id="media-<?= $m['event_pics_id'] ?>">
+                                            <div class="position-relative group">
+                                                <img src="<?= BASE_URL . '/' . $m['event_pics_name'] ?>" class="img-fluid rounded-3 border" style="height: 80px; width: 100%; object-fit: cover;">
+                                                <button type="button"
+                                                        onclick="deleteGalleryImage(<?= $m['event_pics_id'] ?>)"
+                                                        class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 rounded-circle p-1 d-flex align-items-center justify-content-center"
+                                                        style="width: 24px; height: 24px; opacity: 0.8;">
+                                                    <span class="material-symbols-outlined" style="font-size: 16px;">close</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
                     <div class="d-flex justify-content-end gap-3 mt-5">
                         <a href="<?= BASE_URL ?>/admin/events" class="btn btn-light px-4">Cancel</a>
                         <button type="submit" class="btn btn-primary-custom px-5">
@@ -90,5 +135,33 @@
 <script>
 function eventRedirect() {
     window.location.href = '<?= BASE_URL ?>/admin/events';
+}
+
+async function deleteGalleryImage(mediaId) {
+    if (!confirm('Are you sure you want to delete this image?')) return;
+
+    try {
+        const formData = new FormData();
+        formData.append('id', mediaId);
+
+        const response = await fetch('<?= BASE_URL ?>/admin/events/media/delete', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        });
+
+        const data = await response.json();
+        if (data.status === 'success') {
+            document.getElementById(`media-${mediaId}`).remove();
+            showToast(data.message);
+        } else {
+            showToast(data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('An unexpected error occurred.', 'error');
+    }
 }
 </script>
