@@ -367,7 +367,11 @@
                     </span>
                     <?= ucfirst(stripslashes($event['event_status'])) ?> Event
                 </span>
-                <img src="<?= BASE_URL . '/' . $event['event_img']; ?>" alt="<?= htmlspecialchars($event['event_title']) ?>">
+                <?php
+                    $img = ltrim($event['event_img'] ?? '', './');
+                    $featuredImg = (strpos($img, 'http') === 0) ? $img : BASE_URL . '/' . $img;
+                ?>
+                <img src="<?= $featuredImg; ?>" alt="<?= htmlspecialchars($event['event_title']) ?>">
             </div>
 
             <div class="mb-5">
@@ -430,8 +434,12 @@
                 </div>
                 <div class="gallery-grid">
                     <?php foreach ($event_media as $media): ?>
-                    <a href="<?= BASE_URL . '/' . $media['event_pics_name']; ?>" class="gallery-item popup-box" data-lightbox="event-gallery">
-                        <img src="<?= BASE_URL . '/' . $media['event_pics_name']; ?>" alt="Gallery Image">
+                    <?php
+                        $img = ltrim($media['event_pics_name'] ?? '', './');
+                        $mediaImg = (strpos($img, 'http') === 0) ? $img : BASE_URL . '/' . $img;
+                    ?>
+                    <a href="<?= $mediaImg; ?>" class="gallery-item popup-box" data-lightbox="event-gallery">
+                        <img src="<?= $mediaImg; ?>" alt="Gallery Image">
                         <div class="gallery-overlay">
                             <span class="material-symbols-outlined" style="font-size: 32px;">zoom_in</span>
                         </div>

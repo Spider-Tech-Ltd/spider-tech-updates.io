@@ -80,7 +80,11 @@
                         <input type="file" name="event_img" class="form-control-custom" accept="image/*">
                         <?php if (isset($item['event_img']) && !empty($item['event_img'])): ?>
                             <div class="mt-2">
-                                <img src="<?= BASE_URL . '/' . $item['event_img'] ?>" alt="" style="height: 100px; border-radius: 8px;">
+                                <?php
+                                    $img = ltrim($item['event_img'] ?? '', './');
+                                    $formImg = (strpos($img, 'http') === 0) ? $img : BASE_URL . '/' . $img;
+                                ?>
+                                <img src="<?= $formImg ?>" alt="" style="height: 100px; border-radius: 8px;">
                             </div>
                         <?php endif; ?>
                     </div>
@@ -96,12 +100,25 @@
 
                             <div class="mb-4">
                                 <label class="form-label-custom">Upload Images</label>
-                                <input type="file" @change="handleFileSelect" class="form-control-custom" multiple accept="image/*" id="galleryInput">
+                                <div class="upload-zone p-5 border-2 border-dashed rounded-4 text-center bg-white"
+                                     @click="$refs.galleryInput.click()"
+                                     @dragover.prevent="dragOver = true"
+                                     @dragleave.prevent="dragOver = false"
+                                     @drop.prevent="handleDrop($event)"
+                                     :class="{ 'border-primary bg-light': dragOver }">
+                                    <input type="file" x-ref="galleryInput" @change="handleFileSelect" class="d-none" multiple accept="image/*">
+                                    <span class="material-symbols-outlined fs-1 text-primary mb-2">cloud_upload</span>
+                                    <p class="mb-0 fw-600">Click or drag images here to upload</p>
+                                    <p class="text-muted small">PNG, JPG or WEBP (Max 5MB each)</p>
+                                </div>
                             </div>
 
                             <!-- New Interactive Preview -->
-                            <div class="mb-4" x-show="previews.length > 0">
-                                <label class="form-label-custom mb-3">New Images to Upload</label>
+                            <div class="mb-4" x-show="previews.length > 0" x-transition>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <label class="form-label-custom mb-0">New Images Selection (<span x-text="previews.length"></span>)</label>
+                                    <button type="button" @click="clearAllPreviews" class="btn btn-sm btn-link text-danger text-decoration-none p-0">Clear All</button>
+                                </div>
                                 <div class="row g-3">
                                     <template x-for="(preview, index) in previews" :key="index">
                                         <div class="col-4 col-md-3">
@@ -125,7 +142,11 @@
                                     <?php foreach (($media ?? []) as $m): ?>
                                         <div class="col-4 col-md-3" id="media-<?= $m['event_pics_id'] ?>">
                                             <div class="position-relative group">
-                                                <img src="<?= BASE_URL . '/' . $m['event_pics_name'] ?>" class="img-fluid rounded-3 border" style="height: 80px; width: 100%; object-fit: cover;">
+                                                <?php
+                                                    $img = ltrim($m['event_pics_name'] ?? '', './');
+                                                    $mPath = (strpos($img, 'http') === 0) ? $img : BASE_URL . '/' . $img;
+                                                ?>
+                                                <img src="<?= $mPath ?>" class="img-fluid rounded-3 border" style="height: 80px; width: 100%; object-fit: cover;">
                                                 <button type="button"
                                                         onclick="deleteGalleryImage(<?= $m['event_pics_id'] ?>)"
                                                         class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 rounded-circle p-1 d-flex align-items-center justify-content-center"
@@ -158,24 +179,38 @@ function eventForm() {
         eventStatus: '<?= $item['event_status'] ?? 'Upcoming' ?>',
         selectedFiles: [],
         previews: [],
+        dragOver: false,
 
         handleFileSelect(event) {
             const files = Array.from(event.target.files);
-            files.forEach(file => {
-                this.selectedFiles.push(file);
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.previews.push(e.target.result);
-                };
-                reader.readAsDataURL(file);
-            });
-            // Clear input so same file can be selected again if removed
+            this.addFiles(files);
             event.target.value = '';
         },
 
+        handleDrop(event) {
+            this.dragOver = false;
+            const files = Array.from(event.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+            this.addFiles(files);
+        },
+
+        addFiles(files) {
+            files.forEach(file => {
+                this.selectedFiles.push(file);
+                this.previews.push(URL.createObjectURL(file));
+            });
+        },
+
         removePreview(index) {
+            // Revoke object URL to free memory
+            URL.revokeObjectURL(this.previews[index]);
             this.selectedFiles.splice(index, 1);
             this.previews.splice(index, 1);
+        },
+
+        clearAllPreviews() {
+            this.previews.forEach(url => URL.revokeObjectURL(url));
+            this.selectedFiles = [];
+            this.previews = [];
         },
 
         async handleSubmit(event) {

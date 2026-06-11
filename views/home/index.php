@@ -753,7 +753,13 @@ foreach ($banners as &$banner) {
                         <div class="event-card-horizontal">
                             <div class="row no-gutters">
                                 <div class="col-md-5">
-                                    <?php $ePic = (empty($event['event_img'])) ? BASE_URL . '/images/placeholder-banner.jpg' : ( (preg_match('#^https?://#i', $event['event_img'])) ? $event['event_img'] : BASE_URL . '/' . ltrim($event['event_img'], './') ); ?>
+                                    <?php
+                                        if (empty($event['event_img'])) {
+                                            $ePic = BASE_URL . '/images/placeholder-banner.jpg';
+                                        } else {
+                                            $ePic = (strpos($event['event_img'], 'http') === 0) ? $event['event_img'] : BASE_URL . '/' . $event['event_img'];
+                                        }
+                                    ?>
                                     <img src="<?= $ePic ?>" class="event-img-h w-100" alt="Event Image">
                                 </div>
                                 <div class="col-md-7">
