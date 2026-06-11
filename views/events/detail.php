@@ -367,7 +367,7 @@
                     </span>
                     <?= ucfirst(stripslashes($event['event_status'])) ?> Event
                 </span>
-                <img src="<?= BASE_URL . '/' . ltrim(substr($event['event_img'], 3), '/'); ?>" alt="<?= htmlspecialchars($event['event_title']) ?>">
+                <img src="<?= BASE_URL . '/' . $event['event_img']; ?>" alt="<?= htmlspecialchars($event['event_title']) ?>">
             </div>
 
             <div class="mb-5">
@@ -430,8 +430,8 @@
                 </div>
                 <div class="gallery-grid">
                     <?php foreach ($event_media as $media): ?>
-                    <a href="<?= BASE_URL . '/' . ltrim(substr($media['event_pics_name'], 3), '/'); ?>" class="gallery-item popup-box" data-lightbox="event-gallery">
-                        <img src="<?= BASE_URL . '/' . ltrim(substr($media['event_pics_name'], 3), '/'); ?>" alt="Gallery Image">
+                    <a href="<?= BASE_URL . '/' . $media['event_pics_name']; ?>" class="gallery-item popup-box" data-lightbox="event-gallery">
+                        <img src="<?= BASE_URL . '/' . $media['event_pics_name']; ?>" alt="Gallery Image">
                         <div class="gallery-overlay">
                             <span class="material-symbols-outlined" style="font-size: 32px;">zoom_in</span>
                         </div>

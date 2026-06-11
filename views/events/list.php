@@ -430,7 +430,7 @@
                     <div class="col-lg-4 col-md-6 mb-4">
                         <div class="event-card">
                             <div class="card-img-wrap">
-                                <img src="<?= BASE_URL . '/' . ltrim(substr($event['event_img'], 3), '/'); ?>" alt="<?= htmlspecialchars($event['event_title']); ?>">
+                                <img src="<?= BASE_URL . '/' . $event['event_img']; ?>" alt="<?= htmlspecialchars($event['event_title']); ?>">
                                 <div class="card-date-badge">
                                     <span class="day"><?= $day ?></span>
                                     <span class="month"><?= $month ?></span>
@@ -486,7 +486,7 @@
                     <div class="col-lg-4 col-md-6 mb-4">
                         <div class="event-card">
                             <div class="card-img-wrap">
-                                <img src="<?= BASE_URL . '/' . ltrim(substr($event['event_img'], 3), '/'); ?>" alt="<?= htmlspecialchars($event['event_title']); ?>">
+                                <img src="<?= BASE_URL . '/' . $event['event_img']; ?>" alt="<?= htmlspecialchars($event['event_title']); ?>">
                                 <div class="card-date-badge">
                                     <span class="day"><?= $day ?></span>
                                     <span class="month"><?= $month ?></span>

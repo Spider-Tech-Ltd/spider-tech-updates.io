@@ -8,11 +8,11 @@
     </div>
 </div>
 
-<div class="row justify-content-center" x-data="{ eventStatus: '<?= $item['event_status'] ?? 'Upcoming' ?>' }">
+<div class="row justify-content-center" x-data="eventForm()">
     <div class="col-lg-8 col-xl-7">
         <div class="admin-card">
             <div class="card-body-custom">
-                <form onsubmit="submitForm(event, 'event', 'eventRedirect')" enctype="multipart/form-data">
+                <form id="eventForm" @submit.prevent="handleSubmit(event)" enctype="multipart/form-data">
                     <input type="hidden" name="type" value="event">
                     <?php if ($mode == 'edit'): ?>
                         <input type="hidden" name="id" value="<?= $item['event_id'] ?>">
@@ -80,7 +80,7 @@
                         <input type="file" name="event_img" class="form-control-custom" accept="image/*">
                         <?php if (isset($item['event_img']) && !empty($item['event_img'])): ?>
                             <div class="mt-2">
-                                <img src="<?= str_replace('../', BASE_URL . '/', $item['event_img']) ?>" alt="" style="height: 100px; border-radius: 8px;">
+                                <img src="<?= BASE_URL . '/' . $item['event_img'] ?>" alt="" style="height: 100px; border-radius: 8px;">
                             </div>
                         <?php endif; ?>
                     </div>
@@ -96,7 +96,27 @@
 
                             <div class="mb-4">
                                 <label class="form-label-custom">Upload Images</label>
-                                <input type="file" name="event_gallery[]" class="form-control-custom" multiple accept="image/*">
+                                <input type="file" @change="handleFileSelect" class="form-control-custom" multiple accept="image/*" id="galleryInput">
+                            </div>
+
+                            <!-- New Interactive Preview -->
+                            <div class="mb-4" x-show="previews.length > 0">
+                                <label class="form-label-custom mb-3">New Images to Upload</label>
+                                <div class="row g-3">
+                                    <template x-for="(preview, index) in previews" :key="index">
+                                        <div class="col-4 col-md-3">
+                                            <div class="position-relative group">
+                                                <img :src="preview" class="img-fluid rounded-3 border" style="height: 80px; width: 100%; object-fit: cover;">
+                                                <button type="button"
+                                                        @click="removePreview(index)"
+                                                        class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 rounded-circle p-1 d-flex align-items-center justify-content-center"
+                                                        style="width: 24px; height: 24px; opacity: 0.8;">
+                                                    <span class="material-symbols-outlined" style="font-size: 16px;">close</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
                             </div>
 
                             <?php if (!empty($media ?? [])): ?>
@@ -133,6 +153,95 @@
 </div>
 
 <script>
+function eventForm() {
+    return {
+        eventStatus: '<?= $item['event_status'] ?? 'Upcoming' ?>',
+        selectedFiles: [],
+        previews: [],
+
+        handleFileSelect(event) {
+            const files = Array.from(event.target.files);
+            files.forEach(file => {
+                this.selectedFiles.push(file);
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.previews.push(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            });
+            // Clear input so same file can be selected again if removed
+            event.target.value = '';
+        },
+
+        removePreview(index) {
+            this.selectedFiles.splice(index, 1);
+            this.previews.splice(index, 1);
+        },
+
+        async handleSubmit(event) {
+            // Re-use global submitForm logic but with our custom file handling
+            const form = event.target;
+            const formData = new FormData(form);
+
+            // Append our selected gallery files
+            this.selectedFiles.forEach((file, i) => {
+                formData.append('event_gallery[]', file);
+            });
+
+            // Use the global submitForm logic but we need to pass the enriched formData
+            // Since submitForm takes (event, type, callbackOrModal) and builds its own FormData,
+            // we'll have to either modify submitForm or replicate its core here.
+            // For now, let's replicate the core but use our formData.
+
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (form.dataset.submitting === 'true') return;
+
+            // Sync CKEditor data
+            if (typeof editors !== 'undefined') {
+                for (const name in editors) {
+                    const textarea = form.querySelector(`[name="${name}"]`);
+                    if (textarea) {
+                        textarea.value = editors[name].getData();
+                        formData.set(name, textarea.value);
+                    }
+                }
+            }
+
+            const originalBtnContent = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processing...';
+            form.dataset.submitting = 'true';
+
+            try {
+                const response = await fetch('<?= BASE_URL ?>/admin/store', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (data.status === 'success') {
+                    showToast(data.message);
+                    setTimeout(() => window.location.href = '<?= BASE_URL ?>/admin/events', 1000);
+                } else {
+                    showToast(data.message, 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnContent;
+                    delete form.dataset.submitting;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('An unexpected error occurred.', 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnContent;
+                delete form.dataset.submitting;
+            }
+        }
+    };
+}
+
 function eventRedirect() {
     window.location.href = '<?= BASE_URL ?>/admin/events';
 }
