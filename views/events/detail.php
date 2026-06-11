@@ -367,11 +367,7 @@
                     </span>
                     <?= ucfirst(stripslashes($event['event_status'])) ?> Event
                 </span>
-                <?php
-                    $img = ltrim($event['event_img'] ?? '', './');
-                    $featuredImg = (strpos($img, 'http') === 0) ? $img : BASE_URL . '/' . $img;
-                ?>
-                <img src="<?= $featuredImg; ?>" alt="<?= htmlspecialchars($event['event_title']) ?>">
+                <img src="<?= resolvePath($event['event_img']); ?>" alt="<?= htmlspecialchars($event['event_title']) ?>">
             </div>
 
             <div class="mb-5">
@@ -434,10 +430,7 @@
                 </div>
                 <div class="gallery-grid">
                     <?php foreach ($event_media as $media): ?>
-                    <?php
-                        $img = ltrim($media['event_pics_name'] ?? '', './');
-                        $mediaImg = (strpos($img, 'http') === 0) ? $img : BASE_URL . '/' . $img;
-                    ?>
+                    <?php $mediaImg = resolvePath($media['event_pics_name']); ?>
                     <a href="<?= $mediaImg; ?>" class="gallery-item popup-box" data-lightbox="event-gallery">
                         <img src="<?= $mediaImg; ?>" alt="Gallery Image">
                         <div class="gallery-overlay">

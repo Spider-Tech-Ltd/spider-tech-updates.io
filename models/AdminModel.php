@@ -244,7 +244,10 @@ class AdminModel
         // Handle File Upload
         if ($uploadField && isset($_FILES[$uploadField]) && $_FILES[$uploadField]['error'] === UPLOAD_ERR_OK) {
             $tmp_name = $_FILES[$uploadField]['tmp_name'];
-            $name = time() . '_' . basename($_FILES[$uploadField]['name']);
+            $ext = pathinfo($_FILES[$uploadField]['name'], PATHINFO_EXTENSION);
+            // Use a shorter filename to ensure it fits in VARCHAR(64) if not migrated
+            $name = time() . '_' . mt_rand(100, 999) . '.' . $ext;
+
             if (!is_dir(ROOT_PATH . '/' . $uploadPath)) {
                 mkdir(ROOT_PATH . '/' . $uploadPath, 0777, true);
             }
@@ -356,7 +359,9 @@ class AdminModel
         for ($i = 0; $i < count($files['name']); $i++) {
             if ($files['error'][$i] === UPLOAD_ERR_OK) {
                 $tmp_name = $files['tmp_name'][$i];
-                $name = time() . '_' . $i . '_' . basename($files['name'][$i]);
+                $ext = pathinfo($files['name'][$i], PATHINFO_EXTENSION);
+                // Use a much shorter filename to guarantee fitting in VARCHAR(64)
+                $name = time() . '_' . $i . '_' . mt_rand(10, 99) . '.' . $ext;
 
                 if (move_uploaded_file($tmp_name, ROOT_PATH . '/' . $uploadPath . $name)) {
                     $filePath = $uploadPath . $name;
