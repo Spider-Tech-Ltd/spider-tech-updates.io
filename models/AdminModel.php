@@ -364,7 +364,7 @@ class AdminModel
                 $name = time() . '_' . $i . '_' . mt_rand(10, 99) . '.' . $ext;
 
                 if (move_uploaded_file($tmp_name, ROOT_PATH . '/' . $uploadPath . $name)) {
-                    $filePath = $uploadPath . $name;
+                    $filePath = ltrim($uploadPath . $name, '/');
                     $stmt = $this->db->prepare("INSERT INTO events_media (event_id, event_pics_name) VALUES (?, ?)");
                     $stmt->execute([$eventId, $filePath]);
                 }
