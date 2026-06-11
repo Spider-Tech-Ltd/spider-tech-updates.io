@@ -20,4 +20,34 @@ function cleanHTML($htmlValue)
   }, $clean);
   return $clean;
 }
+
+/**
+ * Robustly resolves image paths for both new and legacy assets.
+ * Handles absolute URLs, root-relative paths, and legacy filenames.
+ */
+function resolvePath($path, $fallback = 'images/placeholder-banner.jpg') {
+    if (empty($path)) return BASE_URL . '/' . $fallback;
+
+    // 1. Return as is if already a full URL
+    if (strpos($path, 'http') === 0) return $path;
+
+    // 2. Normalize by removing leading './' or '../'
+    $cleanPath = ltrim($path, './');
+
+    // 3. If it starts with images/ or img/ or uploads/, assume it is correct
+    if (preg_match('#^(images/|img/|uploads/)#i', $cleanPath)) {
+        return BASE_URL . '/' . $cleanPath;
+    }
+
+    // 4. Legacy fallback: Check common directories if it is just a filename
+    $searchDirs = ['images/pictures/', 'images/events/', 'images/blog/', 'img/'];
+    foreach ($searchDirs as $dir) {
+        if (file_exists(ROOT_PATH . '/' . $dir . $cleanPath)) {
+            return BASE_URL . '/' . $dir . $cleanPath;
+        }
+    }
+
+    // 5. Default to the clean path if no match found
+    return BASE_URL . '/' . $cleanPath;
+}
 ?>

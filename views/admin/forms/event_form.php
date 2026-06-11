@@ -80,11 +80,7 @@
                         <input type="file" name="event_img" class="form-control-custom" accept="image/*">
                         <?php if (isset($item['event_img']) && !empty($item['event_img'])): ?>
                             <div class="mt-2">
-                                <?php
-                                    $img = ltrim($item['event_img'] ?? '', './');
-                                    $formImg = (strpos($img, 'http') === 0) ? $img : BASE_URL . '/' . $img;
-                                ?>
-                                <img src="<?= $formImg ?>" alt="" style="height: 100px; border-radius: 8px;">
+                                <img src="<?= resolvePath($item['event_img']) ?>" alt="" style="height: 100px; border-radius: 8px;">
                             </div>
                         <?php endif; ?>
                     </div>
@@ -114,22 +110,29 @@
                             </div>
 
                             <!-- New Interactive Preview -->
-                            <div class="mb-4" x-show="previews.length > 0" x-transition>
+                            <div class="mb-5" x-show="previews.length > 0" x-transition>
                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <label class="form-label-custom mb-0">New Images Selection (<span x-text="previews.length"></span>)</label>
-                                    <button type="button" @click="clearAllPreviews" class="btn btn-sm btn-link text-danger text-decoration-none p-0">Clear All</button>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="badge bg-primary rounded-pill" x-text="previews.length"></span>
+                                        <label class="form-label-custom mb-0">New Images Selection</label>
+                                    </div>
+                                    <button type="button" @click="clearAllPreviews" class="btn btn-sm btn-outline-danger border-0">
+                                        <span class="material-symbols-outlined align-middle fs-6">delete_sweep</span> Clear All
+                                    </button>
                                 </div>
                                 <div class="row g-3">
                                     <template x-for="(preview, index) in previews" :key="index">
-                                        <div class="col-4 col-md-3">
-                                            <div class="position-relative group">
-                                                <img :src="preview" class="img-fluid rounded-3 border" style="height: 80px; width: 100%; object-fit: cover;">
-                                                <button type="button"
-                                                        @click="removePreview(index)"
-                                                        class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 rounded-circle p-1 d-flex align-items-center justify-content-center"
-                                                        style="width: 24px; height: 24px; opacity: 0.8;">
-                                                    <span class="material-symbols-outlined" style="font-size: 16px;">close</span>
-                                                </button>
+                                        <div class="col-6 col-md-3">
+                                            <div class="card h-100 border-0 shadow-sm overflow-hidden group">
+                                                <img :src="preview" class="card-img-top" style="height: 100px; object-fit: cover;">
+                                                <div class="position-absolute top-0 end-0 p-2">
+                                                    <button type="button"
+                                                            @click="removePreview(index)"
+                                                            class="btn btn-danger btn-sm rounded-circle p-1 d-flex align-items-center justify-content-center shadow"
+                                                            style="width: 26px; height: 26px;">
+                                                        <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </template>
@@ -140,19 +143,17 @@
                                 <label class="form-label-custom mb-3">Existing Gallery Images</label>
                                 <div class="row g-3">
                                     <?php foreach (($media ?? []) as $m): ?>
-                                        <div class="col-4 col-md-3" id="media-<?= $m['event_pics_id'] ?>">
-                                            <div class="position-relative group">
-                                                <?php
-                                                    $img = ltrim($m['event_pics_name'] ?? '', './');
-                                                    $mPath = (strpos($img, 'http') === 0) ? $img : BASE_URL . '/' . $img;
-                                                ?>
-                                                <img src="<?= $mPath ?>" class="img-fluid rounded-3 border" style="height: 80px; width: 100%; object-fit: cover;">
-                                                <button type="button"
-                                                        onclick="deleteGalleryImage(<?= $m['event_pics_id'] ?>)"
-                                                        class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 rounded-circle p-1 d-flex align-items-center justify-content-center"
-                                                        style="width: 24px; height: 24px; opacity: 0.8;">
-                                                    <span class="material-symbols-outlined" style="font-size: 16px;">close</span>
-                                                </button>
+                                        <div class="col-6 col-md-3" id="media-<?= $m['event_pics_id'] ?>">
+                                            <div class="card h-100 border-0 shadow-sm overflow-hidden group">
+                                                <img src="<?= resolvePath($m['event_pics_name']) ?>" class="card-img-top" style="height: 100px; object-fit: cover;">
+                                                <div class="position-absolute top-0 end-0 p-2">
+                                                    <button type="button"
+                                                            onclick="deleteGalleryImage(<?= $m['event_pics_id'] ?>)"
+                                                            class="btn btn-danger btn-sm rounded-circle p-1 d-flex align-items-center justify-content-center shadow"
+                                                            style="width: 26px; height: 26px;">
+                                                        <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     <?php endforeach; ?>

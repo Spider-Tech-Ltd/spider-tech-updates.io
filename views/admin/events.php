@@ -27,8 +27,7 @@
                 <tbody>
                     <?php
                     foreach ($events as $event):
-                        $img = ltrim($event['event_img'] ?? '', './');
-                        $imagePath = (strpos($img, 'http') === 0) ? $img : BASE_URL . '/' . $img;
+                        $imagePath = resolvePath($event['event_img']);
                         $statusClass = (strtolower($event['event_status']) == 'upcoming') ? 'badge-soft-green' : 'badge-soft-muted';
                     ?>
                     <tr>
