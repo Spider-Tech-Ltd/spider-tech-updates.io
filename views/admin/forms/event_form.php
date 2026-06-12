@@ -143,9 +143,12 @@
                                 <label class="form-label-custom mb-3">Existing Gallery Images</label>
                                 <div class="row g-3">
                                     <?php foreach (($media ?? []) as $m): ?>
+                                        <?php $mPath = resolvePath($m['event_pics_name']); ?>
                                         <div class="col-6 col-md-3" id="media-<?= $m['event_pics_id'] ?>">
                                             <div class="card h-100 border-0 shadow-sm overflow-hidden group">
-                                                <img src="<?= resolvePath($m['event_pics_name']) ?>" class="card-img-top" style="height: 100px; object-fit: cover;">
+                                                <a href="<?= $mPath ?>" data-lightbox="event-gallery-admin">
+                                                    <img src="<?= $mPath ?>" class="card-img-top" style="height: 100px; object-fit: cover;">
+                                                </a>
                                                 <div class="position-absolute top-0 end-0 p-2">
                                                     <button type="button"
                                                             onclick="deleteGalleryImage(<?= $m['event_pics_id'] ?>)"
@@ -260,7 +263,8 @@ function eventForm() {
                 const data = await response.json();
                 if (data.status === 'success') {
                     showToast(data.message);
-                    setTimeout(() => window.location.href = '<?= BASE_URL ?>/admin/events', 1000);
+                    // Add timestamp to prevent caching when redirecting back
+                    setTimeout(() => window.location.href = '<?= BASE_URL ?>/admin/events?t=' + Date.now(), 1000);
                 } else {
                     showToast(data.message, 'error');
                     submitBtn.disabled = false;
