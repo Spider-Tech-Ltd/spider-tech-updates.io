@@ -26,35 +26,45 @@ function cleanHTML($htmlValue)
  * Handles absolute URLs, root-relative paths, and legacy filenames.
  */
 function resolvePath($path, $fallback = 'images/placeholder-banner.jpg') {
-    $path = trim($path ?? '');
-    if (empty($path)) return BASE_URL . '/' . $fallback;
+    $path = trim((string)($path ?? ''));
+    if (empty($path)) return BASE_URL . '/' . ltrim($fallback, '/');
 
-    // 1. Return as is if already a full URL
-    if (preg_match('#^https?://#i', $path)) return $path;
+    // 1. Full URL check
+    if (filter_var($path, FILTER_VALIDATE_URL) || strpos($path, 'http') === 0) return $path;
 
-    // 2. Robust normalization: strip any number of leading ../ or ./ or /
-    $cleanPath = preg_replace('#^([\./]+|/)+#', '', $path);
+    // 2. Normalize markers
+    $normalized = str_replace('\\', '/', $path);
 
-    // 3. High-confidence check: Does the cleaned path point to a real file?
-    if (file_exists(ROOT_PATH . '/' . $cleanPath)) {
-        return BASE_URL . '/' . $cleanPath;
-    }
+    // 3. Strip leading relative markers (../, ./) and slashes
+    $cleanPath = preg_replace('#^([\./]+|/)+#', '', $normalized);
 
-    // 4. Legacy Search: If just a filename, look in common media folders
-    $filename = basename($path);
-    $searchDirs = ['images/pictures/', 'images/events/', 'images/blog/', 'img/'];
-    foreach ($searchDirs as $dir) {
-        if (file_exists(ROOT_PATH . '/' . $dir . $filename)) {
-            return BASE_URL . '/' . $dir . $filename;
-        }
-    }
-
-    // 5. Asset Folder Fallback: If it starts with a known folder, trust it even if file_exists fails (permissions etc)
+    // 4. Check if it already starts with common folders - If so, trust it
     if (preg_match('#^(images/|img/|uploads/)#i', $cleanPath)) {
         return BASE_URL . '/' . $cleanPath;
     }
 
-    // 6. Final safety: return as root-relative path if nothing else worked
-    return BASE_URL . '/' . $cleanPath;
+    // 5. Filename-only fallback search (Legacy)
+    $filename = basename($normalized);
+    $searchDirs = ['images/pictures/', 'images/events/', 'images/blog/', 'img/', 'uploads/'];
+    foreach ($searchDirs as $dir) {
+        $dirPath = ROOT_PATH . '/' . ltrim($dir, '/');
+
+        // Exact match
+        if (file_exists($dirPath . $filename)) {
+            return BASE_URL . '/' . ltrim($dir, '/') . $filename;
+        }
+
+        // Truncation fallback: if name is 64 chars (common VARCHAR limit), search for prefix
+        if (strlen($filename) >= 60) {
+            $prefix = substr($filename, 0, 50);
+            $matches = glob($dirPath . $prefix . "*");
+            if ($matches && count($matches) > 0) {
+                return BASE_URL . '/' . ltrim($dir, '/') . basename($matches[0]);
+            }
+        }
+    }
+
+    // 6. Final fallback: Prepend BASE_URL to the cleaned path
+    return (!empty($cleanPath)) ? BASE_URL . '/' . $cleanPath : BASE_URL . '/' . ltrim($fallback, '/');
 }
 ?>

@@ -360,11 +360,12 @@ class AdminModel
             if ($files['error'][$i] === UPLOAD_ERR_OK) {
                 $tmp_name = $files['tmp_name'][$i];
                 $ext = pathinfo($files['name'][$i], PATHINFO_EXTENSION);
-                // Use a much shorter filename to guarantee fitting in VARCHAR(64)
+                // Short unique name
                 $name = time() . '_' . $i . '_' . mt_rand(10, 99) . '.' . $ext;
+                $fullPath = ROOT_PATH . '/' . $uploadPath . $name;
 
-                if (move_uploaded_file($tmp_name, ROOT_PATH . '/' . $uploadPath . $name)) {
-                    $filePath = ltrim($uploadPath . $name, '/');
+                if (move_uploaded_file($tmp_name, $fullPath)) {
+                    $filePath = $uploadPath . $name;
                     $stmt = $this->db->prepare("INSERT INTO events_media (event_id, event_pics_name) VALUES (?, ?)");
                     $stmt->execute([$eventId, $filePath]);
                 }

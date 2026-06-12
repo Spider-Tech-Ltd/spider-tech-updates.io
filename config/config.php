@@ -25,7 +25,7 @@ if ($base_dir === '/' || $base_dir === '\\') {
     $base_dir = str_replace('\\', '/', $base_dir);
 }
 $base_url = $protocol . "://" . $host . $base_dir;
-define('BASE_URL', rtrim($base_url, '/'));
+define('BASE_URL', rtrim(rtrim($base_url, '.'), '/'));
 
 // Mailtrap SMTP Configuration
 define('MAIL_HOST', 'sandbox.smtp.mailtrap.io');
