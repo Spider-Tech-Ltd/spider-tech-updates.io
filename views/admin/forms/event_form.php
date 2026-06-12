@@ -286,31 +286,58 @@ function eventRedirect() {
     window.location.href = '<?= BASE_URL ?>/admin/events';
 }
 
-async function deleteGalleryImage(mediaId) {
-    if (!confirm('Are you sure you want to delete this image?')) return;
+function deleteGalleryImage(mediaId) {
+    if (window.Alpine && Alpine.store('actionModal')) {
+        Alpine.store('actionModal').show({
+            id: mediaId,
+            title: 'Delete Gallery Image',
+            message: 'Are you sure you want to delete this image from the gallery? This action is permanent.',
+            confirmText: 'Yes, Delete',
+            variant: 'danger',
+            callback: async (id) => {
+                try {
+                    const formData = new FormData();
+                    formData.append('id', id);
 
-    try {
-        const formData = new FormData();
-        formData.append('id', mediaId);
+                    const response = await fetch('<?= BASE_URL ?>/admin/events/media/delete', {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: formData
+                    });
 
-        const response = await fetch('<?= BASE_URL ?>/admin/events/media/delete', {
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: formData
+                    const data = await response.json();
+                    if (data.status === 'success') {
+                        document.getElementById(`media-${id}`).remove();
+                        showToast(data.message);
+                    } else {
+                        showToast(data.message, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showToast('An unexpected error occurred.', 'error');
+                }
+            }
         });
-
-        const data = await response.json();
-        if (data.status === 'success') {
-            document.getElementById(`media-${mediaId}`).remove();
-            showToast(data.message);
-        } else {
-            showToast(data.message, 'error');
+    } else {
+        // Fallback
+        if (confirm('Are you sure you want to delete this image?')) {
+            (async () => {
+                const formData = new FormData();
+                formData.append('id', mediaId);
+                const response = await fetch('<?= BASE_URL ?>/admin/events/media/delete', {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    document.getElementById(`media-${mediaId}`).remove();
+                    showToast(data.message);
+                }
+            })();
         }
-    } catch (error) {
-        console.error('Error:', error);
-        showToast('An unexpected error occurred.', 'error');
     }
 }
 </script>
