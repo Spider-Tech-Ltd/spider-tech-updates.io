@@ -31,10 +31,10 @@ class TrainingModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function submitRegistration($program_id, $user_data_json) {
-        $query = "INSERT INTO `training_registrations` (program_id, user_data) VALUES (?, ?)";
+    public function submitRegistration($program_id, $user_data_json, $type = 'training') {
+        $query = "INSERT INTO `training_registrations` (program_id, user_data, registration_type) VALUES (?, ?, ?)";
         $stmt = $this->conn->prepare($query);
-        return $stmt->execute([$program_id, $user_data_json]);
+        return $stmt->execute([$program_id, $user_data_json, $type]);
     }
 
     public function isEmailRegistered($email, $program_id) {

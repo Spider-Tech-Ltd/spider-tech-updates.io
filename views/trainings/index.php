@@ -420,7 +420,7 @@
             }
             ?>
             <div class="col-lg-4 col-md-6 mb-4 d-flex">
-              <a href="<?= BASE_URL ?>/trainings/detail?id=<?= stripslashes($training['id']); ?>" class="research-card">
+              <div class="research-card">
                 <?php if (!empty($imageSrc)): ?>
                   <div class="card-img-wrap">
                     <img src="<?= htmlspecialchars($imageSrc) ?>" alt="<?= htmlspecialchars(strip_tags($training['training_name'])) ?>">
@@ -428,7 +428,9 @@
                   </div>
                 <?php endif; ?>
                 <div class="card-body-content">
-                  <h3><?= htmlspecialchars(strip_tags($training['training_name'])) ?></h3>
+                  <a href="<?= BASE_URL ?>/trainings/detail?id=<?= stripslashes($training['id']); ?>" class="text-decoration-none">
+                    <h3><?= htmlspecialchars(strip_tags($training['training_name'])) ?></h3>
+                  </a>
                   <p><?= strip_tags($training['training_description']) ?></p>
                   
                   <div style="display: flex; gap: 15px; margin-bottom: 20px; font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 1px;">
@@ -436,11 +438,16 @@
                       <span style="display: flex; align-items: center; gap: 5px;"><span class="material-symbols-outlined" style="font-size: 16px; color: #f48221;">star</span> <?= isset($training['rating']) ? $training['rating'] : '4.9' ?></span>
                   </div>
 
-                  <span class="read-link">
-                    View Details <i class="material-symbols-outlined">trending_flat</i>
-                  </span>
+                  <div class="d-flex align-items-center justify-content-between mt-auto">
+                    <a href="<?= BASE_URL ?>/trainings/detail?id=<?= stripslashes($training['id']); ?>" class="read-link">
+                      View Details <i class="material-symbols-outlined">trending_flat</i>
+                    </a>
+                    <?php if ($training['registration_available']): ?>
+                      <a href="<?= BASE_URL ?>/trainings/register?id=<?= $training['id']; ?>" class="btn btn-sm btn-orange rounded-pill py-1 px-3 fs-07 fw-700">Enroll Now</a>
+                    <?php endif; ?>
+                  </div>
                 </div>
-              </a>
+              </div>
             </div>
           <?php endforeach; ?>
         <?php else: ?>

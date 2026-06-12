@@ -443,10 +443,15 @@
                                 </span>
                                 <h3 class="card-title"><?= stripslashes($event['event_title']); ?></h3>
                                 <div class="card-desc"><?= strip_tags(stripslashes($event['event_content'])); ?></div>
-                                <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="view-btn">
-                                    View Event Details
-                                    <span class="material-symbols-outlined">trending_flat</span>
-                                </a>
+                                <div class="d-flex align-items-center gap-3">
+                                    <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="view-btn">
+                                        View Details
+                                        <span class="material-symbols-outlined">trending_flat</span>
+                                    </a>
+                                    <?php if ($event['registration_available']): ?>
+                                        <a href="<?= BASE_URL ?>/trainings/register?id=<?= $event['event_id']; ?>&type=event" class="btn btn-sm btn-orange rounded-pill py-1 px-3 fs-07 fw-700">Enroll Now</a>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -499,10 +504,15 @@
                                 </span>
                                 <h3 class="card-title"><?= stripslashes($event['event_title']); ?></h3>
                                 <div class="card-desc"><?= strip_tags(stripslashes($event['event_content'])); ?></div>
-                                <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="view-btn">
-                                    View Recap
-                                    <span class="material-symbols-outlined">trending_flat</span>
-                                </a>
+                                <div class="d-flex align-items-center gap-3">
+                                    <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="view-btn">
+                                        View Recap
+                                        <span class="material-symbols-outlined">trending_flat</span>
+                                    </a>
+                                    <?php if ($event['registration_available']): ?>
+                                        <a href="<?= BASE_URL ?>/trainings/register?id=<?= $event['event_id']; ?>" class="btn btn-sm btn-orange rounded-pill py-1 px-3 fs-07 fw-700">Enroll Now</a>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
                     </div>

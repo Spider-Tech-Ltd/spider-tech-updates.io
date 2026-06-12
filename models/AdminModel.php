@@ -70,9 +70,14 @@ class AdminModel
         $total = $stmt->fetchColumn();
         $totalPages = ceil($total / $limit);
 
-        $sql = "SELECT tr.*, t.training_name as program_name
+        $sql = "SELECT tr.*,
+                CASE
+                    WHEN tr.registration_type = 'event' THEN e.event_title
+                    ELSE t.training_name
+                END as program_name
                 FROM training_registrations tr
                 LEFT JOIN trainings_tb t ON tr.program_id = t.id
+                LEFT JOIN events e ON tr.program_id = e.event_id
                 $where
                 ORDER BY tr.created_at DESC LIMIT :limit OFFSET :offset";
 
@@ -228,8 +233,8 @@ class AdminModel
             'banner' => ['table' => 'banners_tb', 'pk' => 'banner_id', 'fields' => ['banner_title'], 'upload' => 'banner_image', 'path' => 'images/banners/'],
             'faq' => ['table' => 'faq_tb', 'pk' => 'faq_id', 'fields' => ['faq_question', 'faq_answer'], 'upload' => null],
             'testimonial' => ['table' => 'testimonials_tb', 'pk' => 'id', 'fields' => ['name', 'organization', 'title', 'testimonial'], 'upload' => 'image', 'path' => 'images/pictures/'],
-            'event' => ['table' => 'events', 'pk' => 'event_id', 'fields' => ['event_title', 'event_content', 'event_detail', 'event_date', 'event_time', 'event_address', 'event_status', 'show_on_home', 'sort_order'], 'upload' => 'event_img', 'path' => 'images/pictures/'],
-            'training' => ['table' => 'trainings_tb', 'pk' => 'id', 'fields' => ['training_name', 'training_description', 'training_details', 'training_icon', 'show_on_home', 'sort_order'], 'upload' => 'training_image', 'path' => 'images/pictures/'],
+            'event' => ['table' => 'events', 'pk' => 'event_id', 'fields' => ['event_title', 'event_content', 'event_detail', 'event_date', 'event_time', 'event_address', 'event_status', 'show_on_home', 'sort_order', 'registration_available'], 'upload' => 'event_img', 'path' => 'images/pictures/'],
+            'training' => ['table' => 'trainings_tb', 'pk' => 'id', 'fields' => ['training_name', 'training_description', 'training_details', 'training_icon', 'show_on_home', 'sort_order', 'registration_available'], 'upload' => 'training_image', 'path' => 'images/pictures/'],
             'blog' => ['table' => 'blogs', 'pk' => 'uuid', 'fields' => ['category_id', 'title', 'slug', 'summary', 'content', 'status'], 'upload' => 'image_path', 'path' => 'images/blog/']
         ];
         if (!isset($allowedTypes[$type])) return false;
@@ -268,10 +273,10 @@ class AdminModel
                 $sets = [];
                 $values = [];
                 foreach ($fields as $field) {
-                    if ($field === 'show_on_home') {
-                        $sets[] = "show_on_home = ?";
+                    if ($field === 'show_on_home' || $field === 'registration_available') {
+                        $sets[] = "$field = ?";
                         // Safeguard checkbox state checking
-                        $values[] = (isset($data['show_on_home']) && $data['show_on_home']) ? 1 : 0;
+                        $values[] = (isset($data[$field]) && $data[$field]) ? 1 : 0;
                     } elseif ($field === 'sort_order') {
                         $sets[] = "sort_order = ?";
                         $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
@@ -319,8 +324,8 @@ class AdminModel
                 $fieldNames = implode(',', $fields);
                 $values = [];
                 foreach ($fields as $field) {
-                    if ($field === 'show_on_home') {
-                        $values[] = (isset($data['show_on_home']) && $data['show_on_home']) ? 1 : 0;
+                    if ($field === 'show_on_home' || $field === 'registration_available') {
+                        $values[] = (isset($data[$field]) && $data[$field]) ? 1 : 0;
                     } elseif ($field === 'sort_order') {
                         $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
                     } elseif ($field === 'category_id' && $type === 'blog') {

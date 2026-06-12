@@ -18,8 +18,8 @@ class EventController extends BaseController {
         $this->redirect('events');
     }
 
-    public function detail() {
-        $id = $_GET['id'] ?? null;
+    public function detail($id = null) {
+        $id = $id ?? $_GET['id'] ?? null;
         $model = new EventModel($this->db);
         $data = [
             'event' => $model->getEventById($id),
