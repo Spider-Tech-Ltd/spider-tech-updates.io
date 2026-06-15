@@ -49,9 +49,24 @@
                             <label class="form-label-custom">Show on Home</label>
                             <label class="form-switch-custom mt-2">
                                 <input type="hidden" name="show_on_home" value="0">
-                                <input type="checkbox" name="show_on_home" value="1" <?= (!isset($item) || $item['show_on_home']) ? 'checked' : '' ?>>
+                                <input type="checkbox" name="show_on_home" value="1" <?= (!isset($item) || (isset($item['show_on_home']) && $item['show_on_home'])) ? 'checked' : '' ?>>
                                 <span class="fs-08 text-muted">Feature on homepage</span>
                             </label>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label-custom">Is Featured</label>
+                            <label class="form-switch-custom mt-2">
+                                <input type="hidden" name="is_featured" value="0">
+                                <input type="checkbox" name="is_featured" value="1" <?= (isset($item['is_featured']) && $item['is_featured']) ? 'checked' : '' ?>>
+                                <span class="fs-08 text-muted">Mark as Premier Highlight</span>
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-custom">YouTube Video URL</label>
+                            <input type="url" name="video_url" class="form-control-custom" value="<?= $item['video_url'] ?? '' ?>" placeholder="https://www.youtube.com/watch?v=...">
                         </div>
                     </div>
 
@@ -63,6 +78,16 @@
                     <div class="mb-4">
                         <label class="form-label-custom">Location / Address</label>
                         <input type="text" name="event_address" class="form-control-custom" value="<?= $item['event_address'] ?? '' ?>" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label-custom">Event Feature Image</label>
+                        <input type="file" name="event_img" class="form-control-custom" <?= ($mode == 'add') ? 'required' : '' ?>>
+                        <?php if (isset($item['event_img'])): ?>
+                            <div class="mt-2">
+                                <img src="<?= str_replace('../', BASE_URL . '/', $item['event_img']) ?>" alt="" style="height: 100px; border-radius: 8px;">
+                            </div>
+                        <?php endif; ?>
                     </div>
 
                     <div class="mb-4">

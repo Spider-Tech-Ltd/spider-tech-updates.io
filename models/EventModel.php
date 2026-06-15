@@ -27,6 +27,13 @@ class EventModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getFeaturedEvents() {
+        $query = "SELECT * FROM `events` WHERE is_featured = 1 ORDER BY event_date DESC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getEventById($id) {
         $query = "SELECT * FROM `events` WHERE event_id = ? LIMIT 1";
         $stmt = $this->conn->prepare($query);
