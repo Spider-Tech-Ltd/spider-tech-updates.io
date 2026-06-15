@@ -78,4 +78,24 @@ function getYouTubeEmbedUrl($url) {
     }
     return $video_id ? 'https://www.youtube.com/embed/' . $video_id : $url;
 }
+
+/**
+ * Normalizes Instagram URLs to embed format.
+ */
+function getInstagramEmbedUrl($url) {
+    $url = rtrim($url, '/');
+    if (strpos($url, '/embed') === false) {
+        $url .= '/embed';
+    }
+    return $url;
+}
+
+/**
+ * Normalizes Facebook URLs to embed format.
+ */
+function getFacebookEmbedUrl($url) {
+    // For Facebook, we usually need the full URL encoded for the oEmbed or Plugins
+    // This helper returns a URL suitable for the Facebook Embedded Posts/Video plugin
+    return "https://www.facebook.com/plugins/post.php?href=" . urlencode($url) . "&show_text=true&width=500";
+}
 ?>

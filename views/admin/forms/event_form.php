@@ -68,10 +68,20 @@
                         <input type="number" name="sort_order" class="form-control-custom" value="<?= $item['sort_order'] ?? 0 ?>" min="0">
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label-custom">YouTube Video URL (Highlight)</label>
-                        <input type="url" name="video_url" class="form-control-custom" value="<?= $item['video_url'] ?? '' ?>" placeholder="https://www.youtube.com/watch?v=...">
-                        <p class="text-muted small mt-1">Provide a YouTube link to feature this event in the highlights section.</p>
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label-custom">Recap Type</label>
+                            <select name="video_type" class="form-control-custom" x-model="videoType">
+                                <option value="youtube">YouTube Video</option>
+                                <option value="instagram">Instagram Post/Reel</option>
+                                <option value="facebook">Facebook Post/Video</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label-custom">Recap Link (URL)</label>
+                            <input type="url" name="video_url" class="form-control-custom" value="<?= $item['video_url'] ?? '' ?>" :placeholder="recapPlaceholder">
+                            <p class="text-muted small mt-1" x-text="recapHint"></p>
+                        </div>
                     </div>
 
                     <div class="mb-4">
@@ -212,7 +222,20 @@
 function eventForm() {
     return {
         eventStatus: '<?= $item['event_status'] ?? 'Upcoming' ?>',
+        videoType: '<?= $item['video_type'] ?? 'youtube' ?>',
         shortUrl: '',
+
+        get recapPlaceholder() {
+            if (this.videoType === 'instagram') return 'https://www.instagram.com/p/CLP...';
+            if (this.videoType === 'facebook') return 'https://www.facebook.com/username/posts/...';
+            return 'https://www.youtube.com/watch?v=...';
+        },
+
+        get recapHint() {
+            if (this.videoType === 'instagram') return 'Provide an Instagram post or reel link.';
+            if (this.videoType === 'facebook') return 'Provide a Facebook post or video link.';
+            return 'Provide a YouTube link to feature this event in the highlights section.';
+        },
 
         generateShortUrl() {
             const id = '<?= $item['event_id'] ?? '' ?>';

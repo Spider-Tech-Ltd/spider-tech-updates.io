@@ -33,12 +33,18 @@ try {
             }
         }
 
-        // Add video_url for events
+        // Add video_url and video_type for events
         if ($table === 'events') {
             $stmt = $db->query("SHOW COLUMNS FROM $table LIKE 'video_url'");
             if ($stmt->rowCount() == 0) {
                 $db->exec("ALTER TABLE $table ADD COLUMN video_url VARCHAR(255) DEFAULT NULL");
                 echo "<span style='color:blue;'>[Added video_url]</span> ";
+            }
+
+            $stmt = $db->query("SHOW COLUMNS FROM $table LIKE 'video_type'");
+            if ($stmt->rowCount() == 0) {
+                $db->exec("ALTER TABLE $table ADD COLUMN video_type VARCHAR(20) DEFAULT 'youtube' AFTER video_url");
+                echo "<span style='color:blue;'>[Added video_type]</span> ";
             }
         }
 

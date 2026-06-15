@@ -388,16 +388,33 @@
         background: #f8f9fa;
         padding: 100px 0;
         border-bottom: 1px solid #eee;
+        position: relative;
+    }
+
+    .highlights-section::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100px;
+        background: linear-gradient(to top, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+        pointer-events: none;
     }
 
     .video-container {
         position: relative;
-        padding-bottom: 56.25%; /* 16:9 */
+        padding-bottom: 60%; /* Adjusted for social media variety */
         height: 0;
         overflow: hidden;
         border-radius: 30px;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
-        background: #000;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+        background: #f0f0f0;
+        transition: transform 0.4s ease;
+    }
+
+    .video-container:hover {
+        transform: scale(1.02);
     }
 
     .video-container iframe {
@@ -442,14 +459,29 @@ $highlights = array_filter(array_merge($upcoming_events, $past_events), function
 
 if (!empty($highlights)):
     $mainHighlight = reset($highlights);
-    $embedUrl = getYouTubeEmbedUrl($mainHighlight['video_url']);
+    $vType = $mainHighlight['video_type'] ?? 'youtube';
+    $vUrl = $mainHighlight['video_url'];
+
+    if ($vType === 'instagram') {
+        $embedUrl = getInstagramEmbedUrl($vUrl);
+    } elseif ($vType === 'facebook') {
+        $embedUrl = getFacebookEmbedUrl($vUrl);
+    } else {
+        $embedUrl = getYouTubeEmbedUrl($vUrl);
+    }
 ?>
-<section class="highlights-section">
+<section class="highlights-section overflow-hidden">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-7">
-                <div class="video-container animate__animated animate__fadeInLeft">
-                    <iframe src="<?= $embedUrl ?>" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <div class="video-container animate__animated animate__fadeInLeft shadow-lg">
+                    <?php if ($vType === 'youtube'): ?>
+                        <iframe src="<?= $embedUrl ?>" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <?php elseif ($vType === 'instagram'): ?>
+                        <iframe src="<?= $embedUrl ?>" class="instagram-media" allowtransparency="true" frameborder="0" scrolling="no" style="background:white; margin:0; width:100%; height:100%; min-height:450px;"></iframe>
+                    <?php elseif ($vType === 'facebook'): ?>
+                        <iframe src="<?= $embedUrl ?>" width="100%" height="100%" style="border:none;overflow:hidden;min-height:500px;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="col-lg-5">
