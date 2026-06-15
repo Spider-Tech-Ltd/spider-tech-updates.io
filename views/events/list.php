@@ -404,14 +404,17 @@
 
     .video-container {
         position: relative;
-        padding-bottom: 60%; /* Adjusted for social media variety */
-        height: 0;
-        overflow: hidden;
+        width: 100%;
         border-radius: 30px;
         box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
-        background: #f0f0f0;
+        background: #000;
         transition: transform 0.4s ease;
+        overflow: hidden;
     }
+
+    .video-container.ratio-youtube { aspect-ratio: 16 / 9; }
+    .video-container.ratio-instagram { aspect-ratio: 4 / 5; min-height: 500px; max-height: 650px; }
+    .video-container.ratio-facebook { aspect-ratio: 16 / 9; min-height: 400px; }
 
     .video-container::before {
         content: 'PREVIEW';
@@ -442,6 +445,14 @@
         width: 100%;
         height: 100%;
         border: 0;
+        display: block;
+    }
+
+    /* Instagram specific centering/scaling for Reels */
+    .video-container.ratio-instagram iframe {
+        height: 160%;
+        top: 50%;
+        transform: translateY(-45%);
     }
 
     .highlight-content {
@@ -492,13 +503,13 @@ if (!empty($highlights)):
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-7">
-                <div class="video-container animate__animated animate__fadeInLeft shadow-lg">
+                <div class="video-container ratio-<?= $vType ?> animate__animated animate__fadeInLeft shadow-lg">
                     <?php if ($vType === 'youtube'): ?>
                         <iframe src="<?= $embedUrl ?>" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     <?php elseif ($vType === 'instagram'): ?>
-                        <iframe src="<?= $embedUrl ?>" class="instagram-media" allowtransparency="true" frameborder="0" scrolling="no" style="background:white; margin:0; width:100%; height:100%; min-height:540px;" allow="autoplay"></iframe>
+                        <iframe src="<?= $embedUrl ?>" class="instagram-media" allowtransparency="true" frameborder="0" scrolling="no" allow="autoplay"></iframe>
                     <?php elseif ($vType === 'facebook'): ?>
-                        <iframe src="<?= $embedUrl ?>" width="100%" height="100%" style="border:none;overflow:hidden;min-height:500px;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+                        <iframe src="<?= $embedUrl ?>" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
                     <?php endif; ?>
                 </div>
             </div>
@@ -508,13 +519,13 @@ if (!empty($highlights)):
                     <h2 class="section-title mb-4">Event <span>Recap</span></h2>
                     <h4 class="fw-700 mb-3"><?= htmlspecialchars($mainHighlight['event_title']) ?></h4>
                     <p class="text-muted mb-4"><?= strip_tags(stripslashes($mainHighlight['event_content'])) ?></p>
-                    <div class="d-flex flex-wrap gap-3">
-                        <a href="<?= BASE_URL ?>/events/detail?id=<?= $mainHighlight['event_id'] ?>" class="cta-button">
-                            View Details
-                            <span class="material-symbols-outlined">collections</span>
+                    <div class="d-flex flex-column align-items-start gap-3 mt-4">
+                        <a href="<?= BASE_URL ?>/events/detail?id=<?= $mainHighlight['event_id'] ?>" class="cta-button w-100 justify-content-center">
+                            VIEW DETAILS
+                            <span class="material-symbols-outlined">photo_library</span>
                         </a>
-                        <a href="<?= htmlspecialchars($vUrl) ?>" target="_blank" class="cta-button cta-button-outline text-dark border-dark">
-                            View on <?= ucfirst($vType) ?>
+                        <a href="<?= htmlspecialchars($vUrl) ?>" target="_blank" class="cta-button cta-button-outline text-dark border-dark w-100 justify-content-center">
+                            VIEW ON <?= strtoupper($vType) ?>
                             <span class="material-symbols-outlined">open_in_new</span>
                         </a>
                     </div>
