@@ -413,6 +413,24 @@
         transition: transform 0.4s ease;
     }
 
+    .video-container::before {
+        content: 'PREVIEW';
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(0, 0, 0, 0.6);
+        color: #fff;
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        z-index: 10;
+        pointer-events: none;
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
     .video-container:hover {
         transform: scale(1.02);
     }
@@ -478,7 +496,7 @@ if (!empty($highlights)):
                     <?php if ($vType === 'youtube'): ?>
                         <iframe src="<?= $embedUrl ?>" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     <?php elseif ($vType === 'instagram'): ?>
-                        <iframe src="<?= $embedUrl ?>" class="instagram-media" allowtransparency="true" frameborder="0" scrolling="no" style="background:white; margin:0; width:100%; height:100%; min-height:540px;"></iframe>
+                        <iframe src="<?= $embedUrl ?>" class="instagram-media" allowtransparency="true" frameborder="0" scrolling="no" style="background:white; margin:0; width:100%; height:100%; min-height:540px;" allow="autoplay"></iframe>
                     <?php elseif ($vType === 'facebook'): ?>
                         <iframe src="<?= $embedUrl ?>" width="100%" height="100%" style="border:none;overflow:hidden;min-height:500px;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
                     <?php endif; ?>

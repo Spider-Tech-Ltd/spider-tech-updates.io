@@ -69,14 +69,15 @@ function resolvePath($path, $fallback = 'images/placeholder-banner.jpg') {
 }
 
 /**
- * Extracts YouTube Video ID and returns an embed URL.
+ * Extracts YouTube Video ID and returns an embed URL with autoplay enabled.
  */
 function getYouTubeEmbedUrl($url) {
     $video_id = '';
     if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $url, $match)) {
         $video_id = $match[1];
     }
-    return $video_id ? 'https://www.youtube.com/embed/' . $video_id : $url;
+    // Autoplay requires mute=1 to work in most browsers without user interaction
+    return $video_id ? "https://www.youtube.com/embed/{$video_id}?autoplay=1&mute=1&loop=1&playlist={$video_id}&rel=0" : $url;
 }
 
 /**
@@ -103,7 +104,9 @@ function getFacebookEmbedUrl($url) {
     // Determine if it's a video or a post
     $is_video = (strpos($url, '/videos/') !== false || strpos($url, '/watch/') !== false || strpos($url, 'fb.watch') !== false);
     $plugin = $is_video ? 'video.php' : 'post.php';
+    // Use 1/0 for boolean params in Facebook plugins
+    $params = $is_video ? "&autoplay=1&mute=1&show_captions=0" : "";
 
-    return "https://www.facebook.com/plugins/{$plugin}?href=" . urlencode($url) . "&show_text=true&width=500";
+    return "https://www.facebook.com/plugins/{$plugin}?href=" . urlencode($url) . "&show_text=true&width=500" . $params;
 }
 ?>

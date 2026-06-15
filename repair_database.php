@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Spider Tech - Critical Database Repair & CMS Synchronization Tool
  */
@@ -98,6 +97,7 @@ try {
     echo "<h3 style='color:green;'>Repair Completed Successfully!</h3>";
     echo "<p><strong>Important:</strong> Please delete this file (<code>repair_database.php</code>) immediately for security.</p>";
     echo "<p><a href='" . BASE_URL . "/admin/dashboard'>Go to Dashboard</a></p>";
+
 } catch (Exception $e) {
     echo "<h3 style='color:red;'>Repair Failed:</h3>";
     echo "<p>" . htmlspecialchars($e->getMessage()) . "</p>";
