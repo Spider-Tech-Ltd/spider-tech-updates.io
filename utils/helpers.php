@@ -67,4 +67,15 @@ function resolvePath($path, $fallback = 'images/placeholder-banner.jpg') {
     // 6. Final fallback: Prepend BASE_URL to the cleaned path
     return (!empty($cleanPath)) ? BASE_URL . '/' . $cleanPath : BASE_URL . '/' . ltrim($fallback, '/');
 }
+
+/**
+ * Extracts YouTube Video ID and returns an embed URL.
+ */
+function getYouTubeEmbedUrl($url) {
+    $video_id = '';
+    if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $url, $match)) {
+        $video_id = $match[1];
+    }
+    return $video_id ? 'https://www.youtube.com/embed/' . $video_id : $url;
+}
 ?>

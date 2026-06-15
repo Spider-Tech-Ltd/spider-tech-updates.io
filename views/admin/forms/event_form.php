@@ -69,6 +69,12 @@
                     </div>
 
                     <div class="mb-4">
+                        <label class="form-label-custom">YouTube Video URL (Highlight)</label>
+                        <input type="url" name="video_url" class="form-control-custom" value="<?= $item['video_url'] ?? '' ?>" placeholder="https://www.youtube.com/watch?v=...">
+                        <p class="text-muted small mt-1">Provide a YouTube link to feature this event in the highlights section.</p>
+                    </div>
+
+                    <div class="mb-4">
                         <label class="form-label-custom">Location / Address</label>
                         <input type="text" name="event_address" class="form-control-custom" value="<?= $item['event_address'] ?? '' ?>" required>
                     </div>

@@ -340,6 +340,7 @@ unset($_SESSION['old_input']);
                     <!-- Registration Form -->
                     <form @submit.prevent="submitForm" id="registrationForm" enctype="multipart/form-data">
                         <input type="hidden" name="program_id" value="<?= $program_id; ?>">
+                        <input type="hidden" name="registration_type" value="<?= $registration_type ?? 'training'; ?>">
 
                         <?php if (!empty($sections)) : ?>
                             <?php foreach ($sections as $section_name => $fields) : ?>

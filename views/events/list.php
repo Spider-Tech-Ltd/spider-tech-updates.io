@@ -382,6 +382,36 @@
         background: rgba(255, 255, 255, 0.1);
         color: rgba(255, 255, 255, 0.85);
     }
+
+    /* Highlights Section */
+    .highlights-section {
+        background: #f8f9fa;
+        padding: 100px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .video-container {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 */
+        height: 0;
+        overflow: hidden;
+        border-radius: 30px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+        background: #000;
+    }
+
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+
+    .highlight-content {
+        padding: 40px;
+    }
 </style>
 
 <!-- ====== Page Header ====== -->
@@ -404,10 +434,41 @@
     </div>
 </section>
 
+<!-- ====== Events Highlights Section Start ====== -->
+<?php
+$highlights = array_filter(array_merge($upcoming_events, $past_events), function($e) {
+    return !empty($e['video_url']);
+});
 
-
-
-
+if (!empty($highlights)):
+    $mainHighlight = reset($highlights);
+    $embedUrl = getYouTubeEmbedUrl($mainHighlight['video_url']);
+?>
+<section class="highlights-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <div class="video-container animate__animated animate__fadeInLeft">
+                    <iframe src="<?= $embedUrl ?>" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="highlight-content animate__animated animate__fadeInRight">
+                    <span class="tag-eyebrow">Visual Highlights</span>
+                    <h2 class="section-title mb-4">Event <span>Recap</span></h2>
+                    <h4 class="fw-700 mb-3"><?= htmlspecialchars($mainHighlight['event_title']) ?></h4>
+                    <p class="text-muted mb-4"><?= strip_tags(stripslashes($mainHighlight['event_content'])) ?></p>
+                    <a href="<?= BASE_URL ?>/events/detail?id=<?= $mainHighlight['event_id'] ?>" class="cta-button">
+                        View Full Gallery
+                        <span class="material-symbols-outlined">collections</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+<!-- ====== Events Highlights Section End ====== -->
 
 <!-- ====== Upcoming Events Section Start ====== -->
 <section id="upcoming-events" class="section-padding pb-0 bg-light">
@@ -510,7 +571,7 @@
                                         <span class="material-symbols-outlined">trending_flat</span>
                                     </a>
                                     <?php if ($event['registration_available']): ?>
-                                        <a href="<?= BASE_URL ?>/trainings/register?id=<?= $event['event_id']; ?>" class="btn btn-sm btn-orange rounded-pill py-1 px-3 fs-07 fw-700">Enroll Now</a>
+                                        <a href="<?= BASE_URL ?>/trainings/register?id=<?= $event['event_id']; ?>&type=event" class="btn btn-sm btn-orange rounded-pill py-1 px-3 fs-07 fw-700">Enroll Now</a>
                                     <?php endif; ?>
                                 </div>
                             </div>

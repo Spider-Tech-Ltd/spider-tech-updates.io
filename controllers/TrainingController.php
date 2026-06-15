@@ -60,6 +60,7 @@ class TrainingController extends BaseController {
             'training' => $training,
             'sections' => $sections,
             'program_id' => $id,
+            'registration_type' => $type,
             'contact' => $model->getContactDetails()
         ];
         $this->render("trainings/register", $data);
@@ -162,12 +163,8 @@ class TrainingController extends BaseController {
         try {
             $user_data_json = json_encode($user_data);
 
-            // Detect if this is an event or training based on the ID or a hidden field
-            // Since the user is redirected to /trainings/register, we might need a hint.
-            // For now, let's assume we can check if it exists in events table.
-            $eventModel = new EventModel($this->db);
-            $isEvent = $eventModel->getEventById($program_id);
-            $regType = $isEvent ? 'event' : 'training';
+            // Use explicit registration type if provided, otherwise default to training
+            $regType = $_POST['registration_type'] ?? 'training';
 
             $result = $model->submitRegistration($program_id, $user_data_json, $regType);
 

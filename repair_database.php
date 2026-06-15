@@ -33,6 +33,15 @@ try {
             }
         }
 
+        // Add video_url for events
+        if ($table === 'events') {
+            $stmt = $db->query("SHOW COLUMNS FROM $table LIKE 'video_url'");
+            if ($stmt->rowCount() == 0) {
+                $db->exec("ALTER TABLE $table ADD COLUMN video_url VARCHAR(255) DEFAULT NULL");
+                echo "<span style='color:blue;'>[Added video_url]</span> ";
+            }
+        }
+
         // 2. Add show_on_home
         $stmt = $db->query("SHOW COLUMNS FROM $table LIKE 'show_on_home'");
         if ($stmt->rowCount() == 0) {
