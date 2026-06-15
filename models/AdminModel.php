@@ -202,7 +202,7 @@ class AdminModel
             'banner' => ['table' => 'banners_tb', 'pk' => 'banner_id', 'fields' => ['banner_title'], 'upload' => 'banner_image', 'path' => 'images/banners/'],
             'faq' => ['table' => 'faq_tb', 'pk' => 'faq_id', 'fields' => ['faq_question', 'faq_answer'], 'upload' => null],
             'testimonial' => ['table' => 'testimonials_tb', 'pk' => 'id', 'fields' => ['name', 'organization', 'title', 'testimonial'], 'upload' => 'image', 'path' => 'images/pictures/'],
-            'event' => ['table' => 'events', 'pk' => 'event_id', 'fields' => ['event_title', 'event_content', 'event_detail', 'event_date', 'event_time', 'event_address', 'event_status', 'show_on_home', 'sort_order'], 'upload' => 'event_img', 'path' => 'images/pictures/'],
+            'event' => ['table' => 'events', 'pk' => 'event_id', 'fields' => ['event_title', 'event_content', 'event_detail', 'event_date', 'event_time', 'event_address', 'event_status', 'show_on_home', 'sort_order', 'video_url', 'is_featured'], 'upload' => 'event_img', 'path' => 'images/pictures/'],
             'training' => ['table' => 'trainings_tb', 'pk' => 'id', 'fields' => ['training_name', 'training_description', 'training_details', 'training_icon', 'show_on_home', 'sort_order'], 'upload' => 'training_image', 'path' => 'images/pictures/'],
             'blog' => ['table' => 'blogs', 'pk' => 'uuid', 'fields' => ['category_id', 'title', 'slug', 'summary', 'content', 'status'], 'upload' => 'image_path', 'path' => 'images/blog/']
         ];
@@ -246,6 +246,9 @@ class AdminModel
                     } elseif ($field === 'sort_order') {
                         $sets[] = "sort_order = ?";
                         $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
+                    } elseif ($field === 'is_featured') {
+                        $sets[] = "is_featured = ?";
+                        $values[] = (isset($data['is_featured']) && $data['is_featured']) ? 1 : 0;
                     } elseif ($field === 'category_id' && $type === 'blog') {
                         $sets[] = "category_id = ?";
                         $values[] = (int)$data['category_id'];
@@ -284,6 +287,8 @@ class AdminModel
                 foreach ($fields as $field) {
                     if ($field === 'show_on_home') {
                         $values[] = (isset($data['show_on_home']) && $data['show_on_home']) ? 1 : 0;
+                    } elseif ($field === 'is_featured') {
+                        $values[] = (isset($data['is_featured']) && $data['is_featured']) ? 1 : 0;
                     } elseif ($field === 'sort_order') {
                         $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
                     } elseif ($field === 'category_id' && $type === 'blog') {

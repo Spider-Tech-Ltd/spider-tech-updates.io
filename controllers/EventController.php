@@ -3,6 +3,7 @@ class EventController extends BaseController {
     public function index() {
         $model = new EventModel($this->db);
         $data = [
+            'featured_events' => $model->getFeaturedEvents(),
             'upcoming_events' => $model->getUpcomingEvents(),
             'past_events' => $model->getPastEvents(),
             'contact' => $model->getContactDetails()
