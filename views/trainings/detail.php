@@ -285,10 +285,17 @@
                                 <div><strong>Language:</strong> English</div>
                             </li>
                         </ul>
-                        <a href="<?= BASE_URL ?>/trainings/register?id=<?= $training['id']; ?>" class="register-btn-large">
-                            <span class="material-symbols-outlined">how_to_reg</span>
-                            Enroll Now
-                        </a>
+                        <?php if ($training['registration_available']): ?>
+                            <a href="<?= BASE_URL ?>/trainings/register?id=<?= $training['id']; ?>" class="register-btn-large">
+                                <span class="material-symbols-outlined">how_to_reg</span>
+                                Enroll Now
+                            </a>
+                        <?php else: ?>
+                            <div class="alert alert-light border text-center small py-3 rounded-4">
+                                <span class="material-symbols-outlined align-middle fs-5 text-muted">info</span>
+                                <span class="text-muted">Registration currently closed</span>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

@@ -24,7 +24,16 @@ try {
     foreach ($contentTables as $table => $pk) {
         echo "<li>Processing table: <strong>$table</strong>... ";
 
-        // 1. Add show_on_home
+        // 1. Add registration_available if table is events or trainings_tb
+        if ($table === 'events' || $table === 'trainings_tb') {
+            $stmt = $db->query("SHOW COLUMNS FROM $table LIKE 'registration_available'");
+            if ($stmt->rowCount() == 0) {
+                $db->exec("ALTER TABLE $table ADD COLUMN registration_available TINYINT(1) DEFAULT 0");
+                echo "<span style='color:blue;'>[Added registration_available]</span> ";
+            }
+        }
+
+        // 2. Add show_on_home
         $stmt = $db->query("SHOW COLUMNS FROM $table LIKE 'show_on_home'");
         if ($stmt->rowCount() == 0) {
             $db->exec("ALTER TABLE $table ADD COLUMN show_on_home TINYINT(1) DEFAULT 1");
@@ -58,6 +67,14 @@ try {
     if ($stmt->rowCount() == 0) {
         $db->exec("ALTER TABLE members ADD COLUMN status ENUM('Active', 'Suspended') DEFAULT 'Active' AFTER is_verified");
         echo "[Added status] ";
+    }
+    echo "OK</li>";
+
+    echo "<li>Upgrading registration system... ";
+    $stmt = $db->query("SHOW COLUMNS FROM training_registrations LIKE 'registration_type'");
+    if ($stmt->rowCount() == 0) {
+        $db->exec("ALTER TABLE training_registrations ADD COLUMN registration_type VARCHAR(20) DEFAULT 'training' AFTER program_id");
+        echo "[Added registration_type] ";
     }
     echo "OK</li>";
 

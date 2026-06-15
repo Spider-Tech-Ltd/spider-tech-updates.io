@@ -27,16 +27,24 @@
                     </div>
 
                     <div class="row mb-4">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label-custom">Icon Class</label>
                             <input type="text" name="training_icon" class="form-control-custom" value="<?= $item['training_icon'] ?? 'fas fa-graduation-cap' ?>" required>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label-custom">Show on Home</label>
                             <label class="form-switch-custom mt-2">
                                 <input type="hidden" name="show_on_home" value="0">
                                 <input type="checkbox" name="show_on_home" value="1" <?= (!isset($item) || $item['show_on_home']) ? 'checked' : '' ?>>
                                 <span class="fs-08 text-muted">Feature on homepage</span>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label-custom">Enable Registration</label>
+                            <label class="form-switch-custom mt-2">
+                                <input type="hidden" name="registration_available" value="0">
+                                <input type="checkbox" name="registration_available" value="1" <?= (isset($item) && $item['registration_available']) ? 'checked' : '' ?>>
+                                <span class="fs-08 text-muted">Allow enrollments</span>
                             </label>
                         </div>
                     </div>
@@ -56,7 +64,7 @@
                         <input type="file" name="training_image" class="form-control-custom" <?= ($mode == 'add') ? 'required' : '' ?>>
                         <?php if ($mode == 'edit' && $item['training_image']): ?>
                             <div class="mt-3 table-img-wrapper" style="width: 150px; height: 100px;">
-                                <img src="<?= str_replace('../', BASE_URL . '/', $item['training_image']) ?>" alt="">
+                                <img src="<?= resolvePath($item['training_image']) ?>" alt="">
                             </div>
                         <?php endif; ?>
                     </div>

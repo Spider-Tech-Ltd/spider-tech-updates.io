@@ -19,10 +19,35 @@ class TrainingController extends BaseController {
         $this->render("trainings/detail", $data);
     }
 
+    public function registerShort($id) {
+        $_GET['id'] = $id;
+        $_GET['type'] = 'event';
+        $this->register();
+    }
+
     public function register() {
         $id = $_GET['id'] ?? null;
+        $type = $_GET['type'] ?? 'training';
         $model = new TrainingModel($this->db);
-        $training = $model->getTrainingById($id);
+
+        if ($type === 'event') {
+            $eventModel = new EventModel($this->db);
+            $event = $eventModel->getEventById($id);
+            if ($event) {
+                $training = [
+                    'id' => $event['event_id'],
+                    'training_name' => $event['event_title'],
+                    'training_description' => $event['event_content'],
+                    'registration_available' => $event['registration_available']
+                ];
+            }
+        } else {
+            $training = $model->getTrainingById($id);
+        }
+
+        if (!$training || !$training['registration_available']) {
+            $this->redirect('home');
+        }
 
         $form_fields = $model->getFormFieldsByProgramId($id);
         $sections = [];
@@ -136,7 +161,15 @@ class TrainingController extends BaseController {
 
         try {
             $user_data_json = json_encode($user_data);
-            $result = $model->submitRegistration($program_id, $user_data_json);
+
+            // Detect if this is an event or training based on the ID or a hidden field
+            // Since the user is redirected to /trainings/register, we might need a hint.
+            // For now, let's assume we can check if it exists in events table.
+            $eventModel = new EventModel($this->db);
+            $isEvent = $eventModel->getEventById($program_id);
+            $regType = $isEvent ? 'event' : 'training';
+
+            $result = $model->submitRegistration($program_id, $user_data_json, $regType);
 
             if ($result) {
                 // Trigger Admin Notification
