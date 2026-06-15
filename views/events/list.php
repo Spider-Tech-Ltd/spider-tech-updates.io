@@ -478,7 +478,7 @@ if (!empty($highlights)):
                     <?php if ($vType === 'youtube'): ?>
                         <iframe src="<?= $embedUrl ?>" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     <?php elseif ($vType === 'instagram'): ?>
-                        <iframe src="<?= $embedUrl ?>" class="instagram-media" allowtransparency="true" frameborder="0" scrolling="no" style="background:white; margin:0; width:100%; height:100%; min-height:450px;"></iframe>
+                        <iframe src="<?= $embedUrl ?>" class="instagram-media" allowtransparency="true" frameborder="0" scrolling="no" style="background:white; margin:0; width:100%; height:100%; min-height:540px;"></iframe>
                     <?php elseif ($vType === 'facebook'): ?>
                         <iframe src="<?= $embedUrl ?>" width="100%" height="100%" style="border:none;overflow:hidden;min-height:500px;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
                     <?php endif; ?>
@@ -490,10 +490,16 @@ if (!empty($highlights)):
                     <h2 class="section-title mb-4">Event <span>Recap</span></h2>
                     <h4 class="fw-700 mb-3"><?= htmlspecialchars($mainHighlight['event_title']) ?></h4>
                     <p class="text-muted mb-4"><?= strip_tags(stripslashes($mainHighlight['event_content'])) ?></p>
-                    <a href="<?= BASE_URL ?>/events/detail?id=<?= $mainHighlight['event_id'] ?>" class="cta-button">
-                        View Full Gallery
-                        <span class="material-symbols-outlined">collections</span>
-                    </a>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="<?= BASE_URL ?>/events/detail?id=<?= $mainHighlight['event_id'] ?>" class="cta-button">
+                            View Details
+                            <span class="material-symbols-outlined">collections</span>
+                        </a>
+                        <a href="<?= htmlspecialchars($vUrl) ?>" target="_blank" class="cta-button cta-button-outline text-dark border-dark">
+                            View on <?= ucfirst($vType) ?>
+                            <span class="material-symbols-outlined">open_in_new</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
