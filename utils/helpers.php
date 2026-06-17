@@ -77,7 +77,8 @@ function getYouTubeEmbedUrl($url) {
         $video_id = $match[1];
     }
     // Autoplay requires mute=1 to work in most browsers without user interaction
-    return $video_id ? "https://www.youtube.com/embed/{$video_id}?autoplay=1&mute=1&loop=1&playlist={$video_id}&rel=0" : $url;
+    // controls=1 (default) ensures the seek bar and pause/play buttons are visible
+    return $video_id ? "https://www.youtube.com/embed/{$video_id}?autoplay=1&mute=1&loop=1&playlist={$video_id}&rel=0&controls=1" : $url;
 }
 
 /**

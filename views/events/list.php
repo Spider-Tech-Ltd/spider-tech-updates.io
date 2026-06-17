@@ -405,16 +405,13 @@
     .video-container {
         position: relative;
         width: 100%;
+        aspect-ratio: 16 / 9;
         border-radius: 30px;
         box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
         background: #000;
         transition: transform 0.4s ease;
         overflow: hidden;
     }
-
-    .video-container.ratio-youtube { aspect-ratio: 16 / 9; }
-    .video-container.ratio-instagram { aspect-ratio: 4 / 5; min-height: 500px; max-height: 650px; }
-    .video-container.ratio-facebook { aspect-ratio: 16 / 9; min-height: 400px; }
 
     .video-container::before {
         content: 'PREVIEW';
@@ -446,13 +443,7 @@
         height: 100%;
         border: 0;
         display: block;
-    }
-
-    /* Instagram specific centering/scaling for Reels */
-    .video-container.ratio-instagram iframe {
-        height: 160%;
-        top: 50%;
-        transform: translateY(-45%);
+        object-fit: contain;
     }
 
     .highlight-content {
@@ -503,7 +494,7 @@ if (!empty($highlights)):
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-7">
-                <div class="video-container ratio-<?= $vType ?> animate__animated animate__fadeInLeft shadow-lg">
+                <div class="video-container animate__animated animate__fadeInLeft shadow-lg">
                     <?php if ($vType === 'youtube'): ?>
                         <iframe src="<?= $embedUrl ?>" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     <?php elseif ($vType === 'instagram'): ?>
