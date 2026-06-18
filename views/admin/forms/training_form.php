@@ -27,6 +27,22 @@
                     </div>
 
                     <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label-custom">Start Date</label>
+                            <input type="date" name="start_date" class="form-control-custom" value="<?= $item['start_date'] ?? '' ?>">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-custom">End Date</label>
+                            <input type="date" name="end_date" class="form-control-custom" value="<?= $item['end_date'] ?? '' ?>">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label-custom">Training Time</label>
+                        <input type="text" name="training_time" class="form-control-custom" value="<?= $item['training_time'] ?? '' ?>" placeholder="e.g. 10:00 AM - 2:00 PM">
+                    </div>
+
+                    <div class="row mb-4">
                         <div class="col-md-4">
                             <label class="form-label-custom">Icon Class</label>
                             <input type="text" name="training_icon" class="form-control-custom" value="<?= $item['training_icon'] ?? 'fas fa-graduation-cap' ?>" required>
@@ -49,9 +65,15 @@
                         </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label-custom">Display Order</label>
-                        <input type="number" name="sort_order" class="form-control-custom" value="<?= $item['sort_order'] ?? 0 ?>" min="0">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label-custom">Certified Candidates</label>
+                            <input type="number" name="certified_count" class="form-control-custom" value="<?= $item['certified_count'] ?? 0 ?>" min="0">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-custom">Display Order</label>
+                            <input type="number" name="sort_order" class="form-control-custom" value="<?= $item['sort_order'] ?? 0 ?>" min="0">
+                        </div>
                     </div>
 
                     <div class="mb-4">

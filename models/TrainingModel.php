@@ -24,6 +24,13 @@ class TrainingModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getEnrollmentCount($program_id) {
+        $query = "SELECT COUNT(*) FROM `training_registrations` WHERE program_id = ? AND registration_type = 'training'";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$program_id]);
+        return (int)$stmt->fetchColumn();
+    }
+
     public function getFormFieldsByProgramId($program_id) {
         $query = "SELECT * FROM `training_form_fields` WHERE program_id = ? ORDER BY field_section ASC, field_order ASC";
         $stmt = $this->conn->prepare($query);

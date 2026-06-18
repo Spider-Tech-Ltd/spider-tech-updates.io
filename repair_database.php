@@ -33,6 +33,33 @@ try {
             }
         }
 
+        // Add start_date, end_date, certified_count for trainings
+        if ($table === 'trainings_tb') {
+            $stmt = $db->query("SHOW COLUMNS FROM $table LIKE 'start_date'");
+            if ($stmt->rowCount() == 0) {
+                $db->exec("ALTER TABLE $table ADD COLUMN start_date DATE DEFAULT NULL");
+                echo "<span style='color:blue;'>[Added start_date]</span> ";
+            }
+
+            $stmt = $db->query("SHOW COLUMNS FROM $table LIKE 'end_date'");
+            if ($stmt->rowCount() == 0) {
+                $db->exec("ALTER TABLE $table ADD COLUMN end_date DATE DEFAULT NULL");
+                echo "<span style='color:blue;'>[Added end_date]</span> ";
+            }
+
+            $stmt = $db->query("SHOW COLUMNS FROM $table LIKE 'certified_count'");
+            if ($stmt->rowCount() == 0) {
+                $db->exec("ALTER TABLE $table ADD COLUMN certified_count INT DEFAULT 0");
+                echo "<span style='color:blue;'>[Added certified_count]</span> ";
+            }
+
+            $stmt = $db->query("SHOW COLUMNS FROM $table LIKE 'training_time'");
+            if ($stmt->rowCount() == 0) {
+                $db->exec("ALTER TABLE $table ADD COLUMN training_time VARCHAR(100) DEFAULT NULL");
+                echo "<span style='color:blue;'>[Added training_time]</span> ";
+            }
+        }
+
         // Add video_url and video_type for events
         if ($table === 'events') {
             $stmt = $db->query("SHOW COLUMNS FROM $table LIKE 'video_url'");
