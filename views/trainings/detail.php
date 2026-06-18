@@ -295,14 +295,18 @@
                                         $start = new DateTime($training['start_date']);
                                         $end = new DateTime($training['end_date']);
                                         $interval = $start->diff($end);
-                                        $weeks = floor($interval->days / 7);
-                                        $remaining_days = $interval->days % 7;
+                                        $days = $interval->days + 1; // Include both start and end day
+
+                                        $weeks = floor($days / 7);
+                                        $remaining_days = $days % 7;
 
                                         $duration = "";
                                         if ($weeks > 0) $duration .= $weeks . " " . ($weeks == 1 ? "Week" : "Weeks");
                                         if ($remaining_days > 0) $duration .= ($duration ? ", " : "") . $remaining_days . " " . ($remaining_days == 1 ? "Day" : "Days");
 
-                                        echo htmlspecialchars($duration ?: "TBD");
+                                        echo htmlspecialchars($duration ?: "1 Day");
+                                    } elseif (!empty($training['start_date'])) {
+                                        echo "1 Day";
                                     } else {
                                         echo "TBD";
                                     }
