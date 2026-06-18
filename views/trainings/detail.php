@@ -143,6 +143,7 @@
         gap: 12px;
         margin-bottom: 18px;
         font-size: 0.95rem;
+        color: #374151;
     }
 
     .info-item .material-symbols-outlined {
