@@ -265,24 +265,61 @@
                         <h5 class="sidebar-title">Course Information</h5>
                         <ul class="info-list">
                             <li class="info-item">
-                                <span class="material-symbols-outlined">schedule</span>
-                                <div><strong>Duration:</strong> 24 Weeks</div>
+                                <span class="material-symbols-outlined">calendar_today</span>
+                                <div>
+                                    <strong>Schedule:</strong>
+                                    <?php
+                                    if (!empty($training['start_date'])) {
+                                        echo date('M d, Y', strtotime($training['start_date']));
+                                        if (!empty($training['end_date'])) {
+                                            echo ' - ' . date('M d, Y', strtotime($training['end_date']));
+                                        }
+                                    } else {
+                                        echo "TBD";
+                                    }
+                                    ?>
+                                </div>
+                            </li>
+                            <?php if (!empty($training['training_time'])): ?>
+                            <li class="info-item">
+                                <span class="material-symbols-outlined">access_time</span>
+                                <div><strong>Time:</strong> <?= htmlspecialchars($training['training_time']) ?></div>
+                            </li>
+                            <?php endif; ?>
+                            <li class="info-item">
+                                <span class="material-symbols-outlined">hourglass_empty</span>
+                                <div>
+                                    <strong>Duration:</strong>
+                                    <?php
+                                    if (!empty($training['start_date']) && !empty($training['end_date'])) {
+                                        $start = new DateTime($training['start_date']);
+                                        $end = new DateTime($training['end_date']);
+                                        $interval = $start->diff($end);
+                                        $weeks = floor($interval->days / 7);
+                                        $remaining_days = $interval->days % 7;
+
+                                        $duration = "";
+                                        if ($weeks > 0) $duration .= $weeks . " " . ($weeks == 1 ? "Week" : "Weeks");
+                                        if ($remaining_days > 0) $duration .= ($duration ? ", " : "") . $remaining_days . " " . ($remaining_days == 1 ? "Day" : "Days");
+
+                                        echo htmlspecialchars($duration ?: "TBD");
+                                    } else {
+                                        echo "TBD";
+                                    }
+                                    ?>
+                                </div>
                             </li>
                             <li class="info-item">
                                 <span class="material-symbols-outlined">group</span>
-                                <div><strong>Enrolled:</strong> 41,000+ Students</div>
-                            </li>
-                            <li class="info-item">
-                                <span class="material-symbols-outlined">star</span>
-                                <div><strong>Rating:</strong> 4.9/5.0</div>
+                                <div><strong>Enrolled:</strong> <?= number_format($enrollment_count ?? 0) ?> Students</div>
                             </li>
                             <li class="info-item">
                                 <span class="material-symbols-outlined">verified</span>
-                                <div><strong>Certified:</strong> Yes, upon completion</div>
+                                <div><strong>Certified:</strong> <?= number_format($training['certified_count'] ?? 0) ?> Candidates</div>
                             </li>
                             <li class="info-item">
                                 <span class="material-symbols-outlined">language</span>
-                                <div><strong>Language:</strong> English</div>
+                                <div><strong>Language:</strong> English Only</div>
                             </li>
                         </ul>
                         <?php if ($training['registration_available']): ?>

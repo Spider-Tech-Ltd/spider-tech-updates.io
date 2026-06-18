@@ -234,7 +234,7 @@ class AdminModel
             'faq' => ['table' => 'faq_tb', 'pk' => 'faq_id', 'fields' => ['faq_question', 'faq_answer'], 'upload' => null],
             'testimonial' => ['table' => 'testimonials_tb', 'pk' => 'id', 'fields' => ['name', 'organization', 'title', 'testimonial'], 'upload' => 'image', 'path' => 'images/pictures/'],
             'event' => ['table' => 'events', 'pk' => 'event_id', 'fields' => ['event_title', 'event_content', 'event_detail', 'event_date', 'event_time', 'event_address', 'event_status', 'show_on_home', 'sort_order', 'registration_available', 'video_url', 'video_type'], 'upload' => 'event_img', 'path' => 'images/pictures/'],
-            'training' => ['table' => 'trainings_tb', 'pk' => 'id', 'fields' => ['training_name', 'training_description', 'training_details', 'training_icon', 'show_on_home', 'sort_order', 'registration_available'], 'upload' => 'training_image', 'path' => 'images/pictures/'],
+            'training' => ['table' => 'trainings_tb', 'pk' => 'id', 'fields' => ['training_name', 'training_description', 'training_details', 'training_icon', 'show_on_home', 'sort_order', 'registration_available', 'start_date', 'end_date', 'training_time', 'certified_count'], 'upload' => 'training_image', 'path' => 'images/pictures/'],
             'blog' => ['table' => 'blogs', 'pk' => 'uuid', 'fields' => ['category_id', 'title', 'slug', 'summary', 'content', 'status'], 'upload' => 'image_path', 'path' => 'images/blog/']
         ];
         if (!isset($allowedTypes[$type])) return false;

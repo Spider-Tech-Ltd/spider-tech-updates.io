@@ -12,8 +12,16 @@ class TrainingController extends BaseController {
     public function detail() {
         $id = $_GET['id'] ?? null;
         $model = new TrainingModel($this->db);
+        $training = $model->getTrainingById($id);
+
+        $enrollmentCount = 0;
+        if ($training) {
+            $enrollmentCount = $model->getEnrollmentCount($id);
+        }
+
         $data = [
-            'training' => $model->getTrainingById($id),
+            'training' => $training,
+            'enrollment_count' => $enrollmentCount,
             'contact' => $model->getContactDetails()
         ];
         $this->render("trainings/detail", $data);
