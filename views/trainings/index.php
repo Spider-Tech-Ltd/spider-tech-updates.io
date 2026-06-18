@@ -404,29 +404,14 @@
             if (!empty($training['training_icon']) && preg_match('/^[a-z0-9_]+$/i', $training['training_icon'])) {
               $iconName = $training['training_icon'];
             }
-            $imageSrc = '';
-            if (!empty($training['image_url'])) {
-              $imageSrc = $training['image_url'];
-            } elseif (!empty($training['training_image'])) {
-              $imageSrc = $training['training_image'];
-            }
-            if (!empty($imageSrc)) {
-              $imageSrc = str_replace('\\', '/', $imageSrc);
-              if (preg_match('#^https?://#i', $imageSrc)) {
-                $imageSrc = htmlspecialchars($imageSrc);
-              } else {
-                $imageSrc = BASE_URL . '/' . ltrim($imageSrc, './');
-              }
-            }
+            $imageSrc = resolvePath($training['image_url'] ?? $training['training_image'] ?? '');
             ?>
             <div class="col-lg-4 col-md-6 mb-4 d-flex">
               <div class="research-card">
-                <?php if (!empty($imageSrc)): ?>
-                  <div class="card-img-wrap">
-                    <img src="<?= htmlspecialchars($imageSrc) ?>" alt="<?= htmlspecialchars(strip_tags($training['training_name'])) ?>">
-                    <div class="card-category">[ <?= $is_featured ? 'Featured' : 'Program' ?> ]</div>
-                  </div>
-                <?php endif; ?>
+                <div class="card-img-wrap">
+                  <img src="<?= $imageSrc ?>" alt="<?= htmlspecialchars(strip_tags($training['training_name'])) ?>">
+                  <div class="card-category">[ <?= $is_featured ? 'Featured' : 'Program' ?> ]</div>
+                </div>
                 <div class="card-body-content">
                   <a href="<?= BASE_URL ?>/trainings/detail?id=<?= stripslashes($training['id']); ?>" class="text-decoration-none">
                     <h3><?= htmlspecialchars(strip_tags($training['training_name'])) ?></h3>

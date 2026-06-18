@@ -233,25 +233,8 @@
             <div class="row">
                 <div class="col-lg-8">
                     <div class="project_screen">
-                        <?php
-                        $detailImage = '';
-                        if (!empty($training['image_url'])) {
-                            $detailImage = $training['image_url'];
-                        } elseif (!empty($training['training_image'])) {
-                            $detailImage = $training['training_image'];
-                        }
-                        if (!empty($detailImage)) {
-                            $detailImage = str_replace('\\', '/', $detailImage);
-                            if (preg_match('#^https?://#i', $detailImage)) {
-                                $detailImage = htmlspecialchars($detailImage);
-                            } else {
-                                $detailImage = BASE_URL . '/' . ltrim($detailImage, './');
-                            }
-                        }
-                        ?>
-                        <?php if (!empty($detailImage)): ?>
-                            <img src="<?= $detailImage ?>" alt="Training" />
-                        <?php endif; ?>
+                        <?php $detailImage = resolvePath($training['image_url'] ?? $training['training_image'] ?? ''); ?>
+                        <img src="<?= $detailImage ?>" alt="Training" />
                     </div>
                     <div class="project_description">
                         <h3 class="mb-4">About this Program</h3>

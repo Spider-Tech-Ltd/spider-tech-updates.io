@@ -35,17 +35,24 @@ function resolvePath($path, $fallback = 'images/placeholder-banner.jpg') {
     // 2. Normalize markers
     $normalized = str_replace('\\', '/', $path);
 
-    // 3. Strip leading relative markers (../, ./) and slashes
+    // 3. Handle Absolute OS Paths (e.g. C:/xampp/htdocs/...)
+    // Extract part after ROOT_PATH if it exists within it
+    $rootPathNormalized = str_replace('\\', '/', ROOT_PATH);
+    if (stripos($normalized, $rootPathNormalized) !== false) {
+        $normalized = substr($normalized, strlen($rootPathNormalized));
+    }
+
+    // 4. Strip leading relative markers (../, ./) and slashes
     $cleanPath = preg_replace('#^([\./]+|/)+#', '', $normalized);
 
-    // 4. Check if it already starts with common folders - If so, trust it
-    if (preg_match('#^(images/|img/|uploads/)#i', $cleanPath)) {
+    // 5. Check if it already starts with common folders - If so, trust it
+    if (preg_match('#^(images/|img/|uploads/|assets/)#i', $cleanPath)) {
         return BASE_URL . '/' . $cleanPath;
     }
 
-    // 5. Filename-only fallback search (Legacy)
+    // 6. Filename-only fallback search (Legacy/Lost Assets)
     $filename = basename($normalized);
-    $searchDirs = ['images/pictures/', 'images/events/', 'images/blog/', 'img/', 'uploads/'];
+    $searchDirs = ['images/pictures/', 'images/events/', 'images/blog/', 'images/banners/', 'img/', 'uploads/', 'assets/img/'];
     foreach ($searchDirs as $dir) {
         $dirPath = ROOT_PATH . '/' . ltrim($dir, '/');
 
@@ -64,7 +71,7 @@ function resolvePath($path, $fallback = 'images/placeholder-banner.jpg') {
         }
     }
 
-    // 6. Final fallback: Prepend BASE_URL to the cleaned path
+    // 7. Final fallback: Prepend BASE_URL to the cleaned path
     return (!empty($cleanPath)) ? BASE_URL . '/' . $cleanPath : BASE_URL . '/' . ltrim($fallback, '/');
 }
 
