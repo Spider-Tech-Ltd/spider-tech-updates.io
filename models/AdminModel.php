@@ -283,6 +283,9 @@ class AdminModel
                     } elseif ($field === 'category_id' && $type === 'blog') {
                         $sets[] = "category_id = ?";
                         $values[] = (int)$data['category_id'];
+                    } elseif ($field === 'certified_count' && $type === 'training') {
+                        $sets[] = "certified_count = ?";
+                        $values[] = (int)($data['certified_count'] ?? 0);
                     } elseif (isset($data[$field])) {
                         $sets[] = "$field = ?";
                         $values[] = $data[$field];
@@ -330,6 +333,8 @@ class AdminModel
                         $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
                     } elseif ($field === 'category_id' && $type === 'blog') {
                         $values[] = (int)$data['category_id'];
+                    } elseif ($field === 'certified_count' && $type === 'training') {
+                        $values[] = (int)($data['certified_count'] ?? 0);
                     } else {
                         $values[] = $data[$field] ?? '';
                     }

@@ -433,9 +433,10 @@
                   </a>
                   <p><?= strip_tags($training['training_description']) ?></p>
                   
-                  <div style="display: flex; gap: 15px; margin-bottom: 20px; font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 1px;">
-                      <span style="display: flex; align-items: center; gap: 5px;"><span class="material-symbols-outlined" style="font-size: 16px; color: #f48221;">school</span> <?= isset($training['students_enrolled']) ? number_format($training['students_enrolled']) . '+' : '41K+' ?></span>
-                      <span style="display: flex; align-items: center; gap: 5px;"><span class="material-symbols-outlined" style="font-size: 16px; color: #f48221;">star</span> <?= isset($training['rating']) ? $training['rating'] : '4.9' ?></span>
+                  <div style="display: flex; gap: 15px; margin-bottom: 20px; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 1px;">
+                      <span style="display: flex; align-items: center; gap: 5px;"><span class="material-symbols-outlined" style="font-size: 16px; color: #f48221;">group</span> <?= number_format($training['enrollment_count'] ?? 0) ?> ENROLLED</span>
+                      <span style="display: flex; align-items: center; gap: 5px;"><span class="material-symbols-outlined" style="font-size: 16px; color: #f48221;">verified</span> <?= number_format($training['certified_count'] ?? 0) ?> CERTIFIED</span>
+                      <span style="display: flex; align-items: center; gap: 5px;"><span class="material-symbols-outlined" style="font-size: 16px; color: #f48221;">language</span> ENG</span>
                   </div>
 
                   <div class="d-flex align-items-center justify-content-between mt-auto">
