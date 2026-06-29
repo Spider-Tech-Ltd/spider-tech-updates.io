@@ -6,6 +6,13 @@
 ?>
 
 <style>
+    :root {
+        --primary-orange: #f48221;
+        --dark-bg: #111111;
+        --text-body: #374151;
+        --text-muted: #888888;
+    }
+
     /* Page Header High-Fidelity */
     .page-header {
         background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
@@ -195,18 +202,22 @@
     }
 </style>
 
-<!-- ====== Hero Section Start ====== -->
-<section class="training-hero">
-    <div class="hero-blob hero-blob-left"></div>
-    <div class="hero-blob hero-blob-right"></div>
-    <div class="container hero-inner">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <span class="hero-eyebrow-pill">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">school</span>
-                    Training Course
-                </span>
-                <h1 class="hero-title"><?= $training ? htmlspecialchars($training['training_name']) : 'Training Detail'; ?></h1>
+<!-- ====== Page Header ====== -->
+<section class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <?php
+                    $title = $training ? htmlspecialchars($training['training_name']) : 'Training Detail';
+                    $words = explode(' ', $title);
+                    if (count($words) > 1) {
+                        $lastWord = array_pop($words);
+                        $displayTitle = implode(' ', $words) . ' <span>' . $lastWord . '</span>';
+                    } else {
+                        $displayTitle = '<span>' . $title . '</span>';
+                    }
+                ?>
+                <h1 class="page-title"><?= $displayTitle; ?></h1>
 
                 <div class="breadcrumb-custom">
                     <div class="breadcrumb-item-custom">
@@ -225,7 +236,7 @@
         </div>
     </div>
 </section>
-<!-- ====== Hero Section End ====== -->
+<!-- ====== Page Header End ====== -->
 
 <section class="detail-section">
     <?php if ($training): ?>

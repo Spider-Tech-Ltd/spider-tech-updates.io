@@ -330,7 +330,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-title">Event <span>Insights</span></h1>
+                <h1 class="page-title"><?= htmlspecialchars(stripslashes($event['event_title'] ?? 'Event Detail')) ?></h1>
                 <div class="breadcrumb-custom">
                     <div class="breadcrumb-item-custom">
                         <a href="<?= BASE_URL ?>/">Home</a>
@@ -341,7 +341,7 @@
                     </div>
                     <div class="breadcrumb-separator"></div>
                     <div class="breadcrumb-item-custom active">
-                        Detail
+                        <?= htmlspecialchars(mb_strimwidth(stripslashes($event['event_title'] ?? 'Detail'), 0, 40, '…')) ?>
                     </div>
                 </div>
             </div>
@@ -367,12 +367,10 @@
                     </span>
                     <?= ucfirst(stripslashes($event['event_status'])) ?> Event
                 </span>
-                <img src="<?= resolvePath($event['event_img']); ?>" alt="<?= htmlspecialchars($event['event_title']) ?>">
+                <img src="<?= resolvePath($event['event_img']); ?>" alt="<?= htmlspecialchars($event['event_title']) ?>" onerror="this.src='<?= BASE_URL ?>/images/placeholder-banner.jpg'; this.onerror=null;">
             </div>
 
-            <div class="mb-5">
-                <h2 class="section-title" style="font-size: 3rem; margin-bottom: 2rem;"><?= stripslashes($event['event_title']) ?></h2>
-                
+            <div class="mb-4">
                 <div class="event-meta-grid">
                     <div class="meta-item">
                         <div class="meta-icon-wrap">
@@ -439,8 +437,8 @@
                 <div class="gallery-grid">
                     <?php foreach ($event_media as $media): ?>
                     <?php $mediaImg = resolvePath($media['event_pics_name']); ?>
-                    <a href="<?= $mediaImg; ?>" class="gallery-item popup-box" data-lightbox="event-gallery">
-                        <img src="<?= $mediaImg; ?>" alt="Gallery Image">
+                    <a href="<?= $mediaImg; ?>" class="gallery-item popup-box" data-lightbox="event-gallery" rel="lightbox[event-gallery]" title="<?= htmlspecialchars($event['event_title']) ?>">
+                        <img src="<?= $mediaImg; ?>" alt="Event gallery photo" loading="lazy" onerror="this.closest('a').style.display='none';">
                         <div class="gallery-overlay">
                             <span class="material-symbols-outlined" style="font-size: 32px;">zoom_in</span>
                         </div>

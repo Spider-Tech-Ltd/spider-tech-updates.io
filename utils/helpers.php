@@ -115,6 +115,6 @@ function getFacebookEmbedUrl($url) {
     // Use 1/0 for boolean params in Facebook plugins
     $params = $is_video ? "&autoplay=1&mute=1&show_captions=0" : "";
 
-    return "https://www.facebook.com/plugins/{$plugin}?href=" . urlencode($url) . "&show_text=true&width=500" . $params;
+    return "https://www.facebook.com/plugins/{$plugin}?href=" . urlencode($url) . "&show_text=false&width=500" . $params;
 }
 ?>

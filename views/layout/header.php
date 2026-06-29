@@ -13,8 +13,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Spider Tech</title>
+  <title><?= isset($og_title) ? htmlspecialchars($og_title) . ' — Spider Tech' : 'Spider Tech' ?></title>
   <link rel="shortcut icon" type="image/x-icon" href="<?= BASE_URL ?>/images/favicon.ico" />
+  <?php if (isset($og_title)): ?>
+  <!-- Open Graph / Social Sharing Meta Tags -->
+  <meta property="og:type"        content="article">
+  <meta property="og:site_name"   content="Spider Tech">
+  <meta property="og:title"       content="<?= htmlspecialchars($og_title) ?>">
+  <meta property="og:description" content="<?= htmlspecialchars($og_description ?? '') ?>">
+  <meta property="og:image"       content="<?= htmlspecialchars($og_image ?? '') ?>">
+  <meta property="og:url"         content="<?= htmlspecialchars($og_url ?? '') ?>">
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="<?= htmlspecialchars($og_title) ?>">
+  <meta name="twitter:description" content="<?= htmlspecialchars($og_description ?? '') ?>">
+  <meta name="twitter:image"       content="<?= htmlspecialchars($og_image ?? '') ?>">
+  <?php endif; ?>
   <link rel="stylesheet" href="<?= BASE_URL ?>/css/animate.css" />
   <link rel="stylesheet" href="https://unicons.iconscout.com/release/v3.0.6/css/line.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">

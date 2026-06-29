@@ -9,6 +9,10 @@
 </div>
 
 <div class="row justify-content-center" x-data="eventForm()">
+<?php
+    // Normalise video_type to lowercase so PHP selected attrs + Alpine model agree
+    $normalizedVideoType = strtolower($item['video_type'] ?? 'youtube');
+?>
     <div class="col-lg-8 col-xl-7">
         <div class="admin-card">
             <div class="card-body-custom">
@@ -72,9 +76,9 @@
                         <div class="col-md-4">
                             <label class="form-label-custom">Recap Type</label>
                             <select name="video_type" class="form-control-custom" x-model="videoType">
-                                <option value="youtube">YouTube Video</option>
-                                <option value="instagram">Instagram Post/Reel</option>
-                                <option value="facebook">Facebook Post/Video</option>
+                                <option value="youtube"   <?= $normalizedVideoType === 'youtube'   ? 'selected' : '' ?>>YouTube Video</option>
+                                <option value="instagram" <?= $normalizedVideoType === 'instagram' ? 'selected' : '' ?>>Instagram Post/Reel</option>
+                                <option value="facebook"  <?= $normalizedVideoType === 'facebook'  ? 'selected' : '' ?>>Facebook Post/Video</option>
                             </select>
                         </div>
                         <div class="col-md-8">
@@ -222,7 +226,7 @@
 function eventForm() {
     return {
         eventStatus: '<?= $item['event_status'] ?? 'Upcoming' ?>',
-        videoType: '<?= $item['video_type'] ?? 'youtube' ?>',
+        videoType: '<?= $normalizedVideoType ?>',
         shortUrl: '',
 
         get recapPlaceholder() {
