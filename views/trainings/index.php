@@ -447,7 +447,6 @@
                   <p><?= strip_tags($training['training_description']) ?></p>
                   
                   <div class="training-stats-row">
-                      <span class="training-stats-item"><span class="material-symbols-outlined">group</span> <?= number_format($training['enrollment_count'] ?? 0) ?> Enrolled</span>
                       <span class="training-stats-item"><span class="material-symbols-outlined">verified</span> <?= number_format($training['certified_count'] ?? 0) ?> Certified</span>
                       <span class="training-stats-item"><span class="material-symbols-outlined">language</span> ENG</span>
                   </div>

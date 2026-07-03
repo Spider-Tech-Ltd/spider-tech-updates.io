@@ -8,16 +8,14 @@ class TrainingModel {
 
     public function getAllTrainings() {
         try {
-            $query = "SELECT t.*,
-                      (SELECT COUNT(*) FROM training_registrations tr WHERE tr.program_id = t.id AND (tr.registration_type = 'training' OR tr.registration_type IS NULL OR tr.registration_type = '')) as enrollment_count
-                      FROM `trainings_tb` t
-                      WHERE t.`show_on_home` = 1
-                      ORDER BY t.sort_order ASC, t.id DESC";
+            $query = "SELECT * FROM `trainings_tb`
+                      WHERE `show_on_home` = 1
+                      ORDER BY sort_order ASC, id DESC";
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            return $this->conn->query("SELECT *, 0 as enrollment_count FROM `trainings_tb` ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
+            return $this->conn->query("SELECT * FROM `trainings_tb` ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
         }
     }
 
@@ -26,13 +24,6 @@ class TrainingModel {
         $stmt = $this->conn->prepare($query);
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    public function getEnrollmentCount($program_id) {
-        $query = "SELECT COUNT(*) FROM `training_registrations` WHERE program_id = ? AND (registration_type = 'training' OR registration_type IS NULL OR registration_type = '')";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute([$program_id]);
-        return (int)$stmt->fetchColumn();
     }
 
     public function getFormFieldsByProgramId($program_id) {
