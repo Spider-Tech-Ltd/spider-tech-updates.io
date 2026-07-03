@@ -42,27 +42,19 @@
                     </div>
 
                     <div class="row mb-4">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label class="form-label-custom">Status</label>
                             <select name="event_status" class="form-control-custom" required x-model="eventStatus">
                                 <option value="Upcoming" <?= (isset($item) && $item['event_status'] == 'Upcoming') ? 'selected' : '' ?>>Upcoming</option>
                                 <option value="Past" <?= (isset($item) && $item['event_status'] == 'Past') ? 'selected' : '' ?>>Past</option>
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label class="form-label-custom">Show on Home</label>
                             <label class="form-switch-custom mt-2">
                                 <input type="hidden" name="show_on_home" value="0">
                                 <input type="checkbox" name="show_on_home" value="1" <?= (!isset($item) || $item['show_on_home']) ? 'checked' : '' ?>>
                                 <span class="fs-08 text-muted">Feature on homepage</span>
-                            </label>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label-custom">Enable Registration</label>
-                            <label class="form-switch-custom mt-2">
-                                <input type="hidden" name="registration_available" value="0">
-                                <input type="checkbox" name="registration_available" value="1" <?= (isset($item) && $item['registration_available']) ? 'checked' : '' ?>>
-                                <span class="fs-08 text-muted">Allow enrollments</span>
                             </label>
                         </div>
                     </div>
@@ -193,28 +185,11 @@
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-center mt-5">
-                        <div>
-                            <?php if ($mode == 'edit'): ?>
-                                <button type="button" @click="generateShortUrl()" class="btn btn-outline-orange btn-sm rounded-pill px-3">
-                                    <span class="material-symbols-outlined align-middle fs-6">link</span> Generate Short URL
-                                </button>
-                                <template x-if="shortUrl">
-                                    <div class="mt-2 d-flex align-items-center gap-2 animate__animated animate__fadeIn">
-                                        <code class="bg-light p-1 px-2 rounded small border" x-text="shortUrl"></code>
-                                        <button type="button" @click="copyShortUrl()" class="btn btn-link p-0 text-orange">
-                                            <span class="material-symbols-outlined fs-6">content_copy</span>
-                                        </button>
-                                    </div>
-                                </template>
-                            <?php endif; ?>
-                        </div>
-                        <div class="d-flex gap-3">
-                            <a href="<?= BASE_URL ?>/admin/events" class="btn btn-light px-4">Cancel</a>
-                            <button type="submit" class="btn btn-primary-custom px-5">
-                                <?= ($mode == 'add') ? 'Create Event' : 'Save Changes' ?>
-                            </button>
-                        </div>
+                    <div class="d-flex justify-content-end gap-3 mt-5">
+                        <a href="<?= BASE_URL ?>/admin/events" class="btn btn-light px-4">Cancel</a>
+                        <button type="submit" class="btn btn-primary-custom px-5">
+                            <?= ($mode == 'add') ? 'Create Event' : 'Save Changes' ?>
+                        </button>
                     </div>
                 </form>
             </div>
@@ -227,7 +202,6 @@ function eventForm() {
     return {
         eventStatus: '<?= $item['event_status'] ?? 'Upcoming' ?>',
         videoType: '<?= $normalizedVideoType ?>',
-        shortUrl: '',
 
         get recapPlaceholder() {
             if (this.videoType === 'instagram') return 'https://www.instagram.com/p/CLP...';
@@ -239,22 +213,6 @@ function eventForm() {
             if (this.videoType === 'instagram') return 'Provide an Instagram post or reel link.';
             if (this.videoType === 'facebook') return 'Provide a Facebook post or video link.';
             return 'Provide a YouTube link to feature this event in the highlights section.';
-        },
-
-        generateShortUrl() {
-            const id = '<?= $item['event_id'] ?? '' ?>';
-            if (!id) {
-                showToast('Please save the event first to generate a short URL.', 'error');
-                return;
-            }
-            this.shortUrl = '<?= BASE_URL ?>/r/e/' + id;
-            showToast('Registration Short URL generated!');
-        },
-
-        copyShortUrl() {
-            navigator.clipboard.writeText(this.shortUrl).then(() => {
-                showToast('Copied to clipboard!');
-            });
         },
         selectedFiles: [],
         previews: [],

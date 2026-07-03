@@ -406,19 +406,7 @@
                 <?= stripslashes($event['event_detail']) ?>
             </article>
 
-            <?php if ($event['registration_available']): ?>
-            <div class="mt-5 p-5 bg-white border rounded-4 text-center">
-                <h3 class="mb-4" style="font-weight: 800; letter-spacing: -1px;">Join us at this session!</h3>
-                <a href="<?= BASE_URL ?>/trainings/register?id=<?= $event['event_id']; ?>&type=event" class="cta-button">
-                    Enroll Now
-                    <span class="material-symbols-outlined">how_to_reg</span>
-                </a>
-                <p class="text-muted mt-4 small">
-                    <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 16px;">info</span>
-                    #SpiderTechEmpowers - Limited slots available for this interactive event.
-                </p>
-            </div>
-            <?php elseif (strtolower(trim(stripslashes($event['event_status']))) === "upcoming"): ?>
+            <?php if (strtolower(trim(stripslashes($event['event_status']))) === "upcoming"): ?>
             <div class="mt-5 p-5 bg-white border rounded-4 text-center">
                 <h3 class="mb-4" style="font-weight: 800; letter-spacing: -1px;">Coming Soon!</h3>
                 <a href="<?= BASE_URL ?>/contact" class="cta-button cta-button-secondary">
