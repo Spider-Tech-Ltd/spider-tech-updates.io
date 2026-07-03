@@ -220,11 +220,37 @@ class AdminController extends AdminBaseController {
         $this->renderAdmin('forms/project_form', ['mode' => 'edit', 'item' => $project, 'services' => $services]);
     }
 
-    public function addEvent() { $this->renderAdmin('forms/event_form', ['mode' => 'add']); }
+    public function addEvent() { $this->renderAdmin('forms/event_form', ['mode' => 'add', 'media' => []]); }
     public function editEvent($id) {
         $adminModel = new AdminModel();
         $event = $adminModel->getById('events', 'event_id', $id);
-        $this->renderAdmin('forms/event_form', ['mode' => 'edit', 'item' => $event]);
+        $media = $adminModel->getEventMedia($id);
+        $this->renderAdmin('forms/event_form', ['mode' => 'edit', 'item' => $event, 'media' => $media]);
+    }
+
+    public function deleteEventMedia() {
+        header('Content-Type: application/json');
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403); exit;
+        }
+
+        $id = $_POST['id'] ?? null;
+        if (!$id) {
+            echo json_encode(['status' => 'error', 'message' => 'Missing media ID.']);
+            exit;
+        }
+
+        try {
+            $adminModel = new AdminModel();
+            if ($adminModel->deleteEventMedia($id)) {
+                echo json_encode(['status' => 'success', 'message' => 'Media deleted successfully.']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to delete media.']);
+            }
+        } catch (Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()]);
+        }
+        exit;
     }
 
     public function addTraining() { $this->renderAdmin('forms/training_form', ['mode' => 'add']); }

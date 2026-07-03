@@ -330,7 +330,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-title">Event <span>Insights</span></h1>
+                <h1 class="page-title"><?= htmlspecialchars(stripslashes($event['event_title'] ?? 'Event Detail')) ?></h1>
                 <div class="breadcrumb-custom">
                     <div class="breadcrumb-item-custom">
                         <a href="<?= BASE_URL ?>/">Home</a>
@@ -341,7 +341,7 @@
                     </div>
                     <div class="breadcrumb-separator"></div>
                     <div class="breadcrumb-item-custom active">
-                        Detail
+                        <?= htmlspecialchars(mb_strimwidth(stripslashes($event['event_title'] ?? 'Detail'), 0, 40, '…')) ?>
                     </div>
                 </div>
             </div>
@@ -367,12 +367,10 @@
                     </span>
                     <?= ucfirst(stripslashes($event['event_status'])) ?> Event
                 </span>
-                <img src="<?= BASE_URL . '/' . ltrim(substr($event['event_img'], 3), '/'); ?>" alt="<?= htmlspecialchars($event['event_title']) ?>">
+                <img src="<?= resolvePath($event['event_img']); ?>" alt="<?= htmlspecialchars($event['event_title']) ?>" onerror="this.src='<?= BASE_URL ?>/images/placeholder-banner.jpg'; this.onerror=null;">
             </div>
 
-            <div class="mb-5">
-                <h2 class="section-title" style="font-size: 3rem; margin-bottom: 2rem;"><?= stripslashes($event['event_title']) ?></h2>
-                
+            <div class="mb-4">
                 <div class="event-meta-grid">
                     <div class="meta-item">
                         <div class="meta-icon-wrap">
@@ -408,17 +406,25 @@
                 <?= stripslashes($event['event_detail']) ?>
             </article>
 
-            <?php if (strtolower(trim(stripslashes($event['event_status']))) === "upcoming"): ?>
+            <?php if ($event['registration_available']): ?>
             <div class="mt-5 p-5 bg-white border rounded-4 text-center">
                 <h3 class="mb-4" style="font-weight: 800; letter-spacing: -1px;">Join us at this session!</h3>
-                <a href="<?= BASE_URL ?>/trainings" class="cta-button">
-                    Secure Your Spot
+                <a href="<?= BASE_URL ?>/trainings/register?id=<?= $event['event_id']; ?>&type=event" class="cta-button">
+                    Enroll Now
                     <span class="material-symbols-outlined">how_to_reg</span>
                 </a>
                 <p class="text-muted mt-4 small">
                     <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 16px;">info</span>
                     #SpiderTechEmpowers - Limited slots available for this interactive event.
                 </p>
+            </div>
+            <?php elseif (strtolower(trim(stripslashes($event['event_status']))) === "upcoming"): ?>
+            <div class="mt-5 p-5 bg-white border rounded-4 text-center">
+                <h3 class="mb-4" style="font-weight: 800; letter-spacing: -1px;">Coming Soon!</h3>
+                <a href="<?= BASE_URL ?>/contact" class="cta-button cta-button-secondary">
+                    Inquire for Details
+                    <span class="material-symbols-outlined">mail</span>
+                </a>
             </div>
             <?php endif; ?>
 
@@ -430,8 +436,9 @@
                 </div>
                 <div class="gallery-grid">
                     <?php foreach ($event_media as $media): ?>
-                    <a href="<?= BASE_URL . '/' . ltrim(substr($media['event_pics_name'], 3), '/'); ?>" class="gallery-item popup-box" data-lightbox="event-gallery">
-                        <img src="<?= BASE_URL . '/' . ltrim(substr($media['event_pics_name'], 3), '/'); ?>" alt="Gallery Image">
+                    <?php $mediaImg = resolvePath($media['event_pics_name']); ?>
+                    <a href="<?= $mediaImg; ?>" class="gallery-item popup-box" data-lightbox="event-gallery" rel="lightbox[event-gallery]" title="<?= htmlspecialchars($event['event_title']) ?>">
+                        <img src="<?= $mediaImg; ?>" alt="Event gallery photo" loading="lazy" onerror="this.closest('a').style.display='none';">
                         <div class="gallery-overlay">
                             <span class="material-symbols-outlined" style="font-size: 32px;">zoom_in</span>
                         </div>

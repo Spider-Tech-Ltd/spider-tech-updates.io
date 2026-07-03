@@ -12,17 +12,50 @@ class TrainingController extends BaseController {
     public function detail() {
         $id = $_GET['id'] ?? null;
         $model = new TrainingModel($this->db);
+        $training = $model->getTrainingById($id);
+
+        $enrollmentCount = 0;
+        if ($training) {
+            $enrollmentCount = $model->getEnrollmentCount($id);
+        }
+
         $data = [
-            'training' => $model->getTrainingById($id),
+            'training' => $training,
+            'enrollment_count' => $enrollmentCount,
             'contact' => $model->getContactDetails()
         ];
         $this->render("trainings/detail", $data);
     }
 
+    public function registerShort($id) {
+        $_GET['id'] = $id;
+        $_GET['type'] = 'event';
+        $this->register();
+    }
+
     public function register() {
         $id = $_GET['id'] ?? null;
+        $type = $_GET['type'] ?? 'training';
         $model = new TrainingModel($this->db);
-        $training = $model->getTrainingById($id);
+
+        if ($type === 'event') {
+            $eventModel = new EventModel($this->db);
+            $event = $eventModel->getEventById($id);
+            if ($event) {
+                $training = [
+                    'id' => $event['event_id'],
+                    'training_name' => $event['event_title'],
+                    'training_description' => $event['event_content'],
+                    'registration_available' => $event['registration_available']
+                ];
+            }
+        } else {
+            $training = $model->getTrainingById($id);
+        }
+
+        if (!$training || !$training['registration_available']) {
+            $this->redirect('home');
+        }
 
         $form_fields = $model->getFormFieldsByProgramId($id);
         $sections = [];
@@ -35,6 +68,7 @@ class TrainingController extends BaseController {
             'training' => $training,
             'sections' => $sections,
             'program_id' => $id,
+            'registration_type' => $type,
             'contact' => $model->getContactDetails()
         ];
         $this->render("trainings/register", $data);
@@ -136,7 +170,11 @@ class TrainingController extends BaseController {
 
         try {
             $user_data_json = json_encode($user_data);
-            $result = $model->submitRegistration($program_id, $user_data_json);
+
+            // Use explicit registration type if provided, otherwise default to training
+            $regType = $_POST['registration_type'] ?? 'training';
+
+            $result = $model->submitRegistration($program_id, $user_data_json, $regType);
 
             if ($result) {
                 // Trigger Admin Notification

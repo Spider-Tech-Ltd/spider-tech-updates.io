@@ -70,9 +70,14 @@ class AdminModel
         $total = $stmt->fetchColumn();
         $totalPages = ceil($total / $limit);
 
-        $sql = "SELECT tr.*, t.training_name as program_name
+        $sql = "SELECT tr.*,
+                CASE
+                    WHEN tr.registration_type = 'event' THEN e.event_title
+                    ELSE t.training_name
+                END as program_name
                 FROM training_registrations tr
                 LEFT JOIN trainings_tb t ON tr.program_id = t.id
+                LEFT JOIN events e ON tr.program_id = e.event_id
                 $where
                 ORDER BY tr.created_at DESC LIMIT :limit OFFSET :offset";
 
@@ -172,6 +177,32 @@ class AdminModel
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getEventMedia($id)
+    {
+        $query = "SELECT * FROM `events_media` WHERE event_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([$id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function deleteEventMedia($id)
+    {
+        // First get the file path to delete it from disk
+        $stmt = $this->db->prepare("SELECT event_pics_name FROM events_media WHERE event_pics_id = ?");
+        $stmt->execute([$id]);
+        $media = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($media) {
+            $filePath = ROOT_PATH . '/' . $media['event_pics_name'];
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+            $stmt = $this->db->prepare("DELETE FROM events_media WHERE event_pics_id = ?");
+            return $stmt->execute([$id]);
+        }
+        return false;
+    }
+
     public function getPaginatedProjects($page = 1, $limit = 6)
     {
         $offset = ($page - 1) * $limit;
@@ -202,8 +233,8 @@ class AdminModel
             'banner' => ['table' => 'banners_tb', 'pk' => 'banner_id', 'fields' => ['banner_title'], 'upload' => 'banner_image', 'path' => 'images/banners/'],
             'faq' => ['table' => 'faq_tb', 'pk' => 'faq_id', 'fields' => ['faq_question', 'faq_answer'], 'upload' => null],
             'testimonial' => ['table' => 'testimonials_tb', 'pk' => 'id', 'fields' => ['name', 'organization', 'title', 'testimonial'], 'upload' => 'image', 'path' => 'images/pictures/'],
-            'event' => ['table' => 'events', 'pk' => 'event_id', 'fields' => ['event_title', 'event_content', 'event_detail', 'event_date', 'event_time', 'event_address', 'event_status', 'show_on_home', 'sort_order'], 'upload' => 'event_img', 'path' => 'images/pictures/'],
-            'training' => ['table' => 'trainings_tb', 'pk' => 'id', 'fields' => ['training_name', 'training_description', 'training_details', 'training_icon', 'show_on_home', 'sort_order'], 'upload' => 'training_image', 'path' => 'images/pictures/'],
+            'event' => ['table' => 'events', 'pk' => 'event_id', 'fields' => ['event_title', 'event_content', 'event_detail', 'event_date', 'event_time', 'event_address', 'event_status', 'show_on_home', 'sort_order', 'registration_available', 'video_url', 'video_type'], 'upload' => 'event_img', 'path' => 'images/pictures/'],
+            'training' => ['table' => 'trainings_tb', 'pk' => 'id', 'fields' => ['training_name', 'training_description', 'training_details', 'training_icon', 'show_on_home', 'sort_order', 'registration_available', 'start_date', 'end_date', 'training_time', 'certified_count'], 'upload' => 'training_image', 'path' => 'images/pictures/'],
             'blog' => ['table' => 'blogs', 'pk' => 'uuid', 'fields' => ['category_id', 'title', 'slug', 'summary', 'content', 'status'], 'upload' => 'image_path', 'path' => 'images/blog/']
         ];
         if (!isset($allowedTypes[$type])) return false;
@@ -218,7 +249,10 @@ class AdminModel
         // Handle File Upload
         if ($uploadField && isset($_FILES[$uploadField]) && $_FILES[$uploadField]['error'] === UPLOAD_ERR_OK) {
             $tmp_name = $_FILES[$uploadField]['tmp_name'];
-            $name = time() . '_' . basename($_FILES[$uploadField]['name']);
+            $ext = pathinfo($_FILES[$uploadField]['name'], PATHINFO_EXTENSION);
+            // Use a shorter filename to ensure it fits in VARCHAR(64) if not migrated
+            $name = time() . '_' . mt_rand(100, 999) . '.' . $ext;
+
             if (!is_dir(ROOT_PATH . '/' . $uploadPath)) {
                 mkdir(ROOT_PATH . '/' . $uploadPath, 0777, true);
             }
@@ -239,16 +273,19 @@ class AdminModel
                 $sets = [];
                 $values = [];
                 foreach ($fields as $field) {
-                    if ($field === 'show_on_home') {
-                        $sets[] = "show_on_home = ?";
+                    if ($field === 'show_on_home' || $field === 'registration_available') {
+                        $sets[] = "$field = ?";
                         // Safeguard checkbox state checking
-                        $values[] = (isset($data['show_on_home']) && $data['show_on_home']) ? 1 : 0;
+                        $values[] = (isset($data[$field]) && $data[$field]) ? 1 : 0;
                     } elseif ($field === 'sort_order') {
                         $sets[] = "sort_order = ?";
                         $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
                     } elseif ($field === 'category_id' && $type === 'blog') {
                         $sets[] = "category_id = ?";
                         $values[] = (int)$data['category_id'];
+                    } elseif ($field === 'certified_count' && $type === 'training') {
+                        $sets[] = "certified_count = ?";
+                        $values[] = (int)($data['certified_count'] ?? 0);
                     } elseif (isset($data[$field])) {
                         $sets[] = "$field = ?";
                         $values[] = $data[$field];
@@ -257,7 +294,15 @@ class AdminModel
                 $values[] = $id;
                 $setSql = implode(',', $sets);
                 $stmt = $this->db->prepare("UPDATE $table SET $setSql WHERE $pk = ?");
-                return $stmt->execute($values);
+                $result = $stmt->execute($values);
+
+                if ($result && $type === 'event' && isset($_FILES['event_gallery'])) {
+                    if (strtolower($data['event_status'] ?? '') === 'past') {
+                        $this->handleGalleryUpload($id, $_FILES['event_gallery']);
+                    }
+                }
+
+                return $result;
             } else {
                 // Duplicate Check for certain types
                 if ($type === 'service') {
@@ -282,22 +327,59 @@ class AdminModel
                 $fieldNames = implode(',', $fields);
                 $values = [];
                 foreach ($fields as $field) {
-                    if ($field === 'show_on_home') {
-                        $values[] = (isset($data['show_on_home']) && $data['show_on_home']) ? 1 : 0;
+                    if ($field === 'show_on_home' || $field === 'registration_available') {
+                        $values[] = (isset($data[$field]) && $data[$field]) ? 1 : 0;
                     } elseif ($field === 'sort_order') {
                         $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
                     } elseif ($field === 'category_id' && $type === 'blog') {
                         $values[] = (int)$data['category_id'];
+                    } elseif ($field === 'certified_count' && $type === 'training') {
+                        $values[] = (int)($data['certified_count'] ?? 0);
                     } else {
                         $values[] = $data[$field] ?? '';
                     }
                 }
                 $stmt = $this->db->prepare("INSERT INTO $table ($fieldNames) VALUES ($placeholders)");
-                return $stmt->execute($values);
+                $result = $stmt->execute($values);
+
+                if ($result && $type === 'event' && isset($_FILES['event_gallery'])) {
+                    if (strtolower($data['event_status'] ?? '') === 'past') {
+                        $newId = $this->db->lastInsertId();
+                        $this->handleGalleryUpload($newId, $_FILES['event_gallery']);
+                    }
+                }
+
+                return $result;
             }
         } catch (PDOException $e) {
             error_log("AdminModel::storeRecord error for $type: " . $e->getMessage());
             throw $e;
+        }
+    }
+
+    private function handleGalleryUpload($eventId, $files)
+    {
+        if (!isset($files['name']) || !is_array($files['name'])) return;
+
+        $uploadPath = 'images/pictures/';
+        if (!is_dir(ROOT_PATH . '/' . $uploadPath)) {
+            mkdir(ROOT_PATH . '/' . $uploadPath, 0777, true);
+        }
+
+        for ($i = 0; $i < count($files['name']); $i++) {
+            if ($files['error'][$i] === UPLOAD_ERR_OK) {
+                $tmp_name = $files['tmp_name'][$i];
+                $ext = pathinfo($files['name'][$i], PATHINFO_EXTENSION);
+                // Short unique name
+                $name = time() . '_' . $i . '_' . mt_rand(10, 99) . '.' . $ext;
+                $fullPath = ROOT_PATH . '/' . $uploadPath . $name;
+
+                if (move_uploaded_file($tmp_name, $fullPath)) {
+                    $filePath = $uploadPath . $name;
+                    $stmt = $this->db->prepare("INSERT INTO events_media (event_id, event_pics_name) VALUES (?, ?)");
+                    $stmt->execute([$eventId, $filePath]);
+                }
+            }
         }
     }
 

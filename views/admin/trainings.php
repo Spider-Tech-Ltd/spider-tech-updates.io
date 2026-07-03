@@ -26,13 +26,11 @@
                 <tbody>
                     <?php
                     foreach ($trainings as $training):
-                        $pic = $training['training_image'];
-                        $imagePath = (empty($pic)) ? BASE_URL . '/images/placeholder-banner.jpg' : ( (preg_match('#^https?://#i', $pic)) ? $pic : BASE_URL . '/' . ltrim($pic, './') );
                     ?>
                     <tr>
                         <td>
                             <div class="table-img-wrapper">
-                                <img src="<?= $imagePath ?>" alt="<?= htmlspecialchars($training['training_name']) ?>">
+                                <img src="<?= resolvePath($training['training_image']) ?>" alt="<?= htmlspecialchars($training['training_name']) ?>">
                             </div>
                         </td>
                         <td>

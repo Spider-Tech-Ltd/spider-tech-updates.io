@@ -49,6 +49,8 @@ $routes = [
     'faq' => ['GeneralController', 'faq'],
     'blog' => ['BlogController', 'index'],
     'blog/{slug}' => ['BlogController', 'detail'],
+    'e/{id}' => ['EventController', 'detail'],
+    'r/e/{id}' => ['TrainingController', 'registerShort'],
     // Password reset routes
     'forum/forgot-password' => ['PasswordResetController', 'forgotPassword'],
     'forum/verify-reset-code' => ['PasswordResetController', 'verifyResetCode'],
@@ -77,6 +79,7 @@ $routes = [
     'admin/members/toggle-status' => ['AdminController', 'toggleMemberStatus'],
     'admin/notifications' => ['AdminController', 'getNotifications'],
     'admin/notifications/mark-read' => ['AdminController', 'markNotificationRead'],
+    'admin/events/media/delete' => ['AdminController', 'deleteEventMedia'],
 
     // Module Specific Form Routes
     'admin/services/add' => ['AdminController', 'addService'],

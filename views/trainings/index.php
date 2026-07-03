@@ -121,7 +121,7 @@
 
     .training-hero {
       background: #ffffff;
-      padding: 90px 0 70px;
+      padding: 60px 0 40px;
     }
 
     .hero-eyebrow-pill {
@@ -136,7 +136,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
 
     .hero-title {
@@ -144,7 +144,7 @@
       font-size: clamp(2.7rem, 4vw, 4rem);
       font-weight: 800;
       line-height: 1.05;
-      margin-bottom: 1.2rem;
+      margin-bottom: 1rem;
       color: #111111;
     }
 
@@ -278,6 +278,34 @@
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
+        min-height: 5.1rem; /* Enforce uniform height so shorter description cards (like We Code) align perfectly */
+    }
+
+    /* Training stats layout & alignment */
+    .training-stats-row {
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 12px;
+        row-gap: 6px;
+        margin-bottom: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .training-stats-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
+    }
+
+    .training-stats-item .material-symbols-outlined {
+        font-size: 15px;
+        color: var(--primary-orange);
+        flex-shrink: 0;
     }
 
     .read-link {
@@ -404,43 +432,33 @@
             if (!empty($training['training_icon']) && preg_match('/^[a-z0-9_]+$/i', $training['training_icon'])) {
               $iconName = $training['training_icon'];
             }
-            $imageSrc = '';
-            if (!empty($training['image_url'])) {
-              $imageSrc = $training['image_url'];
-            } elseif (!empty($training['training_image'])) {
-              $imageSrc = $training['training_image'];
-            }
-            if (!empty($imageSrc)) {
-              $imageSrc = str_replace('\\', '/', $imageSrc);
-              if (preg_match('#^https?://#i', $imageSrc)) {
-                $imageSrc = htmlspecialchars($imageSrc);
-              } else {
-                $imageSrc = BASE_URL . '/' . ltrim($imageSrc, './');
-              }
-            }
+            $imageSrc = resolvePath($training['image_url'] ?? $training['training_image'] ?? '');
             ?>
             <div class="col-lg-4 col-md-6 mb-4 d-flex">
-              <a href="<?= BASE_URL ?>/trainings/detail?id=<?= stripslashes($training['id']); ?>" class="research-card">
-                <?php if (!empty($imageSrc)): ?>
-                  <div class="card-img-wrap">
-                    <img src="<?= htmlspecialchars($imageSrc) ?>" alt="<?= htmlspecialchars(strip_tags($training['training_name'])) ?>">
-                    <div class="card-category">[ <?= $is_featured ? 'Featured' : 'Program' ?> ]</div>
-                  </div>
-                <?php endif; ?>
+              <div class="research-card">
+                <div class="card-img-wrap">
+                  <img src="<?= $imageSrc ?>" alt="<?= htmlspecialchars(strip_tags($training['training_name'])) ?>">
+                  <div class="card-category">[ <?= $is_featured ? 'Featured' : 'Program' ?> ]</div>
+                </div>
                 <div class="card-body-content">
-                  <h3><?= htmlspecialchars(strip_tags($training['training_name'])) ?></h3>
+                  <a href="<?= BASE_URL ?>/trainings/detail?id=<?= stripslashes($training['id']); ?>" class="text-decoration-none">
+                    <h3><?= htmlspecialchars(strip_tags($training['training_name'])) ?></h3>
+                  </a>
                   <p><?= strip_tags($training['training_description']) ?></p>
                   
-                  <div style="display: flex; gap: 15px; margin-bottom: 20px; font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 1px;">
-                      <span style="display: flex; align-items: center; gap: 5px;"><span class="material-symbols-outlined" style="font-size: 16px; color: #f48221;">school</span> <?= isset($training['students_enrolled']) ? number_format($training['students_enrolled']) . '+' : '41K+' ?></span>
-                      <span style="display: flex; align-items: center; gap: 5px;"><span class="material-symbols-outlined" style="font-size: 16px; color: #f48221;">star</span> <?= isset($training['rating']) ? $training['rating'] : '4.9' ?></span>
+                  <div class="training-stats-row">
+                      <span class="training-stats-item"><span class="material-symbols-outlined">group</span> <?= number_format($training['enrollment_count'] ?? 0) ?> Enrolled</span>
+                      <span class="training-stats-item"><span class="material-symbols-outlined">verified</span> <?= number_format($training['certified_count'] ?? 0) ?> Certified</span>
+                      <span class="training-stats-item"><span class="material-symbols-outlined">language</span> ENG</span>
                   </div>
 
-                  <span class="read-link">
-                    View Details <i class="material-symbols-outlined">trending_flat</i>
-                  </span>
+                  <div class="d-flex align-items-center justify-content-between mt-auto">
+                    <a href="<?= BASE_URL ?>/trainings/detail?id=<?= stripslashes($training['id']); ?>" class="read-link">
+                      View Details <i class="material-symbols-outlined">trending_flat</i>
+                    </a>
+                  </div>
                 </div>
-              </a>
+              </div>
             </div>
           <?php endforeach; ?>
         <?php else: ?>

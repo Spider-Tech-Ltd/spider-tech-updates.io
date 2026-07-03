@@ -20,4 +20,101 @@ function cleanHTML($htmlValue)
   }, $clean);
   return $clean;
 }
+
+/**
+ * Robustly resolves image paths for both new and legacy assets.
+ * Handles absolute URLs, root-relative paths, and legacy filenames.
+ */
+function resolvePath($path, $fallback = 'images/placeholder-banner.jpg') {
+    $path = trim((string)($path ?? ''));
+    if (empty($path)) return BASE_URL . '/' . ltrim($fallback, '/');
+
+    // 1. Full URL check
+    if (filter_var($path, FILTER_VALIDATE_URL) || strpos($path, 'http') === 0) return $path;
+
+    // 2. Normalize markers
+    $normalized = str_replace('\\', '/', $path);
+
+    // 3. Handle Absolute OS Paths (e.g. C:/xampp/htdocs/...)
+    // Extract part after ROOT_PATH if it exists within it
+    $rootPathNormalized = str_replace('\\', '/', ROOT_PATH);
+    if (stripos($normalized, $rootPathNormalized) !== false) {
+        $normalized = substr($normalized, strlen($rootPathNormalized));
+    }
+
+    // 4. Strip leading relative markers (../, ./) and slashes
+    $cleanPath = preg_replace('#^([\./]+|/)+#', '', $normalized);
+
+    // 5. Check if it already starts with common folders - If so, trust it
+    if (preg_match('#^(images/|img/|uploads/|assets/)#i', $cleanPath)) {
+        return BASE_URL . '/' . $cleanPath;
+    }
+
+    // 6. Filename-only fallback search (Legacy/Lost Assets)
+    $filename = basename($normalized);
+    $searchDirs = ['images/pictures/', 'images/events/', 'images/blog/', 'images/banners/', 'img/', 'uploads/', 'assets/img/'];
+    foreach ($searchDirs as $dir) {
+        $dirPath = ROOT_PATH . '/' . ltrim($dir, '/');
+
+        // Exact match
+        if (file_exists($dirPath . $filename)) {
+            return BASE_URL . '/' . ltrim($dir, '/') . $filename;
+        }
+
+        // Truncation fallback: if name is 64 chars (common VARCHAR limit), search for prefix
+        if (strlen($filename) >= 60) {
+            $prefix = substr($filename, 0, 50);
+            $matches = glob($dirPath . $prefix . "*");
+            if ($matches && count($matches) > 0) {
+                return BASE_URL . '/' . ltrim($dir, '/') . basename($matches[0]);
+            }
+        }
+    }
+
+    // 7. Final fallback: Prepend BASE_URL to the cleaned path
+    return (!empty($cleanPath)) ? BASE_URL . '/' . $cleanPath : BASE_URL . '/' . ltrim($fallback, '/');
+}
+
+/**
+ * Extracts YouTube Video ID and returns an embed URL with autoplay enabled.
+ */
+function getYouTubeEmbedUrl($url) {
+    $video_id = '';
+    if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $url, $match)) {
+        $video_id = $match[1];
+    }
+    // Autoplay requires mute=1 to work in most browsers without user interaction
+    // controls=1 (default) ensures the seek bar and pause/play buttons are visible
+    return $video_id ? "https://www.youtube.com/embed/{$video_id}?autoplay=1&mute=1&loop=1&playlist={$video_id}&rel=0&controls=1" : $url;
+}
+
+/**
+ * Normalizes Instagram URLs to embed format.
+ */
+function getInstagramEmbedUrl($url) {
+    // Strip query parameters
+    $clean_url = strtok($url, '?');
+    $clean_url = rtrim($clean_url, '/');
+
+    // Ensure it's an embed URL
+    if (strpos($clean_url, '/embed') === false) {
+        $clean_url .= '/embed/';
+    }
+    return $clean_url;
+}
+
+/**
+ * Normalizes Facebook URLs to embed format.
+ */
+function getFacebookEmbedUrl($url) {
+    $clean_url = strtok($url, '?');
+
+    // Determine if it's a video or a post
+    $is_video = (strpos($url, '/videos/') !== false || strpos($url, '/watch/') !== false || strpos($url, 'fb.watch') !== false);
+    $plugin = $is_video ? 'video.php' : 'post.php';
+    // Use 1/0 for boolean params in Facebook plugins
+    $params = $is_video ? "&autoplay=1&mute=1&show_captions=0" : "";
+
+    return "https://www.facebook.com/plugins/{$plugin}?href=" . urlencode($url) . "&show_text=false&width=500" . $params;
+}
 ?>

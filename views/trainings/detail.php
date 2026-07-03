@@ -6,6 +6,13 @@
 ?>
 
 <style>
+    :root {
+        --primary-orange: #f48221;
+        --dark-bg: #111111;
+        --text-body: #374151;
+        --text-muted: #888888;
+    }
+
     /* Page Header High-Fidelity */
     .page-header {
         background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
@@ -143,6 +150,7 @@
         gap: 12px;
         margin-bottom: 18px;
         font-size: 0.95rem;
+        color: #374151;
     }
 
     .info-item .material-symbols-outlined {
@@ -194,18 +202,22 @@
     }
 </style>
 
-<!-- ====== Hero Section Start ====== -->
-<section class="training-hero">
-    <div class="hero-blob hero-blob-left"></div>
-    <div class="hero-blob hero-blob-right"></div>
-    <div class="container hero-inner">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <span class="hero-eyebrow-pill">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">school</span>
-                    Training Course
-                </span>
-                <h1 class="hero-title"><?= $training ? htmlspecialchars($training['training_name']) : 'Training Detail'; ?></h1>
+<!-- ====== Page Header ====== -->
+<section class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <?php
+                    $title = $training ? htmlspecialchars($training['training_name']) : 'Training Detail';
+                    $words = explode(' ', $title);
+                    if (count($words) > 1) {
+                        $lastWord = array_pop($words);
+                        $displayTitle = implode(' ', $words) . ' <span>' . $lastWord . '</span>';
+                    } else {
+                        $displayTitle = '<span>' . $title . '</span>';
+                    }
+                ?>
+                <h1 class="page-title"><?= $displayTitle; ?></h1>
 
                 <div class="breadcrumb-custom">
                     <div class="breadcrumb-item-custom">
@@ -224,7 +236,7 @@
         </div>
     </div>
 </section>
-<!-- ====== Hero Section End ====== -->
+<!-- ====== Page Header End ====== -->
 
 <section class="detail-section">
     <?php if ($training): ?>
@@ -232,25 +244,8 @@
             <div class="row">
                 <div class="col-lg-8">
                     <div class="project_screen">
-                        <?php
-                        $detailImage = '';
-                        if (!empty($training['image_url'])) {
-                            $detailImage = $training['image_url'];
-                        } elseif (!empty($training['training_image'])) {
-                            $detailImage = $training['training_image'];
-                        }
-                        if (!empty($detailImage)) {
-                            $detailImage = str_replace('\\', '/', $detailImage);
-                            if (preg_match('#^https?://#i', $detailImage)) {
-                                $detailImage = htmlspecialchars($detailImage);
-                            } else {
-                                $detailImage = BASE_URL . '/' . ltrim($detailImage, './');
-                            }
-                        }
-                        ?>
-                        <?php if (!empty($detailImage)): ?>
-                            <img src="<?= $detailImage ?>" alt="Training" />
-                        <?php endif; ?>
+                        <?php $detailImage = resolvePath($training['image_url'] ?? $training['training_image'] ?? ''); ?>
+                        <img src="<?= $detailImage ?>" alt="Training" />
                     </div>
                     <div class="project_description">
                         <h3 class="mb-4">About this Program</h3>
@@ -265,30 +260,78 @@
                         <h5 class="sidebar-title">Course Information</h5>
                         <ul class="info-list">
                             <li class="info-item">
-                                <span class="material-symbols-outlined">schedule</span>
-                                <div><strong>Duration:</strong> 24 Weeks</div>
+                                <span class="material-symbols-outlined">calendar_today</span>
+                                <div>
+                                    <strong>Schedule:</strong>
+                                    <?php
+                                    if (!empty($training['start_date'])) {
+                                        echo date('M d, Y', strtotime($training['start_date']));
+                                        if (!empty($training['end_date'])) {
+                                            echo ' - ' . date('M d, Y', strtotime($training['end_date']));
+                                        }
+                                    } else {
+                                        echo "TBD";
+                                    }
+                                    ?>
+                                </div>
+                            </li>
+                            <?php if (!empty($training['training_time'])): ?>
+                            <li class="info-item">
+                                <span class="material-symbols-outlined">access_time</span>
+                                <div><strong>Time:</strong> <?= htmlspecialchars($training['training_time']) ?></div>
+                            </li>
+                            <?php endif; ?>
+                            <li class="info-item">
+                                <span class="material-symbols-outlined">hourglass_empty</span>
+                                <div>
+                                    <strong>Duration:</strong>
+                                    <?php
+                                    if (!empty($training['start_date']) && !empty($training['end_date'])) {
+                                        $start = new DateTime($training['start_date']);
+                                        $end = new DateTime($training['end_date']);
+                                        $interval = $start->diff($end);
+                                        $days = $interval->days + 1; // Include both start and end day
+
+                                        $weeks = floor($days / 7);
+                                        $remaining_days = $days % 7;
+
+                                        $duration = "";
+                                        if ($weeks > 0) $duration .= $weeks . " " . ($weeks == 1 ? "Week" : "Weeks");
+                                        if ($remaining_days > 0) $duration .= ($duration ? ", " : "") . $remaining_days . " " . ($remaining_days == 1 ? "Day" : "Days");
+
+                                        echo htmlspecialchars($duration ?: "1 Day");
+                                    } elseif (!empty($training['start_date'])) {
+                                        echo "1 Day";
+                                    } else {
+                                        echo "TBD";
+                                    }
+                                    ?>
+                                </div>
                             </li>
                             <li class="info-item">
                                 <span class="material-symbols-outlined">group</span>
-                                <div><strong>Enrolled:</strong> 41,000+ Students</div>
-                            </li>
-                            <li class="info-item">
-                                <span class="material-symbols-outlined">star</span>
-                                <div><strong>Rating:</strong> 4.9/5.0</div>
+                                <div><strong>Enrolled:</strong> <?= number_format($enrollment_count ?? 0) ?> Students</div>
                             </li>
                             <li class="info-item">
                                 <span class="material-symbols-outlined">verified</span>
-                                <div><strong>Certified:</strong> Yes, upon completion</div>
+                                <div><strong>Certified:</strong> <?= number_format($training['certified_count'] ?? 0) ?> Candidates</div>
                             </li>
                             <li class="info-item">
                                 <span class="material-symbols-outlined">language</span>
-                                <div><strong>Language:</strong> English</div>
+                                <div><strong>Language:</strong> English Only</div>
                             </li>
                         </ul>
-                        <a href="<?= BASE_URL ?>/trainings/register?id=<?= $training['id']; ?>" class="register-btn-large">
-                            <span class="material-symbols-outlined">how_to_reg</span>
-                            Enroll Now
-                        </a>
+                        <?php if ($training['registration_available']): ?>
+                            <a href="<?= BASE_URL ?>/trainings/register?id=<?= $training['id']; ?>" class="register-btn-large">
+                                <span class="material-symbols-outlined">how_to_reg</span>
+                                Enroll Now
+                            </a>
+                        <?php else: ?>
+                            <div class="alert alert-light border text-center small py-3 rounded-4">
+                                <span class="material-symbols-outlined align-middle fs-5 text-muted">info</span>
+                                <span class="text-muted">Registration currently closed</span>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

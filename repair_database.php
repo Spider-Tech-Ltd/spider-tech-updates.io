@@ -24,7 +24,58 @@ try {
     foreach ($contentTables as $table => $pk) {
         echo "<li>Processing table: <strong>$table</strong>... ";
 
-        // 1. Add show_on_home
+        // 1. Add registration_available if table is events or trainings_tb
+        if ($table === 'events' || $table === 'trainings_tb') {
+            $stmt = $db->query("SHOW COLUMNS FROM $table LIKE 'registration_available'");
+            if ($stmt->rowCount() == 0) {
+                $db->exec("ALTER TABLE $table ADD COLUMN registration_available TINYINT(1) DEFAULT 0");
+                echo "<span style='color:blue;'>[Added registration_available]</span> ";
+            }
+        }
+
+        // Add start_date, end_date, certified_count for trainings
+        if ($table === 'trainings_tb') {
+            $stmt = $db->query("SHOW COLUMNS FROM $table LIKE 'start_date'");
+            if ($stmt->rowCount() == 0) {
+                $db->exec("ALTER TABLE $table ADD COLUMN start_date DATE DEFAULT NULL");
+                echo "<span style='color:blue;'>[Added start_date]</span> ";
+            }
+
+            $stmt = $db->query("SHOW COLUMNS FROM $table LIKE 'end_date'");
+            if ($stmt->rowCount() == 0) {
+                $db->exec("ALTER TABLE $table ADD COLUMN end_date DATE DEFAULT NULL");
+                echo "<span style='color:blue;'>[Added end_date]</span> ";
+            }
+
+            $stmt = $db->query("SHOW COLUMNS FROM $table LIKE 'certified_count'");
+            if ($stmt->rowCount() == 0) {
+                $db->exec("ALTER TABLE $table ADD COLUMN certified_count INT DEFAULT 0");
+                echo "<span style='color:blue;'>[Added certified_count]</span> ";
+            }
+
+            $stmt = $db->query("SHOW COLUMNS FROM $table LIKE 'training_time'");
+            if ($stmt->rowCount() == 0) {
+                $db->exec("ALTER TABLE $table ADD COLUMN training_time VARCHAR(100) DEFAULT NULL");
+                echo "<span style='color:blue;'>[Added training_time]</span> ";
+            }
+        }
+
+        // Add video_url and video_type for events
+        if ($table === 'events') {
+            $stmt = $db->query("SHOW COLUMNS FROM $table LIKE 'video_url'");
+            if ($stmt->rowCount() == 0) {
+                $db->exec("ALTER TABLE $table ADD COLUMN video_url VARCHAR(255) DEFAULT NULL");
+                echo "<span style='color:blue;'>[Added video_url]</span> ";
+            }
+
+            $stmt = $db->query("SHOW COLUMNS FROM $table LIKE 'video_type'");
+            if ($stmt->rowCount() == 0) {
+                $db->exec("ALTER TABLE $table ADD COLUMN video_type VARCHAR(20) DEFAULT 'youtube' AFTER video_url");
+                echo "<span style='color:blue;'>[Added video_type]</span> ";
+            }
+        }
+
+        // 2. Add show_on_home
         $stmt = $db->query("SHOW COLUMNS FROM $table LIKE 'show_on_home'");
         if ($stmt->rowCount() == 0) {
             $db->exec("ALTER TABLE $table ADD COLUMN show_on_home TINYINT(1) DEFAULT 1");
@@ -47,6 +98,7 @@ try {
     $db->exec("ALTER TABLE projects_tb MODIFY COLUMN project_pic VARCHAR(255) NOT NULL");
     $db->exec("ALTER TABLE services_tb MODIFY COLUMN service_icon VARCHAR(255) NOT NULL");
     $db->exec("ALTER TABLE events MODIFY COLUMN event_img VARCHAR(255) NOT NULL");
+    $db->exec("ALTER TABLE events_media MODIFY COLUMN event_pics_name VARCHAR(255) NOT NULL");
     $db->exec("ALTER TABLE trainings_tb MODIFY COLUMN training_image VARCHAR(255) NOT NULL");
     $db->exec("ALTER TABLE banners_tb MODIFY COLUMN banner_image VARCHAR(255) NOT NULL");
     $db->exec("ALTER TABLE admin_tb MODIFY COLUMN admin_password VARCHAR(255) NOT NULL");
@@ -57,6 +109,14 @@ try {
     if ($stmt->rowCount() == 0) {
         $db->exec("ALTER TABLE members ADD COLUMN status ENUM('Active', 'Suspended') DEFAULT 'Active' AFTER is_verified");
         echo "[Added status] ";
+    }
+    echo "OK</li>";
+
+    echo "<li>Upgrading registration system... ";
+    $stmt = $db->query("SHOW COLUMNS FROM training_registrations LIKE 'registration_type'");
+    if ($stmt->rowCount() == 0) {
+        $db->exec("ALTER TABLE training_registrations ADD COLUMN registration_type VARCHAR(20) DEFAULT 'training' AFTER program_id");
+        echo "[Added registration_type] ";
     }
     echo "OK</li>";
 

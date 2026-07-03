@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | Spider Tech Admin</title>
     <link rel="shortcut icon" type="image/x-icon" href="<?= BASE_URL ?>/images/favicon.ico" />
+  <link rel="stylesheet" href="<?= BASE_URL ?>/css/lightbox.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1" />
@@ -18,6 +19,7 @@
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <!-- CKEditor 5 for Rich Text Content -->
     <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
+    <script src="<?= BASE_URL ?>/js/lightbox.js"></script>
 </head>
 <body class="admin-body">
     <div class="admin-wrapper">
