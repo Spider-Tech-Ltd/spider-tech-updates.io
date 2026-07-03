@@ -27,31 +27,12 @@ class TrainingController extends BaseController {
         $this->render("trainings/detail", $data);
     }
 
-    public function registerShort($id) {
-        $_GET['id'] = $id;
-        $_GET['type'] = 'event';
-        $this->register();
-    }
-
     public function register() {
         $id = $_GET['id'] ?? null;
         $type = $_GET['type'] ?? 'training';
         $model = new TrainingModel($this->db);
 
-        if ($type === 'event') {
-            $eventModel = new EventModel($this->db);
-            $event = $eventModel->getEventById($id);
-            if ($event) {
-                $training = [
-                    'id' => $event['event_id'],
-                    'training_name' => $event['event_title'],
-                    'training_description' => $event['event_content'],
-                    'registration_available' => $event['registration_available']
-                ];
-            }
-        } else {
-            $training = $model->getTrainingById($id);
-        }
+        $training = $model->getTrainingById($id);
 
         if (!$training || !$training['registration_available']) {
             $this->redirect('home');
