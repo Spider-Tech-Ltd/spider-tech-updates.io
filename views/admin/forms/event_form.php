@@ -9,10 +9,10 @@
 </div>
 
 <div class="row justify-content-center" x-data="eventForm()">
-<?php
+    <?php
     // Normalise video_type to lowercase so PHP selected attrs + Alpine model agree
     $normalizedVideoType = strtolower($item['video_type'] ?? 'youtube');
-?>
+    ?>
     <div class="col-lg-8 col-xl-7">
         <div class="admin-card">
             <div class="card-body-custom">
@@ -57,14 +57,15 @@
                                 <span class="fs-08 text-muted">Feature on homepage</span>
                             </label>
                         </div>
-                        <div class="col-md-4">
+                        <!-- Disable enrollment input block on the events form. -->
+                        <!-- <div class="col-md-4">
                             <label class="form-label-custom">Enable Registration</label>
                             <label class="form-switch-custom mt-2">
                                 <input type="hidden" name="registration_available" value="0">
                                 <input type="checkbox" name="registration_available" value="1" <?= (isset($item) && $item['registration_available']) ? 'checked' : '' ?>>
                                 <span class="fs-08 text-muted">Allow enrollments</span>
                             </label>
-                        </div>
+                        </div> -->
                     </div>
 
                     <div class="mb-4">
@@ -76,9 +77,9 @@
                         <div class="col-md-4">
                             <label class="form-label-custom">Recap Type</label>
                             <select name="video_type" class="form-control-custom" x-model="videoType">
-                                <option value="youtube"   <?= $normalizedVideoType === 'youtube'   ? 'selected' : '' ?>>YouTube Video</option>
+                                <option value="youtube" <?= $normalizedVideoType === 'youtube'   ? 'selected' : '' ?>>YouTube Video</option>
                                 <option value="instagram" <?= $normalizedVideoType === 'instagram' ? 'selected' : '' ?>>Instagram Post/Reel</option>
-                                <option value="facebook"  <?= $normalizedVideoType === 'facebook'  ? 'selected' : '' ?>>Facebook Post/Video</option>
+                                <option value="facebook" <?= $normalizedVideoType === 'facebook'  ? 'selected' : '' ?>>Facebook Post/Video</option>
                             </select>
                         </div>
                         <div class="col-md-8">
@@ -125,11 +126,11 @@
                             <div class="mb-4">
                                 <label class="form-label-custom">Upload Images</label>
                                 <div class="upload-zone p-5 border-2 border-dashed rounded-4 text-center bg-white"
-                                     @click="$refs.galleryInput.click()"
-                                     @dragover.prevent="dragOver = true"
-                                     @dragleave.prevent="dragOver = false"
-                                     @drop.prevent="handleDrop($event)"
-                                     :class="{ 'border-primary bg-light': dragOver }">
+                                    @click="$refs.galleryInput.click()"
+                                    @dragover.prevent="dragOver = true"
+                                    @dragleave.prevent="dragOver = false"
+                                    @drop.prevent="handleDrop($event)"
+                                    :class="{ 'border-primary bg-light': dragOver }">
                                     <input type="file" x-ref="galleryInput" @change="handleFileSelect" class="d-none" multiple accept="image/*">
                                     <span class="material-symbols-outlined fs-1 text-primary mb-2">cloud_upload</span>
                                     <p class="mb-0 fw-600">Click or drag images here to upload</p>
@@ -155,9 +156,9 @@
                                                 <img :src="preview" class="card-img-top" style="height: 100px; object-fit: cover;">
                                                 <div class="position-absolute top-0 end-0 p-2">
                                                     <button type="button"
-                                                            @click="removePreview(index)"
-                                                            class="btn btn-danger btn-sm rounded-circle p-1 d-flex align-items-center justify-content-center shadow"
-                                                            style="width: 26px; height: 26px;">
+                                                        @click="removePreview(index)"
+                                                        class="btn btn-danger btn-sm rounded-circle p-1 d-flex align-items-center justify-content-center shadow"
+                                                        style="width: 26px; height: 26px;">
                                                         <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
                                                     </button>
                                                 </div>
@@ -179,9 +180,9 @@
                                                 </a>
                                                 <div class="position-absolute top-0 end-0 p-2">
                                                     <button type="button"
-                                                            onclick="deleteGalleryImage(<?= $m['event_pics_id'] ?>)"
-                                                            class="btn btn-danger btn-sm rounded-circle p-1 d-flex align-items-center justify-content-center shadow"
-                                                            style="width: 26px; height: 26px;">
+                                                        onclick="deleteGalleryImage(<?= $m['event_pics_id'] ?>)"
+                                                        class="btn btn-danger btn-sm rounded-circle p-1 d-flex align-items-center justify-content-center shadow"
+                                                        style="width: 26px; height: 26px;">
                                                         <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
                                                     </button>
                                                 </div>
@@ -223,158 +224,111 @@
 </div>
 
 <script>
-function eventForm() {
-    return {
-        eventStatus: '<?= $item['event_status'] ?? 'Upcoming' ?>',
-        videoType: '<?= $normalizedVideoType ?>',
-        shortUrl: '',
+    function eventForm() {
+        return {
+            eventStatus: '<?= $item['event_status'] ?? 'Upcoming' ?>',
+            videoType: '<?= $normalizedVideoType ?>',
+            shortUrl: '',
 
-        get recapPlaceholder() {
-            if (this.videoType === 'instagram') return 'https://www.instagram.com/p/CLP...';
-            if (this.videoType === 'facebook') return 'https://www.facebook.com/username/posts/...';
-            return 'https://www.youtube.com/watch?v=...';
-        },
+            get recapPlaceholder() {
+                if (this.videoType === 'instagram') return 'https://www.instagram.com/p/CLP...';
+                if (this.videoType === 'facebook') return 'https://www.facebook.com/username/posts/...';
+                return 'https://www.youtube.com/watch?v=...';
+            },
 
-        get recapHint() {
-            if (this.videoType === 'instagram') return 'Provide an Instagram post or reel link.';
-            if (this.videoType === 'facebook') return 'Provide a Facebook post or video link.';
-            return 'Provide a YouTube link to feature this event in the highlights section.';
-        },
+            get recapHint() {
+                if (this.videoType === 'instagram') return 'Provide an Instagram post or reel link.';
+                if (this.videoType === 'facebook') return 'Provide a Facebook post or video link.';
+                return 'Provide a YouTube link to feature this event in the highlights section.';
+            },
 
-        generateShortUrl() {
-            const id = '<?= $item['event_id'] ?? '' ?>';
-            if (!id) {
-                showToast('Please save the event first to generate a short URL.', 'error');
-                return;
-            }
-            this.shortUrl = '<?= BASE_URL ?>/r/e/' + id;
-            showToast('Registration Short URL generated!');
-        },
-
-        copyShortUrl() {
-            navigator.clipboard.writeText(this.shortUrl).then(() => {
-                showToast('Copied to clipboard!');
-            });
-        },
-        selectedFiles: [],
-        previews: [],
-        dragOver: false,
-
-        handleFileSelect(event) {
-            const files = Array.from(event.target.files);
-            this.addFiles(files);
-            event.target.value = '';
-        },
-
-        handleDrop(event) {
-            this.dragOver = false;
-            const files = Array.from(event.dataTransfer.files).filter(file => file.type.startsWith('image/'));
-            this.addFiles(files);
-        },
-
-        addFiles(files) {
-            files.forEach(file => {
-                this.selectedFiles.push(file);
-                this.previews.push(URL.createObjectURL(file));
-            });
-        },
-
-        removePreview(index) {
-            // Revoke object URL to free memory
-            URL.revokeObjectURL(this.previews[index]);
-            this.selectedFiles.splice(index, 1);
-            this.previews.splice(index, 1);
-        },
-
-        clearAllPreviews() {
-            this.previews.forEach(url => URL.revokeObjectURL(url));
-            this.selectedFiles = [];
-            this.previews = [];
-        },
-
-        async handleSubmit(event) {
-            // Re-use global submitForm logic but with our custom file handling
-            const form = event.target;
-            const formData = new FormData(form);
-
-            // Append our selected gallery files
-            this.selectedFiles.forEach((file, i) => {
-                formData.append('event_gallery[]', file);
-            });
-
-            // Use the global submitForm logic but we need to pass the enriched formData
-            // Since submitForm takes (event, type, callbackOrModal) and builds its own FormData,
-            // we'll have to either modify submitForm or replicate its core here.
-            // For now, let's replicate the core but use our formData.
-
-            const submitBtn = form.querySelector('button[type="submit"]');
-            if (form.dataset.submitting === 'true') return;
-
-            // Sync CKEditor data
-            if (typeof editors !== 'undefined') {
-                for (const name in editors) {
-                    const textarea = form.querySelector(`[name="${name}"]`);
-                    if (textarea) {
-                        textarea.value = editors[name].getData();
-                        formData.set(name, textarea.value);
-                    }
+            generateShortUrl() {
+                const id = '<?= $item['event_id'] ?? '' ?>';
+                if (!id) {
+                    showToast('Please save the event first to generate a short URL.', 'error');
+                    return;
                 }
-            }
+                this.shortUrl = '<?= BASE_URL ?>/r/e/' + id;
+                showToast('Registration Short URL generated!');
+            },
 
-            const originalBtnContent = submitBtn.innerHTML;
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processing...';
-            form.dataset.submitting = 'true';
+            copyShortUrl() {
+                navigator.clipboard.writeText(this.shortUrl).then(() => {
+                    showToast('Copied to clipboard!');
+                });
+            },
+            selectedFiles: [],
+            previews: [],
+            dragOver: false,
 
-            try {
-                const response = await fetch('<?= BASE_URL ?>/admin/store', {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: formData
+            handleFileSelect(event) {
+                const files = Array.from(event.target.files);
+                this.addFiles(files);
+                event.target.value = '';
+            },
+
+            handleDrop(event) {
+                this.dragOver = false;
+                const files = Array.from(event.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+                this.addFiles(files);
+            },
+
+            addFiles(files) {
+                files.forEach(file => {
+                    this.selectedFiles.push(file);
+                    this.previews.push(URL.createObjectURL(file));
+                });
+            },
+
+            removePreview(index) {
+                // Revoke object URL to free memory
+                URL.revokeObjectURL(this.previews[index]);
+                this.selectedFiles.splice(index, 1);
+                this.previews.splice(index, 1);
+            },
+
+            clearAllPreviews() {
+                this.previews.forEach(url => URL.revokeObjectURL(url));
+                this.selectedFiles = [];
+                this.previews = [];
+            },
+
+            async handleSubmit(event) {
+                // Re-use global submitForm logic but with our custom file handling
+                const form = event.target;
+                const formData = new FormData(form);
+
+                // Append our selected gallery files
+                this.selectedFiles.forEach((file, i) => {
+                    formData.append('event_gallery[]', file);
                 });
 
-                const data = await response.json();
-                if (data.status === 'success') {
-                    showToast(data.message);
-                    // Add timestamp to prevent caching when redirecting back
-                    setTimeout(() => window.location.href = '<?= BASE_URL ?>/admin/events?t=' + Date.now(), 1000);
-                } else {
-                    showToast(data.message, 'error');
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalBtnContent;
-                    delete form.dataset.submitting;
+                // Use the global submitForm logic but we need to pass the enriched formData
+                // Since submitForm takes (event, type, callbackOrModal) and builds its own FormData,
+                // we'll have to either modify submitForm or replicate its core here.
+                // For now, let's replicate the core but use our formData.
+
+                const submitBtn = form.querySelector('button[type="submit"]');
+                if (form.dataset.submitting === 'true') return;
+
+                // Sync CKEditor data
+                if (typeof editors !== 'undefined') {
+                    for (const name in editors) {
+                        const textarea = form.querySelector(`[name="${name}"]`);
+                        if (textarea) {
+                            textarea.value = editors[name].getData();
+                            formData.set(name, textarea.value);
+                        }
+                    }
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('An unexpected error occurred.', 'error');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalBtnContent;
-                delete form.dataset.submitting;
-            }
-        }
-    };
-}
 
-function eventRedirect() {
-    window.location.href = '<?= BASE_URL ?>/admin/events';
-}
+                const originalBtnContent = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processing...';
+                form.dataset.submitting = 'true';
 
-function deleteGalleryImage(mediaId) {
-    if (window.Alpine && Alpine.store('actionModal')) {
-        Alpine.store('actionModal').show({
-            id: mediaId,
-            title: 'Delete Gallery Image',
-            message: 'Are you sure you want to delete this image from the gallery? This action is permanent.',
-            confirmText: 'Yes, Delete',
-            variant: 'danger',
-            callback: async (id) => {
                 try {
-                    const formData = new FormData();
-                    formData.append('id', id);
-
-                    const response = await fetch('<?= BASE_URL ?>/admin/events/media/delete', {
+                    const response = await fetch('<?= BASE_URL ?>/admin/store', {
                         method: 'POST',
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest'
@@ -384,35 +338,84 @@ function deleteGalleryImage(mediaId) {
 
                     const data = await response.json();
                     if (data.status === 'success') {
-                        document.getElementById(`media-${id}`).remove();
                         showToast(data.message);
+                        // Add timestamp to prevent caching when redirecting back
+                        setTimeout(() => window.location.href = '<?= BASE_URL ?>/admin/events?t=' + Date.now(), 1000);
                     } else {
                         showToast(data.message, 'error');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnContent;
+                        delete form.dataset.submitting;
                     }
                 } catch (error) {
                     console.error('Error:', error);
                     showToast('An unexpected error occurred.', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnContent;
+                    delete form.dataset.submitting;
                 }
             }
-        });
-    } else {
-        // Fallback
-        if (confirm('Are you sure you want to delete this image?')) {
-            (async () => {
-                const formData = new FormData();
-                formData.append('id', mediaId);
-                const response = await fetch('<?= BASE_URL ?>/admin/events/media/delete', {
-                    method: 'POST',
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                    body: formData
-                });
-                const data = await response.json();
-                if (data.status === 'success') {
-                    document.getElementById(`media-${mediaId}`).remove();
-                    showToast(data.message);
+        };
+    }
+
+    function eventRedirect() {
+        window.location.href = '<?= BASE_URL ?>/admin/events';
+    }
+
+    function deleteGalleryImage(mediaId) {
+        if (window.Alpine && Alpine.store('actionModal')) {
+            Alpine.store('actionModal').show({
+                id: mediaId,
+                title: 'Delete Gallery Image',
+                message: 'Are you sure you want to delete this image from the gallery? This action is permanent.',
+                confirmText: 'Yes, Delete',
+                variant: 'danger',
+                callback: async (id) => {
+                    try {
+                        const formData = new FormData();
+                        formData.append('id', id);
+
+                        const response = await fetch('<?= BASE_URL ?>/admin/events/media/delete', {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: formData
+                        });
+
+                        const data = await response.json();
+                        if (data.status === 'success') {
+                            document.getElementById(`media-${id}`).remove();
+                            showToast(data.message);
+                        } else {
+                            showToast(data.message, 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showToast('An unexpected error occurred.', 'error');
+                    }
                 }
-            })();
+            });
+        } else {
+            // Fallback
+            if (confirm('Are you sure you want to delete this image?')) {
+                (async () => {
+                    const formData = new FormData();
+                    formData.append('id', mediaId);
+                    const response = await fetch('<?= BASE_URL ?>/admin/events/media/delete', {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: formData
+                    });
+                    const data = await response.json();
+                    if (data.status === 'success') {
+                        document.getElementById(`media-${mediaId}`).remove();
+                        showToast(data.message);
+                    }
+                })();
+            }
         }
     }
-}
 </script>
