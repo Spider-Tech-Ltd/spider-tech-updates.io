@@ -309,10 +309,6 @@
                                 </div>
                             </li>
                             <li class="info-item">
-                                <span class="material-symbols-outlined">group</span>
-                                <div><strong>Enrolled:</strong> <?= number_format($enrollment_count ?? 0) ?> Students</div>
-                            </li>
-                            <li class="info-item">
                                 <span class="material-symbols-outlined">verified</span>
                                 <div><strong>Certified:</strong> <?= number_format($training['certified_count'] ?? 0) ?> Candidates</div>
                             </li>

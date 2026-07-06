@@ -80,6 +80,12 @@
         padding: 120px 0;
     }
 
+    @media (max-width: 768px) {
+        .section-padding {
+            padding: 40px 0;
+        }
+    }
+
     .section-header {
         margin-bottom: 60px;
     }

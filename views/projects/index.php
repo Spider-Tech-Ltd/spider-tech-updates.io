@@ -273,6 +273,10 @@
         .page-header { padding: 120px 0 60px; }
         .premium-cta { padding: 60px 30px; }
     }
+
+    @media (max-width: 768px) {
+        .section-padding { padding: 40px 0; }
+    }
 </style>
 
 <!-- ====== Page Header ====== -->
