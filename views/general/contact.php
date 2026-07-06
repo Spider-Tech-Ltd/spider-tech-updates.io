@@ -400,6 +400,12 @@
         .section-padding {
             padding: 80px 0;
         }
+    }
+
+    @media (max-width: 768px) {
+        .section-padding {
+            padding: 40px 0;
+        }
 
         .contact-form-wrap {
             padding: 35px 28px;

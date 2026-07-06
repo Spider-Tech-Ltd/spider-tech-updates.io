@@ -206,6 +206,10 @@
         .section-padding { padding: 80px 0; }
         .page-header { padding: 120px 0 60px; }
     }
+
+    @media (max-width: 768px) {
+        .section-padding { padding: 40px 0; }
+    }
 </style>
 
 <!-- ====== Page Header ====== -->

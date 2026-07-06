@@ -223,6 +223,10 @@
         .cta-box { padding: 40px 30px; text-align: center; }
         .service-main-title { font-size: 2.2rem; }
     }
+
+    @media (max-width: 768px) {
+        .section-padding { padding: 40px 0; }
+    }
 </style>
 
 <!-- ====== Page Header ====== -->

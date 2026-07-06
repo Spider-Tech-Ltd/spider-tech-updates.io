@@ -253,6 +253,10 @@
             grid-template-columns: 1fr 1fr;
         }
     }
+
+    @media (max-width: 768px) {
+        .section-padding { padding: 40px 0; }
+    }
 </style>
 
 <!-- ====== Page Header ====== -->

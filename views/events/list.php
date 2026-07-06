@@ -102,6 +102,12 @@
         }
     }
 
+    @media (max-width: 768px) {
+        .section-padding {
+            padding: 40px 0;
+        }
+    }
+
     .section-padding {
         padding: 80px 0;
     }
