@@ -61,7 +61,7 @@
 
                     <div class="mb-4">
                         <label class="form-label-custom">Project Main Image</label>
-                        <input type="file" name="project_pic" class="form-control-custom" <?= ($mode == 'add') ? 'required' : '' ?>>
+                        <input type="file" name="project_pic" class="form-control-custom" accept="image/*" onchange="checkMainImageSize(this)" <?= ($mode == 'add') ? 'required' : '' ?>>
                         <?php if (isset($item['project_pic']) && !empty($item['project_pic'])): ?>
                             <div class="mt-2">
                                 <img src="<?= resolvePath($item['project_pic']) ?>" alt="" style="height: 100px; border-radius: 8px;">
@@ -168,6 +168,17 @@
 </div>
 
 <script>
+function checkMainImageSize(input) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const maxSizeBytes = 5 * 1024 * 1024; // 5MB
+        if (file.size > maxSizeBytes) {
+            showToast("Featured image is too large (max 5MB).", 'error');
+            input.value = ''; // clear file choice
+        }
+    }
+}
+
 function projectForm() {
     return {
         selectedFiles: [],
@@ -187,7 +198,12 @@ function projectForm() {
         },
 
         addFiles(files) {
+            const maxSizeBytes = 5 * 1024 * 1024; // 5MB
             files.forEach(file => {
+                if (file.size > maxSizeBytes) {
+                    showToast("File '" + file.name + "' is too large (max 5MB).", 'error');
+                    return;
+                }
                 this.selectedFiles.push(file);
                 this.previews.push(URL.createObjectURL(file));
             });
