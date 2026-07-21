@@ -97,7 +97,7 @@
 
                     <div class="mb-4">
                         <label class="form-label-custom">Event Featured Image</label>
-                        <input type="file" name="event_img" class="form-control-custom" accept="image/*">
+                        <input type="file" name="event_img" class="form-control-custom" accept="image/*" onchange="checkMainImageSize(this)">
                         <?php if (isset($item['event_img']) && !empty($item['event_img'])): ?>
                             <div class="mt-2">
                                 <img src="<?= resolvePath($item['event_img']) ?>" alt="" style="height: 100px; border-radius: 8px;">
@@ -198,6 +198,17 @@
 </div>
 
 <script>
+function checkMainImageSize(input) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const maxSizeBytes = 5 * 1024 * 1024; // 5MB
+        if (file.size > maxSizeBytes) {
+            showToast("Featured image is too large (max 5MB).", 'error');
+            input.value = ''; // clear file choice
+        }
+    }
+}
+
 function eventForm() {
     return {
         eventStatus: '<?= $item['event_status'] ?? 'Upcoming' ?>',
@@ -231,7 +242,12 @@ function eventForm() {
         },
 
         addFiles(files) {
+            const maxSizeBytes = 5 * 1024 * 1024; // 5MB
             files.forEach(file => {
+                if (file.size > maxSizeBytes) {
+                    showToast("File '" + file.name + "' is too large (max 5MB).", 'error');
+                    return;
+                }
                 this.selectedFiles.push(file);
                 this.previews.push(URL.createObjectURL(file));
             });
