@@ -34,11 +34,26 @@ try {
         echo " OK</li>";
     }
 
+    echo "<li>Ensuring projects_media table exists...";
+    $stmt = $db->query("SHOW TABLES LIKE 'projects_media'");
+    if ($stmt->rowCount() == 0) {
+        $db->exec("CREATE TABLE IF NOT EXISTS `projects_media` (
+          `project_pics_id` int NOT NULL AUTO_INCREMENT,
+          `project_id` int NOT NULL,
+          `project_pics_name` varchar(255) NOT NULL,
+          PRIMARY KEY (`project_pics_id`),
+          KEY `project_id` (`project_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;");
+        echo " [Created projects_media]";
+    }
+    echo " OK</li>";
+
     // Fix Truncation Issues (Expanding lengths to 255)
     echo "<li>Expanding column lengths to prevent path truncation...";
     $db->exec("ALTER TABLE projects_tb MODIFY COLUMN project_pic VARCHAR(255) NOT NULL");
     $db->exec("ALTER TABLE services_tb MODIFY COLUMN service_icon VARCHAR(255) NOT NULL");
     $db->exec("ALTER TABLE events MODIFY COLUMN event_img VARCHAR(255) NOT NULL");
+    $db->exec("ALTER TABLE projects_media MODIFY COLUMN project_pics_name VARCHAR(255) NOT NULL");
     $db->exec("ALTER TABLE trainings_tb MODIFY COLUMN training_image VARCHAR(255) NOT NULL");
     $db->exec("ALTER TABLE banners_tb MODIFY COLUMN banner_image VARCHAR(255) NOT NULL");
     $db->exec("ALTER TABLE admin_tb MODIFY COLUMN admin_password VARCHAR(255) NOT NULL");

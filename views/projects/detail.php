@@ -257,6 +257,72 @@
     @media (max-width: 768px) {
         .section-padding { padding: 40px 0; }
     }
+
+    /* Media Gallery Industrial Grid */
+    .media-gallery-section {
+        margin-top: 80px;
+        padding-top: 60px;
+        border-top: 1px solid rgba(0,0,0,0.06);
+        margin-bottom: 80px;
+    }
+
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+    }
+
+    .gallery-item {
+        position: relative;
+        aspect-ratio: 4/3;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .gallery-item:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+
+    .gallery-item:hover img {
+        transform: scale(1.1);
+    }
+
+    .gallery-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.2);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+    }
+
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+
+    .tag-eyebrow {
+        background: rgba(244, 130, 33, 0.1);
+        color: var(--primary-orange);
+        padding: 8px 18px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        display: inline-block;
+        margin-bottom: 1.5rem;
+    }
 </style>
 
 <!-- ====== Page Header ====== -->
@@ -337,6 +403,26 @@
                 <div class="project-narrative">
                     <?= stripslashes($project['project_description']); ?>
                 </div>
+
+                <?php if (!empty($project_media)): ?>
+                <div class="media-gallery-section">
+                    <div class="mb-5">
+                        <span class="tag-eyebrow">Visual Highlights</span>
+                        <h3 class="section-title">Project <span>Gallery</span></h3>
+                    </div>
+                    <div class="gallery-grid">
+                        <?php foreach ($project_media as $media): ?>
+                        <?php $mediaImg = resolvePath($media['project_pics_name']); ?>
+                        <a href="<?= $mediaImg; ?>" class="gallery-item popup-box" data-lightbox="project-gallery" rel="lightbox[project-gallery]" title="<?= htmlspecialchars($project['project_name']) ?>">
+                            <img src="<?= $mediaImg; ?>" alt="Project gallery photo" loading="lazy" onerror="this.closest('a').style.display='none';">
+                            <div class="gallery-overlay">
+                                <span class="material-symbols-outlined" style="font-size: 32px;">zoom_in</span>
+                            </div>
+                        </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
 
                 <!-- Bottom CTA -->
                 <div class="showcase-cta">

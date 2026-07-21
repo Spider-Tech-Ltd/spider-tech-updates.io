@@ -21,6 +21,7 @@ class ProjectController extends BaseController
         $homeModel = new HomeModel($this->db);
         $data = [
             'project' => $projectModel->getProjectById($id),
+            'project_media' => $projectModel->getProjectMedia($id),
             'contact' => $homeModel->getContactDetails()
         ];
         $this->render("projects/detail", $data);

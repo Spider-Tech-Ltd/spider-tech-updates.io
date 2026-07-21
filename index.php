@@ -79,6 +79,7 @@ $routes = [
     'admin/notifications' => ['AdminController', 'getNotifications'],
     'admin/notifications/mark-read' => ['AdminController', 'markNotificationRead'],
     'admin/events/media/delete' => ['AdminController', 'deleteEventMedia'],
+    'admin/projects/media/delete' => ['AdminController', 'deleteProjectMedia'],
 
     // Module Specific Form Routes
     'admin/services/add' => ['AdminController', 'addService'],
