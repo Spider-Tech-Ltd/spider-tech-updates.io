@@ -328,6 +328,21 @@ INSERT INTO `events_media` (`event_pics_id`, `event_id`, `event_pics_name`) VALU
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `projects_media`
+--
+
+DROP TABLE IF EXISTS `projects_media`;
+CREATE TABLE IF NOT EXISTS `projects_media` (
+  `project_pics_id` int NOT NULL AUTO_INCREMENT,
+  `project_id` int NOT NULL,
+  `project_pics_name` varchar(255) NOT NULL,
+  PRIMARY KEY (`project_pics_id`),
+  KEY `project_id` (`project_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `faq_tb`
 --
 

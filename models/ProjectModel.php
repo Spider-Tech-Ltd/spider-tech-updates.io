@@ -36,4 +36,12 @@ class ProjectModel
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    public function getProjectMedia($id)
+    {
+        $query = "SELECT * FROM `projects_media` WHERE project_id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

@@ -203,6 +203,32 @@ class AdminModel
         return false;
     }
 
+    public function getProjectMedia($id)
+    {
+        $query = "SELECT * FROM `projects_media` WHERE project_id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([$id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function deleteProjectMedia($id)
+    {
+        // First get the file path to delete it from disk
+        $stmt = $this->db->prepare("SELECT project_pics_name FROM projects_media WHERE project_pics_id = ?");
+        $stmt->execute([$id]);
+        $media = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($media) {
+            $filePath = ROOT_PATH . '/' . $media['project_pics_name'];
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+            $stmt = $this->db->prepare("DELETE FROM projects_media WHERE project_pics_id = ?");
+            return $stmt->execute([$id]);
+        }
+        return false;
+    }
+
     public function getPaginatedProjects($page = 1, $limit = 6)
     {
         $offset = ($page - 1) * $limit;
@@ -302,6 +328,10 @@ class AdminModel
                     }
                 }
 
+                if ($result && $type === 'project' && isset($_FILES['project_gallery'])) {
+                    $this->handleProjectGalleryUpload($id, $_FILES['project_gallery']);
+                }
+
                 return $result;
             } else {
                 // Duplicate Check for certain types
@@ -349,6 +379,11 @@ class AdminModel
                     }
                 }
 
+                if ($result && $type === 'project' && isset($_FILES['project_gallery'])) {
+                    $newId = $this->db->lastInsertId();
+                    $this->handleProjectGalleryUpload($newId, $_FILES['project_gallery']);
+                }
+
                 return $result;
             }
         } catch (PDOException $e) {
@@ -378,6 +413,32 @@ class AdminModel
                     $filePath = $uploadPath . $name;
                     $stmt = $this->db->prepare("INSERT INTO events_media (event_id, event_pics_name) VALUES (?, ?)");
                     $stmt->execute([$eventId, $filePath]);
+                }
+            }
+        }
+    }
+
+    private function handleProjectGalleryUpload($projectId, $files)
+    {
+        if (!isset($files['name']) || !is_array($files['name'])) return;
+
+        $uploadPath = 'images/pictures/';
+        if (!is_dir(ROOT_PATH . '/' . $uploadPath)) {
+            mkdir(ROOT_PATH . '/' . $uploadPath, 0777, true);
+        }
+
+        for ($i = 0; $i < count($files['name']); $i++) {
+            if ($files['error'][$i] === UPLOAD_ERR_OK) {
+                $tmp_name = $files['tmp_name'][$i];
+                $ext = pathinfo($files['name'][$i], PATHINFO_EXTENSION);
+                // Short unique name
+                $name = time() . '_' . $i . '_' . mt_rand(10, 99) . '.' . $ext;
+                $fullPath = ROOT_PATH . '/' . $uploadPath . $name;
+
+                if (move_uploaded_file($tmp_name, $fullPath)) {
+                    $filePath = $uploadPath . $name;
+                    $stmt = $this->db->prepare("INSERT INTO projects_media (project_id, project_pics_name) VALUES (?, ?)");
+                    $stmt->execute([$projectId, $filePath]);
                 }
             }
         }

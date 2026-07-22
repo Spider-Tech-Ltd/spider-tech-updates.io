@@ -211,13 +211,14 @@ class AdminController extends AdminBaseController {
     public function addProject() {
         $adminModel = new AdminModel();
         $services = $adminModel->getPaginated('services_tb', 1, 100)['data'];
-        $this->renderAdmin('forms/project_form', ['mode' => 'add', 'services' => $services]);
+        $this->renderAdmin('forms/project_form', ['mode' => 'add', 'services' => $services, 'media' => []]);
     }
     public function editProject($id) {
         $adminModel = new AdminModel();
         $project = $adminModel->getById('projects_tb', 'project_id', $id);
         $services = $adminModel->getPaginated('services_tb', 1, 100)['data'];
-        $this->renderAdmin('forms/project_form', ['mode' => 'edit', 'item' => $project, 'services' => $services]);
+        $media = $adminModel->getProjectMedia($id);
+        $this->renderAdmin('forms/project_form', ['mode' => 'edit', 'item' => $project, 'services' => $services, 'media' => $media]);
     }
 
     public function addEvent() { $this->renderAdmin('forms/event_form', ['mode' => 'add', 'media' => []]); }
@@ -243,6 +244,31 @@ class AdminController extends AdminBaseController {
         try {
             $adminModel = new AdminModel();
             if ($adminModel->deleteEventMedia($id)) {
+                echo json_encode(['status' => 'success', 'message' => 'Media deleted successfully.']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to delete media.']);
+            }
+        } catch (Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()]);
+        }
+        exit;
+    }
+
+    public function deleteProjectMedia() {
+        header('Content-Type: application/json');
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403); exit;
+        }
+
+        $id = $_POST['id'] ?? null;
+        if (!$id) {
+            echo json_encode(['status' => 'error', 'message' => 'Missing media ID.']);
+            exit;
+        }
+
+        try {
+            $adminModel = new AdminModel();
+            if ($adminModel->deleteProjectMedia($id)) {
                 echo json_encode(['status' => 'success', 'message' => 'Media deleted successfully.']);
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Failed to delete media.']);
