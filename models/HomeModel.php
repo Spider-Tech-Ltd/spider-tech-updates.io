@@ -106,6 +106,10 @@ class HomeModel {
         $unique = [];
         $filtered = [];
         foreach ($all as $t) {
+            // Clean quote strings and fix typos in testimonial text
+            $t['testimonial'] = str_replace('SpidersTech', 'SpiderTech', $t['testimonial']);
+            $t['testimonial'] = trim(stripslashes($t['testimonial']), " \"'\t\n\r\0\x0B");
+
             $name = trim($t['name']);
             if (!isset($unique[$name])) {
                 $unique[$name] = true;

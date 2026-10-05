@@ -24,7 +24,7 @@ try {
     if ($count == 0) {
         $seedSql = "INSERT INTO `banners_tb` (`banner_title`, `banner_image`) VALUES
             ('Give Wings to your <span>Business</span>', 'banner-1.jpg'),
-            ('Innovating the <span>Future of Tech</span>', 'banner-2.jpg'),
+            ('Innovating the <span>Feature of Tech</span>', 'banner-2.jpg'),
             ('Empowering <span>Digital Transformation</span>', 'banner-3.jpg')";
         $db->exec($seedSql);
         echo "Seeded initial banners.\n";

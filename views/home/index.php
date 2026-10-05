@@ -13,7 +13,7 @@ foreach ($banners as &$banner) {
                 $banner['banner_title'] = "Give Wings to your <span>Business</span>";
                 break;
             case 2:
-                $banner['banner_title'] = "Innovating the <span>Future of Tech</span>";
+                $banner['banner_title'] = "Innovating the <span>Feature of Tech</span>";
                 break;
             case 3:
                 $banner['banner_title'] = "Empowering <span>Digital Transformation</span>";
@@ -483,10 +483,18 @@ foreach ($banners as &$banner) {
         gap: 12px;
     }
 
-    /* Testimonials Slider - High Fidelity Refinement */
+    /* Testimonials Slider - Balanced Height & Word-Aware Truncation */
+    #testimonial-carousel .owl-stage {
+        display: flex;
+        align-items: stretch;
+    }
+    #testimonial-carousel .owl-item {
+        display: flex;
+        height: auto;
+    }
     .testimonial-slide-new {
         background: #fff;
-        padding: 35px;
+        padding: 28px 25px 22px 25px;
         border-radius: 20px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
         margin: 10px;
@@ -494,9 +502,10 @@ foreach ($banners as &$banner) {
         transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         position: relative;
         overflow: hidden;
-        height: 100%;
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
+        width: 100%;
     }
 
     .testimonial-slide-new:hover {
@@ -507,25 +516,21 @@ foreach ($banners as &$banner) {
 
     .quote-icon {
         position: absolute;
-        top: 20px;
+        top: 18px;
         right: 20px;
-        font-size: 2rem;
+        font-size: 1.8rem;
         color: rgba(244, 130, 33, 0.1);
     }
 
     .testimonial-text {
         font-family: 'Open Sans', sans-serif;
-        font-size: 0.95rem;
+        font-size: 0.92rem;
         line-height: 1.6;
         color: #555;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         font-style: italic;
         position: relative;
         z-index: 1;
-        display: -webkit-box;
-        -webkit-line-clamp: 4;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
         flex: 1;
     }
 
@@ -648,7 +653,7 @@ foreach ($banners as &$banner) {
                 <h1 class="hero-title" x-html="slides[activeSlide].banner_title"></h1>
 
                 <p class="hero-desc">
-                    We are team of passionate tech enthusiats committed to elavating your technological ambision to greater heights.
+                    We are a team of passionate tech enthusiasts committed to elevating your technological ambition to greater heights.
                 </p>
 
                 <div class="hero-btns">
@@ -838,14 +843,34 @@ foreach ($banners as &$banner) {
             <p class="section-subtitle">Trusted by industry leaders to deliver excellence and technical innovation.</p>
         </div>
         <div class="owl-carousel owl-theme" id="testimonial-carousel">
-            <?php foreach ($testimonials as $testimonial): ?>
+            <?php 
+            // Smart word-boundary truncation helper to avoid mid-word cuts or CSS line-clamp issues
+            if (!function_exists('truncateTestimonialWordAware')) {
+                function truncateTestimonialWordAware($text, $limit = 140) {
+                    $text = trim(stripslashes($text), " \"'\t\n\r\0\x0B");
+                    if (mb_strlen($text) <= $limit) {
+                        return $text;
+                    }
+                    $truncated = mb_substr($text, 0, $limit);
+                    $lastSpace = mb_strrpos($truncated, ' ');
+                    if ($lastSpace !== false) {
+                        $truncated = mb_substr($truncated, 0, $lastSpace);
+                    }
+                    $truncated = rtrim($truncated, ".,;:-");
+                    return $truncated . '...';
+                }
+            }
+
+            foreach ($testimonials as $testimonial): 
+                $cleanQuote = truncateTestimonialWordAware($testimonial['testimonial'], 140);
+            ?>
                 <div class="item">
                     <div class="testimonial-slide-new">
                         <div class="quote-icon">
                             <i class="fa-solid fa-quote-left"></i>
                         </div>
                         <p class="testimonial-text">
-                            "<?= stripslashes($testimonial['testimonial']); ?>"
+                            "<?= htmlspecialchars($cleanQuote); ?>"
                         </p>
                         <div class="client-info-v2">
                             <div class="client-avatar-v2">
