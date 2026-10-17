@@ -3,7 +3,7 @@
         <a href="<?= BASE_URL ?>/admin/events" class="btn-action"><span class="material-symbols-outlined">arrow_back</span></a>
         <div>
             <h1><?= ($mode == 'add') ? 'Add New' : 'Edit' ?> Event</h1>
-            <p>Organize and manage upcoming and past events.</p>
+            <p>Organize and manage upcoming, ongoing, and past events.</p>
         </div>
     </div>
 </div>
@@ -45,8 +45,9 @@
                         <div class="col-md-6">
                             <label class="form-label-custom">Status</label>
                             <select name="event_status" class="form-control-custom" required x-model="eventStatus">
-                                <option value="Upcoming" <?= (isset($item) && $item['event_status'] == 'Upcoming') ? 'selected' : '' ?>>Upcoming</option>
-                                <option value="Past" <?= (isset($item) && $item['event_status'] == 'Past') ? 'selected' : '' ?>>Past</option>
+                                <option value="Upcoming" <?= (isset($item) && strcasecmp($item['event_status'] ?? '', 'Upcoming') === 0) ? 'selected' : '' ?>>Upcoming</option>
+                                <option value="Ongoing" <?= (isset($item) && strcasecmp($item['event_status'] ?? '', 'Ongoing') === 0) ? 'selected' : '' ?>>Ongoing</option>
+                                <option value="Past" <?= (isset($item) && strcasecmp($item['event_status'] ?? '', 'Past') === 0) ? 'selected' : '' ?>>Past</option>
                             </select>
                         </div>
                         <div class="col-md-6">
@@ -105,14 +106,14 @@
                         <?php endif; ?>
                     </div>
 
-                    <!-- Gallery Section - Only for Past Events -->
-                    <div class="mb-4" x-show="eventStatus === 'Past'" x-transition x-cloak>
+                    <!-- Gallery Section - For Past and Ongoing Events -->
+                    <div class="mb-4" x-show="eventStatus === 'Past' || eventStatus === 'Ongoing'" x-transition x-cloak>
                         <div class="p-4 border rounded-4 bg-light">
                             <div class="d-flex align-items-center gap-2 mb-3">
                                 <span class="material-symbols-outlined text-primary">collections</span>
                                 <h5 class="mb-0 fw-700">Event Gallery</h5>
                             </div>
-                            <p class="text-muted fs-08 mb-4">Upload multiple images for this past event gallery.</p>
+                            <p class="text-muted fs-08 mb-4">Upload multiple images for this event gallery.</p>
 
                             <div class="mb-4">
                                 <label class="form-label-custom">Upload Images</label>
@@ -211,7 +212,7 @@ function checkMainImageSize(input) {
 
 function eventForm() {
     return {
-        eventStatus: '<?= $item['event_status'] ?? 'Upcoming' ?>',
+        eventStatus: '<?= ucfirst(strtolower(trim($item['event_status'] ?? 'Upcoming'))) ?>',
         videoType: '<?= $normalizedVideoType ?>',
 
         get recapPlaceholder() {

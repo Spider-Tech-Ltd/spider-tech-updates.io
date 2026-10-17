@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h1>Events Management</h1>
-            <p>Organize and manage upcoming and past events.</p>
+            <p>Organize and manage upcoming, ongoing, and past events.</p>
         </div>
         <a href="<?= BASE_URL ?>/admin/events/add" class="btn btn-primary-custom">
             <span class="material-symbols-outlined">add</span>
@@ -28,7 +28,14 @@
                     <?php
                     foreach ($events as $event):
                         $imagePath = resolvePath($event['event_img']);
-                        $statusClass = (strtolower($event['event_status']) == 'upcoming') ? 'badge-soft-green' : 'badge-soft-muted';
+                        $status = strtolower($event['event_status'] ?? '');
+                        if ($status === 'ongoing') {
+                            $statusClass = 'badge-soft-blue';
+                        } elseif ($status === 'upcoming') {
+                            $statusClass = 'badge-soft-green';
+                        } else {
+                            $statusClass = 'badge-soft-muted';
+                        }
                     ?>
                     <tr>
                         <td>

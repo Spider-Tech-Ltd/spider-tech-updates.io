@@ -13,6 +13,13 @@ class EventModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getOngoingEvents() {
+        $query = "SELECT * FROM `events` WHERE LOWER(`event_status`) = 'ongoing' ORDER BY event_date ASC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getUpcomingEvents() {
         $query = "SELECT * FROM `events` WHERE LOWER(`event_status`) = 'upcoming' ORDER BY event_date ASC";
         $stmt = $this->conn->prepare($query);

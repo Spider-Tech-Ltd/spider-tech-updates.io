@@ -179,13 +179,11 @@ require('secured-login.php');
 												<div class="col-md-5">
 													<select class="form-control input-height" name="event_status" required>
                                                         <?php
-                                                        
-                                                        echo
-                                                        '<option value="'.$event_row['event_status'].'" selected>'.$event_row['event_status'].'</option>
-                                                        <option value="Upcoming">Upcoming</option>
-                                                        <option value="Past">Past</option>';
-                                                        
+                                                        $currentStatus = strtolower(trim($event_row['event_status'] ?? ''));
                                                         ?>
+                                                        <option value="Upcoming" <?= $currentStatus === 'upcoming' ? 'selected' : '' ?>>Upcoming</option>
+                                                        <option value="Ongoing" <?= $currentStatus === 'ongoing' ? 'selected' : '' ?>>Ongoing</option>
+                                                        <option value="Past" <?= $currentStatus === 'past' ? 'selected' : '' ?>>Past</option>
                                                     </select>
                                                     <?php if(isset($_POST['edit_event'])) {echo $event_statusErr; }?>
 												</div>

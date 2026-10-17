@@ -768,7 +768,13 @@ foreach ($banners as &$banner) {
                                 </div>
                                 <div class="col-md-7">
                                     <div class="event-content-h">
-                                        <span class="event-tag">Upcoming Event</span>
+                                        <span class="event-tag">
+                                            <?php if (strtolower($event['event_status'] ?? '') === 'ongoing'): ?>
+                                                <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">sensors</span> Ongoing Event
+                                            <?php else: ?>
+                                                Upcoming Event
+                                            <?php endif; ?>
+                                        </span>
                                         <h3 class="service-title mb-4" style="font-size: 1.8rem;">
                                             <?= stripslashes($event['event_title']); ?>
                                         </h3>
@@ -787,7 +793,7 @@ foreach ($banners as &$banner) {
                                         </div>
                                         <div class="mt-auto">
                                             <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="btn-pill btn-orange">
-                                                Register Now
+                                                <?= (strtolower($event['event_status'] ?? '') === 'ongoing') ? 'View Event Details' : 'Register Now' ?>
                                                 <span class="material-symbols-outlined">arrow_forward</span>
                                             </a>
                                         </div>

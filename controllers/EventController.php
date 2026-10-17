@@ -3,11 +3,16 @@ class EventController extends BaseController {
     public function index() {
         $model = new EventModel($this->db);
         $data = [
+            'ongoing_events' => $model->getOngoingEvents(),
             'upcoming_events' => $model->getUpcomingEvents(),
             'past_events' => $model->getPastEvents(),
             'contact' => $model->getContactDetails()
         ];
         $this->render("events/list", $data);
+    }
+
+    public function ongoing() {
+        $this->redirect('events');
     }
 
     public function upcoming() {

@@ -79,14 +79,25 @@ class HomeModel {
         }
     }
 
-    public function getUpcomingEvents() {
+    public function getOngoingEvents() {
         try {
-            $query = "SELECT * FROM `events` WHERE LOWER(`event_status`) = 'upcoming' AND `show_on_home` = 1 ORDER BY sort_order ASC, event_date ASC";
+            $query = "SELECT * FROM `events` WHERE LOWER(`event_status`) = 'ongoing' AND `show_on_home` = 1 ORDER BY sort_order ASC, event_date ASC";
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            return $this->conn->query("SELECT * FROM `events` WHERE LOWER(`event_status`) = 'upcoming' ORDER BY event_date ASC")->fetchAll(PDO::FETCH_ASSOC);
+            return $this->conn->query("SELECT * FROM `events` WHERE LOWER(`event_status`) = 'ongoing' ORDER BY event_date ASC")->fetchAll(PDO::FETCH_ASSOC);
+        }
+    }
+
+    public function getUpcomingEvents() {
+        try {
+            $query = "SELECT * FROM `events` WHERE (LOWER(`event_status`) = 'upcoming' OR LOWER(`event_status`) = 'ongoing') AND `show_on_home` = 1 ORDER BY CASE WHEN LOWER(`event_status`) = 'ongoing' THEN 0 ELSE 1 END, sort_order ASC, event_date ASC";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return $this->conn->query("SELECT * FROM `events` WHERE (LOWER(`event_status`) = 'upcoming' OR LOWER(`event_status`) = 'ongoing') ORDER BY CASE WHEN LOWER(`event_status`) = 'ongoing' THEN 0 ELSE 1 END, event_date ASC")->fetchAll(PDO::FETCH_ASSOC);
         }
     }
 

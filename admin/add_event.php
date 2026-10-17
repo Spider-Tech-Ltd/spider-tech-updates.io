@@ -181,21 +181,12 @@ class="<?php require('body-tag-css.html'); ?>">
 												<div class="col-md-5">
 													<select class="form-control input-height" name="event_status" required>
                                                         <?php
-                                                        if(isset($_POST['add_event']) && !empty($event_status))
-                                                        {
-                                                        echo
-                                                        '<option value="'.$event_status.'" selected>'.$event_status.'</option>
-                                                        <option value="Upcoming">Upcoming</option>
-                                                        <option value="Past">Past</option>';
-                                                        }
-                                                        else
-                                                        {
-                                                        echo
-                                                        '<option value="" selected>Select...</option>
-                                                        <option value="Upcoming">Upcoming event</option>
-                                                        <option value="Past">Past event</option>';   
-                                                        }
+                                                        $selectedStatus = isset($_POST['add_event']) ? strtolower(trim($event_status ?? '')) : '';
                                                         ?>
+                                                        <option value="" <?= $selectedStatus === '' ? 'selected' : '' ?>>Select...</option>
+                                                        <option value="Upcoming" <?= $selectedStatus === 'upcoming' ? 'selected' : '' ?>>Upcoming event</option>
+                                                        <option value="Ongoing" <?= $selectedStatus === 'ongoing' ? 'selected' : '' ?>>Ongoing event</option>
+                                                        <option value="Past" <?= $selectedStatus === 'past' ? 'selected' : '' ?>>Past event</option>
                                                     </select>
                                                     <?php if(isset($_POST['add_event'])) {echo $event_statusErr; }?>
 												</div>

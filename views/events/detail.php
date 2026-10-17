@@ -138,6 +138,7 @@
     }
 
     .status-upcoming { color: #28a745; }
+    .status-ongoing { color: #0d6efd; }
     .status-past { color: #6c757d; }
 
     /* Event info High-Fidelity Grid */
@@ -362,8 +363,12 @@
 
             <div class="event-featured-image">
                 <span class="card-status-pill status-<?= strtolower(stripslashes($event['event_status'])) ?>">
+                    <?php
+                        $st = strtolower(trim($event['event_status'] ?? ''));
+                        $stIcon = ($st === 'upcoming') ? 'bolt' : (($st === 'ongoing') ? 'sensors' : 'history');
+                    ?>
                     <span class="material-symbols-outlined" style="font-size: 18px;">
-                        <?= strtolower($event['event_status']) === 'upcoming' ? 'bolt' : 'history' ?>
+                        <?= $stIcon ?>
                     </span>
                     <?= ucfirst(stripslashes($event['event_status'])) ?> Event
                 </span>
@@ -412,6 +417,14 @@
                 <a href="<?= BASE_URL ?>/contact" class="cta-button cta-button-secondary">
                     Inquire for Details
                     <span class="material-symbols-outlined">mail</span>
+                </a>
+            </div>
+            <?php elseif (strtolower(trim(stripslashes($event['event_status']))) === "ongoing"): ?>
+            <div class="mt-5 p-5 bg-white border rounded-4 text-center">
+                <h3 class="mb-4" style="font-weight: 800; letter-spacing: -1px;">Happening Now!</h3>
+                <a href="<?= BASE_URL ?>/contact" class="cta-button cta-button-secondary">
+                    Join or Inquire Now
+                    <span class="material-symbols-outlined">sensors</span>
                 </a>
             </div>
             <?php endif; ?>

@@ -242,6 +242,38 @@
         border: 1px solid rgba(40, 167, 69, 0.1);
     }
 
+    .status-ongoing {
+        background: rgba(13, 110, 253, 0.08);
+        color: #0d6efd;
+        border: 1px solid rgba(13, 110, 253, 0.2);
+    }
+
+    .live-indicator-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background-color: #0d6efd;
+        display: inline-block;
+        box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.7);
+        animation: ongoingPulse 1.8s infinite;
+        flex-shrink: 0;
+    }
+
+    @keyframes ongoingPulse {
+        0% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.7);
+        }
+        70% {
+            transform: scale(1);
+            box-shadow: 0 0 0 5px rgba(13, 110, 253, 0);
+        }
+        100% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(13, 110, 253, 0);
+        }
+    }
+
     .status-past {
         background: rgba(108, 117, 125, 0.08);
         color: #6c757d;
@@ -617,13 +649,19 @@
 
 <!-- ====== Section Jump Navigation ====== -->
 <?php
-$highlights = array_filter(array_merge($upcoming_events, $past_events), function($e) {
+$highlights = array_filter(array_merge($ongoing_events ?? [], $upcoming_events ?? [], $past_events ?? []), function($e) {
     return !empty($e['video_url']);
 });
 $highlights = array_values($highlights); // re-index
 ?>
 <nav class="events-tab-nav" aria-label="Events sections">
     <div class="events-tab-nav-inner">
+        <?php if (!empty($ongoing_events)): ?>
+        <a href="#ongoing-events" class="events-tab-pill">
+            <span class="live-indicator-dot" style="margin-right:2px;"></span>
+            Ongoing Events
+        </a>
+        <?php endif; ?>
         <a href="#upcoming-events" class="events-tab-pill">
             <span class="material-symbols-outlined" style="font-size:15px;">bolt</span>
             Upcoming Events
@@ -776,6 +814,72 @@ $highlights = array_values($highlights); // re-index
     });
 })();
 </script>
+
+<!-- ====== Ongoing Events Section Start ====== -->
+<?php if (!empty($ongoing_events)): ?>
+<section id="ongoing-events" class="section-padding pb-0">
+    <div class="container">
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-8 text-center">
+                <span class="tag-eyebrow">Happening Now</span>
+                <h2 class="section-title">Ongoing <span>Events</span></h2>
+                <p class="section-subtitle">Catch the action live! Explore our currently running workshops, conferences, and programs.</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <?php foreach ($ongoing_events as $event):
+                $date = strtotime($event['event_date']);
+                $day = date('d', $date);
+                $month = date('M', $date);
+                $truncatedAddr = mb_strimwidth(strip_tags(stripslashes($event['event_address'] ?? '')), 0, 35, '…');
+            ?>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="event-card">
+                        <div class="card-img-wrap">
+                            <img src="<?= resolvePath($event['event_img']); ?>" alt="<?= htmlspecialchars($event['event_title']); ?>" onerror="this.src='<?= BASE_URL ?>/images/placeholder-banner.jpg'; this.onerror=null;">
+                            <div class="card-date-badge">
+                                <span class="day"><?= $day ?></span>
+                                <span class="month"><?= $month ?></span>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <span class="card-status-pill status-ongoing">
+                                <span class="live-indicator-dot"></span>
+                                <span class="material-symbols-outlined" style="font-size: 14px;">sensors</span>
+                                Ongoing
+                            </span>
+                            <h3 class="card-title"><?= stripslashes($event['event_title']); ?></h3>
+                            <div class="card-desc"><?= strip_tags(stripslashes($event['event_content'])); ?></div>
+                            <div class="card-meta-row">
+                                <?php if (!empty($event['event_time'])): ?>
+                                <div class="card-meta-item">
+                                    <span class="material-symbols-outlined">schedule</span>
+                                    <?= htmlspecialchars($event['event_time']) ?>
+                                </div>
+                                <?php endif; ?>
+                                <?php if (!empty($event['event_address'])): ?>
+                                <div class="card-meta-item">
+                                    <span class="material-symbols-outlined">location_on</span>
+                                    <?= htmlspecialchars($truncatedAddr) ?>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="view-btn">
+                                    View Details
+                                    <span class="material-symbols-outlined">trending_flat</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+<!-- ====== Ongoing Events Section End ====== -->
 
 <!-- ====== Upcoming Events Section Start ====== -->
 <section id="upcoming-events" class="section-padding pb-0">

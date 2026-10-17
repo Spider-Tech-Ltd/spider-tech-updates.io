@@ -323,7 +323,7 @@ class AdminModel
                 $result = $stmt->execute($values);
 
                 if ($result && $type === 'event' && isset($_FILES['event_gallery'])) {
-                    if (strtolower($data['event_status'] ?? '') === 'past') {
+                    if (in_array(strtolower($data['event_status'] ?? ''), ['past', 'ongoing'])) {
                         $this->handleGalleryUpload($id, $_FILES['event_gallery']);
                     }
                 }
@@ -373,7 +373,7 @@ class AdminModel
                 $result = $stmt->execute($values);
 
                 if ($result && $type === 'event' && isset($_FILES['event_gallery'])) {
-                    if (strtolower($data['event_status'] ?? '') === 'past') {
+                    if (in_array(strtolower($data['event_status'] ?? ''), ['past', 'ongoing'])) {
                         $newId = $this->db->lastInsertId();
                         $this->handleGalleryUpload($newId, $_FILES['event_gallery']);
                     }

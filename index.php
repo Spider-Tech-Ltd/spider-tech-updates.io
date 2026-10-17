@@ -13,6 +13,7 @@ $routes = [
     'home' => ['HomeController', 'index'],
     '' => ['HomeController', 'index'],
     'events' => ['EventController', 'index'],
+    'events/ongoing' => ['EventController', 'ongoing'],
     'events/upcoming' => ['EventController', 'upcoming'],
     'events/past' => ['EventController', 'past'],
     'events/detail' => ['EventController', 'detail'],
