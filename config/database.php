@@ -16,14 +16,25 @@ class Database {
 
     public function getConnection() {
         $this->conn = null;
-        try {
-            $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->db_name, $this->username, $this->password);
-            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->conn->exec("set names utf8");
-        } catch(PDOException $exception) {
-            error_log("Connection error: " . $exception->getMessage());
+        $dsn = "mysql:host=" . $this->host . ";dbname=" . $this->db_name;
+        $options = [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_TIMEOUT => 5
+        ];
+
+        for ($attempt = 1; $attempt <= 2; $attempt++) {
+            try {
+                $this->conn = new PDO($dsn, $this->username, $this->password, $options);
+                $this->conn->exec("set names utf8");
+                return $this->conn;
+            } catch(PDOException $exception) {
+                error_log("Database connection attempt {$attempt} failed: " . $exception->getMessage());
+                if ($attempt === 1) {
+                    usleep(150000); // 150ms retry delay
+                }
+            }
         }
-        return $this->conn;
+        return null;
     }
 }
 ?>

@@ -640,9 +640,19 @@ foreach ($banners as &$banner) {
     <!-- Slides -->
     <template x-for="(slide, index) in slides" :key="index">
         <div class="hero-slide" :class="{ 'active': activeSlide === index }">
-            <img :src="slide.banner_image.startsWith('http') ? slide.banner_image : '<?= BASE_URL ?>/' + slide.banner_image" alt="Slider Image">
+            <img :src="slide.banner_image.startsWith('http') ? slide.banner_image : '<?= BASE_URL ?>/' + slide.banner_image" src="<?= !empty($banners[0]['banner_image']) ? (preg_match('#^https?://#i', $banners[0]['banner_image']) ? $banners[0]['banner_image'] : BASE_URL . '/' . ltrim($banners[0]['banner_image'], '/')) : BASE_URL . '/images/placeholder-banner.jpg' ?>" alt="Slider Image" fetchpriority="high">
         </div>
     </template>
+    <?php if (!empty($banners)): 
+        $firstBanner = $banners[0]['banner_image'];
+        $firstSrc = (preg_match('#^https?://#i', $firstBanner)) ? $firstBanner : BASE_URL . '/' . ltrim($firstBanner, '/');
+    ?>
+    <noscript>
+        <div class="hero-slide active">
+            <img src="<?= htmlspecialchars($firstSrc) ?>" alt="Spider Tech Hero Banner">
+        </div>
+    </noscript>
+    <?php endif; ?>
 
     <!-- Content Overlay -->
     <div class="hero-overlay">
@@ -697,7 +707,7 @@ foreach ($banners as &$banner) {
         <div class="row align-items-center">
             <div class="col-lg-6 mb-5 mb-lg-0">
                 <div class="about-img-group">
-                    <img src="<?= BASE_URL ?>/images/timeline/<?= stripslashes($about[0]['image'] ?? ''); ?>" alt="About Spider Tech" class="about-img-main">
+                    <img src="<?= BASE_URL ?>/images/timeline/<?= stripslashes($about[0]['image'] ?? ''); ?>" alt="About Spider Tech" class="about-img-main" loading="lazy" decoding="async">
                     <div class="about-experience-card">
                         <span class="exp-years">4+</span>
                         <span class="exp-text">Years of Tech Excellence</span>
@@ -821,7 +831,7 @@ foreach ($banners as &$banner) {
                     <a href="<?= BASE_URL ?>/projects/detail?id=<?= $project['project_id']; ?>" class="project-card-new">
                         <div class="card-img-wrap">
                             <?php $pPic = (empty($project['project_pic'])) ? BASE_URL . '/images/placeholder-banner.jpg' : ( (preg_match('#^https?://#i', $project['project_pic'])) ? $project['project_pic'] : BASE_URL . '/' . ltrim($project['project_pic'], './') ); ?>
-                            <img src="<?= $pPic ?>" alt="<?= stripslashes($project['project_name']); ?>">
+                            <img src="<?= $pPic ?>" alt="<?= stripslashes($project['project_name']); ?>" loading="lazy" decoding="async">
                         </div>
                         <div class="card-content-p">
                             <span class="card-category-p"><?= $project['service_name']; ?></span>

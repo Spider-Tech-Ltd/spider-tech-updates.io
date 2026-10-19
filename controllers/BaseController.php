@@ -9,7 +9,10 @@ class BaseController {
         $database = new Database();
         $this->db = $database->getConnection();
         if ($this->db === null) {
-            die("Critical Error: Database connection failed. Please check your configuration and ensure MySQL is running.");
+            http_response_code(503);
+            header('Retry-After: 30');
+            echo '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Service Temporarily Unavailable — Spider Tech</title><style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;text-align:center;padding:100px 20px;color:#222;background:#fafafa}h1{color:#f48221;font-size:2rem;margin-bottom:12px}p{color:#666;font-size:1.1rem;max-width:500px;margin:0 auto 24px}</style></head><body><h1>Service Temporarily Unavailable</h1><p>Our database service is temporarily synchronizing. Please refresh in a few moments.</p></body></html>';
+            exit;
         }
         
         // Track member activity if logged in

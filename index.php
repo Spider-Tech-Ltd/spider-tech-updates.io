@@ -48,6 +48,7 @@ $routes = [
     'about' => ['GeneralController', 'about'],
     'contact' => ['GeneralController', 'contact'],
     'faq' => ['GeneralController', 'faq'],
+    'healthz' => ['GeneralController', 'healthz'],
     'blog' => ['BlogController', 'index'],
     'blog/{slug}' => ['BlogController', 'detail'],
     'e/{id}' => ['EventController', 'detail'],

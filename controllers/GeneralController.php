@@ -36,5 +36,17 @@ class GeneralController extends BaseController {
         ];
         $this->render("general/blog", $data);
     }
+
+    public function healthz() {
+        header('Content-Type: application/json');
+        $dbStatus = ($this->db !== null);
+        if (!$dbStatus) {
+            http_response_code(503);
+            echo json_encode(['status' => 'degraded', 'database' => false, 'timestamp' => time()]);
+            exit;
+        }
+        echo json_encode(['status' => 'healthy', 'database' => true, 'timestamp' => time()]);
+        exit;
+    }
 }
 ?>

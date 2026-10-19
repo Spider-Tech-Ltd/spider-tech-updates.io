@@ -1,35 +1,17 @@
 /**
-Company : Companyname
-File    : custom.js
-Version : 1.0
-**/
+ * Company : Spider Technologies Limited
+ * File    : custom.js
+ * Version : 2.0 (Audit Hardened & Modernized)
+ **/
 
-
-
-/*************------------------------------
-
-
- JS INDEX
-    ===================
-
-
-    1. Sticky Header
-    2. Parallax
-    3. Mobile Menu
-    4. Counter
-    5. Portfolio
-
-
-------------------------------*************/
 (function ($) {
     "use strict";
 
-
-    /****---- Sticky Header Start ----****/
-
+    /* ==========================================
+       1. Sticky Header Backward Compatibility
+    ========================================== */
     $(window).scroll(function () {
         var scroll = $(window).scrollTop();
-
         if (scroll >= 100) {
             $(".header").addClass("sticky");
         } else {
@@ -37,97 +19,88 @@ Version : 1.0
         }
     });
 
-
-    /****---- Sticky Header End ----****/
-
-
-    /****---- Parallax Start ----****/
-
-
+    /* ==========================================
+       2. Parallax (Safe Guarded)
+    ========================================== */
     $(document).ready(function () {
-        $('#counter').parallax("50%", 0.1);
-        $('#client').parallax("50%", 0.1);
-        $('#services-counter').parallax("50%", 0.1);
-        $('#member').parallax("50%", 0.1);
-        $('#work-status').parallax("50%", 0.1);
-        $('#portfolio').parallax("50%", 0.1);
-        $('#services').parallax("50%", 0.1);
-    });
-
-
-    /****---- Parallax End ----****/
-
-
-    /****---- Menu Start ----****/
-
-    /*--------------- SMARTMENU ---------------*/
-    $('#main-menu').smartmenus({
-        mainMenuSubOffsetX: -1,
-        mainMenuSubOffsetY: 4,
-        subMenusSubOffsetX: 6,
-        subMenusSubOffsetY: -6
-    });
-
-    /*--------------- SMARTMENUS MOBILE MENU TOGGLE BUTTON ---------------*/
-    var $mainMenuState = $('#main-menu-state');
-    if ($mainMenuState.length) {
-        // animate mobile menu
-        $mainMenuState.on('change', function () {
-            var $menu = $('#main-menu');
-            if (this.checked) {
-                $menu.hide().slideDown(250, function () {
-                    $menu.css('display', '');
-                });
-            } else {
-                $menu.show().slideUp(250, function () {
-                    $menu.css('display', '');
-                });
-            }
-        });
-        // hide mobile menu beforeunload
-        $(window).on('bind', 'beforeunload unload', function () {
-            if ($mainMenuState[0].checked) {
-                $mainMenuState[0].click();
-            }
-        });
-    }
-    $(function () {
-        // use the whole parent item as sub menu toggle button
-        $('#main-menu').bind('click.smapi', function (e, item) {
-            var obj = $(this).data('smartmenus');
-            if (obj.isCollapsible()) {
-                var $sub = $(item).dataSM('sub');
-                if ($sub && $sub.is(':visible')) {
-                    obj.menuHide($sub);
-                    return false;
+        if (typeof $.fn.parallax === 'function') {
+            var parallaxSelectors = [
+                '#counter', '#client', '#services-counter',
+                '#member', '#work-status', '#portfolio', '#services'
+            ];
+            parallaxSelectors.forEach(function (sel) {
+                var $elem = $(sel);
+                if ($elem.length) {
+                    $elem.parallax("50%", 0.1);
                 }
-            }
-        });
+            });
+        }
     });
 
+    /* ==========================================
+       3. SmartMenus (Safe Guarded)
+    ========================================== */
+    $(document).ready(function () {
+        var $mainMenu = $('#main-menu');
+        if (typeof $.fn.smartmenus === 'function' && $mainMenu.length) {
+            $mainMenu.smartmenus({
+                mainMenuSubOffsetX: -1,
+                mainMenuSubOffsetY: 4,
+                subMenusSubOffsetX: 6,
+                subMenusSubOffsetY: -6
+            });
 
-    /*--------------- navigation menu---------------*/
-    function mainmenu() {
+            var $mainMenuState = $('#main-menu-state');
+            if ($mainMenuState.length) {
+                $mainMenuState.on('change', function () {
+                    if (this.checked) {
+                        $mainMenu.hide().slideDown(250, function () {
+                            $mainMenu.css('display', '');
+                        });
+                    } else {
+                        $mainMenu.show().slideUp(250, function () {
+                            $mainMenu.css('display', '');
+                        });
+                    }
+                });
+
+                $(window).on('beforeunload unload', function () {
+                    if ($mainMenuState[0].checked) {
+                        $mainMenuState[0].click();
+                    }
+                });
+            }
+
+            $mainMenu.on('click.smapi', function (e, item) {
+                var obj = $(this).data('smartmenus');
+                if (obj && typeof obj.isCollapsible === 'function' && obj.isCollapsible()) {
+                    var $sub = $(item).dataSM ? $(item).dataSM('sub') : null;
+                    if ($sub && $sub.is(':visible')) {
+                        obj.menuHide($sub);
+                        return false;
+                    }
+                }
+            });
+        }
+
+        // Navigation menu mobile dropdown helper
         if ($(window).width() < 992) {
             $('.navbar .dropdown-item').on('click', function (e) {
                 var $el = $(this).children('.dropdown-toggle');
-                var $parent = $el.offsetParent(".dropdown-menu");
+                var $parent = $el.offsetParent ? $el.offsetParent(".dropdown-menu") : null;
                 $(this).parent("li").toggleClass('open');
 
-                if (!$parent.parent().hasClass('navbar-nav')) {
+                if ($parent && $parent.length && !$parent.parent().hasClass('navbar-nav')) {
                     if ($parent.hasClass('show')) {
                         $parent.removeClass('show');
                         $el.next().removeClass('show');
-                        $el.next().css({
-                            "top": -999,
-                            "left": -999
-                        });
+                        $el.next().css({ "top": -999, "left": -999 });
                     } else {
                         $parent.parent().find('.show').removeClass('show');
                         $parent.addClass('show');
                         $el.next().addClass('show');
                         $el.next().css({
-                            "top": $el[0].offsetTop,
+                            "top": $el[0] ? $el[0].offsetTop : 0,
                             "left": $parent.outerWidth() - 4
                         });
                     }
@@ -141,64 +114,58 @@ Version : 1.0
                 $(this).find('ul.dropdown-menu').removeClass('show open');
             });
         }
-    }
-    mainmenu()
-
-
-    /****---- Menu End ----****/
-
-
-    /****---- Counter Start ----****/
-
-
-    $('.counter').counterUp({
-        delay: 10,
-        time: 1000
     });
 
-
-    /****---- Counter End ----****/
-
-
-    /****---- Portfolio Start ----****/
-
-    $('#portfolio').imagesLoaded(function () {
-        $('.portfolio-gallary').isotope({
-            itemSelector: '.port-item',
-            percentPosition: true,
-            masonry: {
-                columnWidth: '.port-item'
-            }
-        });
-
-        $('.portfolio-sort ul li').on("click", function () {
-            $('.portfolio-sort ul li').removeClass('active');
-            $(this).addClass('active');
-
-            var selector = $(this).attr('data-filter');
-            $('.portfolio-gallary').isotope({
-                filter: selector
+    /* ==========================================
+       4. CounterUp (Safe Guarded)
+    ========================================== */
+    $(document).ready(function () {
+        if (typeof $.fn.counterUp === 'function' && $('.counter').length) {
+            $('.counter').counterUp({
+                delay: 10,
+                time: 1000
             });
-            return false;
-        });
-
-
-         $('.blog-isotope').imagesLoaded(function () {
-    var $blogisotope = $('.blog-isotope').isotope({
-        itemSelector: '.blog-iso-item',
-        percentPosition: true,
-        masonry: {
-            columnWidth: '.blog-iso-item'
         }
     });
-});
 
+    /* ==========================================
+       5. Portfolio & Isotope (Safe Guarded)
+    ========================================== */
+    $(document).ready(function () {
+        if (typeof $.fn.isotope === 'function' && typeof $.fn.imagesLoaded === 'function') {
+            var $portfolio = $('#portfolio');
+            if ($portfolio.length) {
+                $portfolio.imagesLoaded(function () {
+                    var $gallery = $('.portfolio-gallary');
+                    if ($gallery.length) {
+                        $gallery.isotope({
+                            itemSelector: '.port-item',
+                            percentPosition: true,
+                            masonry: { columnWidth: '.port-item' }
+                        });
 
+                        $('.portfolio-sort ul li').on("click", function () {
+                            $('.portfolio-sort ul li').removeClass('active');
+                            $(this).addClass('active');
+                            var selector = $(this).attr('data-filter');
+                            $gallery.isotope({ filter: selector });
+                            return false;
+                        });
+                    }
+                });
+            }
+
+            var $blogIsotope = $('.blog-isotope');
+            if ($blogIsotope.length) {
+                $blogIsotope.imagesLoaded(function () {
+                    $blogIsotope.isotope({
+                        itemSelector: '.blog-iso-item',
+                        percentPosition: true,
+                        masonry: { columnWidth: '.blog-iso-item' }
+                    });
+                });
+            }
+        }
     });
 
-
-    /****---- Portfolio End ----****/
-
-
 })(jQuery);
-
