@@ -9,6 +9,9 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
 </IfModule>
 
+# Prevent directory browsing
+Options -Indexes
+
 # ========================================================
 # GZIP / Deflate Compression
 # Drastically reduces transferred page weight (CSS, JS, HTML)
