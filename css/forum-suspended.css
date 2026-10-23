@@ -1,0 +1,99 @@
+    .rounded-5 { border-radius: 2.5rem !important; }
+    .rounded-4 { border-radius: 1.2rem !important; }
+    .bg-light { background-color: #f8f9fa !important; }
+    .bg-soft-orange { background-color: #fff4e5; }
+    .text-orange { color: #f48221; }
+    .poppins { font-family: 'Poppins', sans-serif; }
+    .transition-all { transition: all 0.3s ease; }
+    [x-cloak] { display: none !important; }
+
+    /* ====== System Design Buttons (Industrial-Grade) ====== */
+    .btn-system-pill-primary {
+        background-color: #f48221;
+        color: #ffffff !important;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 12px 30px;
+        border-radius: 50px;
+        border: none;
+        box-shadow: 0 4px 14px rgba(244, 130, 33, 0.25);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 140px;
+    }
+
+    .btn-system-pill-primary:hover {
+        background-color: #e6751c;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(244, 130, 33, 0.35);
+    }
+
+    .btn-system-pill-outline {
+        background-color: transparent;
+        color: #111111 !important;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 12px 30px;
+        border-radius: 50px;
+        border: 1.5px solid rgba(17, 17, 17, 0.12);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 140px;
+    }
+
+    .btn-system-pill-outline:hover {
+        background: rgba(244, 130, 33, 0.07);
+        border-color: rgba(244, 130, 33, 0.3);
+        color: #f48221 !important;
+        transform: translateY(-2px);
+    }
+
+    .btn-system-pill-dark {
+        background-color: #111111;
+        color: #ffffff !important;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 12px 30px;
+        border-radius: 50px;
+        border: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 140px;
+    }
+
+    .btn-system-pill-dark:hover {
+        background-color: #333333;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .focus-orange:focus {
+        background-color: #ffffff !important;
+        border: 1px solid #f48221 !important;
+        box-shadow: 0 0 0 0.25rem rgba(244, 130, 33, 0.1);
+    }
+
+    .hover-orange:hover {
+        color: #f48221 !important;
+    }
+
+    .hover-opacity:hover {
+        opacity: 0.7;
+    }
+
+    /* Transition tweaks for x-collapse */
+    [x-collapse] {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
