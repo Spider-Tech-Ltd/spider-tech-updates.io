@@ -3,36 +3,7 @@
  * Forum Categories Grid
  */
 ?>
-<style>
-  /* Category Grid Additional Styles */
-  .forum-categories-section {
-    background-color: #ffffff;
-    padding: 80px 0;
-  }
-  .forum-category-card:hover {
-     border-color: #f48221;
-     box-shadow: 0 12px 28px rgba(244, 130, 33, 0.12);
-     transform: translateY(-5px);
-  }
-  .category-grid-header {
-    margin-bottom: 48px;
-    text-align: center;
-  }
-  .category-grid-title {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 800;
-    font-size: 2.25rem;
-    color: #111111;
-    margin-bottom: 12px;
-  }
-  .category-grid-subtitle {
-    font-family: 'Open Sans', sans-serif;
-    color: #555555;
-    font-size: 1.1rem;
-    max-width: 600px;
-    margin: 0 auto;
-  }
-</style>
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-categories.css" />
 
 <section class="forum-categories-section">
   <div class="container">
