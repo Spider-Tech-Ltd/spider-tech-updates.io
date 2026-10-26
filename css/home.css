@@ -256,6 +256,10 @@
     }
 
     /* Services Grid */
+    .services-section {
+        border-bottom: 1px solid #e2e8f0;
+    }
+
     .service-card-new {
         background: #fff;
         border: 1px solid #f0f0f0;

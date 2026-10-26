@@ -133,7 +133,7 @@ foreach ($banners as &$banner) {
 </section>
 
 <!-- ====== Services Section ====== -->
-<section class="section-padding bg-light">
+<section class="section-padding bg-light services-section">
     <div class="container">
         <div class="section-header">
             <h2 class="section-title">Our Core <span>Services</span></h2>
