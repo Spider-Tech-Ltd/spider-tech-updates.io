@@ -77,7 +77,7 @@
     </div> <!-- End blog-content -->
 
     <!-- Detail View Container -->
-    <div id="article-detail-container" x-show="view === 'detail'" x-cloak>
+    <div id="article-detail-container" class="article-main" x-show="view === 'detail'" x-cloak>
         <div x-html="detailContent"></div>
     </div>
 </main>

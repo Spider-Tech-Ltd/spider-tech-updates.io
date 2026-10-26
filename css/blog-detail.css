@@ -93,26 +93,42 @@
         padding-bottom: 64px;
     }
 
-    /* Article Featured Image */
-    .article-featured-image {
+    /* Article Hero Section (Synchronized with SPA detail view) */
+    .hero-wrap {
         position: relative;
-        height: 500px;
+        height: 450px;
         border-radius: 30px;
         overflow: hidden;
-        margin-bottom: 60px;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+        margin-bottom: 48px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     }
 
-    .article-featured-image img {
+    .hero-wrap img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
 
-    .category-badge {
+    .hero-overlay {
         position: absolute;
-        top: 30px;
-        left: 30px;
+        inset: 0;
+        background: linear-gradient(to top, rgba(17, 24, 39, 0.9), transparent);
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+
+    .hero-overlay h1 {
+        color: #fff;
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        font-weight: 700;
+        line-height: 1.2;
+        max-width: 900px;
+        margin-bottom: 0;
+    }
+
+    .hero-overlay .badge {
         background: var(--primary-orange);
         color: #fff;
         padding: 6px 20px;
@@ -121,15 +137,14 @@
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 2px;
-        z-index: 2;
-        box-shadow: 0 4px 15px rgba(244, 130, 33, 0.3);
+        width: fit-content;
+        margin-bottom: 20px;
     }
 
     /* Centralized Reading Flow */
     .reading-container {
         max-width: 850px;
         margin: 0 auto;
-        margin-block-start: 2.5rem !important;
     }
 
     /* Article Meta */
@@ -137,9 +152,9 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 30px 0;
+        padding: 24px 0;
         border-bottom: 1px solid #eee;
-        margin-bottom: 50px;
+        margin-bottom: 40px;
     }
 
     .author-box {
@@ -247,6 +262,7 @@
     }
 
     .related-card {
+        background: #fff;
         border: 1px solid #eee;
         padding: 30px;
         border-radius: 20px;
@@ -275,6 +291,7 @@
         font-size: 18px;
         color: var(--primary-dark);
         font-weight: 700;
+        margin-bottom: 0;
     }
 
     /* Back Button Branding */
@@ -295,6 +312,7 @@
         transition: all 0.3s ease;
         box-shadow: 0 4px 14px rgba(244, 130, 33, 0.25);
         text-decoration: none !important;
+        cursor: pointer;
     }
 
     .btn-insights-back:hover {
@@ -302,22 +320,4 @@
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(244, 130, 33, 0.35);
         color: #fff;
-    }
-
-    .hero-wrap {
-        position: relative;
-        margin-block: 2rem;
-        max-width: 100%;
-        height: 65vh;
-
-        >img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 2rem;
-        }
-
-        >div:first-of-type>h1 {
-            margin-block-end: 1rem;
-        }
     }

@@ -57,7 +57,7 @@
 
         <!-- Back Link -->
         <div class="mt-5 text-center">
-             <button @click="view = 'index'; history.pushState({view: 'index'}, '', '<?= BASE_URL ?>/blog')" class="btn-insights-back">
+             <button @click="view = 'index'; window.scrollTo({top: 0, behavior: 'smooth'}); history.pushState({view: 'index'}, '', '<?= BASE_URL ?>/blog')" class="btn-insights-back">
                 <span class="material-symbols-outlined">arrow_back</span> Back to Insights
              </button>
         </div>
