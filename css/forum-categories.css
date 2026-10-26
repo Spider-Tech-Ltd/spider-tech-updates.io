@@ -1,7 +1,7 @@
   /* Category Grid Additional Styles */
   .forum-categories-section {
     background-color: #ffffff;
-    padding: 80px 0;
+    padding: 56px 0;
   }
   .forum-category-card:hover {
      border-color: #f48221;
@@ -9,7 +9,7 @@
      transform: translateY(-5px);
   }
   .category-grid-header {
-    margin-bottom: 48px;
+    margin-bottom: 36px;
     text-align: center;
   }
   .category-grid-title {

@@ -20,7 +20,7 @@
     .page-header {
         background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('../images/bg/inner-banner.jpg') center/cover;
         background-color: var(--dark-bg);
-        padding: 140px 0 80px;
+        padding: 130px 0 64px;
         position: relative;
         overflow: hidden;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -89,8 +89,8 @@
     }
 
     .article-main {
-        padding-top: 80px;
-        padding-bottom: 100px;
+        padding-top: 64px;
+        padding-bottom: 64px;
     }
 
     /* Article Featured Image */
@@ -129,7 +129,7 @@
     .reading-container {
         max-width: 850px;
         margin: 0 auto;
-        margin-block-start: 6rem !important;
+        margin-block-start: 2.5rem !important;
     }
 
     /* Article Meta */
@@ -236,8 +236,8 @@
 
     /* Related Footer */
     .related-section {
-        margin-top: 80px;
-        padding-top: 60px;
+        margin-top: 48px;
+        padding-top: 40px;
         border-top: 1px solid #eee;
     }
 

@@ -38,7 +38,7 @@
     .page-header {
       background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('../images/bg/inner-banner.jpg') center/cover;
       background-color: var(--dark-bg);
-      padding: 140px 0 80px;
+      padding: 130px 0 64px;
       position: relative;
       overflow: hidden;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -118,9 +118,25 @@
       }
     }
 
+    .section-padding {
+      padding: 64px 0;
+    }
+
+    @media (max-width: 991px) {
+      .section-padding {
+        padding: 50px 0;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .section-padding {
+        padding: 36px 0;
+      }
+    }
+
     .training-hero {
       background: #ffffff;
-      padding: 60px 0 40px;
+      padding: 44px 0 36px;
     }
 
     .hero-eyebrow-pill {
@@ -352,7 +368,6 @@
       }
 
       .training-hero {
-        padding: 60px 0 50px;
+        padding: 40px 0 32px;
       }
     }
-  

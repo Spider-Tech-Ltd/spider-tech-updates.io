@@ -23,7 +23,7 @@
     .page-header {
         background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('../images/bg/inner-banner.jpg') center/cover;
         background-color: var(--dark-bg);
-        padding: 140px 0 80px;
+        padding: 130px 0 64px;
         position: relative;
         overflow: hidden;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -93,22 +93,24 @@
 
     @media (max-width: 991px) {
         .page-header {
-            padding: 120px 0 60px;
+            padding: 110px 0 50px;
         }
+    }
 
+    .section-padding {
+        padding: 60px 0;
+    }
+
+    @media (max-width: 991px) {
         .section-padding {
-            padding: 60px 0;
+            padding: 48px 0;
         }
     }
 
     @media (max-width: 768px) {
         .section-padding {
-            padding: 40px 0;
+            padding: 36px 0;
         }
-    }
-
-    .section-padding {
-        padding: 80px 0;
     }
 
     .tag-eyebrow {
@@ -422,7 +424,7 @@
     /* Highlights Section */
     .highlights-section {
         background: #ffffff;
-        padding: 72px 0;
+        padding: 56px 0;
         border-bottom: 1px solid #f0f0f0;
         position: relative;
     }

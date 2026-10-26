@@ -9,7 +9,7 @@
     .page-header {
         background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('../images/bg/inner-banner.jpg') center/cover;
         background-color: var(--dark-bg);
-        padding: 140px 0 80px;
+        padding: 130px 0 64px;
         position: relative;
         overflow: hidden;
         border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -79,7 +79,7 @@
 
     /* Section Styles */
     .section-padding {
-        padding: 120px 0;
+        padding: 64px 0;
     }
 
     .tag-eyebrow {
@@ -202,7 +202,7 @@
     }
 
     @media (max-width: 991px) {
-        .section-padding { padding: 80px 0; }
+        .section-padding { padding: 50px 0; }
         .page-header { padding: 120px 0 60px; }
     }
 

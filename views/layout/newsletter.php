@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="<?= BASE_URL ?>/css/newsletter.css" />
 
 <!-- ====== Newsletter Section ====== -->
-<section class="section-padding">
+<section class="section-padding newsletter-wrapper">
     <div class="container">
         <div class="newsletter-section">
             <div class="newsletter-grid-overlay"></div>

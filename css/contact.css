@@ -15,7 +15,7 @@
     .page-header {
         background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('../images/bg/inner-banner.jpg') center/cover;
         background-color: var(--dark-bg);
-        padding: 140px 0 80px;
+        padding: 130px 0 64px;
         position: relative;
         overflow: hidden;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -86,7 +86,7 @@
 
     /* ====== Section Utilities ====== */
     .section-padding {
-        padding: 120px 0;
+        padding: 64px 0;
     }
 
     .tag-eyebrow {
@@ -276,7 +276,7 @@
 
     /* ====== Contact Info Strip ====== */
     .contact-info-strip {
-        margin-top: 60px;
+        margin-top: 40px;
     }
 
     .contact-info-card {
@@ -341,7 +341,7 @@
     .premium-cta {
         background: var(--dark-bg);
         border-radius: 40px;
-        padding: 70px 40px;
+        padding: 52px 40px;
         position: relative;
         overflow: hidden;
         text-align: center;
@@ -397,7 +397,7 @@
         }
 
         .section-padding {
-            padding: 80px 0;
+            padding: 50px 0;
         }
     }
 

@@ -9,7 +9,7 @@
     .page-header {
         background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('../images/bg/inner-banner.jpg') center/cover;
         background-color: var(--dark-bg);
-        padding: 140px 0 80px;
+        padding: 130px 0 64px;
         position: relative;
         overflow: hidden;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -79,7 +79,7 @@
 
     /* Showcase Content */
     .section-padding {
-        padding: 100px 0;
+        padding: 64px 0;
     }
 
     .project-hero-wrap {
@@ -168,7 +168,7 @@
         font-size: 1.15rem;
         line-height: 1.8;
         color: #444;
-        margin-bottom: 80px;
+        margin-bottom: 48px;
     }
 
     .project-narrative h2,
@@ -182,7 +182,7 @@
     /* Bottom CTA Box */
     .showcase-cta {
         background: var(--dark-bg);
-        padding: 80px;
+        padding: 56px 40px;
         border-radius: 40px;
         text-align: center;
         color: #fff;
@@ -259,10 +259,10 @@
 
     /* Media Gallery Industrial Grid */
     .media-gallery-section {
-        margin-top: 80px;
-        padding-top: 60px;
+        margin-top: 48px;
+        padding-top: 40px;
         border-top: 1px solid rgba(0,0,0,0.06);
-        margin-bottom: 80px;
+        margin-bottom: 48px;
     }
 
     .gallery-grid {
