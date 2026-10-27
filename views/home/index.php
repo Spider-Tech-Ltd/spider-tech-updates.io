@@ -58,7 +58,17 @@ foreach ($banners as &$banner) {
     <div class="hero-overlay">
         <div class="container">
             <div class="hero-content" x-show="true" x-transition:enter="animate__animated animate__fadeInUp">
-                <span class="hero-eyebrow">Precision and Speed</span>
+                <span class="hero-eyebrow">
+                    <svg class="hero-eyebrow-sep" width="40" height="12" viewBox="0 0 40 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                        <rect x="4" y="5.25" width="36" height="1.5" rx="0.5" fill="rgba(244, 130, 33, 0.58)"/>
+                    </svg>
+                    <span class="hero-eyebrow-text">Precision and Speed</span>
+                    <svg class="hero-eyebrow-sep" width="40" height="12" viewBox="0 0 40 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="5.25" width="36" height="1.5" rx="0.5" fill="rgba(244, 130, 33, 0.58)"/>
+                        <rect x="37" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                    </svg>
+                </span>
 
                 <h1 class="hero-title" x-html="slides[activeSlide].banner_title"></h1>
 
