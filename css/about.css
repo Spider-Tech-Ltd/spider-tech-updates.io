@@ -370,9 +370,12 @@
     }
 
     .card-icon-box .material-symbols-outlined,
-    .card-icon-box .icon-render {
-        font-size: 1.4rem;
-        line-height: 1;
+    .card-icon-box .icon-render,
+    .card-icon-box i::before {
+        font-size: 1.4rem !important;
+        line-height: 1 !important;
+        margin: 0 !important;
+        display: block;
     }
 
     .mv-card-tag {

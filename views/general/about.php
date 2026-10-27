@@ -151,26 +151,30 @@
                 <h2 class="section-title">Guided by Purpose &amp; <span>Engineering Rigor</span></h2>
             </div>
         </div>
+        <?php
+        $renderMvIcon = function (?string $icon, string $fallbackMaterial): string {
+            $icon = trim((string) $icon);
+            if ($icon === '') {
+                return '<span class="material-symbols-outlined">' . htmlspecialchars($fallbackMaterial) . '</span>';
+            }
+            if (preg_match('/\b(fa|fas|far|fab|fal|fad|flaticon|flat|uil| uis)\b|flaticon-|fa-/i', $icon)) {
+                return '<i class="' . htmlspecialchars($icon) . ' icon-render"></i>';
+            }
+            return '<span class="material-symbols-outlined">' . htmlspecialchars($icon) . '</span>';
+        };
+        ?>
         <div class="row">
             <div class="col-lg-4 mb-4 mb-lg-0">
                 <div class="mission-vision-card">
                     <div class="mv-card-header">
                         <div class="card-icon-box">
-                            <?php if (!empty($mission[0]['icon'])): ?>
-                                <?php if (strpos($mission[0]['icon'], 'material') !== false): ?>
-                                    <span class="material-symbols-outlined"><?= $mission[0]['icon'] ?></span>
-                                <?php else: ?>
-                                    <i class="<?= $mission[0]['icon'] ?> icon-render"></i>
-                                <?php endif; ?>
-                            <?php else: ?>
-                                <span class="material-symbols-outlined">rocket_launch</span>
-                            <?php endif; ?>
+                            <?= $renderMvIcon($mission[0]['icon'] ?? '', 'rocket_launch') ?>
                         </div>
                         <span class="mv-card-tag">Mission</span>
                     </div>
                     <h3 class="mv-title"><?= stripslashes($mission[0]['title'] ?? 'Our Mission'); ?></h3>
                     <p class="mv-text">
-                        <?= stripslashes($mission[0]['details'] ?? 'Providing excellence in every project.'); ?>
+                        <?= trim(stripslashes($mission[0]['details'] ?? 'Providing excellence in every project.')); ?>
                     </p>
                 </div>
             </div>
@@ -178,21 +182,13 @@
                 <div class="mission-vision-card">
                     <div class="mv-card-header">
                         <div class="card-icon-box">
-                            <?php if (!empty($vision[0]['icon'])): ?>
-                                <?php if (strpos($vision[0]['icon'], 'material') !== false): ?>
-                                    <span class="material-symbols-outlined"><?= $vision[0]['icon'] ?></span>
-                                <?php else: ?>
-                                    <i class="<?= $vision[0]['icon'] ?> icon-render"></i>
-                                <?php endif; ?>
-                            <?php else: ?>
-                                <span class="material-symbols-outlined">visibility</span>
-                            <?php endif; ?>
+                            <?= $renderMvIcon($vision[0]['icon'] ?? '', 'visibility') ?>
                         </div>
                         <span class="mv-card-tag">Vision</span>
                     </div>
                     <h3 class="mv-title"><?= stripslashes($vision[0]['title'] ?? 'Our Vision'); ?></h3>
                     <p class="mv-text">
-                        <?= stripslashes($vision[0]['details'] ?? 'Driving digital ecosystems forward.'); ?>
+                        <?= trim(stripslashes($vision[0]['details'] ?? 'Driving digital ecosystems forward.')); ?>
                     </p>
                 </div>
             </div>
@@ -200,21 +196,13 @@
                 <div class="mission-vision-card">
                     <div class="mv-card-header">
                         <div class="card-icon-box">
-                            <?php if (!empty($values[0]['icon'])): ?>
-                                <?php if (strpos($values[0]['icon'], 'material') !== false): ?>
-                                    <span class="material-symbols-outlined"><?= $values[0]['icon'] ?></span>
-                                <?php else: ?>
-                                    <i class="<?= $values[0]['icon'] ?> icon-render"></i>
-                                <?php endif; ?>
-                            <?php else: ?>
-                                <span class="material-symbols-outlined">architecture</span>
-                            <?php endif; ?>
+                            <?= $renderMvIcon($values[0]['icon'] ?? '', 'lightbulb') ?>
                         </div>
-                        <span class="mv-card-tag">Approach</span>
+                        <span class="mv-card-tag">Core Value</span>
                     </div>
                     <h3 class="mv-title"><?= stripslashes($values[0]['title'] ?? 'Custom Solutions'); ?></h3>
                     <p class="mv-text">
-                        <?= stripslashes($values[0]['details'] ?? 'Spider offers custom solutions tailored to your specific needs, unlike generic bundles from product-focused companies. As a vendor-independent provider, we choose the best options to minimize your Total Cost of Ownership and maximize Quality of Service.'); ?>
+                        <?= trim(stripslashes($values[0]['details'] ?? 'Spider offers custom solutions tailored to your specific needs, unlike generic bundles from product-focused companies.')); ?>
                     </p>
                 </div>
             </div>
