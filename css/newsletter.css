@@ -1,41 +1,14 @@
     .newsletter-wrapper {
-        padding: 44px 0 52px;
+        padding: 48px 0;
         background-color: #ffffff;
     }
 
     .newsletter-section {
-        background: linear-gradient(135deg, #ffffff 0%, #fffaf5 100%);
+        background-color: #f8fafc;
         border: 1px solid #e2e8f0;
-        border-radius: 24px;
-        padding: 38px 42px;
+        border-radius: 20px;
+        padding: 36px 42px;
         position: relative;
-        overflow: hidden;
-        box-shadow: 0 12px 32px rgba(15, 23, 42, 0.04);
-    }
-
-    .newsletter-section::before {
-        content: '';
-        position: absolute;
-        top: -90px;
-        right: -90px;
-        width: 280px;
-        height: 280px;
-        background: radial-gradient(circle, rgba(244, 130, 33, 0.1) 0%, transparent 70%);
-        border-radius: 50%;
-        z-index: 0;
-        pointer-events: none;
-    }
-
-    .newsletter-grid-overlay {
-        position: absolute;
-        inset: 0;
-        background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
-        background-size: 20px 20px;
-        opacity: 0.35;
-        mask-image: linear-gradient(to right, black, transparent 75%);
-        -webkit-mask-image: linear-gradient(to right, black, transparent 75%);
-        pointer-events: none;
-        z-index: 0;
     }
 
     .news-content {
@@ -43,32 +16,13 @@
         z-index: 1;
     }
 
-    .news-eyebrow {
-        background: rgba(244, 130, 33, 0.1);
-        color: var(--primary-orange, #f48221);
-        padding: 5px 14px;
-        border-radius: 50px;
-        font-family: 'Poppins', sans-serif;
-        font-weight: 600;
-        font-size: 0.74rem;
-        letter-spacing: 0.4px;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        margin-bottom: 12px;
-    }
-
-    .news-eyebrow .material-symbols-outlined {
-        font-size: 0.98rem;
-    }
-
     .news-title {
         font-family: 'Poppins', sans-serif;
         font-weight: 800;
-        font-size: clamp(1.65rem, 2.4vw, 2.05rem);
+        font-size: clamp(1.6rem, 2.3vw, 1.95rem);
         letter-spacing: -0.4px;
         color: var(--dark-bg, #111111);
-        margin-bottom: 8px;
+        margin-bottom: 6px;
         line-height: 1.2;
     }
 
@@ -77,63 +31,40 @@
     }
 
     .news-subtitle {
-        color: #475569;
+        color: #64748b;
         font-size: 0.95rem;
-        line-height: 1.62;
-        max-width: 460px;
+        line-height: 1.6;
+        max-width: 440px;
     }
 
     .news-form {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
+        margin: 0;
     }
 
     .news-input-group {
-        background: #f8fafc;
-        padding: 5px 6px 5px 18px;
+        background: #ffffff;
+        padding: 5px 6px 5px 22px;
         border-radius: 50px;
         display: flex;
         align-items: center;
         gap: 10px;
-        border: 1.5px solid #cbd5e1;
-        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
-        transition: background-color 0.25s ease,
-                    border-color 0.25s ease,
-                    box-shadow 0.25s ease;
+        border: 1px solid #cbd5e1;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease;
     }
 
     .news-input-group:hover {
-        background: #ffffff;
         border-color: #94a3b8;
-        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
     }
 
     .news-input-group:focus-within {
-        background: #ffffff;
         border-color: var(--primary-orange, #f48221);
-        box-shadow: 0 0 0 4px rgba(244, 130, 33, 0.14), 0 8px 22px rgba(15, 23, 42, 0.06);
-    }
-
-    .news-input-icon {
-        font-size: 1.2rem;
-        color: #94a3b8;
-        flex-shrink: 0;
-        transition: color 0.25s ease;
-    }
-
-    .news-input-group:hover .news-input-icon {
-        color: #64748b;
-    }
-
-    .news-input-group:focus-within .news-input-icon {
-        color: var(--primary-orange, #f48221);
+        box-shadow: 0 0 0 3px rgba(244, 130, 33, 0.14);
     }
 
     .news-input {
         border: none !important;
         background: transparent;
-        padding: 8px 4px;
+        padding: 8px 0;
         flex: 1;
         min-width: 0;
         outline: none !important;
@@ -141,7 +72,7 @@
         font-family: 'Open Sans', sans-serif;
         font-size: 0.94rem;
         color: #0f172a;
-        font-weight: 500;
+        font-weight: 400;
     }
 
     .news-input::placeholder {
@@ -149,22 +80,7 @@
         font-weight: 400;
     }
 
-    .news-helper-text {
-        margin: 0;
-        padding-left: 14px;
-        font-size: 0.76rem;
-        color: #64748b;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .news-helper-text .material-symbols-outlined {
-        font-size: 0.92rem;
-        color: var(--primary-orange, #f48221);
-    }
-
-    /* Standardized Premium Button for Newsletter */
+    /* Standardized Button for Newsletter */
     .btn-pill {
         padding: 12px 28px;
         border-radius: 50px;
@@ -212,7 +128,7 @@
     .btn-orange {
         background: var(--primary-orange, #f48221);
         color: #ffffff;
-        box-shadow: 0 6px 18px rgba(244, 130, 33, 0.26);
+        box-shadow: 0 6px 18px rgba(244, 130, 33, 0.24);
         border: 1.5px solid var(--primary-orange, #f48221);
     }
 
@@ -221,15 +137,13 @@
         border-color: #e6751c;
         transform: translateY(-2px);
         color: #ffffff;
-        box-shadow: 0 10px 24px rgba(244, 130, 33, 0.34);
+        box-shadow: 0 10px 24px rgba(244, 130, 33, 0.32);
     }
 
     @media (max-width: 991px) {
         .newsletter-wrapper { padding: 32px 0; }
-        .newsletter-section { padding: 32px 24px; }
-        .news-input-group { border-radius: 20px; flex-direction: column; padding: 12px; gap: 10px; align-items: stretch; }
-        .news-input-icon { display: none; }
-        .news-input { padding: 10px 14px; width: 100%; text-align: center; }
-        .news-submit-btn { width: 100%; border-radius: 14px; }
-        .news-helper-text { justify-content: center; padding-left: 0; }
+        .newsletter-section { padding: 28px 24px; }
+        .news-input-group { border-radius: 18px; flex-direction: column; padding: 12px; gap: 10px; align-items: stretch; }
+        .news-input { padding: 8px 12px; width: 100%; text-align: center; }
+        .news-submit-btn { width: 100%; border-radius: 12px; }
     }

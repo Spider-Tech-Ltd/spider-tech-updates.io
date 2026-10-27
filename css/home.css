@@ -896,149 +896,107 @@
         color: #64748b;
         font-weight: 600;
     }
-    /* ====== Partnership Logos Tier Section ====== */
+    /* ====== Partnership Logos Tier Section (Animated Marquee) ====== */
     .partners-logo-section {
         background-color: #ffffff;
-        padding: 40px 0 36px;
+        padding: 36px 0 32px;
         border-bottom: 1px solid #eef2f6;
+        overflow: hidden;
     }
 
     .partners-tier-header {
         text-align: center;
-        margin-bottom: 24px;
+        margin-bottom: 22px;
     }
 
-    .partners-tier-eyebrow {
+    .partners-tier-label {
         font-family: 'Poppins', sans-serif;
-        font-size: 0.76rem;
+        font-size: 0.75rem;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 1.8px;
-        color: #64748b;
-        display: inline-flex;
-        align-items: center;
-        gap: 12px;
+        letter-spacing: 1.6px;
+        color: #94a3b8;
     }
 
-    .partners-tier-eyebrow::before,
-    .partners-tier-eyebrow::after {
-        content: '';
-        width: 28px;
-        height: 1px;
-        background-color: #cbd5e1;
+    .partners-marquee-viewport {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        padding: 6px 0;
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
+        mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
     }
 
-    .partners-logo-grid {
-        display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: 16px;
-        align-items: stretch;
+    .partners-marquee-track {
+        display: flex;
+        width: max-content;
+        will-change: transform;
+        animation: partnersLogoMarquee 32s linear infinite;
     }
 
-    .partner-logo-item {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 14px 16px;
-        min-height: 68px;
+    .partners-marquee-viewport:hover .partners-marquee-track {
+        animation-play-state: paused;
+    }
+
+    @keyframes partnersLogoMarquee {
+        0% {
+            transform: translate3d(0%, 0, 0);
+        }
+        100% {
+            transform: translate3d(-50%, 0, 0);
+        }
+    }
+
+    .partners-marquee-group {
         display: flex;
         align-items: center;
-        justify-content: center;
-        transition: background-color 0.25s ease,
-                    border-color 0.25s ease,
-                    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
-                    box-shadow 0.25s ease;
+        gap: 64px;
+        padding-right: 64px;
     }
 
-    .partner-logo-item:hover {
-        background: #ffffff;
-        border-color: rgba(244, 130, 33, 0.32);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
-    }
-
-    .partner-logo-img {
-        max-height: 38px;
-        max-width: 130px;
-        width: auto;
-        height: auto;
-        object-fit: contain;
-        filter: grayscale(100%) opacity(0.72);
-        transition: filter 0.3s ease, transform 0.3s ease;
-    }
-
-    .partner-logo-item:hover .partner-logo-img {
-        filter: grayscale(0%) opacity(1);
-        transform: scale(1.03);
-    }
-
-    .partner-logo-placeholder {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: #64748b;
-        transition: color 0.25s ease;
-    }
-
-    .partner-placeholder-mark {
-        width: 34px;
-        height: 34px;
-        border-radius: 9px;
-        background: #eef2f6;
-        color: #64748b;
+    .partner-ticker-item {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        transition: background-color 0.25s ease, color 0.25s ease;
-    }
-
-    .partner-logo-item:hover .partner-placeholder-mark {
-        background: rgba(244, 130, 33, 0.12);
-        color: var(--primary-orange);
-    }
-
-    .partner-placeholder-icon {
-        font-size: 1.15rem;
-    }
-
-    .partner-placeholder-text {
-        display: flex;
-        flex-direction: column;
-        line-height: 1.2;
-        text-align: left;
-    }
-
-    .partner-placeholder-name {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 600;
-        font-size: 0.78rem;
-        color: #334155;
-        white-space: nowrap;
-        transition: color 0.25s ease;
-    }
-
-    .partner-logo-item:hover .partner-placeholder-name {
-        color: #0f172a;
-    }
-
-    .partner-placeholder-sub {
-        font-size: 0.66rem;
         color: #94a3b8;
-        font-weight: 500;
+        opacity: 0.8;
+        transition: color 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .partner-ticker-item:hover {
+        color: #1e293b;
+        opacity: 1;
+        transform: translateY(-1px);
+    }
+
+    .partner-svg-logo {
+        height: 32px;
+        width: auto;
+        display: block;
+    }
+
+    .partner-logo-img {
+        max-height: 36px;
+        max-width: 140px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        filter: grayscale(100%) opacity(0.68);
+        transition: filter 0.3s ease;
+    }
+
+    .partner-ticker-item:hover .partner-logo-img {
+        filter: grayscale(0%) opacity(1);
+    }
+
+    .partner-fallback-wordmark {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 1rem;
+        letter-spacing: -0.3px;
+        color: inherit;
         white-space: nowrap;
-    }
-
-    @media (max-width: 1199px) {
-        .partners-logo-grid {
-            grid-template-columns: repeat(3, 1fr);
-        }
-    }
-
-    @media (max-width: 767px) {
-        .partners-logo-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
     }
     @media (max-width: 991px) {
         .hero-stats {

@@ -2,24 +2,18 @@
 <link rel="stylesheet" href="<?= BASE_URL ?>/css/newsletter.css" />
 
 <!-- ====== Newsletter / Call to Action Section ====== -->
-<section class="section-padding newsletter-wrapper" aria-labelledby="newsletterHeading">
+<section class="newsletter-wrapper" aria-labelledby="newsletterHeading">
     <div class="container">
         <div class="newsletter-section">
-            <div class="newsletter-grid-overlay" aria-hidden="true"></div>
             <div class="row align-items-center news-content">
                 <div class="col-lg-6 mb-4 mb-lg-0">
-                    <span class="news-eyebrow">
-                        <span class="material-symbols-outlined" aria-hidden="true">mail</span>
-                        Newsletter &amp; Updates
-                    </span>
                     <h2 id="newsletterHeading" class="news-title">Stay <span>Connected</span></h2>
-                    <p class="news-subtitle mb-0">Get the latest tech updates, training announcements, and community insights delivered straight to your inbox.</p>
+                    <p class="news-subtitle mb-0">Get the latest tech updates and community news delivered to your inbox.</p>
                 </div>
                 <div class="col-lg-6">
                     <form id="subscribeForm" class="news-form" novalidate>
                         <label for="newsletterEmailInput" class="sr-only">Email address</label>
                         <div class="news-input-group">
-                            <span class="material-symbols-outlined news-input-icon" aria-hidden="true">alternate_email</span>
                             <input type="email"
                                    id="newsletterEmailInput"
                                    name="email"
@@ -30,13 +24,9 @@
                                    required>
                             <button type="submit" class="btn-pill btn-orange news-submit-btn" id="subscribeBtn">
                                 <span>Subscribe</span>
-                                <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                                <span class="material-symbols-outlined" aria-hidden="true">mail</span>
                             </button>
                         </div>
-                        <p class="news-helper-text">
-                            <span class="material-symbols-outlined" aria-hidden="true">verified_user</span>
-                            <span>We respect your privacy. Unsubscribe at any time.</span>
-                        </p>
                     </form>
                     <div id="subscribeMessage" class="mt-2" role="status" aria-live="polite"></div>
                 </div>
@@ -58,7 +48,7 @@ $(document).ready(function() {
             type: 'POST',
             data: $(this).serialize() + '&subscribe=1',
             success: function(data) {
-                btn.prop('disabled', false).html('<span>Subscribe</span> <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>');
+                btn.prop('disabled', false).html('<span>Subscribe</span> <span class="material-symbols-outlined" aria-hidden="true">mail</span>');
                 msg.html(data).fadeIn();
                 if(data.indexOf('alert-success') !== -1) {
                     $("#subscribeForm")[0].reset();
