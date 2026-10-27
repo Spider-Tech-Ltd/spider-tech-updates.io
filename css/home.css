@@ -7,8 +7,9 @@
     /* Hero Slider */
     .home-hero {
         position: relative;
-        height: 100vh;
-        min-height: 800px;
+        height: calc(100vh - 36px);
+        min-height: 580px;
+        max-height: 860px;
         background: var(--dark-bg);
         overflow: hidden;
     }
@@ -41,7 +42,7 @@
         display: flex;
         align-items: center;
         background: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.2) 60%, transparent 100%);
-        padding-top: 80px;
+        padding-top: 68px;
         /* Reduced to bring stats more into view */
     }
 
@@ -56,8 +57,8 @@
         text-transform: uppercase;
         letter-spacing: 3px;
         font-weight: 700;
-        font-size: 0.85rem;
-        margin-bottom: 1.25rem;
+        font-size: 0.8rem;
+        margin-bottom: 0.75rem;
         display: flex;
         align-items: center;
         gap: 10px;
@@ -73,9 +74,9 @@
     .hero-title {
         font-family: 'Poppins', sans-serif;
         font-weight: 800;
-        font-size: clamp(2.5rem, 5vw, 4.5rem);
-        line-height: 1.1;
-        margin-bottom: 1.5rem;
+        font-size: clamp(2.2rem, 4vw, 3.6rem);
+        line-height: 1.12;
+        margin-bottom: 1rem;
         color: rgba(255, 255, 255, 0.85);
         /* Match description color for readability */
     }
@@ -86,28 +87,28 @@
 
     .hero-desc {
         font-family: 'Open Sans', sans-serif;
-        font-size: 1.2rem;
+        font-size: 1.05rem;
         color: rgba(255, 255, 255, 0.85);
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.25rem;
         /* Reduced for tighter layout */
         max-width: 650px;
-        line-height: 1.7;
+        line-height: 1.6;
     }
 
     .hero-btns {
         display: flex;
-        gap: 1.25rem;
-        margin-bottom: 3rem;
+        gap: 1rem;
+        margin-bottom: 1.75rem;
         /* Reduced to pull stats up */
     }
 
     .btn-pill {
-        padding: 16px 38px;
+        padding: 13px 32px;
         border-radius: 50px;
         font-family: 'Poppins', sans-serif;
         font-weight: 700;
         text-transform: uppercase;
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         text-decoration: none !important;
         display: inline-flex;
@@ -145,9 +146,9 @@
     /* Hero Stats */
     .hero-stats {
         display: flex;
-        gap: 4.5rem;
+        gap: 3.5rem;
         border-top: 1px solid rgba(255, 255, 255, 0.2);
-        padding-top: 1.5rem;
+        padding-top: 1.15rem;
     }
 
     .hero-stat-item {
@@ -156,7 +157,7 @@
     }
 
     .hero-stat-value {
-        font-size: 2.5rem;
+        font-size: 2rem;
         font-weight: 800;
         font-family: 'Poppins', sans-serif;
         color: #fff;
@@ -164,11 +165,11 @@
     }
 
     .hero-stat-label {
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         text-transform: uppercase;
         color: rgba(255, 255, 255, 0.6);
         letter-spacing: 1.5px;
-        margin-top: 8px;
+        margin-top: 5px;
     }
 
     .section-padding {
