@@ -138,28 +138,38 @@ foreach ($banners as &$banner) {
 <section class="section-padding bg-light services-section">
     <div class="container">
         <div class="section-header">
+            <span class="event-tag">
+                <span class="material-symbols-outlined" style="font-size: 1.05rem;">layers</span>
+                What We Do
+            </span>
+            <br>
             <h2 class="section-title">Our Core <span>Services</span></h2>
             <p class="section-subtitle">We provide high-impact technical solutions designed to scale your business and empower your workforce.</p>
         </div>
-        <div class="row">
+        <div class="row services-grid-row">
             <?php foreach ($services as $service): ?>
-                <div class="col-lg-4 col-md-6 mb-4">
+                <div class="col-lg-4 col-md-6 services-grid-col">
                     <a href="<?= BASE_URL ?>/services/detail?id=<?= $service['id']; ?>" class="service-card-new">
-                        <div class="service-icon-box">
-                            <i class="<?= $service['service_icon']; ?>"></i>
+                        <div class="service-card-body">
+                            <div class="service-icon-box">
+                                <i class="<?= $service['service_icon']; ?>"></i>
+                            </div>
+                            <h3 class="service-title"><?= htmlspecialchars($service['service_name']); ?></h3>
+                            <p class="service-text"><?= htmlspecialchars($service['service_description']); ?></p>
                         </div>
-                        <h3 class="service-title"><?= htmlspecialchars($service['service_name']); ?></h3>
-                        <p class="service-text"><?= htmlspecialchars($service['service_description']); ?></p>
+                        <span class="service-card-link">
+                            Learn More
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </span>
                     </a>
                 </div>
             <?php endforeach; ?>
         </div>
         <div class="section-footer">
-            <a href="<?= BASE_URL ?>/services" class="btn-pill btn-orange">Explore All Services</a>
+            <a href="<?= BASE_URL ?>/services" class="btn-pill btn-orange services-cta-btn">Explore All Services</a>
         </div>
     </div>
 </section>
-
 <!-- ====== Upcoming Events Section ====== -->
 <?php if (!empty($upcoming_events)): ?>
     <section class="section-padding">
