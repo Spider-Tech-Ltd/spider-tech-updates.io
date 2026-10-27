@@ -5,6 +5,7 @@ class ServiceController extends BaseController {
         $homeModel = new HomeModel($this->db);
         $data = [
             'services' => $serviceModel->getAllServices(),
+            'testimonials' => $homeModel->getTestimonials(),
             'contact' => $homeModel->getContactDetails()
         ];
         $this->render("services/index", $data);

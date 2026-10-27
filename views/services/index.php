@@ -85,5 +85,8 @@
     </div>
 </section>
 
+<!-- ====== Testimonials Section ====== -->
+<?php include ROOT_PATH . '/views/layout/testimonials.php'; ?>
+
 <!-- Include Modular Newsletter -->
 <?php include ROOT_PATH . '/views/layout/newsletter.php'; ?>
