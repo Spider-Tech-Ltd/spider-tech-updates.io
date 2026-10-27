@@ -3,14 +3,14 @@
        Phase 6: Mobile Accessibility & Active State + Top Bar
     ==================================================== */
 
-    /* ====== Top Utility Bar (Non-Fixed, Compact) ====== */
+    /* ====== Top Utility Bar (Non-Fixed, Compact, Primary Orange) ====== */
     .site-topbar {
       position: relative;
       z-index: 1201;
-      background-color: #111111;
-      color: rgba(255, 255, 255, 0.85);
+      background-color: #f48221;
+      color: #ffffff;
       height: 36px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
       font-family: 'Open Sans', sans-serif;
       font-size: 0.78rem;
       display: flex;
@@ -40,7 +40,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      color: rgba(255, 255, 255, 0.85);
+      color: #ffffff;
       text-decoration: none !important;
       font-weight: 600;
       letter-spacing: 0.2px;
@@ -50,26 +50,32 @@
 
     .topbar-link:hover,
     .topbar-link:focus-visible {
-      color: #f48221;
+      color: #111111;
     }
 
     .topbar-link:focus-visible,
     .topbar-social-link:focus-visible {
-      outline: 2px solid #f48221;
+      outline: 2px solid #ffffff;
       outline-offset: 2px;
       border-radius: 4px;
     }
 
     .topbar-icon {
       font-size: 15px !important;
-      color: #f48221;
+      color: #ffffff;
       line-height: 1;
+      transition: color 0.25s ease;
+    }
+
+    .topbar-link:hover .topbar-icon,
+    .topbar-link:focus-visible .topbar-icon {
+      color: #111111;
     }
 
     .topbar-divider {
       width: 1px;
       height: 12px;
-      background-color: rgba(255, 255, 255, 0.18);
+      background-color: rgba(255, 255, 255, 0.35);
       flex-shrink: 0;
     }
 
@@ -87,15 +93,15 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: rgba(255, 255, 255, 0.8);
-      background-color: rgba(255, 255, 255, 0.06);
+      color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.18);
       font-size: 0.72rem;
       text-decoration: none !important;
       transition: all 0.25s ease;
     }
 
     .topbar-social-link:hover {
-      background-color: #f48221;
+      background-color: #111111;
       color: #ffffff;
       transform: translateY(-1px);
     }
@@ -126,27 +132,27 @@
       }
     }
 
-    /* ====== Modern Header Reset & Base (Fixed on Scroll) ====== */
+    /* ====== Modern Header Reset & Base (Fixed on Scroll, Constant Narrow Height) ====== */
     .site-header {
       position: fixed;
       top: 36px;
       left: 0;
       right: 0;
       z-index: 1200;
+      padding: 14px 0;
       transition: background 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                  padding 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                  box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-      padding: 22px 0;
+                  box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                  border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     /* Scrolled State: Glassmorphism locked at top: 0 */
     .site-header.is-scrolled {
       top: 0;
       padding: 14px 0;
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.78);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
       border-bottom: 1px solid rgba(244, 130, 31, 0.1);
     }
 
@@ -289,7 +295,7 @@
       }
 
       .site-header {
-        padding: 18px 0;
+        padding: 14px 0;
       }
     }
 
