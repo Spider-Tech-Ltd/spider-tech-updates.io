@@ -75,36 +75,57 @@
 
     /* Standardized Premium Button for Newsletter */
     .btn-pill {
-        padding: 12px 30px; /* Refined for newsletter context */
+        padding: 9px 24px;
         border-radius: 50px;
         font-family: 'Poppins', sans-serif;
-        font-weight: 700;
+        font-weight: 600;
         text-transform: uppercase;
         font-size: 0.8rem;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        line-height: 1.25;
+        letter-spacing: 0.45px;
+        transition: background-color 0.25s ease,
+                    border-color 0.25s ease,
+                    color 0.25s ease,
+                    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                    box-shadow 0.25s ease;
         text-decoration: none !important;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
         white-space: nowrap;
+        cursor: pointer;
+    }
+
+    .btn-pill .material-symbols-outlined {
+        font-size: 1.05rem;
+        line-height: 1;
+        transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .btn-pill:hover .material-symbols-outlined {
+        transform: translateX(3px);
+    }
+
+    .btn-pill:focus-visible {
+        outline: 2px solid var(--primary-orange);
+        outline-offset: 3px;
     }
 
     .btn-orange {
         background: var(--primary-orange);
-        color: #fff;
-        box-shadow: 0 8px 20px rgba(244, 130, 33, 0.25);
-        border: 2px solid var(--primary-orange);
+        color: #ffffff;
+        box-shadow: 0 4px 14px rgba(244, 130, 33, 0.24);
+        border: 1.5px solid var(--primary-orange);
     }
 
     .btn-orange:hover {
         background: #e6751c;
         border-color: #e6751c;
-        transform: translateY(-3px);
-        color: #fff;
-        box-shadow: 0 10px 25px rgba(244, 130, 33, 0.35);
+        transform: translateY(-2px);
+        color: #ffffff;
+        box-shadow: 0 8px 20px rgba(244, 130, 33, 0.32);
     }
-
     @media (max-width: 991px) {
         .newsletter-wrapper { padding: 32px 0; }
         .newsletter-section { padding: 40px 28px; }

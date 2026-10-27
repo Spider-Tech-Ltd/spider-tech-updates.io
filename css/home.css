@@ -102,47 +102,79 @@
     }
 
     .btn-pill {
-        padding: 14px 34px;
+        padding: 9px 24px;
         border-radius: 50px;
         font-family: 'Poppins', sans-serif;
-        font-weight: 700;
+        font-weight: 600;
         text-transform: uppercase;
-        font-size: 0.84rem;
-        letter-spacing: 0.4px;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        font-size: 0.8rem;
+        line-height: 1.25;
+        letter-spacing: 0.45px;
+        transition: background-color 0.25s ease,
+                    border-color 0.25s ease,
+                    color 0.25s ease,
+                    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                    box-shadow 0.25s ease;
         text-decoration: none !important;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
+        cursor: pointer;
+    }
+
+    .btn-pill .material-symbols-outlined {
+        font-size: 1.05rem;
+        line-height: 1;
+        transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .btn-pill:hover .material-symbols-outlined {
+        transform: translateX(3px);
+    }
+
+    .btn-pill:active {
+        transform: translateY(0) !important;
+    }
+
+    .btn-pill:focus-visible {
+        outline: 2px solid var(--primary-orange);
+        outline-offset: 3px;
     }
 
     .btn-orange {
         background: var(--primary-orange);
-        color: #fff;
-        box-shadow: 0 10px 25px rgba(244, 130, 33, 0.35);
-        border: 2px solid var(--primary-orange);
+        color: #ffffff;
+        box-shadow: 0 4px 14px rgba(244, 130, 33, 0.24);
+        border: 1.5px solid var(--primary-orange);
     }
 
     .btn-orange:hover {
         background: #e6751c;
         border-color: #e6751c;
-        transform: translateY(-5px);
-        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(244, 130, 33, 0.32);
+        color: #ffffff;
     }
 
     .btn-outline-white {
-        border: 2px solid #fff;
-        color: #fff;
-        background: transparent;
+        border: 1.5px solid rgba(255, 255, 255, 0.88);
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.04);
     }
 
     .btn-outline-white:hover {
-        background: #fff;
+        background: #ffffff;
+        border-color: #ffffff;
         color: var(--dark-bg);
-        transform: translateY(-5px);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     }
 
+    .btn-outline-white:focus-visible {
+        outline: 2px solid #ffffff;
+        outline-offset: 3px;
+    }
     /* Hero Stats */
     .hero-stats {
         display: flex;
@@ -281,8 +313,8 @@
     }
 
     .about-cta-btn {
-        padding: 11px 24px;
-        font-size: 0.8rem;
+        padding: 9px 22px;
+        font-size: 0.78rem;
         width: fit-content;
     }
     /* Services Grid */
@@ -427,8 +459,8 @@
     }
 
     .services-cta-btn {
-        padding: 12px 28px;
-        font-size: 0.82rem;
+        padding: 9px 24px;
+        font-size: 0.8rem;
     }
     /* Events Horizontal Card */
     .event-card-horizontal {
