@@ -231,26 +231,68 @@ foreach ($banners as &$banner) {
 <?php endif; ?>
 
 <!-- ====== Projects Showcase ====== -->
-<section class="section-padding bg-light">
+<section class="section-padding bg-light projects-showcase-section">
     <div class="container">
         <div class="section-header">
+            <span class="event-tag">
+                <span class="material-symbols-outlined" style="font-size: 1.05rem;">work_history</span>
+                Our Portfolio
+            </span>
+            <br>
             <h2 class="section-title">Featured <span>Projects</span></h2>
             <p class="section-subtitle">We design innovative digital solutions leveraging cutting-edge technology.</p>
         </div>
         <div class="row">
-            <?php foreach ($projects as $project): ?>
+            <?php foreach ($projects as $project):
+                $rawPic = trim($project['project_pic'] ?? '');
+                $hasPic = false;
+                $pPic = '';
+                if ($rawPic !== '') {
+                    if (preg_match('#^https?://#i', $rawPic)) {
+                        $pPic = $rawPic;
+                        $hasPic = true;
+                    } else {
+                        $relPath = ltrim($rawPic, './');
+                        if (file_exists(ROOT_PATH . '/' . $relPath)) {
+                            $pPic = BASE_URL . '/' . $relPath;
+                            $hasPic = true;
+                        }
+                    }
+                }
+                $pTitle = trim(stripslashes($project['project_name'] ?? 'Untitled Project'));
+                $pCategory = trim(stripslashes($project['service_name'] ?? 'Technology Solution'));
+                $pDesc = trim(strip_tags(stripslashes($project['project_description'] ?? '')));
+            ?>
                 <div class="col-lg-4 col-md-6 mb-4">
-                    <a href="<?= BASE_URL ?>/projects/detail?id=<?= $project['project_id']; ?>" class="project-card-new">
+                    <a href="<?= BASE_URL ?>/projects/detail?id=<?= (int)$project['project_id']; ?>"
+                       class="project-card-new"
+                       aria-label="View project details for <?= htmlspecialchars($pTitle); ?>">
                         <div class="card-img-wrap">
-                            <?php $pPic = (empty($project['project_pic'])) ? BASE_URL . '/images/placeholder-banner.jpg' : ( (preg_match('#^https?://#i', $project['project_pic'])) ? $project['project_pic'] : BASE_URL . '/' . ltrim($project['project_pic'], './') ); ?>
-                            <img src="<?= $pPic ?>" alt="<?= stripslashes($project['project_name']); ?>" loading="lazy" decoding="async">
+                            <?php if ($hasPic): ?>
+                                <img src="<?= htmlspecialchars($pPic) ?>"
+                                     alt="<?= htmlspecialchars($pTitle); ?>"
+                                     loading="lazy"
+                                     decoding="async"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <?php endif; ?>
+                            <div class="project-img-fallback" style="display: <?= $hasPic ? 'none' : 'flex' ?>;" aria-hidden="true">
+                                <svg class="fallback-svg-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="6" y="10" width="52" height="44" rx="6" stroke="currentColor" stroke-width="2.5" stroke-dasharray="4 3"/>
+                                    <circle cx="22" cy="24" r="4.5" stroke="#f48221" stroke-width="2.5"/>
+                                    <path d="M10 46L23 33C24.5 31.5 26.8 31.5 28.3 33L38 42.5L44.5 36C46 34.5 48.3 34.5 49.8 36L56 42.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span class="fallback-label">Thumbnail Unavailable</span>
+                            </div>
                         </div>
                         <div class="card-content-p">
-                            <span class="card-category-p"><?= $project['service_name']; ?></span>
-                            <h4 class="card-title-p"><?= stripslashes($project['project_name']); ?></h4>
+                            <span class="card-category-p"><?= htmlspecialchars($pCategory); ?></span>
+                            <h3 class="card-title-p" title="<?= htmlspecialchars($pTitle); ?>"><?= htmlspecialchars($pTitle); ?></h3>
+                            <?php if ($pDesc !== ''): ?>
+                                <p class="card-desc-p"><?= htmlspecialchars($pDesc); ?></p>
+                            <?php endif; ?>
                             <div class="view-btn-p">
-                                View Project Details
-                                <span class="material-symbols-outlined" style="font-size: 1.1rem;">arrow_forward</span>
+                                <span>View Project Details</span>
+                                <span class="material-symbols-outlined">arrow_forward</span>
                             </div>
                         </div>
                     </a>
@@ -258,11 +300,10 @@ foreach ($banners as &$banner) {
             <?php endforeach; ?>
         </div>
         <div class="section-footer">
-            <a href="<?= BASE_URL ?>/projects" class="btn-pill btn-orange">View All Projects</a>
+            <a href="<?= BASE_URL ?>/projects" class="btn-pill btn-orange services-cta-btn">View All Projects</a>
         </div>
     </div>
 </section>
-
 <!-- ====== Testimonials Section ====== -->
 <section class="section-padding">
     <div class="container">

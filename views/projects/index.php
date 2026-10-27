@@ -32,30 +32,59 @@
         </div>
         
         <div class="row g-4">
-            <?php foreach($projects as $project): ?>
+            <?php foreach($projects as $project):
+                $rawPic = trim($project['project_pic'] ?? '');
+                $hasPic = false;
+                $finalPic = '';
+                if ($rawPic !== '') {
+                    if (preg_match('#^https?://#i', $rawPic)) {
+                        $finalPic = $rawPic;
+                        $hasPic = true;
+                    } else {
+                        $relPath = ltrim($rawPic, './');
+                        if (file_exists(ROOT_PATH . '/' . $relPath)) {
+                            $finalPic = BASE_URL . '/' . $relPath;
+                            $hasPic = true;
+                        }
+                    }
+                }
+                $pTitle = trim(stripslashes($project['project_name'] ?? 'Untitled Project'));
+                $pCategory = trim(stripslashes($project['service_name'] ?? 'Technology Solution'));
+            ?>
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="project-card">
                     <div class="project-img-wrap">
-                        <span class="project-category-tag"><?= htmlspecialchars($project['service_name']); ?></span>
-                        <?php
-                            $pic = $project['project_pic'];
-                            $finalPic = (empty($pic)) ? BASE_URL . '/images/placeholder-banner.jpg' : ( (preg_match('#^https?://#i', $pic)) ? $pic : BASE_URL . '/' . ltrim($pic, './') );
-                        ?>
-                        <img src="<?= $finalPic ?>" alt="<?= htmlspecialchars($project['project_name']); ?>">
+                        <span class="project-category-tag"><?= htmlspecialchars($pCategory); ?></span>
+                        <?php if ($hasPic): ?>
+                            <img src="<?= htmlspecialchars($finalPic) ?>"
+                                 alt="<?= htmlspecialchars($pTitle); ?>"
+                                 loading="lazy"
+                                 decoding="async"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <?php endif; ?>
+                        <div class="project-img-fallback" style="display: <?= $hasPic ? 'none' : 'flex' ?>;" aria-hidden="true">
+                            <svg class="fallback-svg-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="6" y="10" width="52" height="44" rx="6" stroke="currentColor" stroke-width="2.5" stroke-dasharray="4 3"/>
+                                <circle cx="22" cy="24" r="4.5" stroke="#f48221" stroke-width="2.5"/>
+                                <path d="M10 46L23 33C24.5 31.5 26.8 31.5 28.3 33L38 42.5L44.5 36C46 34.5 48.3 34.5 49.8 36L56 42.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span class="fallback-label">Thumbnail Unavailable</span>
+                        </div>
                     </div>
                     <div class="project-body">
-                        <h3 class="project-title"><?= stripslashes($project['project_name']); ?></h3>
-                        <div class="project-desc"><?= strip_tags(stripslashes($project['project_description'])); ?></div>
-                        <a href="<?= BASE_URL ?>/projects/detail?id=<?= $project['project_id']; ?>" class="project-link">
-                            View Case Study 
-                            <span class="material-symbols-outlined arrow-icon">trending_flat</span>
+                        <h3 class="project-title" title="<?= htmlspecialchars($pTitle); ?>"><?= htmlspecialchars($pTitle); ?></h3>
+                        <div class="project-desc"><?= htmlspecialchars(strip_tags(stripslashes($project['project_description'] ?? ''))); ?></div>
+                        <a href="<?= BASE_URL ?>/projects/detail?id=<?= (int)$project['project_id']; ?>"
+                           class="project-link"
+                           aria-label="View case study for <?= htmlspecialchars($pTitle); ?>">
+                            <span>View Case Study</span>
+                            <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
                         </a>
                     </div>
                 </div>
             </div>
             <?php endforeach; ?>
         </div>
-
         <!-- Premium CTA Section -->
         <div class="premium-cta">
             <div class="row justify-content-center">
