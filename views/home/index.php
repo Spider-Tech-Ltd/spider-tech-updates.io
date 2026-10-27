@@ -470,6 +470,69 @@ foreach ($banners as &$banner) {
     </div>
     <?php endif; ?>
 </section>
+<!-- ====== Partnership Logos Tier Section ====== -->
+<section class="partners-logo-section" aria-label="Our Partners and Collaborators">
+    <div class="container">
+        <div class="partners-tier-header">
+            <span class="partners-tier-eyebrow">Trusted By Industry &amp; Institutional Partners</span>
+        </div>
+        <?php
+        $placeholderPartners = [
+            ['name' => 'Partner Slot 01', 'sub' => 'Technology Partner', 'icon' => 'hub'],
+            ['name' => 'Partner Slot 02', 'sub' => 'Enterprise Partner', 'icon' => 'cloud_done'],
+            ['name' => 'Partner Slot 03', 'sub' => 'Academic Partner',   'icon' => 'school'],
+            ['name' => 'Partner Slot 04', 'sub' => 'Innovation Partner', 'icon' => 'memory'],
+            ['name' => 'Partner Slot 05', 'sub' => 'Infrastructure',     'icon' => 'dns'],
+            ['name' => 'Partner Slot 06', 'sub' => 'Digital Partner',    'icon' => 'verified_user'],
+        ];
+        $hasAdminPartners = !empty($partners) && is_array($partners);
+        ?>
+        <div class="partners-logo-grid" role="list">
+            <?php if ($hasAdminPartners): ?>
+                <?php foreach ($partners as $partner):
+                    $pName = trim(stripslashes($partner['name'] ?? 'Partner'));
+                    $rawLogo = trim($partner['logo'] ?? '');
+                    $logoUrl = '';
+                    if ($rawLogo !== '') {
+                        $logoUrl = preg_match('#^https?://#i', $rawLogo)
+                            ? $rawLogo
+                            : BASE_URL . '/' . ltrim($rawLogo, './');
+                    }
+                ?>
+                    <div class="partner-logo-item" role="listitem" title="<?= htmlspecialchars($pName); ?>">
+                        <?php if ($logoUrl !== ''): ?>
+                            <img src="<?= htmlspecialchars($logoUrl); ?>"
+                                 alt="<?= htmlspecialchars($pName); ?>"
+                                 class="partner-logo-img"
+                                 loading="lazy"
+                                 decoding="async"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <?php endif; ?>
+                        <div class="partner-logo-placeholder" style="display: <?= $logoUrl !== '' ? 'none' : 'flex' ?>;">
+                            <span class="material-symbols-outlined partner-placeholder-icon" aria-hidden="true">domain</span>
+                            <span class="partner-placeholder-name"><?= htmlspecialchars($pName); ?></span>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <?php foreach ($placeholderPartners as $slot): ?>
+                    <div class="partner-logo-item" role="listitem" title="<?= htmlspecialchars($slot['name'] . ' — ' . $slot['sub']); ?>">
+                        <div class="partner-logo-placeholder">
+                            <span class="partner-placeholder-mark" aria-hidden="true">
+                                <span class="material-symbols-outlined partner-placeholder-icon"><?= htmlspecialchars($slot['icon']); ?></span>
+                            </span>
+                            <div class="partner-placeholder-text">
+                                <span class="partner-placeholder-name"><?= htmlspecialchars($slot['name']); ?></span>
+                                <span class="partner-placeholder-sub"><?= htmlspecialchars($slot['sub']); ?></span>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>
+
 <?php include ROOT_PATH . '/views/layout/newsletter.php'; ?>
 
 <script>

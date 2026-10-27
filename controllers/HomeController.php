@@ -14,6 +14,7 @@ class HomeController extends BaseController {
             'upcoming_events' => $model->getUpcomingEvents(),
             'latest_events' => $model->getLatestEvents(),
             'testimonials' => $model->getTestimonials(),
+            'partners' => $model->getPartners(),
             'stats' => $model->getStats()
         ];
 

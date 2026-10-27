@@ -131,6 +131,17 @@ class HomeModel {
         return $filtered;
     }
 
+    public function getPartners() {
+        try {
+            $query = "SELECT * FROM partners_tb WHERE is_active = 1 ORDER BY sort_order ASC, id DESC";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return [];
+        }
+    }
+
     public function getStats() {
         $stats = [
             'clients' => 0,
