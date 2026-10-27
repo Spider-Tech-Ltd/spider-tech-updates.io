@@ -1,26 +1,152 @@
     /* ====================================================
        HEADER — Industrial-Grade Design System
-       Phase 6: Mobile Accessibility & Active State
+       Phase 6: Mobile Accessibility & Active State + Top Bar
     ==================================================== */
 
-    /* ====== Modern Header Reset & Base ====== */
+    /* ====== Top Utility Bar (Non-Fixed, Compact) ====== */
+    .site-topbar {
+      position: relative;
+      z-index: 1201;
+      background-color: #111111;
+      color: rgba(255, 255, 255, 0.85);
+      height: 36px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-family: 'Open Sans', sans-serif;
+      font-size: 0.78rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .topbar-container {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .topbar-contact {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: nowrap;
+      overflow: hidden;
+    }
+
+    .topbar-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255, 255, 255, 0.85);
+      text-decoration: none !important;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      transition: color 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .topbar-link:hover,
+    .topbar-link:focus-visible {
+      color: #f48221;
+    }
+
+    .topbar-link:focus-visible,
+    .topbar-social-link:focus-visible {
+      outline: 2px solid #f48221;
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
+    .topbar-icon {
+      font-size: 15px !important;
+      color: #f48221;
+      line-height: 1;
+    }
+
+    .topbar-divider {
+      width: 1px;
+      height: 12px;
+      background-color: rgba(255, 255, 255, 0.18);
+      flex-shrink: 0;
+    }
+
+    .topbar-social {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .topbar-social-link {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, 0.8);
+      background-color: rgba(255, 255, 255, 0.06);
+      font-size: 0.72rem;
+      text-decoration: none !important;
+      transition: all 0.25s ease;
+    }
+
+    .topbar-social-link:hover {
+      background-color: #f48221;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 576px) {
+      .site-topbar {
+        height: 32px;
+        font-size: 0.72rem;
+      }
+
+      .topbar-container {
+        padding: 0 12px;
+        gap: 8px;
+      }
+
+      .topbar-contact {
+        gap: 10px;
+      }
+
+      .topbar-social {
+        gap: 4px;
+      }
+
+      .topbar-social-link {
+        width: 22px;
+        height: 22px;
+        font-size: 0.68rem;
+      }
+    }
+
+    /* ====== Modern Header Reset & Base (Fixed on Scroll) ====== */
     .site-header {
       position: fixed;
-      top: 0;
+      top: 36px;
       left: 0;
       right: 0;
       z-index: 1200;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      padding: 28px 0;
+      transition: background 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                  padding 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 22px 0;
     }
 
-    /* Scrolled State: Glassmorphism */
+    /* Scrolled State: Glassmorphism locked at top: 0 */
     .site-header.is-scrolled {
+      top: 0;
       padding: 14px 0;
-      background: rgba(255, 255, 255, 0.75);
+      background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
       border-bottom: 1px solid rgba(244, 130, 31, 0.1);
     }
 
@@ -163,7 +289,13 @@
       }
 
       .site-header {
-        padding: 20px 0;
+        padding: 18px 0;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .site-header {
+        top: 32px;
       }
     }
 
@@ -288,4 +420,3 @@
       font-size: 0.9rem;
       padding: 14px 20px;
     }
-  

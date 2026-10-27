@@ -82,9 +82,14 @@ class BaseController {
     }
 
     protected function render($view, $data = [], $layout = true) {
-        if ($layout && empty($data['contact']) && $this->db) {
+        if ($layout && $this->db) {
             $gm = new GeneralModel($this->db);
-            $data['contact'] = $gm->getContactDetails();
+            if (empty($data['contact'])) {
+                $data['contact'] = $gm->getContactDetails();
+            }
+            if (empty($data['socialLinks'])) {
+                $data['socialLinks'] = $gm->getSocialLinks();
+            }
         }
         extract($data);
         $header = ROOT_PATH . "/views/layout/header.php";

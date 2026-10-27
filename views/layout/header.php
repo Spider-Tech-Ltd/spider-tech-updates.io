@@ -62,6 +62,67 @@
   <link rel="stylesheet" href="<?= BASE_URL ?>/css/site-header.css" />
 
   <div class="wraper">
+    <?php
+      if (empty($contact) || !isset($socialLinks)) {
+          $headerGm = new GeneralModel($this->db);
+          if (empty($contact)) {
+              $contact = $headerGm->getContactDetails();
+          }
+          if (!isset($socialLinks)) {
+              $socialLinks = $headerGm->getSocialLinks();
+          }
+      }
+      $topEmail = $contact['contact_email'] ?? '';
+      $topPhone = $contact['contact_pno'] ?? '';
+      $topPhoneHref = preg_replace('/[^0-9+]/', '', $topPhone);
+    ?>
+    <!-- ====== Top Utility Bar (Scrolls away, not fixed) ====== -->
+    <div class="site-topbar" id="siteTopbar" role="region" aria-label="Company contact and social media links">
+      <div class="topbar-container">
+        <div class="topbar-contact">
+          <?php if (!empty($topEmail)): ?>
+            <a href="mailto:<?= htmlspecialchars($topEmail) ?>" class="topbar-link" aria-label="Email us at <?= htmlspecialchars($topEmail) ?>">
+              <span class="material-symbols-outlined topbar-icon" aria-hidden="true">mail</span>
+              <span><?= htmlspecialchars($topEmail) ?></span>
+            </a>
+          <?php endif; ?>
+          <?php if (!empty($topEmail) && !empty($topPhone)): ?>
+            <span class="topbar-divider" aria-hidden="true"></span>
+          <?php endif; ?>
+          <?php if (!empty($topPhone)): ?>
+            <a href="tel:<?= htmlspecialchars($topPhoneHref) ?>" class="topbar-link" aria-label="Call us at <?= htmlspecialchars($topPhone) ?>">
+              <span class="material-symbols-outlined topbar-icon" aria-hidden="true">call</span>
+              <span><?= htmlspecialchars($topPhone) ?></span>
+            </a>
+          <?php endif; ?>
+        </div>
+
+        <div class="topbar-social" aria-label="Social media links">
+          <?php
+            $hasSocial = false;
+            if (!empty($socialLinks)):
+              foreach ($socialLinks as $sl):
+                if (!empty($sl['url']) && $sl['url'] !== '#'):
+                  $hasSocial = true;
+          ?>
+            <a target="_blank" rel="noopener noreferrer" href="<?= htmlspecialchars($sl['url']) ?>" class="topbar-social-link" title="<?= htmlspecialchars($sl['platform']) ?>" aria-label="<?= htmlspecialchars($sl['platform']) ?>">
+              <i class="<?= htmlspecialchars($sl['icon_class']) ?>" aria-hidden="true"></i>
+            </a>
+          <?php
+                endif;
+              endforeach;
+            endif;
+            if (!$hasSocial):
+          ?>
+            <a target="_blank" rel="noopener noreferrer" href="https://web.facebook.com/people/Spider-Hub-Spider-Technologies-Limited/61561284852721/" class="topbar-social-link" title="Facebook" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+            <a target="_blank" rel="noopener noreferrer" href="https://x.com/spidertech_hub" class="topbar-social-link" title="X (Twitter)" aria-label="X (Twitter)"><i class="fab fa-x-twitter" aria-hidden="true"></i></a>
+            <a target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/channel/UCBg_EHRiMiwkJyCuva84zNw" class="topbar-social-link" title="YouTube" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+            <a target="_blank" rel="noopener noreferrer" href="https://linkedin.com/company/spider-technologies-limited" class="topbar-social-link" title="LinkedIn" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+            <a target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/spidertech.hub?igsh=bGhnbWU3OHE5cWtp" class="topbar-social-link" title="Instagram" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
     <header class="site-header" id="mainHeader">
       <div class="header-container">
 
@@ -136,6 +197,7 @@
 
     <script>
       document.addEventListener('DOMContentLoaded', function () {
+        const topbar       = document.getElementById('siteTopbar');
         const header       = document.getElementById('mainHeader');
         const openBtn      = document.getElementById('mobileMenuOpen');
         const drawer       = document.getElementById('mobileDrawer');
@@ -144,9 +206,13 @@
 
         // ---- Scroll glassmorphism ----
         function handleScroll() {
-          header.classList.toggle('is-scrolled', window.scrollY > 40);
+          const topbarHeight = topbar ? topbar.offsetHeight : 0;
+          const scrollY = window.scrollY || window.pageYOffset;
+          header.style.top = Math.max(0, topbarHeight - scrollY) + 'px';
+          header.classList.toggle('is-scrolled', scrollY > topbarHeight);
         }
         window.addEventListener('scroll', handleScroll, { passive: true });
+        window.addEventListener('resize', handleScroll, { passive: true });
         handleScroll();
 
         // ---- Focusable elements inside drawer ----
