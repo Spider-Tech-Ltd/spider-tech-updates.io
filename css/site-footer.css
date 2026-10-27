@@ -1,132 +1,260 @@
-  /* ====== Modern Footer Reset & Base ====== */
-  .site-footer {
-    background-color: #ffffff;
-    padding: 56px 0 32px 0;
-    font-family: 'Open Sans', sans-serif;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    color: #555555;
+  /* ====== Warm Dark-Black Website Footer with Subtle Gradient ====== */
+  footer.site-footer {
+    background-color: #110f0d !important;
+    background-image:
+      radial-gradient(ellipse 55% 60% at 88% 10%, rgba(244, 130, 33, 0.12) 0%, rgba(244, 130, 33, 0.03) 50%, transparent 75%),
+      radial-gradient(ellipse 45% 50% at 12% 92%, rgba(244, 130, 33, 0.06) 0%, transparent 70%),
+      linear-gradient(180deg, #161311 0%, #0d0b09 100%) !important;
+    padding: 64px 0 28px 0 !important;
+    font-family: 'Open Sans', sans-serif !important;
+    border-top: 1px solid rgba(244, 130, 33, 0.2) !important;
+    color: rgba(255, 255, 255, 0.72) !important;
+    position: relative;
+    overflow: hidden;
   }
 
-  .footer-container {
+  .site-footer .footer-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+    position: relative;
+    z-index: 1;
   }
 
-  .footer-grid {
+  .site-footer .footer-grid {
     display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+    grid-template-columns: 1.4fr 0.85fr 0.9fr 1.25fr;
     gap: 40px;
-    margin-bottom: 40px;
+    align-items: start;
+    margin-bottom: 44px;
   }
 
-  /* Column Typography */
-  .footer-col h4 {
+  /* Column Headings */
+  .site-footer .footer-col h4 {
     font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    color: #111111;
-    margin-bottom: 24px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .footer-col p {
+    font-weight: 600;
     font-size: 0.95rem;
-    line-height: 1.6;
-    margin-bottom: 24px;
+    color: #ffffff;
+    margin: 0 0 22px 0;
+    letter-spacing: 0.3px;
+    position: relative;
+    padding-bottom: 10px;
   }
 
-  /* Footer Links */
-  .footer-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  .site-footer .footer-col h4::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 26px;
+    height: 2px;
+    border-radius: 2px;
+    background-color: #f48221;
   }
-  .footer-links li {
-    margin-bottom: 12px;
+
+  .site-footer .footer-brand-desc {
+    font-size: 0.9rem;
+    line-height: 1.68;
+    color: rgba(255, 255, 255, 0.66);
+    margin: 0 0 22px 0;
+    max-width: 310px;
   }
-  .footer-links a {
-    color: #555555;
+
+  /* Footer Navigation Links */
+  .site-footer .footer-links {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .site-footer .footer-links li {
+    margin-bottom: 11px;
+    padding: 0 !important;
+  }
+
+  .site-footer .footer-links li::before {
+    display: none !important;
+    content: none !important;
+  }
+
+  .site-footer .footer-links a {
+    color: rgba(255, 255, 255, 0.68) !important;
     text-decoration: none !important;
     font-size: 0.9rem;
-    transition: color 0.3s;
-  }
-  .footer-links a:hover {
-    color: #f48221;
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.25s ease, transform 0.25s ease;
   }
 
-  /* Branding & Social */
-  .footer-logo {
+  .site-footer .footer-links a:hover {
+    color: #f48221 !important;
+    transform: translateX(3px);
+  }
+
+  /* Branding & Socials */
+  .site-footer .footer-logo {
+    display: inline-flex;
+    align-items: center;
+    background: #ffffff;
+    padding: 8px 16px;
+    border-radius: 12px;
+    margin-bottom: 18px;
+    text-decoration: none !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+    transition: transform 0.25s ease;
+  }
+
+  .site-footer .footer-logo:hover {
+    transform: translateY(-2px);
+  }
+
+  .site-footer .footer-logo-img {
+    height: 34px;
+    width: auto;
+    display: block;
+  }
+
+  .site-footer .social-links {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 20px;
-    text-decoration: none !important;
   }
 
-  .footer-logo-img {
-    height: 35px;
-    width: auto;
-  }
-
-  .social-links {
-    display: flex;
-    gap: 12px;
-  }
-  .social-icon {
+  .site-footer .social-icon {
     width: 36px;
     height: 36px;
-    border: 1px solid #e9ecef;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 50%;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: #555555;
-    transition: all 0.3s;
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 0.85rem;
+    transition: background-color 0.25s ease,
+                border-color 0.25s ease,
+                color 0.25s ease,
+                transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
     text-decoration: none !important;
   }
-  .social-icon:hover {
+
+  .site-footer .social-icon:hover {
     background-color: #f48221;
     border-color: #f48221;
-    color: #ffffff;
-    transform: translateY(-3px);
+    color: #ffffff !important;
+    transform: translateY(-2px);
   }
 
   /* Contact Specifics */
-  .contact-item {
+  .site-footer .footer-contact-list {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .site-footer .contact-item {
+    display: flex;
+    align-items: flex-start;
     gap: 12px;
-    margin-bottom: 16px;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
+    line-height: 1.5;
   }
-  .contact-item i {
+
+  .site-footer .contact-icon-wrap {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(244, 130, 33, 0.12);
+    border: 1px solid rgba(244, 130, 33, 0.22);
     color: #f48221;
-    font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
   }
-  .contact-item span {
-    font-weight: 600;
-    color: #111111;
+
+  .site-footer .contact-icon-wrap .material-symbols-outlined {
+    font-size: 1rem;
+  }
+
+  .site-footer .contact-text {
+    color: rgba(255, 255, 255, 0.72);
+    font-weight: 400;
+  }
+
+  .site-footer .contact-link {
+    color: rgba(255, 255, 255, 0.82) !important;
+    font-weight: 500;
+    text-decoration: none !important;
+    transition: color 0.25s ease;
+    word-break: break-word;
+  }
+
+  .site-footer .contact-link:hover {
+    color: #f48221 !important;
   }
 
   /* Bottom Bar */
-  .footer-bottom {
-    border-top: 1px solid #edf2f7;
-    padding-top: 30px;
+  .site-footer .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.85rem;
-    color: #718096;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 0.83rem;
+    color: rgba(255, 255, 255, 0.52);
   }
-  .heart-icon { color: #f48221; }
+
+  .site-footer .footer-bottom-right {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .site-footer .footer-bottom-link {
+    color: rgba(255, 255, 255, 0.62) !important;
+    text-decoration: none !important;
+    transition: color 0.25s ease;
+  }
+
+  .site-footer .footer-bottom-link:hover {
+    color: #f48221 !important;
+  }
+
+  .site-footer .footer-bottom-sep {
+    color: rgba(255, 255, 255, 0.24);
+  }
+
+  .site-footer .heart-icon {
+    color: #f48221;
+  }
 
   /* Responsive Adjustments */
   @media (max-width: 992px) {
-    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .site-footer .footer-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+    }
   }
+
   @media (max-width: 576px) {
-    .footer-grid { grid-template-columns: 1fr; gap: 40px; }
-    .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+    footer.site-footer {
+      padding: 48px 0 24px 0 !important;
+    }
+    .site-footer .footer-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    .site-footer .footer-bottom {
+      flex-direction: column;
+      gap: 12px;
+      text-align: center;
+    }
+    .site-footer .footer-bottom-right {
+      justify-content: center;
+    }
   }
