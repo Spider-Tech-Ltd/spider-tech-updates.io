@@ -13,6 +13,9 @@
         <div class="social-links">
           <?php
             $gm = new GeneralModel($this->db);
+            if (empty($contact)) {
+              $contact = $gm->getContactDetails();
+            }
             $socialLinks = $gm->getSocialLinks();
             foreach ($socialLinks as $sl):
               if (!empty($sl['url']) && $sl['url'] !== '#'):

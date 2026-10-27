@@ -82,6 +82,10 @@ class BaseController {
     }
 
     protected function render($view, $data = [], $layout = true) {
+        if ($layout && empty($data['contact']) && $this->db) {
+            $gm = new GeneralModel($this->db);
+            $data['contact'] = $gm->getContactDetails();
+        }
         extract($data);
         $header = ROOT_PATH . "/views/layout/header.php";
         $viewFile = ROOT_PATH . "/views/$view.php";
