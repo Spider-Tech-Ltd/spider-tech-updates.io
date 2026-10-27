@@ -348,6 +348,33 @@
         border-bottom: 1px solid #e2e8f0;
         overflow: hidden;
         position: relative;
+        padding: 64px 0;
+    }
+
+    .testimonials-marquee-section .section-header {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .testimonials-marquee-section .section-title {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 800;
+        font-size: clamp(1.85rem, 2.8vw, 2.25rem);
+        letter-spacing: -0.5px;
+        color: #111111;
+        margin-bottom: 0.85rem;
+        position: relative;
+        display: inline-block;
+        line-height: 1.22;
+    }
+
+    .testimonials-marquee-section .section-subtitle {
+        color: #666666;
+        max-width: 620px;
+        margin: 0 auto;
+        font-size: 1rem;
+        line-height: 1.65;
+        padding-bottom: 20px;
     }
 
     .testimonial-marquee-viewport {
@@ -466,9 +493,8 @@
         font-family: 'Open Sans', sans-serif;
         font-size: 0.9rem;
         line-height: 1.58;
-        color: #475569 !important;
+        color: #475569;
         margin-bottom: 14px;
-        padding-bottom: 0;
         padding-right: 36px;
         position: relative;
         z-index: 1;
@@ -494,7 +520,7 @@
         height: 38px;
         border-radius: 50%;
         background: rgba(244, 130, 33, 0.1);
-        color: var(--primary-orange) !important;
+        color: var(--primary-orange);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -503,10 +529,6 @@
         font-size: 0.82rem;
         letter-spacing: 0.3px;
         flex-shrink: 0;
-    }
-
-    .client-avatar-v2 span {
-        color: var(--primary-orange) !important;
     }
 
     .client-meta-v2 {
@@ -520,7 +542,7 @@
         font-family: 'Poppins', sans-serif;
         font-weight: 700;
         font-size: 0.93rem;
-        color: var(--dark-bg) !important;
+        color: #111111;
         margin: 0 0 2px 0;
         line-height: 1.2;
         white-space: nowrap;
@@ -531,7 +553,6 @@
     .client-job-v2 {
         font-size: 0.73rem;
         margin: 0;
-        padding-bottom: 0;
         line-height: 1.3;
         white-space: nowrap;
         overflow: hidden;
@@ -539,18 +560,18 @@
     }
 
     .client-role-title {
-        color: var(--primary-orange) !important;
+        color: var(--primary-orange);
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.3px;
     }
 
     .client-role-sep {
-        color: #94a3b8 !important;
+        color: #94a3b8;
     }
 
     .client-role-org {
-        color: #64748b !important;
+        color: #64748b;
         font-weight: 600;
     }
 

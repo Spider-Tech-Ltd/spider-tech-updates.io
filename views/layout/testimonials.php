@@ -1,7 +1,7 @@
 <!-- ====== Testimonials Section ====== -->
 <section class="section-padding testimonials-marquee-section">
     <div class="container">
-        <div class="section-header text-center mb-4">
+        <div class="section-header">
             <span class="section-eyebrow">
                 <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
