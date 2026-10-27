@@ -218,44 +218,73 @@
     /* About Us */
     .about-img-group {
         position: relative;
-        padding-right: 40px;
-        padding-bottom: 40px;
+        display: block;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12);
     }
 
     .about-img-main {
         width: 100%;
-        border-radius: 30px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        display: block;
+        border-radius: 24px;
     }
 
     .about-experience-card {
         position: absolute;
-        bottom: 0;
-        right: 0;
-        background: var(--primary-orange);
+        bottom: 16px;
+        right: 16px;
+        background: rgba(244, 130, 33, 0.96);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
         color: #fff;
-        padding: 20px;
-        border-radius: 25px;
-        text-align: center;
-        min-width: 160px;
-        box-shadow: 0 15px 30px rgba(244, 130, 33, 0.3);
+        padding: 6px 16px 6px 8px;
+        border-radius: 50px;
+        border: 2px solid rgba(255, 255, 255, 0.92);
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+        z-index: 2;
     }
 
     .exp-years {
-        font-size: 3rem;
+        font-size: 1.05rem;
         font-weight: 800;
-        display: block;
         line-height: 1;
         font-family: 'Poppins', sans-serif;
+        background: #ffffff;
+        color: var(--primary-orange);
+        padding: 6px 10px;
+        border-radius: 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .exp-text {
-        font-size: 0.9rem;
+        font-size: 0.72rem;
         text-transform: uppercase;
         font-weight: 700;
-        letter-spacing: 1px;
+        letter-spacing: 0.6px;
+        line-height: 1.2;
+        text-align: left;
     }
 
+    .about-desc,
+    .about-desc span {
+        color: var(--text-muted) !important;
+        font-family: 'Open Sans', sans-serif !important;
+        font-size: 1.05rem !important;
+        line-height: 1.75 !important;
+        margin-bottom: 1.35rem;
+    }
+
+    .about-cta-btn {
+        padding: 11px 24px;
+        font-size: 0.8rem;
+        width: fit-content;
+    }
     /* Services Grid */
     .services-section {
         border-bottom: 1px solid #e2e8f0;

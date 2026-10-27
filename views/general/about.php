@@ -26,7 +26,7 @@
                     <img src="<?= BASE_URL ?>/images/timeline/<?= stripslashes($about[0]['image'] ?? ''); ?>" alt="About Spider Tech" class="about-img-main">
                     <div class="about-experience-card">
                         <span class="exp-years">4+</span>
-                        <span class="exp-text">Years of<br>Excellence</span>
+                        <span class="exp-text">Years of Tech Excellence</span>
                     </div>
                 </div>
             </div>

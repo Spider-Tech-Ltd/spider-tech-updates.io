@@ -120,13 +120,15 @@ foreach ($banners as &$banner) {
                     Our Story
                 </span>
                 <h2 class="section-title">Driving <span>Innovation</span> with Purpose</h2>
-                <div class="section-subtitle text-left mb-4" style="margin: 0;">
+                <div class="about-desc text-left">
                     <?= stripslashes($about[0]['details'] ?? ''); ?>
                 </div>
-                <p class="mb-5 text-muted">
-                    <?= stripslashes($about[0]['short_details'] ?? ''); ?>
-                </p>
-                <a href="<?= BASE_URL ?>/about" class="btn-pill btn-orange">Learn More About Us</a>
+                <?php if (!empty(trim($about[0]['short_details'] ?? ''))): ?>
+                    <p class="about-desc text-muted">
+                        <?= stripslashes($about[0]['short_details']); ?>
+                    </p>
+                <?php endif; ?>
+                <a href="<?= BASE_URL ?>/about" class="btn-pill btn-orange about-cta-btn">Learn More About Us</a>
             </div>
         </div>
     </div>
