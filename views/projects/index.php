@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/projects.css" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/projects.css?v=<?= filemtime(ROOT_PATH . '/css/projects.css') ?>" />
 
 <!-- ====== Page Header ====== -->
 <section class="page-header">
@@ -6,33 +6,45 @@
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="page-title">Project <span>Showcase</span></h1>
-                <div class="breadcrumb-custom">
-                    <div class="breadcrumb-item-custom">
-                        <a href="<?= BASE_URL ?>/">Home</a>
-                    </div>
-                    <div class="breadcrumb-separator"></div>
-                    <div class="breadcrumb-item-custom active">
-                        Projects
-                    </div>
-                </div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb-custom">
+                        <li class="breadcrumb-item-custom">
+                            <a href="<?= BASE_URL ?>/">Home</a>
+                        </li>
+                        <li class="breadcrumb-item-custom active" aria-current="page">
+                            Projects
+                        </li>
+                    </ol>
+                </nav>
             </div>
         </div>
     </div>
 </section>
 
 <!-- ====== Projects Section ====== -->
-<section class="section-padding bg-light">
+<section class="section-padding projects-page-section">
     <div class="container">
-        <div class="row justify-content-center mb-5">
+        <div class="row justify-content-center mb-4">
             <div class="col-lg-8 text-center">
-                <span class="tag-eyebrow">Innovation in Action</span>
-                <h2 class="section-title" style="font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 2.8rem; color: var(--dark-bg);">Building the <span>Future</span></h2>
-                <p class="section-subtitle">Explore our portfolio of cutting-edge digital solutions, enterprise platforms, and transformative tech projects across Africa.</p>
+                <span class="section-eyebrow">
+                    <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                        <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                    </svg>
+                    <span class="eyebrow-label-text">Innovation in Action</span>
+                    <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                        <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                    </svg>
+                </span>
+                <br>
+                <h2 class="section-title">Building the <span>Future</span></h2>
+                <p class="section-subtitle">Explore our portfolio of software platforms, enterprise systems, and digital infrastructure projects across Africa.</p>
             </div>
         </div>
-        
+
         <div class="row g-4">
-            <?php foreach($projects as $project):
+            <?php foreach ($projects as $project):
                 $rawPic = trim($project['project_pic'] ?? '');
                 $hasPic = false;
                 $finalPic = '';
@@ -91,7 +103,7 @@
                         $pDesc = truncateProjectDescWordAware($project['project_description'] ?? '', 112);
                         ?>
                         <div class="project-desc"><?= htmlspecialchars($pDesc); ?></div>
-                        <a href="<?= BASE_URL ?>/projects/detail?id=<?= (int)$project['project_id']; ?>"
+                        <a href="<?= BASE_URL ?>/projects/detail?id=<?= (int) $project['project_id']; ?>"
                            class="project-link"
                            aria-label="View case study for <?= htmlspecialchars($pTitle); ?>">
                             <span>View Case Study</span>
@@ -102,17 +114,20 @@
             </div>
             <?php endforeach; ?>
         </div>
-        <!-- Premium CTA Section -->
+
+        <!-- Bottom Project Inquiry Banner -->
         <div class="premium-cta">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <h2 style="font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 2.5rem; margin-bottom: 1.5rem;">Have a Visionary <span>Idea?</span></h2>
-                    <p style="color: rgba(255,255,255,0.7); line-height: 1.8; font-size: 1.1rem; margin-bottom: 2.5rem;">
-                        We specialize in turning complex challenges into elegant digital realities. Let's collaborate to build something extraordinary together.
+            <div class="row align-items-center justify-content-between">
+                <div class="col-lg-8 mb-3 mb-lg-0 text-lg-left text-center">
+                    <h2 class="premium-cta-title">Have a Visionary <span>Project in Mind?</span></h2>
+                    <p class="premium-cta-desc">
+                        We partner with ambitious organizations to turn complex engineering challenges into reliable digital products.
                     </p>
+                </div>
+                <div class="col-lg-4 text-lg-right text-center">
                     <a href="<?= BASE_URL ?>/contact" class="cta-button">
-                        Start a Project
-                        <span class="material-symbols-outlined">rocket_launch</span>
+                        <span>Start a Project</span>
+                        <span class="material-symbols-outlined">arrow_forward</span>
                     </a>
                 </div>
             </div>
