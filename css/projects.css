@@ -305,6 +305,84 @@
         transform: translateX(4px);
     }
 
+    /* ====== Progressive Row-by-Row Show More & Staggered Card Reveal ====== */
+    [x-cloak] {
+        display: none !important;
+    }
+
+    .projects-extra-row {
+        padding-top: 4px;
+    }
+
+    .project-extra-col {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+                    transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+        transition-delay: 0ms;
+    }
+
+    .projects-extra-row.is-revealed .project-extra-col {
+        opacity: 1;
+        transform: translateY(0);
+        transition-delay: var(--stagger-delay, 0ms);
+    }
+
+    .projects-more-actions {
+        margin-top: 8px;
+        margin-bottom: 12px;
+        text-align: center;
+    }
+
+    .projects-show-more-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 11px 28px;
+        background: var(--primary-orange);
+        color: #ffffff !important;
+        border: 1px solid var(--primary-orange);
+        border-radius: 50px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-transform: none;
+        letter-spacing: 0.1px;
+        cursor: pointer;
+        box-shadow: 0 8px 20px rgba(244, 130, 33, 0.24);
+        transition: background-color 0.25s ease,
+                    border-color 0.25s ease,
+                    transform 0.25s ease,
+                    box-shadow 0.25s ease;
+    }
+
+    .projects-show-more-btn span {
+        color: #ffffff !important;
+    }
+
+    .projects-show-more-btn:hover {
+        background: #e06d0b;
+        border-color: #e06d0b;
+        transform: translateY(-2px);
+        box-shadow: 0 12px 26px rgba(244, 130, 33, 0.34);
+    }
+
+    .projects-show-more-btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 3.5px rgba(244, 130, 33, 0.22), 0 8px 20px rgba(244, 130, 33, 0.24);
+    }
+
+    .projects-show-more-btn .toggle-chevron {
+        font-size: 1.2rem;
+        line-height: 1;
+        transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .projects-show-more-btn .toggle-chevron.is-rotated {
+        transform: rotate(180deg);
+    }
+
     /* ====== Bottom Inquiry Banner ====== */
     .premium-cta {
         background:
