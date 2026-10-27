@@ -62,5 +62,14 @@ class GeneralModel {
             return [];
         }
     }
+
+    public function getPartners() {
+        try {
+            $stmt = $this->conn->query("SELECT * FROM partners_tb WHERE status = 1 ORDER BY sort_order ASC, id ASC");
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return [];
+        }
+    }
 }
 ?>

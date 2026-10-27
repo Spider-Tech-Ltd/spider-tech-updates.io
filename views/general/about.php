@@ -5,17 +5,6 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="header-content">
-                    <span class="page-header-eyebrow">
-                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
-                            <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="rgba(244, 130, 33, 0.58)"/>
-                        </svg>
-                        <span class="eyebrow-label-text">Company Profile</span>
-                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="rgba(244, 130, 33, 0.58)"/>
-                            <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
-                        </svg>
-                    </span>
                     <h1 class="page-title">About <span>Us</span></h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb-custom">
@@ -157,7 +146,7 @@
             if ($icon === '') {
                 return '<span class="material-symbols-outlined">' . htmlspecialchars($fallbackMaterial) . '</span>';
             }
-            if (preg_match('/\b(fa|fas|far|fab|fal|fad|flaticon|flat|uil| uis)\b|flaticon-|fa-/i', $icon)) {
+            if (preg_match('/\b(fa|fas|far|fab|fal|fad|flaticon|flat|uil|uis)\b|flaticon-|fa-/i', $icon)) {
                 return '<i class="' . htmlspecialchars($icon) . ' icon-render"></i>';
             }
             return '<span class="material-symbols-outlined">' . htmlspecialchars($icon) . '</span>';
@@ -209,5 +198,8 @@
         </div>
     </div>
 </section>
+
+<!-- ====== Partnership Logo-Tier Section ====== -->
+<?php include ROOT_PATH . '/views/layout/partners.php'; ?>
 
 <?php include ROOT_PATH . '/views/layout/newsletter.php'; ?>
