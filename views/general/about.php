@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/about.css" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/about.css?v=<?= filemtime(ROOT_PATH . '/css/about.css') ?>" />
 
 <section class="page-header">
     <div class="container">
@@ -6,14 +6,14 @@
             <div class="col-lg-12">
                 <div class="header-content">
                     <span class="page-header-eyebrow">
-                        <svg class="eyebrow-line-svg" width="36" height="12" viewBox="0 0 36 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <rect x="0" y="1.5" width="2.5" height="9" rx="0.75" fill="#f48221"/>
-                            <rect x="4" y="5.25" width="32" height="1.5" rx="0.75" fill="rgba(244, 130, 33, 0.55)"/>
+                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                            <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="rgba(244, 130, 33, 0.58)"/>
                         </svg>
-                        <span>Company Profile</span>
-                        <svg class="eyebrow-line-svg" width="36" height="12" viewBox="0 0 36 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <rect x="0" y="5.25" width="32" height="1.5" rx="0.75" fill="rgba(244, 130, 33, 0.55)"/>
-                            <rect x="33.5" y="1.5" width="2.5" height="9" rx="0.75" fill="#f48221"/>
+                        <span class="eyebrow-label-text">Company Profile</span>
+                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="rgba(244, 130, 33, 0.58)"/>
+                            <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
                         </svg>
                     </span>
                     <h1 class="page-title">About <span>Us</span></h1>
@@ -30,12 +30,12 @@
 </section>
 
 <!-- ====== Our Story Section ====== -->
-<section class="section-padding">
+<section class="section-padding bg-white">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 mb-4 mb-lg-0">
                 <div class="about-img-group">
-                    <img src="<?= BASE_URL ?>/images/timeline/<?= stripslashes($about[0]['image'] ?? ''); ?>" alt="About Spider Tech" class="about-img-main">
+                    <img src="<?= BASE_URL ?>/images/timeline/<?= stripslashes($about[0]['image'] ?? ''); ?>" alt="About Spider Tech" class="about-img-main" loading="lazy" decoding="async">
                     <div class="about-experience-card">
                         <span class="exp-years">4+</span>
                         <span class="exp-text">Years of Tech Excellence</span>
@@ -44,30 +44,32 @@
             </div>
             <div class="col-lg-6 pl-lg-5">
                 <span class="section-eyebrow">
-                    <svg class="eyebrow-line-svg" width="36" height="12" viewBox="0 0 36 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <rect x="0" y="1.5" width="2.5" height="9" rx="0.75" fill="#f48221"/>
-                        <rect x="4" y="5.25" width="32" height="1.5" rx="0.75" fill="#cbd5e1"/>
+                    <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                        <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
                     </svg>
-                    <span>Our Story</span>
-                    <svg class="eyebrow-line-svg" width="36" height="12" viewBox="0 0 36 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <rect x="0" y="5.25" width="32" height="1.5" rx="0.75" fill="#cbd5e1"/>
-                        <rect x="33.5" y="1.5" width="2.5" height="9" rx="0.75" fill="#f48221"/>
+                    <span class="eyebrow-label-text">Our Story</span>
+                    <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                        <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
                     </svg>
                 </span>
                 <h2 class="section-title">Driving <span>Innovation</span> with Purpose</h2>
-                <div class="section-subtitle">
-                    <?= stripslashes($about[0]['details'] ?? 'Spider Tech Limited is a premier technology firm dedicated to bridging the digital divide through advanced engineering.'); ?>
+                <div class="about-story-copy">
+                    <div class="about-lead-copy">
+                        <?= stripslashes($about[0]['details'] ?? 'Spider Tech Limited is a premier technology firm dedicated to bridging the digital divide through advanced engineering.'); ?>
+                    </div>
+                    <?php if (isset($about[1]) && !empty(trim($about[1]['details'] ?? ''))): ?>
+                        <p class="about-body-copy">
+                            <?= stripslashes($about[1]['details']); ?>
+                        </p>
+                    <?php endif; ?>
+                    <?php if (isset($about[2]) && !empty(trim($about[2]['details'] ?? ''))): ?>
+                        <p class="about-body-copy mb-0">
+                            <?= stripslashes($about[2]['details']); ?>
+                        </p>
+                    <?php endif; ?>
                 </div>
-                <?php if (isset($about[1])): ?>
-                    <p class="about-body-copy mb-3">
-                        <?= stripslashes($about[1]['details']); ?>
-                    </p>
-                <?php endif; ?>
-                <?php if (isset($about[2])): ?>
-                    <p class="about-body-copy mb-0">
-                        <?= stripslashes($about[2]['details']); ?>
-                    </p>
-                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -135,16 +137,17 @@
         <div class="row justify-content-center mb-4">
             <div class="col-lg-8 text-center">
                 <span class="section-eyebrow">
-                    <svg class="eyebrow-line-svg" width="36" height="12" viewBox="0 0 36 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <rect x="0" y="1.5" width="2.5" height="9" rx="0.75" fill="#f48221"/>
-                        <rect x="4" y="5.25" width="32" height="1.5" rx="0.75" fill="#cbd5e1"/>
+                    <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                        <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
                     </svg>
-                    <span>Strategic Foundation</span>
-                    <svg class="eyebrow-line-svg" width="36" height="12" viewBox="0 0 36 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <rect x="0" y="5.25" width="32" height="1.5" rx="0.75" fill="#cbd5e1"/>
-                        <rect x="33.5" y="1.5" width="2.5" height="9" rx="0.75" fill="#f48221"/>
+                    <span class="eyebrow-label-text">Strategic Foundation</span>
+                    <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                        <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
                     </svg>
                 </span>
+                <br>
                 <h2 class="section-title">Guided by Purpose &amp; <span>Engineering Rigor</span></h2>
             </div>
         </div>

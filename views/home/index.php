@@ -27,7 +27,7 @@ foreach ($banners as &$banner) {
 ?>
 
 <!-- Custom Home Styles -->
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/home.css" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/home.css?v=<?= filemtime(ROOT_PATH . '/css/home.css') ?>" />
 
 <!-- ====== Hero Slider Section ====== -->
 <section class="home-hero" x-data="{

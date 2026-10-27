@@ -100,13 +100,20 @@
         display: inline-flex;
         align-items: center;
         gap: 12px;
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.76rem;
-        font-weight: 600;
+        font-family: 'Chakra Petch', 'Poppins', sans-serif;
+        font-style: italic;
+        font-size: 0.78rem;
+        font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 1.5px;
-        color: #64748b;
+        letter-spacing: 2.2px;
+        color: var(--primary-orange) !important;
         margin-bottom: 0.75rem;
+    }
+
+    .section-eyebrow span {
+        color: var(--primary-orange) !important;
+        display: inline-block;
+        transform: skewX(-5deg);
     }
 
     .section-title {

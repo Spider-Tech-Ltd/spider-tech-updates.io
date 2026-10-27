@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/faq.css" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/faq.css?v=<?= filemtime(ROOT_PATH . '/css/faq.css') ?>" />
 
 <!-- ====== Page Header ====== -->
 <section class="page-header">
