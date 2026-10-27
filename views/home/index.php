@@ -261,7 +261,21 @@ foreach ($banners as &$banner) {
                 }
                 $pTitle = trim(stripslashes($project['project_name'] ?? 'Untitled Project'));
                 $pCategory = trim(stripslashes($project['service_name'] ?? 'Technology Solution'));
-                $pDesc = trim(strip_tags(stripslashes($project['project_description'] ?? '')));
+                if (!function_exists('truncateProjectDescWordAware')) {
+                    function truncateProjectDescWordAware($text, $limit = 112) {
+                        $text = trim(preg_replace('/\s+/', ' ', strip_tags(stripslashes($text))));
+                        if ($text === '' || mb_strlen($text) <= $limit) {
+                            return $text;
+                        }
+                        $truncated = mb_substr($text, 0, $limit);
+                        $lastSpace = mb_strrpos($truncated, ' ');
+                        if ($lastSpace !== false) {
+                            $truncated = mb_substr($truncated, 0, $lastSpace);
+                        }
+                        return rtrim($truncated, ".,;:- ") . '...';
+                    }
+                }
+                $pDesc = truncateProjectDescWordAware($project['project_description'] ?? '', 112);
             ?>
                 <div class="col-lg-4 col-md-6 mb-4">
                     <a href="<?= BASE_URL ?>/projects/detail?id=<?= (int)$project['project_id']; ?>"

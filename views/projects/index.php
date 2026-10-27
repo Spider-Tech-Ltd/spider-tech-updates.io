@@ -73,7 +73,24 @@
                     </div>
                     <div class="project-body">
                         <h3 class="project-title" title="<?= htmlspecialchars($pTitle); ?>"><?= htmlspecialchars($pTitle); ?></h3>
-                        <div class="project-desc"><?= htmlspecialchars(strip_tags(stripslashes($project['project_description'] ?? ''))); ?></div>
+                        <?php
+                        if (!function_exists('truncateProjectDescWordAware')) {
+                            function truncateProjectDescWordAware($text, $limit = 112) {
+                                $text = trim(preg_replace('/\s+/', ' ', strip_tags(stripslashes($text))));
+                                if ($text === '' || mb_strlen($text) <= $limit) {
+                                    return $text;
+                                }
+                                $truncated = mb_substr($text, 0, $limit);
+                                $lastSpace = mb_strrpos($truncated, ' ');
+                                if ($lastSpace !== false) {
+                                    $truncated = mb_substr($truncated, 0, $lastSpace);
+                                }
+                                return rtrim($truncated, ".,;:- ") . '...';
+                            }
+                        }
+                        $pDesc = truncateProjectDescWordAware($project['project_description'] ?? '', 112);
+                        ?>
+                        <div class="project-desc"><?= htmlspecialchars($pDesc); ?></div>
                         <a href="<?= BASE_URL ?>/projects/detail?id=<?= (int)$project['project_id']; ?>"
                            class="project-link"
                            aria-label="View case study for <?= htmlspecialchars($pTitle); ?>">
