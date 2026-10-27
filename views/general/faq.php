@@ -6,17 +6,6 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="header-content">
-                    <span class="page-header-eyebrow">
-                        <svg class="eyebrow-line-svg" width="36" height="12" viewBox="0 0 36 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <rect x="0" y="1.5" width="2.5" height="9" rx="0.75" fill="#f48221"/>
-                            <rect x="4" y="5.25" width="32" height="1.5" rx="0.75" fill="rgba(244, 130, 33, 0.55)"/>
-                        </svg>
-                        <span>Support &amp; Clarity</span>
-                        <svg class="eyebrow-line-svg" width="36" height="12" viewBox="0 0 36 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <rect x="0" y="5.25" width="32" height="1.5" rx="0.75" fill="rgba(244, 130, 33, 0.55)"/>
-                            <rect x="33.5" y="1.5" width="2.5" height="9" rx="0.75" fill="#f48221"/>
-                        </svg>
-                    </span>
                     <h1 class="page-title">Frequently Asked <span>Questions</span></h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb-custom">
@@ -38,11 +27,15 @@
             <div class="col-lg-4 mb-4 mb-lg-0">
                 <div class="faq-sidebar">
                     <span class="section-eyebrow">
-                        <svg class="eyebrow-line-svg" width="36" height="12" viewBox="0 0 36 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <rect x="0" y="1.5" width="2.5" height="9" rx="0.75" fill="#f48221"/>
-                            <rect x="4" y="5.25" width="32" height="1.5" rx="0.75" fill="#cbd5e1"/>
+                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                            <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
                         </svg>
                         <span>Knowledge Base</span>
+                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                            <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                        </svg>
                     </span>
                     <h2 class="section-title">Answers to Common <span>Inquiries</span></h2>
                     <p class="faq-intro-text">
