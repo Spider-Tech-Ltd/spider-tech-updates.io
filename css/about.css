@@ -407,22 +407,26 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 14px;
-        font-family: 'Poppins', sans-serif;
-        font-size: 0.76rem;
-        font-weight: 600;
+        gap: 12px;
+        font-family: 'Chakra Petch', 'Poppins', sans-serif;
+        font-style: italic;
+        font-size: 0.8rem;
+        font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 1.6px;
-        color: #64748b !important;
+        letter-spacing: 2.2px;
+        color: var(--primary-orange) !important;
     }
 
     .partners-tier-label-text {
-        color: #64748b !important;
+        color: var(--primary-orange) !important;
+        display: inline-block;
+        transform: skewX(-5deg);
     }
 
     .partners-headline-sep {
         display: block;
         flex-shrink: 0;
+        transform: skewX(-8deg);
     }
 
     .partners-marquee-viewport {

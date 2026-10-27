@@ -3,14 +3,14 @@
     <div class="container">
         <div class="partners-tier-header">
             <span class="partners-tier-label">
-                <svg class="partners-headline-sep" width="44" height="12" viewBox="0 0 44 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <rect x="0" y="1.5" width="3" height="9" rx="1" fill="#f48221"/>
-                    <rect x="4" y="5.25" width="40" height="1.5" rx="0.75" fill="#cbd5e1"/>
+                <svg class="partners-headline-sep" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                    <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
                 </svg>
                 <span class="partners-tier-label-text">Trusted Partners &amp; Collaborators</span>
-                <svg class="partners-headline-sep" width="44" height="12" viewBox="0 0 44 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <rect x="0" y="5.25" width="40" height="1.5" rx="0.75" fill="#cbd5e1"/>
-                    <rect x="41" y="1.5" width="3" height="9" rx="1" fill="#f48221"/>
+                <svg class="partners-headline-sep" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                    <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
                 </svg>
             </span>
         </div>
