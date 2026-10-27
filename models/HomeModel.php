@@ -121,7 +121,7 @@ class HomeModel {
             $t['testimonial'] = str_replace('SpidersTech', 'SpiderTech', $t['testimonial']);
             $t['testimonial'] = trim(stripslashes($t['testimonial']), " \"'\t\n\r\0\x0B");
 
-            $name = trim($t['name']);
+            $name = md5(trim($t['name']) . '|' . trim($t['testimonial']));
             if (!isset($unique[$name])) {
                 $unique[$name] = true;
                 $filtered[] = $t;
