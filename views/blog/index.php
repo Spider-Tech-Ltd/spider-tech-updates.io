@@ -1,8 +1,4 @@
-<!-- Material Symbols for Blog UI -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/blog.css" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/blog.css?v=<?= filemtime(ROOT_PATH . '/css/blog.css') ?>" />
 
 <div id="progress-bar" class="reading-progress"></div>
 <main class="blog-wrapper" x-data="blogManager()" @popstate.window="handlePopState($event)" @scroll.window.passive="updateProgress()">
@@ -12,21 +8,17 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <span class="tag-eyebrow" style="background: rgba(244,130,33,0.15); color: #f48221; margin-bottom: 20px; display: inline-flex; align-items: center; border: 1px solid rgba(244,130,33,0.3); padding: 6px 16px; border-radius: 50px; font-size: 13px; font-weight: 700; text-transform: uppercase;">
-                        <span class="material-symbols-outlined" style="font-size: 16px; margin-right: 6px;">auto_awesome</span>
-                        Industrial Knowledge Base
-                    </span>
-                    <h1 class="page-title">Technical Intelligence & <br><span>Global Impact</span></h1>
-                    <p style="color: rgba(255,255,255,0.7); font-size: 1.05rem; max-width: 650px; line-height: 1.6; margin-bottom: 20px;">Exploring the industrial frontier through rigorous technical research, engineering analysis, and data-driven case studies.</p>
-                    <div class="breadcrumb-custom">
-                        <div class="breadcrumb-item-custom">
-                            <a href="<?= BASE_URL ?>/home"> Home</a>
-                        </div>
-                        <div class="breadcrumb-separator"></div>
-                        <div class="breadcrumb-item-custom active">
-                            Research & Insights
-                        </div>
-                    </div>
+                    <h1 class="page-title">Technical Intelligence & <span>Global Impact</span></h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb-custom">
+                            <li class="breadcrumb-item-custom">
+                                <a href="<?= BASE_URL ?>/">Home</a>
+                            </li>
+                            <li class="breadcrumb-item-custom active" aria-current="page">
+                                Research &amp; Insights
+                            </li>
+                        </ol>
+                    </nav>
                 </div>
             </div>
         </div>
@@ -35,48 +27,86 @@
     <!-- Main Content Area -->
     <div class="blog-content" x-show="view === 'index'" x-cloak>
         <div class="container">
+            <!-- Section Header -->
+            <div class="row justify-content-center mb-4">
+                <div class="col-lg-8 text-center">
+                    <span class="section-eyebrow">
+                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                            <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                        </svg>
+                        <span class="eyebrow-label-text">Research &amp; Insights</span>
+                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                            <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                        </svg>
+                    </span>
+                    <br>
+                    <h2 class="section-title">Industrial <span>Knowledge Base</span></h2>
+                    <p class="section-subtitle">Exploring the engineering frontier through technical research, system architecture analysis, and data-driven case studies.</p>
+                </div>
+            </div>
+
             <!-- Filter Navigation -->
             <div class="filter-container">
-            <div class="filter-pill" :class="{ 'active': currentCategory === 'all' }" @click="setCategory('all')">All Research</div>
-            <?php foreach ($categories as $category): ?>
-                <div class="filter-pill" :class="{ 'active': currentCategory === '<?= $category['slug'] ?>' }" @click="setCategory('<?= $category['slug'] ?>')"><?= htmlspecialchars($category['name']) ?></div>
-            <?php endforeach; ?>
-        </div>
+                <button type="button" class="filter-pill" :class="{ 'active': currentCategory === 'all' }" @click="setCategory('all')">
+                    All Research
+                </button>
+                <?php foreach ($categories as $category): ?>
+                    <button type="button" class="filter-pill" :class="{ 'active': currentCategory === '<?= $category['slug'] ?>' }" @click="setCategory('<?= $category['slug'] ?>')">
+                        <?= htmlspecialchars($category['name']) ?>
+                    </button>
+                <?php endforeach; ?>
+            </div>
 
-        <!-- Research Grid -->
-        <div class="row" x-show="!loading">
-            <template x-for="blog in blogs" :key="blog.uuid">
-                <div class="col-lg-4 col-md-6 research-card-col">
-                    <div class="research-card" @click="loadArticle(blog.slug)">
-                        <div class="card-img-wrap">
-                            <img :src="blog.image_path" :alt="blog.title">
-                            <div class="card-category" x-text="`[ ${blog.category_name} ]` "></div>
-                        </div>
-                        <div class="card-body-content">
-                            <h3 x-text="blog.title"></h3>
-                            <p x-text="blog.summary"></p>
-                            <span class="read-link">
-                                Read Insight <i class="material-symbols-outlined">trending_flat</i>
-                            </span>
-                        </div>
+            <!-- Research Grid -->
+            <div class="row g-4" x-show="!loading">
+                <template x-for="blog in blogs" :key="blog.uuid">
+                    <div class="col-lg-4 col-md-6 mb-4 d-flex">
+                        <article class="research-card" @click="loadArticle(blog.slug)">
+                            <div class="card-img-wrap">
+                                <span class="card-category" x-text="blog.category_name"></span>
+                                <img :src="blog.image_path" :alt="blog.title" loading="lazy" decoding="async" @error="$event.target.style.display='none'; $event.target.nextElementSibling.style.display='flex';">
+                                <div class="blog-img-fallback" style="display: none;" aria-hidden="true">
+                                    <svg class="fallback-svg-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="6" y="10" width="52" height="44" rx="6" stroke="currentColor" stroke-width="2.5" stroke-dasharray="4 3"/>
+                                        <path d="M18 24H46M18 34H36" stroke="#f48221" stroke-width="2.5" stroke-linecap="round"/>
+                                    </svg>
+                                    <span class="fallback-label">Spider Tech Insight</span>
+                                </div>
+                            </div>
+                            <div class="card-body-content">
+                                <h3 x-text="blog.title" :title="blog.title"></h3>
+                                <p x-text="blog.summary"></p>
+                                <span class="read-link">
+                                    <span>Read Insight</span>
+                                    <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
+                                </span>
+                            </div>
+                        </article>
                     </div>
+                </template>
+            </div>
+
+            <!-- Loading State -->
+            <div x-show="loading" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-2 text-muted">Loading research insights...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div x-show="!loading && blogs.length === 0" class="text-center py-5">
+                <div class="empty-state">
+                    <span class="material-symbols-outlined">menu_book</span>
+                    <h4>No Articles Found</h4>
+                    <p>No research insights found in this category. Select another topic above.</p>
                 </div>
-            </template>
+            </div>
+            
         </div>
+    </div>
 
-        <div x-show="loading" class="text-center py-5">
-            <div class="spinner-border text-primary" role="status"></div>
-            <p class="mt-2 text-muted">Loading insights...</p>
-        </div>
-
-        <div x-show="!loading && blogs.length === 0" class="text-center py-5">
-            <p class="text-muted">No research articles found in this category.</p>
-        </div>
-        
-        </div> <!-- End container -->
-    </div> <!-- End blog-content -->
-
-    <!-- Detail View Container -->
+    <!-- Detail View Container (AJAX SPA) -->
     <div id="article-detail-container" class="article-main" x-show="view === 'detail'" x-cloak>
         <div x-html="detailContent"></div>
     </div>
@@ -93,8 +123,7 @@
 
             init() {
                 if (this.view === 'detail') {
-                    // If we started on a detail page (SSR), we'll need to handle it
-                    // but for now, we assume it's already rendered by PHP in the detail view.
+                    // Handled if direct SSR
                 }
             },
 
@@ -164,7 +193,7 @@
                     sh = 'scrollHeight';
                 const percent = (h[st] || b[st]) / ((h[sh] || b[sh]) - h.clientHeight) * 100;
                 const progressBar = document.getElementById('progress-bar');
-                if (progressBar) progressBar.style.width = percent + '%';
+                if (progressBar) progressBar.style.width = Math.min(100, Math.max(0, percent)) + '%';
             },
 
         }));

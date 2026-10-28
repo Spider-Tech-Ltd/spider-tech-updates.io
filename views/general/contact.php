@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/contact.css" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/contact.css?v=<?= filemtime(ROOT_PATH . '/css/contact.css') ?>" />
 
 <!-- ====== Page Header ====== -->
 <section class="page-header">
@@ -6,30 +6,42 @@
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="page-title">Get in <span>Touch</span></h1>
-                <div class="breadcrumb-custom">
-                    <div class="breadcrumb-item-custom">
-                        <a href="<?= BASE_URL ?>/">Home</a>
-                    </div>
-                    <div class="breadcrumb-separator"></div>
-                    <div class="breadcrumb-item-custom active">
-                        Contact Us
-                    </div>
-                </div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb-custom">
+                        <li class="breadcrumb-item-custom">
+                            <a href="<?= BASE_URL ?>/">Home</a>
+                        </li>
+                        <li class="breadcrumb-item-custom active" aria-current="page">
+                            Contact Us
+                        </li>
+                    </ol>
+                </nav>
             </div>
         </div>
     </div>
 </section>
 
 <!-- ====== Contact Section ====== -->
-<section class="section-padding">
+<section class="section-padding contact-page-section">
     <div class="container">
 
         <!-- Section Header -->
-        <div class="row justify-content-between align-items-end mb-5">
-            <div class="col-lg-6">
-                <span class="tag-eyebrow">Let's Talk</span>
+        <div class="row justify-content-between align-items-end mb-4">
+            <div class="col-lg-7">
+                <span class="section-eyebrow">
+                    <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                        <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                    </svg>
+                    <span class="eyebrow-label-text">Let's Talk</span>
+                    <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                        <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                    </svg>
+                </span>
+                <br>
                 <h2 class="contact-section-title">We'd Love to <span>Hear From You</span></h2>
-                <p class="contact-section-subtitle">Whether you have a project in mind, a question, or just want to say hello — our team is ready to help.</p>
+                <p class="contact-section-subtitle">Whether you have an enterprise engineering challenge, a technical question, or an innovation idea — our team is ready to collaborate.</p>
             </div>
         </div>
 
@@ -39,54 +51,73 @@
             <!-- Contact Form -->
             <div class="col-lg-6 col-md-12">
                 <div class="contact-form-wrap">
-                    <span class="form-label-eyebrow">Send a Message</span>
+                    <div class="form-header-row mb-3">
+                        <span class="form-label-eyebrow">Send a Direct Message</span>
+                        <p class="text-muted small mb-0">Fill in the fields below and our team will get back to you within 24 hours.</p>
+                    </div>
                     <form id="contactForm" action="" method="post" novalidate>
                         <div id="contactMessage"></div>
-                        <div class="row">
-                            <div class="col-lg-6 col-md-6 contact-mb">
-                                <input
-                                    name="name"
-                                    type="text"
-                                    class="contact-input"
-                                    placeholder="Full Name"
-                                    required />
+                        <div class="row g-3">
+                            <div class="col-lg-6 col-md-6">
+                                <div class="form-group mb-0">
+                                    <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                                    <input
+                                        name="name"
+                                        type="text"
+                                        class="contact-input"
+                                        placeholder="e.g. John Doe"
+                                        required />
+                                </div>
                             </div>
-                            <div class="col-lg-6 col-md-6 contact-mb">
-                                <input
-                                    name="email"
-                                    type="email"
-                                    class="contact-input"
-                                    placeholder="Email Address"
-                                    required />
+                            <div class="col-lg-6 col-md-6">
+                                <div class="form-group mb-0">
+                                    <label class="form-label">Email Address <span class="text-danger">*</span></label>
+                                    <input
+                                        name="email"
+                                        type="email"
+                                        class="contact-input"
+                                        placeholder="e.g. john@example.com"
+                                        required />
+                                </div>
                             </div>
-                            <div class="col-lg-6 col-md-6 contact-mb">
-                                <input
-                                    name="phone"
-                                    type="text"
-                                    class="contact-input"
-                                    placeholder="Phone Number" />
+                            <div class="col-lg-6 col-md-6">
+                                <div class="form-group mb-0">
+                                    <label class="form-label">Phone Number</label>
+                                    <input
+                                        name="phone"
+                                        type="text"
+                                        class="contact-input"
+                                        placeholder="e.g. +234 800 000 0000" />
+                                </div>
                             </div>
-                            <div class="col-lg-6 col-md-6 contact-mb">
-                                <input
-                                    name="subject"
-                                    type="text"
-                                    class="contact-input"
-                                    placeholder="Subject"
-                                    required />
+                            <div class="col-lg-6 col-md-6">
+                                <div class="form-group mb-0">
+                                    <label class="form-label">Subject <span class="text-danger">*</span></label>
+                                    <input
+                                        name="subject"
+                                        type="text"
+                                        class="contact-input"
+                                        placeholder="e.g. Project Consultation"
+                                        required />
+                                </div>
                             </div>
-                            <div class="col-lg-12 contact-mb">
-                                <textarea
-                                    name="message"
-                                    class="contact-input"
-                                    placeholder="Your Message"
-                                    required></textarea>
+                            <div class="col-lg-12">
+                                <div class="form-group mb-0">
+                                    <label class="form-label">Your Message <span class="text-danger">*</span></label>
+                                    <textarea
+                                        name="message"
+                                        class="contact-input"
+                                        placeholder="Tell us about your project or inquiry..."
+                                        rows="4"
+                                        required></textarea>
+                                </div>
                             </div>
-                            <div class="col-lg-12 contact-mb">
+                            <div class="col-lg-12">
                                 <div class="g-recaptcha" data-sitekey="6Lfl_gsqAAAAABRSBy90ezX53ZwoZZDScFsJieVg"></div>
                             </div>
                             <div class="col-lg-12">
                                 <button type="submit" id="sendContact" name="send" class="cta-button">
-                                    Send Message
+                                    <span>Send Message</span>
                                     <span class="material-symbols-outlined">send</span>
                                 </button>
                             </div>
@@ -116,9 +147,9 @@
                     <div class="contact-info-icon">
                         <span class="material-symbols-outlined">location_on</span>
                     </div>
-                    <div>
-                        <p class="contact-info-label">Our Location</p>
-                        <p class="contact-info-value">Abinsa House, Zaria Road Kano, Nigeria</p>
+                    <div class="contact-info-text">
+                        <p class="contact-info-label">Office Headquarters</p>
+                        <p class="contact-info-value">Abinsa House, Zaria Road, Kano, Nigeria</p>
                     </div>
                 </div>
             </div>
@@ -127,9 +158,9 @@
                     <div class="contact-info-icon">
                         <span class="material-symbols-outlined">mail</span>
                     </div>
-                    <div>
-                        <p class="contact-info-label">Email Us</p>
-                        <p class="contact-info-value">info@spidertechltd.com</p>
+                    <div class="contact-info-text">
+                        <p class="contact-info-label">Direct Inquiries</p>
+                        <p class="contact-info-value"><a href="mailto:info@spidertechltd.com">info@spidertechltd.com</a></p>
                     </div>
                 </div>
             </div>
@@ -138,9 +169,9 @@
                     <div class="contact-info-icon">
                         <span class="material-symbols-outlined">schedule</span>
                     </div>
-                    <div>
-                        <p class="contact-info-label">Working Hours</p>
-                        <p class="contact-info-value">Mon – Fri, 8:00am – 5:00pm</p>
+                    <div class="contact-info-text">
+                        <p class="contact-info-label">Operating Hours</p>
+                        <p class="contact-info-value">Mon – Fri: 8:00 AM – 5:00 PM (WAT)</p>
                     </div>
                 </div>
             </div>
@@ -150,32 +181,32 @@
 </section>
 
 <!-- ====== Premium CTA Block ====== -->
-<section class="section-padding pt-0">
+<section class="section-padding pt-0 contact-cta-section">
     <div class="container">
         <div class="premium-cta">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <span class="tag-eyebrow tag-eyebrow-light">Partner With Us</span>
+            <div class="row align-items-center justify-content-between">
+                <div class="col-lg-8 mb-3 mb-lg-0 text-lg-left text-center">
+                    <span class="section-eyebrow cta-eyebrow">
+                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                            <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="rgba(255,255,255,0.4)"/>
+                        </svg>
+                        <span class="eyebrow-label-text">Partner With Us</span>
+                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="rgba(255,255,255,0.4)"/>
+                            <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                        </svg>
+                    </span>
                     <h2 class="premium-cta-title">Ready to Build Something <span>Extraordinary?</span></h2>
-                    <p class="premium-cta-subtitle">
-                        From enterprise platforms to community-driven apps, we turn ambitious ideas into elegant digital realities. Let's collaborate.
+                    <p class="premium-cta-desc">
+                        From enterprise platforms to community ecosystems, we transform complex challenges into scalable, reliable digital reality.
                     </p>
-                    <div class="d-flex flex-wrap justify-content-center gap-3">
-                        <a href="<?= BASE_URL ?>/services" class="cta-button" style="width: auto;">
-                            Explore Our Services
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </a>
-                        <a href="<?= BASE_URL ?>/projects" class="cta-button cta-button-outline" style="width: auto;">
-                            View Our Projects
-                            <span class="material-symbols-outlined">folder_open</span>
-                        </a>
-                    </div>
-                    <div class="mt-4">
-                        <span style="color: var(--primary-orange); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px;">
-                            <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 18px; margin-right: 4px;">verified</span>
-                            Industry Recognized Professional Standards
-                        </span>
-                    </div>
+                </div>
+                <div class="col-lg-4 text-lg-right text-center d-flex flex-column flex-sm-row justify-content-lg-end gap-2">
+                    <a href="<?= BASE_URL ?>/services" class="cta-button" style="width: auto;">
+                        <span>Explore Services</span>
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -190,14 +221,14 @@
             var btn = $("#sendContact");
             var msg = $("#contactMessage");
 
-            btn.prop('disabled', true).html('Sending... <span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;">hourglass_top</span>');
+            btn.prop('disabled', true).html('<span>Sending...</span> <span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;">hourglass_top</span>');
 
             $.ajax({
                 url: '<?= BASE_URL ?>/includes/contact-form-function.php',
                 type: 'POST',
                 data: $(this).serialize() + '&send=1',
                 success: function(data) {
-                    btn.prop('disabled', false).html('Send Message <span class="material-symbols-outlined">send</span>');
+                    btn.prop('disabled', false).html('<span>Send Message</span> <span class="material-symbols-outlined">send</span>');
                     msg.html(data).fadeIn().delay(6000).fadeOut();
                     if (data.indexOf('alert-success') !== -1) {
                         $("#contactForm")[0].reset();
@@ -205,7 +236,7 @@
                     }
                 },
                 error: function() {
-                    btn.prop('disabled', false).html('Send Message <span class="material-symbols-outlined">send</span>');
+                    btn.prop('disabled', false).html('<span>Send Message</span> <span class="material-symbols-outlined">send</span>');
                     msg.html('<div class="alert alert-danger">Something went wrong. Please try again.</div>').fadeIn().delay(6000).fadeOut();
                 }
             });
