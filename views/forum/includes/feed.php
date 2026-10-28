@@ -64,7 +64,7 @@
       <!-- PINNED THREAD FALLBACK -->
       <a href="<?= BASE_URL ?>/forum/feed" class="discussion-card is-pinned">
         <div class="card-top-row">
-          <span class="category-badge">⚙️ Community</span>
+          <span class="category-badge">Community Protocol</span>
           <span class="badge-pinned-label">
             <span class="material-symbols-outlined" style="font-size:13px; font-variation-settings:'FILL' 1;">push_pin</span>
             Pinned

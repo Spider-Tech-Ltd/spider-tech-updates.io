@@ -32,7 +32,7 @@
 
   <!-- WIDGET 2: Top Contributors -->
   <section class="sidebar-widget">
-    <h3 class="widget-title">⭐ Top Contributors</h3>
+    <h3 class="widget-title">Top Technical Contributors</h3>
     <div class="contributor-list">
       <?php if (empty($top_contributors)): ?>
         <p class="text-muted small">No contributors yet.</p>

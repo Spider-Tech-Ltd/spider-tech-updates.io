@@ -78,6 +78,24 @@
     font-size: 22px;
   }
 
+  .category-meta-chips {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hub-serial {
+    font-family: 'Chakra Petch', monospace, sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #64748b;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.05em;
+  }
+
   .forum-topic-badge {
     font-family: 'Poppins', sans-serif;
     font-size: 0.72rem;

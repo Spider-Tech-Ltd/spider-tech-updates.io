@@ -26,19 +26,22 @@
 
     <div class="row g-4">
       <?php if (!empty($categories)): ?>
-        <?php foreach ($categories as $cat): ?>
+        <?php foreach ($categories as $index => $cat): ?>
           <div class="col-lg-4 col-md-6 mb-4 d-flex">
             <a href="<?= BASE_URL ?>/forum/feed?category=<?= urlencode($cat['slug'] ?? $cat['uuid']); ?>" class="forum-category-card">
               <div class="d-flex justify-content-between align-items-center mb-3">
                 <div class="forum-icon-wrapper">
                   <span class="material-symbols-outlined"><?= htmlspecialchars($cat['icon'] ?? 'forum') ?></span>
                 </div>
-                <span class="forum-topic-badge"><?= $cat['topic_count'] ?? '0'; ?> Topics</span>
+                <div class="category-meta-chips">
+                  <span class="hub-serial">HUB-<?= sprintf('%02d', $index + 1) ?></span>
+                  <span class="forum-topic-badge"><?= $cat['topic_count'] ?? '0'; ?> Topics</span>
+                </div>
               </div>
               <h3 class="category-card-title"><?= htmlspecialchars($cat['name']); ?></h3>
               <p class="category-card-desc"><?= htmlspecialchars($cat['description'] ?? 'Join the conversation, explore case studies, and share technical insights.'); ?></p>
               <div class="forum-view-link">
-                <span>View Topics</span>
+                <span>Explore Hub Topics</span>
                 <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
               </div>
             </a>
@@ -52,44 +55,15 @@
               <div class="forum-icon-wrapper">
                 <span class="material-symbols-outlined">precision_manufacturing</span>
               </div>
-              <span class="forum-topic-badge">1.2k Topics</span>
+              <div class="category-meta-chips">
+                <span class="hub-serial">HUB-01</span>
+                <span class="forum-topic-badge">1.2k Topics</span>
+              </div>
             </div>
             <h3 class="category-card-title">Industrial Systems</h3>
             <p class="category-card-desc">Discuss industrial processes, production efficiency, control hardware, and factory automation.</p>
             <div class="forum-view-link">
-              <span>View Topics</span>
-              <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
-            </div>
-          </a>
-        </div>
-        <div class="col-lg-4 col-md-6 mb-4 d-flex">
-          <a href="<?= BASE_URL ?>/forum/feed" class="forum-category-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <div class="forum-icon-wrapper">
-                <span class="material-symbols-outlined">bolt</span>
-              </div>
-              <span class="forum-topic-badge">850 Topics</span>
-            </div>
-            <h3 class="category-card-title">Energy &amp; Infrastructure</h3>
-            <p class="category-card-desc">Power generation, grid distribution, battery architecture, and sustainable microgrids.</p>
-            <div class="forum-view-link">
-              <span>View Topics</span>
-              <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
-            </div>
-          </a>
-        </div>
-        <div class="col-lg-4 col-md-6 mb-4 d-flex">
-          <a href="<?= BASE_URL ?>/forum/feed" class="forum-category-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <div class="forum-icon-wrapper">
-                <span class="material-symbols-outlined">smart_toy</span>
-              </div>
-              <span class="forum-topic-badge">610 Topics</span>
-            </div>
-            <h3 class="category-card-title">AI &amp; Embedded Robotics</h3>
-            <p class="category-card-desc">Edge computing, autonomous robotics, computer vision, and telemetry systems in industry.</p>
-            <div class="forum-view-link">
-              <span>View Topics</span>
+              <span>Explore Hub Topics</span>
               <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
             </div>
           </a>
