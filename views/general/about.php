@@ -152,47 +152,74 @@
             return '<span class="material-symbols-outlined">' . htmlspecialchars($icon) . '</span>';
         };
         ?>
-        <div class="row">
-            <div class="col-lg-4 mb-4 mb-lg-0">
+        <div class="row g-3">
+            <div class="col-lg-4 mb-3 mb-lg-0 d-flex">
                 <div class="mission-vision-card">
-                    <div class="mv-card-header">
-                        <div class="card-icon-box">
-                            <?= $renderMvIcon($mission[0]['icon'] ?? '', 'rocket_launch') ?>
+                    <div class="mv-card-top">
+                        <div class="mv-card-identity">
+                            <div class="card-icon-box">
+                                <?= $renderMvIcon($mission[0]['icon'] ?? '', 'rocket_launch') ?>
+                            </div>
+                            <h3 class="mv-title"><?= stripslashes($mission[0]['title'] ?? 'Our Mission'); ?></h3>
                         </div>
                         <span class="mv-card-tag">Mission</span>
                     </div>
-                    <h3 class="mv-title"><?= stripslashes($mission[0]['title'] ?? 'Our Mission'); ?></h3>
                     <p class="mv-text">
                         <?= trim(stripslashes($mission[0]['details'] ?? 'Providing excellence in every project.')); ?>
                     </p>
+                    <div class="mv-card-footer">
+                        <span class="mv-footer-badge">
+                            <span class="mv-status-dot"></span>
+                            Primary Mission
+                        </span>
+                        <span class="mv-serial">SEC-01</span>
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-4 mb-4 mb-lg-0">
+            <div class="col-lg-4 mb-3 mb-lg-0 d-flex">
                 <div class="mission-vision-card">
-                    <div class="mv-card-header">
-                        <div class="card-icon-box">
-                            <?= $renderMvIcon($vision[0]['icon'] ?? '', 'visibility') ?>
+                    <div class="mv-card-top">
+                        <div class="mv-card-identity">
+                            <div class="card-icon-box">
+                                <?= $renderMvIcon($vision[0]['icon'] ?? '', 'visibility') ?>
+                            </div>
+                            <h3 class="mv-title"><?= stripslashes($vision[0]['title'] ?? 'Our Vision'); ?></h3>
                         </div>
                         <span class="mv-card-tag">Vision</span>
                     </div>
-                    <h3 class="mv-title"><?= stripslashes($vision[0]['title'] ?? 'Our Vision'); ?></h3>
                     <p class="mv-text">
                         <?= trim(stripslashes($vision[0]['details'] ?? 'Driving digital ecosystems forward.')); ?>
                     </p>
+                    <div class="mv-card-footer">
+                        <span class="mv-footer-badge">
+                            <span class="mv-status-dot"></span>
+                            Strategic Vision
+                        </span>
+                        <span class="mv-serial">SEC-02</span>
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-4 mb-3 mb-lg-0 d-flex">
                 <div class="mission-vision-card">
-                    <div class="mv-card-header">
-                        <div class="card-icon-box">
-                            <?= $renderMvIcon($values[0]['icon'] ?? '', 'lightbulb') ?>
+                    <div class="mv-card-top">
+                        <div class="mv-card-identity">
+                            <div class="card-icon-box">
+                                <?= $renderMvIcon($values[0]['icon'] ?? '', 'lightbulb') ?>
+                            </div>
+                            <h3 class="mv-title"><?= stripslashes($values[0]['title'] ?? 'Custom Solutions'); ?></h3>
                         </div>
                         <span class="mv-card-tag">Core Value</span>
                     </div>
-                    <h3 class="mv-title"><?= stripslashes($values[0]['title'] ?? 'Custom Solutions'); ?></h3>
                     <p class="mv-text">
                         <?= trim(stripslashes($values[0]['details'] ?? 'Spider offers custom solutions tailored to your specific needs, unlike generic bundles from product-focused companies.')); ?>
                     </p>
+                    <div class="mv-card-footer">
+                        <span class="mv-footer-badge">
+                            <span class="mv-status-dot"></span>
+                            Engineering Rigor
+                        </span>
+                        <span class="mv-serial">SEC-03</span>
+                    </div>
                 </div>
             </div>
         </div>
