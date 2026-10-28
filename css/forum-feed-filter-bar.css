@@ -11,8 +11,9 @@
   --sp-border: #e2e8f0;
 }
 
+/* Reduced vertical padding as requested */
 .forum-tabs-section {
-  padding: 32px 0 16px;
+  padding: 14px 0 6px;
   background-color: transparent;
 }
 
@@ -20,7 +21,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 16px;
   flex-wrap: wrap;
 }
 
@@ -36,9 +37,9 @@
 .forum-tab-switcher {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   background: #ffffff;
-  padding: 6px;
+  padding: 4px;
   border-radius: 50px;
   border: 1px solid var(--sp-border);
   box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
@@ -52,39 +53,40 @@
   display: none;
 }
 
+/* Slightly reduced vertical padding, maintaining balanced width */
 .forum-tab-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 20px;
+  padding: 6px 18px;
   border-radius: 50px;
   border: 1px solid transparent;
   background: transparent;
   color: #475569;
   font-family: 'Poppins', sans-serif;
-  font-size: 0.86rem;
+  font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.22s ease;
+  transition: all 0.2s ease;
   white-space: nowrap;
   text-decoration: none !important;
 }
 
 .forum-tab-btn .tab-icon {
-  font-size: 18px;
+  font-size: 17px;
   color: #94a3b8;
-  transition: color 0.22s ease;
+  transition: color 0.2s ease;
 }
 
 .forum-tab-btn .tab-badge {
   font-family: 'Poppins', sans-serif;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  padding: 2px 8px;
+  padding: 2px 7px;
   border-radius: 50px;
   background: #f1f5f9;
   color: #475569;
-  transition: all 0.22s ease;
+  transition: all 0.2s ease;
 }
 
 .forum-tab-btn:hover {
@@ -112,61 +114,124 @@
   color: #ffffff !important;
 }
 
-/* Sort Controls Pill */
+/* ==========================================================================
+   Custom Dropdown Menu (Replaces default browser select popup)
+   ========================================================================== */
 .forum-sort-pill-wrap {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-shrink: 0;
+  position: relative;
 }
 
 .forum-sort-label {
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--sp-muted);
   margin-bottom: 0;
 }
 
-.sort-select-box {
+.custom-sort-dropdown {
   position: relative;
+}
+
+.custom-sort-btn {
   display: inline-flex;
   align-items: center;
+  gap: 7px;
   background: #ffffff;
   border: 1px solid var(--sp-border);
   border-radius: 50px;
-  padding: 5px 14px 5px 12px;
+  padding: 6px 16px;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
-  transition: border-color 0.2s ease;
-}
-
-.sort-select-box:focus-within {
-  border-color: var(--primary-orange);
-  box-shadow: 0 0 0 3px rgba(244, 130, 33, 0.1);
-}
-
-.sort-select-box .sort-icon {
-  font-size: 18px;
-  color: #94a3b8;
-  margin-right: 6px;
-  pointer-events: none;
-}
-
-.forum-sort-select {
-  border: none;
-  background: transparent;
-  outline: none;
   font-family: 'Poppins', sans-serif;
   font-size: 0.82rem;
   font-weight: 600;
   color: var(--sp-dark);
   cursor: pointer;
-  padding-right: 18px;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0 center;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.custom-sort-btn:hover,
+.custom-sort-btn:focus-visible {
+  border-color: var(--primary-orange);
+  box-shadow: 0 0 0 3px rgba(244, 130, 33, 0.12);
+}
+
+.custom-sort-btn .sort-icon {
+  font-size: 17px;
+  color: #94a3b8;
+}
+
+.custom-sort-btn .chevron-icon {
+  font-size: 18px;
+  color: #64748b;
+  transition: transform 0.2s ease;
+}
+
+.custom-sort-btn .chevron-icon.is-rotated {
+  transform: rotate(180deg);
+}
+
+/* Floating Custom Menu */
+.custom-sort-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  background: #ffffff;
+  border: 1px solid var(--sp-border);
+  border-radius: 12px;
+  box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.12), 0 4px 10px rgba(15, 23, 42, 0.05);
+  padding: 6px;
+  min-width: 175px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.custom-sort-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #334155;
+  text-decoration: none !important;
+  transition: all 0.18s ease;
+}
+
+.custom-sort-item:hover {
+  background: rgba(244, 130, 33, 0.08);
+  color: var(--primary-orange);
+}
+
+.custom-sort-item.active {
+  background: rgba(244, 130, 33, 0.1);
+  color: var(--primary-orange);
+  font-weight: 700;
+}
+
+.custom-sort-item .item-icon {
+  font-size: 16px;
+  color: #94a3b8;
+}
+
+.custom-sort-item:hover .item-icon,
+.custom-sort-item.active .item-icon {
+  color: var(--primary-orange);
+}
+
+.custom-sort-item .check-mark {
+  font-size: 16px;
+  color: var(--primary-orange);
+  font-weight: 700;
 }
 
 @media (max-width: 991px) {

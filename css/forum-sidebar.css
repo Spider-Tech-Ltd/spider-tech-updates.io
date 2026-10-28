@@ -1,8 +1,8 @@
-  /* ====== Sidebar Styles — Industrial Engineering ====== */
+  /* ====== Sidebar Styles — Tailored Compact Engineering Modules ====== */
   .forum-sidebar {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 18px;
     position: sticky;
     top: 90px;
   }
@@ -11,38 +11,50 @@
   .sidebar-widget {
     background-color: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+    border-radius: 14px;
+    padding: 18px 20px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.025);
   }
 
   .sidebar-widget-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
     border-bottom: 1px solid #f1f5f9;
   }
 
   .sidebar-widget-header .widget-icon {
-    font-size: 20px;
+    font-size: 19px;
     color: var(--primary-orange, #f48221);
   }
 
   .widget-title {
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
-    font-size: 1.05rem;
+    font-size: 0.98rem;
     color: #0f172a;
     margin-bottom: 0;
   }
 
-  /* Ranked List */
+  .widget-view-all {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--primary-orange, #f48221);
+    text-decoration: none !important;
+  }
+
+  .widget-view-all:hover {
+    text-decoration: underline !important;
+  }
+
+  /* Ranked List (Top Categories) */
   .ranked-list {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 8px;
   }
   .ranked-item {
     display: flex;
@@ -51,7 +63,7 @@
     text-decoration: none !important;
     padding: 6px 8px;
     border-radius: 8px;
-    transition: background-color 0.18s ease;
+    transition: all 0.18s ease;
   }
   .ranked-item:hover {
     background-color: #f8fafc;
@@ -59,65 +71,147 @@
   .ranked-item-left {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    min-width: 0;
   }
   .ranked-badge {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
-    background-color: rgba(244, 130, 33, 0.1);
+    width: 24px;
+    height: 24px;
+    background-color: rgba(244, 130, 33, 0.08);
     color: var(--primary-orange, #f48221);
-    border-radius: 8px;
+    border-radius: 6px;
     font-family: 'Chakra Petch', monospace, sans-serif;
     font-weight: 700;
-    font-size: 0.78rem;
-    letter-spacing: 0.02em;
+    font-size: 0.72rem;
+    flex-shrink: 0;
   }
   .ranked-name {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    font-size: 0.88rem;
+    font-size: 0.84rem;
     color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     transition: color 0.2s;
   }
   .ranked-item:hover .ranked-name { color: var(--primary-orange, #f48221); }
   .ranked-count {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    font-size: 0.76rem;
+    font-size: 0.72rem;
     color: #64748b;
     background: #f1f5f9;
-    padding: 2px 8px;
+    padding: 2px 7px;
     border-radius: 50px;
+    flex-shrink: 0;
+  }
+
+  /* Trending Discussions List */
+  .trending-discussions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .trending-discussion-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    text-decoration: none !important;
+    transition: background-color 0.18s ease;
+  }
+
+  .trending-discussion-item:hover {
+    background-color: #f8fafc;
+  }
+
+  .trending-rank {
+    font-family: 'Chakra Petch', monospace, sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    color: #94a3b8;
+    line-height: 1.4;
+    min-width: 16px;
+  }
+
+  .trending-discussion-item:hover .trending-rank {
+    color: var(--primary-orange, #f48221);
+  }
+
+  .trending-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .trending-title {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.84rem;
+    color: #0f172a;
+    line-height: 1.35;
+    margin: 0 0 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.2s ease;
+  }
+
+  .trending-discussion-item:hover .trending-title {
+    color: var(--primary-orange, #f48221);
+  }
+
+  .trending-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.72rem;
+    color: #94a3b8;
+  }
+
+  .trending-likes {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .trending-likes .material-symbols-outlined {
+    font-size: 13px;
+    color: var(--primary-orange, #f48221);
   }
 
   /* Top Contributors */
   .contributor-list {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 10px;
   }
   .contributor-item {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    padding: 4px 6px;
   }
   .contributor-avatar {
-    width: 38px;
-    height: 38px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.84rem;
     color: #ffffff;
     flex-shrink: 0;
-    border: 2px solid #ffffff;
-    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+    border: 1.5px solid #ffffff;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
   }
   .avatar-orange { background-color: #f48221; }
   .avatar-blue   { background-color: #0284c7; }
@@ -128,27 +222,27 @@
   .contributor-info {
     display: flex;
     flex-direction: column;
-    line-height: 1.3;
+    line-height: 1.25;
   }
   .contributor-name {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    font-size: 0.88rem;
+    font-size: 0.84rem;
     color: #0f172a;
   }
   .contributor-posts {
     font-family: 'Open Sans', sans-serif;
-    font-size: 0.74rem;
+    font-size: 0.72rem;
     color: #94a3b8;
   }
 
-  /* Join CTA Card */
+  /* Tailored Sign Access Card */
   .sidebar-join-card {
     background: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    padding: 28px 24px;
-    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.04);
+    border-radius: 14px;
+    padding: 22px 20px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03);
     position: relative;
     overflow: hidden;
     text-align: center;
@@ -163,36 +257,34 @@
     background: linear-gradient(90deg, #f48221, #ea580c);
   }
 
-  .join-icon-wrap {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: rgba(244, 130, 33, 0.1);
+  .join-eyebrow {
+    font-family: 'Chakra Petch', monospace, sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
     color: var(--primary-orange, #f48221);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 12px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
   }
 
-  .join-icon-wrap .material-symbols-outlined {
-    font-size: 24px;
+  .join-eyebrow .eyebrow-accent {
+    color: #94a3b8;
   }
 
   .join-title {
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
-    font-size: 1.12rem;
+    font-size: 1.02rem;
     color: #0f172a;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
 
   .join-body {
     font-family: 'Open Sans', sans-serif;
-    font-size: 0.85rem;
-    line-height: 1.55;
+    font-size: 0.82rem;
+    line-height: 1.5;
     color: #64748b;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
 
   .join-btn-group {
@@ -206,8 +298,8 @@
     color: #ffffff !important;
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
-    font-size: 0.86rem;
-    padding: 10px 18px;
+    font-size: 0.84rem;
+    padding: 9px 18px;
     border-radius: 50px;
     text-decoration: none !important;
     display: block;
@@ -226,8 +318,8 @@
     color: #334155 !important;
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    font-size: 0.84rem;
-    padding: 9px 18px;
+    font-size: 0.82rem;
+    padding: 8px 18px;
     border-radius: 50px;
     border: 1px solid #e2e8f0;
     text-decoration: none !important;

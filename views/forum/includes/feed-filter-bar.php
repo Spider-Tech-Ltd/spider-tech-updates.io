@@ -1,7 +1,7 @@
 <?php
 /**
  * Feed Category Tab Switcher (Matching Events Page Design)
- * Displays unified capsule tab switcher with category badges + sort select
+ * Displays unified capsule tab switcher with category badges + custom sort dropdown
  */
 $currentCat = $_GET['category'] ?? 'all';
 $currentSort = $_GET['sort'] ?? 'latest';
@@ -38,15 +38,43 @@ $currentSort = $_GET['sort'] ?? 'latest';
         </div>
       </div>
 
-      <!-- Sort Filter Controls -->
-      <div class="forum-sort-pill-wrap">
-        <label for="feedSortSelect" class="forum-sort-label">Sort By:</label>
-        <div class="sort-select-box">
-          <span class="material-symbols-outlined sort-icon">sort</span>
-          <select id="feedSortSelect" class="forum-sort-select" onchange="window.location.href=this.value;" aria-label="Sort discussions">
-            <option value="<?= BASE_URL ?>/forum?category=<?= urlencode($currentCat) ?>&sort=latest#feedSection" <?= ($currentSort === 'latest') ? 'selected' : '' ?>>Latest First</option>
-            <option value="<?= BASE_URL ?>/forum?category=<?= urlencode($currentCat) ?>&sort=hottest#feedSection" <?= ($currentSort === 'hottest') ? 'selected' : '' ?>>Trending / Hot</option>
-          </select>
+      <!-- Custom Sort Filter Dropdown (Replaces default OS browser select) -->
+      <div class="forum-sort-pill-wrap" x-data="{ sortOpen: false }" @click.outside="sortOpen = false">
+        <span class="forum-sort-label">Sort By:</span>
+        <div class="custom-sort-dropdown">
+          <button type="button" 
+                  class="custom-sort-btn" 
+                  @click="sortOpen = !sortOpen" 
+                  :aria-expanded="sortOpen.toString()" 
+                  aria-label="Sort discussions">
+            <span class="material-symbols-outlined sort-icon">sort</span>
+            <span><?= ($currentSort === 'hottest') ? 'Trending / Hot' : 'Latest First' ?></span>
+            <span class="material-symbols-outlined chevron-icon" :class="{ 'is-rotated': sortOpen }">expand_more</span>
+          </button>
+
+          <div class="custom-sort-menu" x-show="sortOpen" x-transition.origin.top.right x-cloak style="display: none;">
+            <a href="<?= BASE_URL ?>/forum?category=<?= urlencode($currentCat) ?>&sort=latest#feedSection"
+               class="custom-sort-item <?= ($currentSort === 'latest') ? 'active' : '' ?>">
+              <div class="d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined item-icon">schedule</span>
+                <span>Latest First</span>
+              </div>
+              <?php if ($currentSort === 'latest'): ?>
+                <span class="material-symbols-outlined check-mark">check</span>
+              <?php endif; ?>
+            </a>
+
+            <a href="<?= BASE_URL ?>/forum?category=<?= urlencode($currentCat) ?>&sort=hottest#feedSection"
+               class="custom-sort-item <?= ($currentSort === 'hottest') ? 'active' : '' ?>">
+              <div class="d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined item-icon">local_fire_department</span>
+                <span>Trending / Hot</span>
+              </div>
+              <?php if ($currentSort === 'hottest'): ?>
+                <span class="material-symbols-outlined check-mark">check</span>
+              <?php endif; ?>
+            </a>
+          </div>
         </div>
       </div>
 

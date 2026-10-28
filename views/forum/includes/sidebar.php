@@ -1,6 +1,6 @@
 <?php
 /**
- * Forum Sidebar Component — Industrial Engineering Theme
+ * Forum Sidebar Component — Tailored Compact Engineering Modules
  */
 ?>
 
@@ -11,8 +11,11 @@
   <!-- WIDGET 1: Top Categories -->
   <section class="sidebar-widget">
     <div class="sidebar-widget-header">
-      <span class="material-symbols-outlined widget-icon">hub</span>
-      <h3 class="widget-title">Top Categories</h3>
+      <div class="d-flex align-items-center gap-2">
+        <span class="material-symbols-outlined widget-icon">hub</span>
+        <h3 class="widget-title">Top Categories</h3>
+      </div>
+      <a href="<?= BASE_URL ?>/forum#feedSection" class="widget-view-all">View All</a>
     </div>
     <div class="ranked-list">
       <?php if (empty($top_categories)): ?>
@@ -24,18 +27,48 @@
               <span class="ranked-badge"><?= sprintf('%02d', $index + 1) ?></span>
               <span class="ranked-name"><?= htmlspecialchars($cat['name']) ?></span>
             </div>
-            <span class="ranked-count"><?= Utils::formatNumber($cat['post_count']) ?></span>
+            <span class="ranked-count"><?= Utils::formatNumber($cat['post_count']) ?> topics</span>
           </a>
         <?php endforeach; ?>
       <?php endif; ?>
     </div>
   </section>
 
-  <!-- WIDGET 2: Top Contributors -->
+  <!-- WIDGET 2: Top Discussions / Trending -->
+  <?php if (!empty($trending)): ?>
   <section class="sidebar-widget">
     <div class="sidebar-widget-header">
-      <span class="material-symbols-outlined widget-icon">military_tech</span>
-      <h3 class="widget-title">Top Contributors</h3>
+      <div class="d-flex align-items-center gap-2">
+        <span class="material-symbols-outlined widget-icon text-orange">trending_up</span>
+        <h3 class="widget-title">Top Discussions</h3>
+      </div>
+    </div>
+    <div class="trending-discussions-list">
+      <?php foreach ($trending as $tIndex => $trend): ?>
+        <a href="<?= BASE_URL ?>/forum/discussion?uuid=<?= urlencode($trend['uuid']) ?>" class="trending-discussion-item">
+          <span class="trending-rank"><?= ($tIndex + 1) ?></span>
+          <div class="trending-content">
+            <h4 class="trending-title"><?= htmlspecialchars($trend['title']) ?></h4>
+            <div class="trending-meta">
+              <span class="trending-likes">
+                <span class="material-symbols-outlined">thumb_up</span>
+                <?= $trend['likes'] ?? 0 ?> upvotes
+              </span>
+            </div>
+          </div>
+        </a>
+      <?php endforeach; ?>
+    </div>
+  </section>
+  <?php endif; ?>
+
+  <!-- WIDGET 3: Top Contributors -->
+  <section class="sidebar-widget">
+    <div class="sidebar-widget-header">
+      <div class="d-flex align-items-center gap-2">
+        <span class="material-symbols-outlined widget-icon">military_tech</span>
+        <h3 class="widget-title">Top Contributors</h3>
+      </div>
     </div>
     <div class="contributor-list">
       <?php if (empty($top_contributors)): ?>
@@ -55,7 +88,7 @@
             <?php endif; ?>
             <div class="contributor-info">
               <span class="contributor-name"><?= htmlspecialchars($con['name']) ?></span>
-              <span class="contributor-posts"><?= $con['post_count'] ?> posts total</span>
+              <span class="contributor-posts"><?= $con['post_count'] ?> contributions</span>
             </div>
           </div>
         <?php endforeach; ?>
@@ -63,16 +96,18 @@
     </div>
   </section>
 
-  <!-- WIDGET 3: Join CTA -->
+  <!-- WIDGET 4: Tailored Sign Access Card -->
   <?php if (!isset($_SESSION['member_uuid'])): ?>
   <section class="sidebar-join-card">
     <div class="join-card-accent"></div>
-    <div class="join-icon-wrap">
-      <span class="material-symbols-outlined">engineering</span>
+    <div class="join-eyebrow">
+      <span class="eyebrow-accent">|–</span>
+      <span>MEMBER ACCESS</span>
+      <span class="eyebrow-accent">–|</span>
     </div>
-    <h3 class="join-title">New to Community?</h3>
+    <h3 class="join-title">Join the Engineering Network</h3>
     <p class="join-body">
-      Join verified engineers, troubleshoot technical problems, and share solutions across industrial systems.
+      Ask questions, share blueprints, and troubleshoot industrial systems with verified peers.
     </p>
     <div class="join-btn-group">
       <a href="<?= BASE_URL ?>/forum/sign-up" class="join-btn-primary">Register Free</a>
