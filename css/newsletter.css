@@ -159,5 +159,5 @@
         .newsletter-section { padding: 28px 24px; }
         .news-input-group { border-radius: 18px; flex-direction: column; padding: 12px; gap: 10px; align-items: stretch; }
         .news-input { padding: 8px 12px; width: 100%; text-align: center; }
-        .news-submit-btn { width: 100%; border-radius: 12px; }
+        .news-submit-btn { width: 100%; border-radius: 50px; }
     }

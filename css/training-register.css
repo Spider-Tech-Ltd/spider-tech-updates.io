@@ -264,7 +264,7 @@
         background: var(--primary-orange);
         color: #ffffff !important;
         border: 1px solid var(--primary-orange);
-        border-radius: 12px;
+        border-radius: 50px;
         height: 50px;
         padding: 12px 28px;
         font-family: 'Poppins', sans-serif;
@@ -302,7 +302,7 @@
         background: #ffffff;
         color: #475569 !important;
         border: 1px solid #cbd5e1;
-        border-radius: 12px;
+        border-radius: 50px;
         height: 50px;
         padding: 12px 24px;
         font-family: 'Poppins', sans-serif;
