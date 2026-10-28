@@ -36,24 +36,53 @@
   max-width: 100%;
 }
 
-/* Floating Navigation Arrows */
+/* Blur Fade Overlays (Softly masks overflowing tabs at capsule curve) */
+.tab-scroll-blur {
+  position: absolute;
+  top: 1px;
+  bottom: 1px;
+  width: 58px;
+  pointer-events: none;
+  z-index: 8;
+  transition: opacity 0.25s ease;
+}
+
+.tab-scroll-blur.left {
+  left: 1px;
+  border-top-left-radius: 50px;
+  border-bottom-left-radius: 50px;
+  background: linear-gradient(90deg, #ffffff 20%, rgba(255, 255, 255, 0.88) 55%, rgba(255, 255, 255, 0) 100%);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+
+.tab-scroll-blur.right {
+  right: 1px;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
+  background: linear-gradient(270deg, #ffffff 20%, rgba(255, 255, 255, 0.88) 55%, rgba(255, 255, 255, 0) 100%);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+
+/* Floating Navigation Arrows - Inward Positioned inside the Capsule */
 .tab-scroll-arrow-btn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 10;
-  width: 30px;
-  height: 30px;
+  z-index: 12;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: #ffffff;
   border: 1px solid var(--sp-border);
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
   color: var(--sp-dark);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   padding: 0;
 }
 
@@ -61,22 +90,25 @@
   background: var(--primary-orange);
   border-color: var(--primary-orange);
   color: #ffffff;
-  box-shadow: 0 6px 16px rgba(244, 130, 33, 0.3);
+  box-shadow: 0 4px 12px rgba(244, 130, 33, 0.35);
+  transform: translateY(-50%) scale(1.08);
 }
 
+/* Inward placement inside the capsule curves */
 .tab-scroll-arrow-btn.prev {
-  left: -8px;
+  left: 6px;
 }
 
 .tab-scroll-arrow-btn.next {
-  right: -8px;
+  right: 6px;
 }
 
 .tab-scroll-arrow-btn .material-symbols-outlined {
-  font-size: 19px;
+  font-size: 18px;
+  line-height: 1;
 }
 
-/* Smooth Horizontal Scrollable Switcher Capsule */
+/* Smooth Horizontal Scrollable Switcher Capsule (Scrollbar Completely Hidden) */
 .forum-tab-switcher {
   display: flex;
   align-items: center;
@@ -89,32 +121,21 @@
   max-width: 100%;
   overflow-x: auto;
   scroll-behavior: smooth;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(203, 213, 225, 0.5) transparent;
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
   -webkit-overflow-scrolling: touch;
 }
 
-/* Micro-scrollbar for desktop mouse users */
+/* Hide scrollbar completely for Chrome, Safari, Opera */
 .forum-tab-switcher::-webkit-scrollbar {
-  height: 3px;
-}
-
-.forum-tab-switcher::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.forum-tab-switcher::-webkit-scrollbar-thumb {
-  background: rgba(203, 213, 225, 0.6);
-  border-radius: 3px;
-}
-
-.forum-tab-switcher::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-orange);
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 .tab-scroll-end-spacer {
   display: inline-block;
-  width: 12px;
+  width: 28px;
   flex-shrink: 0;
 }
 
@@ -309,9 +330,9 @@
     width: 100%;
   }
   .tab-scroll-arrow-btn.prev {
-    left: 0;
+    left: 4px;
   }
   .tab-scroll-arrow-btn.next {
-    right: 0;
+    right: 4px;
   }
 }

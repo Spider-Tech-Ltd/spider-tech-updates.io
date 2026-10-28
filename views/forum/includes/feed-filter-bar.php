@@ -16,10 +16,18 @@ $currentSort = $_GET['sort'] ?? 'latest';
       <!-- Category Tab Switcher with Interactive Accessible Horizontal Scroll -->
       <div class="forum-tab-switcher-wrap" x-data="categoryScrollNav()" x-init="initScrollNav()">
         
-        <!-- Left Scroll Arrow Button -->
+        <!-- Left Blur Fade Gradient Overlay -->
+        <div class="tab-scroll-blur left" 
+             x-show="canScrollLeft" 
+             x-transition.opacity.duration.250ms
+             aria-hidden="true" 
+             style="display: none;"></div>
+
+        <!-- Left Inward Scroll Arrow Button -->
         <button type="button" 
                 class="tab-scroll-arrow-btn prev" 
                 x-show="canScrollLeft" 
+                x-transition.opacity.duration.200ms
                 @click="scrollLeft()" 
                 aria-label="Scroll categories left"
                 style="display: none;">
@@ -58,10 +66,18 @@ $currentSort = $_GET['sort'] ?? 'latest';
           <span class="tab-scroll-end-spacer" aria-hidden="true"></span>
         </div>
 
-        <!-- Right Scroll Arrow Button -->
+        <!-- Right Blur Fade Gradient Overlay -->
+        <div class="tab-scroll-blur right" 
+             x-show="canScrollRight" 
+             x-transition.opacity.duration.250ms
+             aria-hidden="true" 
+             style="display: none;"></div>
+
+        <!-- Right Inward Scroll Arrow Button -->
         <button type="button" 
                 class="tab-scroll-arrow-btn next" 
                 x-show="canScrollRight" 
+                x-transition.opacity.duration.200ms
                 @click="scrollRight()" 
                 aria-label="Scroll categories right"
                 style="display: none;">
