@@ -8,9 +8,17 @@
     /* ====== Unified Inner-Page Header ====== */
     .page-header {
         background:
-            radial-gradient(circle at 85% 30%, rgba(244, 130, 33, 0.14) 0%, transparent 50%),
-            linear-gradient(90deg, rgba(10, 9, 8, 0.90) 0%, rgba(14, 12, 10, 0.80) 55%, rgba(15, 13, 11, 0.72) 100%),
-            url('../images/banners/998808547.jpg') center 28% / cover no-repeat;
+            radial-gradient(circle at 85% 30%, rgba(244, 130, 33, 0.16) 0%, transparent 50%),
+            radial-gradient(circle at 15% 85%, rgba(244, 130, 33, 0.06) 0%, transparent 45%),
+            linear-gradient(to right, rgba(244, 130, 33, 0.09) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(244, 130, 33, 0.09) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(10, 9, 8, 0.90) 0%, rgba(14, 12, 10, 0.82) 55%, rgba(15, 13, 11, 0.74) 100%);
+        background-size:
+            auto,
+            auto,
+            32px 32px,
+            32px 32px,
+            auto;
         background-color: var(--dark-bg);
         padding: 132px 0 58px;
         position: relative;
