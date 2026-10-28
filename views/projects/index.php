@@ -79,7 +79,7 @@ $totalExtraRows = count($extraProjectRows);
 
         <!-- Default 6 Projects (2 Rows of 3 Cards) -->
         <div class="row g-4">
-            <?php foreach ($initialProjects as $project):
+            <?php foreach ($initialProjects as $idx => $project):
                 $rawPic = trim($project['project_pic'] ?? '');
                 $hasPic = false;
                 $finalPic = '';
@@ -98,10 +98,12 @@ $totalExtraRows = count($extraProjectRows);
                 $pTitle = trim(stripslashes($project['project_name'] ?? 'Untitled Project'));
                 $pCategory = trim(stripslashes($project['service_name'] ?? 'Technology Solution'));
                 $pDesc = truncateProjectDescWordAware($project['project_description'] ?? '', 112);
+                $serial = sprintf("PRJ-%02d", $idx + 1);
             ?>
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="project-card">
+            <div class="col-lg-4 col-md-6 mb-4 d-flex">
+                <div class="project-card w-100">
                     <div class="project-img-wrap">
+                        <span class="project-serial-tag"><?= $serial; ?></span>
                         <span class="project-category-tag"><?= htmlspecialchars($pCategory); ?></span>
                         <?php if ($hasPic): ?>
                             <img src="<?= htmlspecialchars($finalPic) ?>"
@@ -122,12 +124,18 @@ $totalExtraRows = count($extraProjectRows);
                     <div class="project-body">
                         <h3 class="project-title" title="<?= htmlspecialchars($pTitle); ?>"><?= htmlspecialchars($pTitle); ?></h3>
                         <div class="project-desc"><?= htmlspecialchars($pDesc); ?></div>
-                        <a href="<?= BASE_URL ?>/projects/detail?id=<?= (int) $project['project_id']; ?>"
-                           class="project-link"
-                           aria-label="View case study for <?= htmlspecialchars($pTitle); ?>">
-                            <span>View Case Study</span>
-                            <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
-                        </a>
+                        <div class="project-footer">
+                            <span class="project-pill-badge">
+                                <span class="project-status-dot"></span>
+                                <span>Production Ready</span>
+                            </span>
+                            <a href="<?= BASE_URL ?>/projects/detail?id=<?= (int) $project['project_id']; ?>"
+                               class="project-link"
+                               aria-label="View case study for <?= htmlspecialchars($pTitle); ?>">
+                                <span>Case Study</span>
+                                <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -161,10 +169,13 @@ $totalExtraRows = count($extraProjectRows);
                         $pCategory = trim(stripslashes($project['service_name'] ?? 'Technology Solution'));
                         $pDesc = truncateProjectDescWordAware($project['project_description'] ?? '', 112);
                         $delayMs = ($cardIdx + 1) * 75;
+                        $globalIdx = count($initialProjects) + ($rowIdx * 3) + $cardIdx;
+                        $serial = sprintf("PRJ-%02d", $globalIdx + 1);
                     ?>
-                    <div class="col-lg-4 col-md-6 mb-4 project-extra-col" style="--stagger-delay: <?= (int) $delayMs ?>ms;">
-                        <div class="project-card">
+                    <div class="col-lg-4 col-md-6 mb-4 project-extra-col d-flex" style="--stagger-delay: <?= (int) $delayMs ?>ms;">
+                        <div class="project-card w-100">
                             <div class="project-img-wrap">
+                                <span class="project-serial-tag"><?= $serial; ?></span>
                                 <span class="project-category-tag"><?= htmlspecialchars($pCategory); ?></span>
                                 <?php if ($hasPic): ?>
                                     <img src="<?= htmlspecialchars($finalPic) ?>"
@@ -185,12 +196,18 @@ $totalExtraRows = count($extraProjectRows);
                             <div class="project-body">
                                 <h3 class="project-title" title="<?= htmlspecialchars($pTitle); ?>"><?= htmlspecialchars($pTitle); ?></h3>
                                 <div class="project-desc"><?= htmlspecialchars($pDesc); ?></div>
-                                <a href="<?= BASE_URL ?>/projects/detail?id=<?= (int) $project['project_id']; ?>"
-                                   class="project-link"
-                                   aria-label="View case study for <?= htmlspecialchars($pTitle); ?>">
-                                    <span>View Case Study</span>
-                                    <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
-                                </a>
+                                <div class="project-footer">
+                                    <span class="project-pill-badge">
+                                        <span class="project-status-dot"></span>
+                                        <span>Production Ready</span>
+                                    </span>
+                                    <a href="<?= BASE_URL ?>/projects/detail?id=<?= (int) $project['project_id']; ?>"
+                                       class="project-link"
+                                       aria-label="View case study for <?= htmlspecialchars($pTitle); ?>">
+                                        <span>Case Study</span>
+                                        <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>

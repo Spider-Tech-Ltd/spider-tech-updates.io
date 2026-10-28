@@ -65,23 +65,33 @@ $extraServices = array_slice($allServices, 6);
 
         <!-- Default 6 Services Grid -->
         <div class="row services-grid-row">
-            <?php foreach ($initialServices as $service):
+            <?php foreach ($initialServices as $idx => $service):
                 $sName = trim(stripslashes($service['service_name'] ?? 'Service'));
                 $sDesc = truncateServiceDescWordAware($service['service_description'] ?? '', 118);
+                $serial = sprintf("SRV-%02d", $idx + 1);
             ?>
-            <div class="col-lg-4 col-md-6 services-grid-col">
-                <a href="<?= BASE_URL ?>/services/detail?id=<?= (int) $service['id']; ?>" class="service-card">
-                    <div class="service-card-body">
-                        <div class="icon-box">
-                            <i class="<?= htmlspecialchars($service['service_icon'] ?? ''); ?>"></i>
+            <div class="col-lg-4 col-md-6 services-grid-col d-flex">
+                <a href="<?= BASE_URL ?>/services/detail?id=<?= (int) $service['id']; ?>" class="service-card w-100">
+                    <div class="service-card-top">
+                        <div class="service-card-identity">
+                            <div class="icon-box">
+                                <i class="<?= htmlspecialchars($service['service_icon'] ?? ''); ?>"></i>
+                            </div>
+                            <h3 class="service-title"><?= htmlspecialchars($sName); ?></h3>
                         </div>
-                        <h3 class="service-title"><?= htmlspecialchars($sName); ?></h3>
-                        <p class="service-desc"><?= htmlspecialchars($sDesc); ?></p>
+                        <span class="service-serial-tag"><?= $serial; ?></span>
                     </div>
-                    <span class="learn-more-link">
-                        <span>Explore Service</span>
-                        <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
-                    </span>
+                    <p class="service-desc"><?= htmlspecialchars($sDesc); ?></p>
+                    <div class="service-card-footer">
+                        <span class="service-pill-badge">
+                            <span class="service-status-dot"></span>
+                            <span>Enterprise Ready</span>
+                        </span>
+                        <span class="learn-more-link">
+                            <span>Explore</span>
+                            <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
+                        </span>
+                    </div>
                 </a>
             </div>
             <?php endforeach; ?>
@@ -95,20 +105,30 @@ $extraServices = array_slice($allServices, 6);
                     $sName = trim(stripslashes($service['service_name'] ?? 'Service'));
                     $sDesc = truncateServiceDescWordAware($service['service_description'] ?? '', 118);
                     $delayMs = ($extraIdx + 1) * 70;
+                    $serial = sprintf("SRV-%02d", count($initialServices) + $extraIdx + 1);
                 ?>
-                <div class="col-lg-4 col-md-6 services-grid-col service-extra-col" style="--stagger-delay: <?= (int) $delayMs ?>ms;">
-                    <a href="<?= BASE_URL ?>/services/detail?id=<?= (int) $service['id']; ?>" class="service-card">
-                        <div class="service-card-body">
-                            <div class="icon-box">
-                                <i class="<?= htmlspecialchars($service['service_icon'] ?? ''); ?>"></i>
+                <div class="col-lg-4 col-md-6 services-grid-col service-extra-col d-flex" style="--stagger-delay: <?= (int) $delayMs ?>ms;">
+                    <a href="<?= BASE_URL ?>/services/detail?id=<?= (int) $service['id']; ?>" class="service-card w-100">
+                        <div class="service-card-top">
+                            <div class="service-card-identity">
+                                <div class="icon-box">
+                                    <i class="<?= htmlspecialchars($service['service_icon'] ?? ''); ?>"></i>
+                                </div>
+                                <h3 class="service-title"><?= htmlspecialchars($sName); ?></h3>
                             </div>
-                            <h3 class="service-title"><?= htmlspecialchars($sName); ?></h3>
-                            <p class="service-desc"><?= htmlspecialchars($sDesc); ?></p>
+                            <span class="service-serial-tag"><?= $serial; ?></span>
                         </div>
-                        <span class="learn-more-link">
-                            <span>Explore Service</span>
-                            <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
-                        </span>
+                        <p class="service-desc"><?= htmlspecialchars($sDesc); ?></p>
+                        <div class="service-card-footer">
+                            <span class="service-pill-badge">
+                                <span class="service-status-dot"></span>
+                                <span>Enterprise Ready</span>
+                            </span>
+                            <span class="learn-more-link">
+                                <span>Explore</span>
+                                <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
+                            </span>
+                        </div>
                     </a>
                 </div>
                 <?php endforeach; ?>

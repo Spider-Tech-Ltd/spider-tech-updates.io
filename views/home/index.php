@@ -164,20 +164,31 @@ foreach ($banners as &$banner) {
             <p class="section-subtitle">We provide high-impact technical solutions designed to scale your business and empower your workforce.</p>
         </div>
         <div class="row services-grid-row">
-            <?php foreach ($services as $service): ?>
-                <div class="col-lg-4 col-md-6 services-grid-col">
-                    <a href="<?= BASE_URL ?>/services/detail?id=<?= $service['id']; ?>" class="service-card-new">
-                        <div class="service-card-body">
-                            <div class="service-icon-box">
-                                <i class="<?= $service['service_icon']; ?>"></i>
+            <?php foreach ($services as $sIdx => $service):
+                $serial = sprintf("SRV-%02d", $sIdx + 1);
+            ?>
+                <div class="col-lg-4 col-md-6 services-grid-col d-flex">
+                    <a href="<?= BASE_URL ?>/services/detail?id=<?= $service['id']; ?>" class="service-card-new w-100">
+                        <div class="service-card-top">
+                            <div class="service-card-identity">
+                                <div class="service-icon-box">
+                                    <i class="<?= $service['service_icon']; ?>"></i>
+                                </div>
+                                <h3 class="service-title"><?= htmlspecialchars($service['service_name']); ?></h3>
                             </div>
-                            <h3 class="service-title"><?= htmlspecialchars($service['service_name']); ?></h3>
-                            <p class="service-text"><?= htmlspecialchars($service['service_description']); ?></p>
+                            <span class="service-serial-tag"><?= $serial; ?></span>
                         </div>
-                        <span class="service-card-link">
-                            Learn More
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </span>
+                        <p class="service-text"><?= htmlspecialchars($service['service_description']); ?></p>
+                        <div class="service-card-footer">
+                            <span class="service-pill-badge">
+                                <span class="service-status-dot"></span>
+                                <span>Enterprise Ready</span>
+                            </span>
+                            <span class="service-card-link">
+                                <span>Explore</span>
+                                <span class="material-symbols-outlined">arrow_forward</span>
+                            </span>
+                        </div>
                     </a>
                 </div>
             <?php endforeach; ?>
@@ -267,7 +278,7 @@ foreach ($banners as &$banner) {
             <p class="section-subtitle">We design innovative digital solutions leveraging cutting-edge technology.</p>
         </div>
         <div class="row">
-            <?php foreach ($projects as $project):
+            <?php foreach ($projects as $pIdx => $project):
                 $rawPic = trim($project['project_pic'] ?? '');
                 $hasPic = false;
                 $pPic = '';
@@ -300,12 +311,15 @@ foreach ($banners as &$banner) {
                     }
                 }
                 $pDesc = truncateProjectDescWordAware($project['project_description'] ?? '', 112);
+                $serial = sprintf("PRJ-%02d", $pIdx + 1);
             ?>
-                <div class="col-lg-4 col-md-6 mb-4">
+                <div class="col-lg-4 col-md-6 mb-4 d-flex">
                     <a href="<?= BASE_URL ?>/projects/detail?id=<?= (int)$project['project_id']; ?>"
-                       class="project-card-new"
+                       class="project-card-new w-100"
                        aria-label="View project details for <?= htmlspecialchars($pTitle); ?>">
                         <div class="card-img-wrap">
+                            <span class="project-serial-tag"><?= $serial; ?></span>
+                            <span class="project-category-tag"><?= htmlspecialchars($pCategory); ?></span>
                             <?php if ($hasPic): ?>
                                 <img src="<?= htmlspecialchars($pPic) ?>"
                                      alt="<?= htmlspecialchars($pTitle); ?>"
@@ -323,14 +337,19 @@ foreach ($banners as &$banner) {
                             </div>
                         </div>
                         <div class="card-content-p">
-                            <span class="card-category-p"><?= htmlspecialchars($pCategory); ?></span>
                             <h3 class="card-title-p" title="<?= htmlspecialchars($pTitle); ?>"><?= htmlspecialchars($pTitle); ?></h3>
                             <?php if ($pDesc !== ''): ?>
                                 <p class="card-desc-p"><?= htmlspecialchars($pDesc); ?></p>
                             <?php endif; ?>
-                            <div class="view-btn-p">
-                                <span>View Project Details</span>
-                                <span class="material-symbols-outlined">arrow_forward</span>
+                            <div class="project-footer">
+                                <span class="project-pill-badge">
+                                    <span class="project-status-dot"></span>
+                                    <span>Production Ready</span>
+                                </span>
+                                <div class="view-btn-p">
+                                    <span>Case Study</span>
+                                    <span class="material-symbols-outlined">arrow_forward</span>
+                                </div>
                             </div>
                         </div>
                     </a>
@@ -358,9 +377,6 @@ foreach ($banners as &$banner) {
             nav: false,
             margin: 30
         });
-
-    });
-
 
     });
 </script>
