@@ -19,6 +19,9 @@
 
     /* ====== Unified Inner-Page Header ====== */
     .page-header {
+        --mouse-x: -999px;
+        --mouse-y: -999px;
+        --spotlight-radius: 350px;
         background:
             radial-gradient(circle at 85% 30%, rgba(244, 130, 33, 0.16) 0%, transparent 50%),
             radial-gradient(circle at 15% 85%, rgba(244, 130, 33, 0.06) 0%, transparent 45%),
@@ -36,6 +39,39 @@
         position: relative;
         overflow: hidden;
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* ====== Grayscale Hover Effect with Interactive Grid Cursor Spotlight ====== */
+    .page-header::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 1;
+        background-image:
+            radial-gradient(circle var(--spotlight-radius) at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.06) 0%, transparent 70%),
+            linear-gradient(to right, rgba(255, 255, 255, 0.22) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.22) 1px, transparent 1px);
+        background-size:
+            auto,
+            32px 32px,
+            32px 32px;
+        -webkit-backdrop-filter: grayscale(100%) contrast(1.15) brightness(1.08);
+        backdrop-filter: grayscale(100%) contrast(1.15) brightness(1.08);
+        -webkit-mask-image: radial-gradient(circle var(--spotlight-radius) at var(--mouse-x) var(--mouse-y), black 0%, rgba(0, 0, 0, 0.6) 45%, transparent 75%);
+        mask-image: radial-gradient(circle var(--spotlight-radius) at var(--mouse-x) var(--mouse-y), black 0%, rgba(0, 0, 0, 0.6) 45%, transparent 75%);
+        opacity: 0;
+        transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .page-header.is-hovered::after,
+    .page-header:hover::after {
+        opacity: 1;
+    }
+
+    .page-header > .container {
+        position: relative;
+        z-index: 2;
     }
 
     .page-title {

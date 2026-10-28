@@ -311,5 +311,31 @@
             closeDrawer();
           }
         });
+
+        // ---- Interactive Grayscale & Grid Cursor Spotlight for Page Headers ----
+        const pageHeaders = document.querySelectorAll('.page-header');
+        pageHeaders.forEach(header => {
+          let ticking = false;
+          header.addEventListener('mousemove', function (e) {
+            if (!ticking) {
+              window.requestAnimationFrame(() => {
+                const rect = header.getBoundingClientRect();
+                const x = Math.round(e.clientX - rect.left);
+                const y = Math.round(e.clientY - rect.top);
+                header.style.setProperty('--mouse-x', x + 'px');
+                header.style.setProperty('--mouse-y', y + 'px');
+                header.classList.add('is-hovered');
+                ticking = false;
+              });
+              ticking = true;
+            }
+          }, { passive: true });
+
+          header.addEventListener('mouseleave', function () {
+            header.classList.remove('is-hovered');
+            header.style.setProperty('--mouse-x', '-999px');
+            header.style.setProperty('--mouse-y', '-999px');
+          }, { passive: true });
+        });
       });
     </script>
