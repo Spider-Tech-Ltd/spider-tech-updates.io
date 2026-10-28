@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/events.css" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/events.css?v=<?= filemtime(ROOT_PATH . '/css/events.css') ?>" />
 
 <!-- ====== Page Header ====== -->
 <section class="page-header">
@@ -6,15 +6,16 @@
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="page-title">Experience <span>the Hub</span></h1>
-                <div class="breadcrumb-custom">
-                    <div class="breadcrumb-item-custom">
-                        <a href="<?= BASE_URL ?>/">Home</a>
-                    </div>
-                    <div class="breadcrumb-separator"></div>
-                    <div class="breadcrumb-item-custom active">
-                        Events
-                    </div>
-                </div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb-custom">
+                        <li class="breadcrumb-item-custom">
+                            <a href="<?= BASE_URL ?>/">Home</a>
+                        </li>
+                        <li class="breadcrumb-item-custom active" aria-current="page">
+                            Events
+                        </li>
+                    </ol>
+                </nav>
             </div>
         </div>
     </div>
@@ -25,33 +26,47 @@
 $highlights = array_filter(array_merge($ongoing_events ?? [], $upcoming_events ?? [], $past_events ?? []), function($e) {
     return !empty($e['video_url']);
 });
-$highlights = array_values($highlights); // re-index
+$highlights = array_values($highlights);
+
+if (!function_exists('truncateEventDescWordAware')) {
+    function truncateEventDescWordAware($text, $limit = 118) {
+        $text = trim(preg_replace('/\s+/', ' ', strip_tags(stripslashes($text))));
+        if ($text === '' || mb_strlen($text) <= $limit) {
+            return $text;
+        }
+        $truncated = mb_substr($text, 0, $limit);
+        $lastSpace = mb_strrpos($truncated, ' ');
+        if ($lastSpace !== false) {
+            $truncated = mb_substr($truncated, 0, $lastSpace);
+        }
+        return rtrim($truncated, ".,;:- ") . '...';
+    }
+}
 ?>
 <nav class="events-tab-nav" aria-label="Events sections">
     <div class="events-tab-nav-inner">
         <?php if (!empty($ongoing_events)): ?>
         <a href="#ongoing-events" class="events-tab-pill">
-            <span class="live-indicator-dot" style="margin-right:2px;"></span>
-            Ongoing Events
+            <span class="live-indicator-dot"></span>
+            <span>Ongoing Events</span>
         </a>
         <?php endif; ?>
         <a href="#upcoming-events" class="events-tab-pill">
-            <span class="material-symbols-outlined" style="font-size:15px;">bolt</span>
-            Upcoming Events
+            <span class="material-symbols-outlined tab-icon">bolt</span>
+            <span>Upcoming Events</span>
         </a>
         <a href="#past-events" class="events-tab-pill">
-            <span class="material-symbols-outlined" style="font-size:15px;">history</span>
-            Past Events
+            <span class="material-symbols-outlined tab-icon">history</span>
+            <span>Past Events</span>
         </a>
         <?php if (!empty($highlights)): ?>
         <a href="#recap" class="events-tab-pill">
-            <span class="material-symbols-outlined" style="font-size:15px;">play_circle</span>
-            Recap Videos
+            <span class="material-symbols-outlined tab-icon">play_circle</span>
+            <span>Recap Videos</span>
         </a>
         <?php endif; ?>
     </div>
 </nav>
-<!-- ====== Section Jump Navigation End ====== -->
 
 <!-- ====== Events Highlights Section Start ====== -->
 <?php if (!empty($highlights)): ?>
@@ -74,7 +89,7 @@ $highlights = array_values($highlights); // re-index
                             }
                         ?>
                         <div class="recap-slide">
-                            <div class="video-container shadow-lg">
+                            <div class="video-container">
                                 <?php if ($hType === 'youtube'): ?>
                                     <iframe src="<?= $hEmbed ?>" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
                                 <?php elseif ($hType === 'instagram'): ?>
@@ -88,10 +103,10 @@ $highlights = array_values($highlights); // re-index
                     </div>
                     <?php if (count($highlights) > 1): ?>
                     <button class="recap-nav-btn recap-nav-prev" id="recapPrev" aria-label="Previous recap">
-                        <span class="material-symbols-outlined" style="font-size:20px;">chevron_left</span>
+                        <span class="material-symbols-outlined">chevron_left</span>
                     </button>
                     <button class="recap-nav-btn recap-nav-next" id="recapNext" aria-label="Next recap">
-                        <span class="material-symbols-outlined" style="font-size:20px;">chevron_right</span>
+                        <span class="material-symbols-outlined">chevron_right</span>
                     </button>
                     <?php endif; ?>
                 </div>
@@ -99,22 +114,33 @@ $highlights = array_values($highlights); // re-index
                 <div class="recap-dots" id="recapDots"></div>
                 <?php endif; ?>
             </div>
-            <!-- Right: Animated info panel (updates on slide change) -->
+            <!-- Right: Animated info panel -->
             <div class="col-lg-5">
                 <div class="highlight-content animate__animated animate__fadeInRight" id="recapInfo">
-                    <span class="tag-eyebrow">Visual Highlights</span>
-                    <h2 class="section-title mb-4">Event <span>Recap</span></h2>
+                    <span class="section-eyebrow">
+                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                            <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                        </svg>
+                        <span class="eyebrow-label-text">Visual Highlights</span>
+                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                            <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                        </svg>
+                    </span>
+                    <br>
+                    <h2 class="section-title mb-3">Event <span>Recap</span></h2>
                     <?php foreach ($highlights as $idx => $h): ?>
                     <div class="recap-info-slide" data-index="<?= $idx ?>" <?= $idx > 0 ? 'style="display:none;"' : '' ?>>
-                        <h4 class="fw-700 mb-3"><?= htmlspecialchars(stripslashes($h['event_title'])) ?></h4>
-                        <p class="text-muted mb-4 recap-desc"><?= htmlspecialchars(mb_strimwidth(strip_tags(stripslashes($h['event_content'])), 0, 220, '…')) ?></p>
-                        <div class="d-flex flex-column align-items-start gap-3 mt-4">
-                            <a href="<?= BASE_URL ?>/events/detail?id=<?= $h['event_id'] ?>" class="cta-button w-100 justify-content-center">
-                                VIEW DETAILS
+                        <h4 class="recap-title"><?= htmlspecialchars(stripslashes($h['event_title'])) ?></h4>
+                        <p class="recap-desc"><?= htmlspecialchars(mb_strimwidth(strip_tags(stripslashes($h['event_content'])), 0, 200, '…')) ?></p>
+                        <div class="recap-actions">
+                            <a href="<?= BASE_URL ?>/events/detail?id=<?= $h['event_id'] ?>" class="btn-recap-primary">
+                                <span>View Details</span>
                                 <span class="material-symbols-outlined">photo_library</span>
                             </a>
-                            <a href="<?= htmlspecialchars($h['video_url']) ?>" target="_blank" rel="noopener noreferrer" class="cta-button cta-button-outline text-dark border-dark w-100 justify-content-center">
-                                VIEW ON <?= strtoupper(strtolower($h['video_type'] ?? 'youtube')) ?>
+                            <a href="<?= htmlspecialchars($h['video_url']) ?>" target="_blank" rel="noopener noreferrer" class="btn-recap-secondary">
+                                <span>Watch on <?= strtoupper(strtolower($h['video_type'] ?? 'YouTube')) ?></span>
                                 <span class="material-symbols-outlined">open_in_new</span>
                             </a>
                         </div>
@@ -125,17 +151,7 @@ $highlights = array_values($highlights); // re-index
         </div>
     </div>
 </section>
-<?php else: ?>
-<!-- ====== Recap Fallback — shown when no event has a video URL ====== -->
-<section id="recap" class="recap-fallback">
-    <div class="recap-fallback-inner">
-        <span class="material-symbols-outlined" style="font-size:3rem; color:#e0e0e0; display:block; margin-bottom:16px;">play_circle</span>
-        <h4 style="font-weight:800; color: var(--dark-bg); margin-bottom:10px;">Video Recaps Coming Soon</h4>
-        <p class="text-muted" style="font-size:0.9rem; line-height:1.6; margin-bottom:0;">After each event we publish a video highlight reel here. Check back once our next event wraps up!</p>
-    </div>
-</section>
 <?php endif; ?>
-<!-- ====== Events Highlights Section End ====== -->
 
 <script>
 (function() {
@@ -160,7 +176,6 @@ $highlights = array_values($highlights); // re-index
             smartSpeed: 600
         });
 
-        // Build dots
         var $dotsContainer = $('#recapDots');
         for (var i = 0; i < totalSlides; i++) {
             $dotsContainer.append('<button class="recap-dot' + (i === 0 ? ' active' : '') + '" data-index="' + i + '" aria-label="Recap ' + (i+1) + '"></button>');
@@ -190,13 +205,24 @@ $highlights = array_values($highlights); // re-index
 
 <!-- ====== Ongoing Events Section Start ====== -->
 <?php if (!empty($ongoing_events)): ?>
-<section id="ongoing-events" class="section-padding pb-0">
+<section id="ongoing-events" class="section-padding ongoing-events-section">
     <div class="container">
         <div class="row justify-content-center mb-4">
             <div class="col-lg-8 text-center">
-                <span class="tag-eyebrow">Happening Now</span>
+                <span class="section-eyebrow">
+                    <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                        <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                    </svg>
+                    <span class="eyebrow-label-text">Happening Now</span>
+                    <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                        <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                    </svg>
+                </span>
+                <br>
                 <h2 class="section-title">Ongoing <span>Events</span></h2>
-                <p class="section-subtitle">Catch the action live! Explore our currently running workshops, conferences, and programs.</p>
+                <p class="section-subtitle">Catch the action live! Explore our currently running workshops, conferences, and technical programs.</p>
             </div>
         </div>
 
@@ -205,45 +231,60 @@ $highlights = array_values($highlights); // re-index
                 $date = strtotime($event['event_date']);
                 $day = date('d', $date);
                 $month = date('M', $date);
-                $truncatedAddr = mb_strimwidth(strip_tags(stripslashes($event['event_address'] ?? '')), 0, 35, '…');
+                $rawImg = trim($event['event_img'] ?? '');
+                $hasImg = ($rawImg !== '');
+                $finalImg = $hasImg ? resolvePath($rawImg) : '';
+                $eTitle = trim(stripslashes($event['event_title'] ?? 'Event'));
+                $eDesc = truncateEventDescWordAware($event['event_content'] ?? '', 118);
+                $truncatedAddr = mb_strimwidth(strip_tags(stripslashes($event['event_address'] ?? '')), 0, 32, '…');
             ?>
-                <div class="col-lg-4 col-md-6 mb-4">
+                <div class="col-lg-4 col-md-6 mb-4 d-flex">
                     <div class="event-card">
                         <div class="card-img-wrap">
-                            <img src="<?= resolvePath($event['event_img']); ?>" alt="<?= htmlspecialchars($event['event_title']); ?>" onerror="this.src='<?= BASE_URL ?>/images/placeholder-banner.jpg'; this.onerror=null;">
+                            <span class="card-status-pill status-ongoing">
+                                <span class="live-indicator-dot"></span>
+                                <span>Ongoing</span>
+                            </span>
                             <div class="card-date-badge">
                                 <span class="day"><?= $day ?></span>
                                 <span class="month"><?= $month ?></span>
                             </div>
+                            <?php if ($hasImg): ?>
+                                <img src="<?= htmlspecialchars($finalImg); ?>"
+                                     alt="<?= htmlspecialchars($eTitle); ?>"
+                                     loading="lazy"
+                                     decoding="async"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <?php endif; ?>
+                            <div class="event-img-fallback" style="display: <?= $hasImg ? 'none' : 'flex' ?>;" aria-hidden="true">
+                                <svg class="fallback-svg-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="6" y="10" width="52" height="44" rx="6" stroke="currentColor" stroke-width="2.5" stroke-dasharray="4 3"/>
+                                    <path d="M18 24H46M18 34H36" stroke="#f48221" stroke-width="2.5" stroke-linecap="round"/>
+                                </svg>
+                                <span class="fallback-label">Spider Tech Event</span>
+                            </div>
                         </div>
                         <div class="card-content">
-                            <span class="card-status-pill status-ongoing">
-                                <span class="live-indicator-dot"></span>
-                                <span class="material-symbols-outlined" style="font-size: 14px;">sensors</span>
-                                Ongoing
-                            </span>
-                            <h3 class="card-title"><?= stripslashes($event['event_title']); ?></h3>
-                            <div class="card-desc"><?= strip_tags(stripslashes($event['event_content'])); ?></div>
+                            <h3 class="card-title" title="<?= htmlspecialchars($eTitle); ?>"><?= htmlspecialchars($eTitle); ?></h3>
+                            <div class="card-desc"><?= htmlspecialchars($eDesc); ?></div>
                             <div class="card-meta-row">
                                 <?php if (!empty($event['event_time'])): ?>
                                 <div class="card-meta-item">
                                     <span class="material-symbols-outlined">schedule</span>
-                                    <?= htmlspecialchars($event['event_time']) ?>
+                                    <span><?= htmlspecialchars(stripslashes($event['event_time'])) ?></span>
                                 </div>
                                 <?php endif; ?>
                                 <?php if (!empty($event['event_address'])): ?>
                                 <div class="card-meta-item">
                                     <span class="material-symbols-outlined">location_on</span>
-                                    <?= htmlspecialchars($truncatedAddr) ?>
+                                    <span><?= htmlspecialchars($truncatedAddr) ?></span>
                                 </div>
                                 <?php endif; ?>
                             </div>
-                            <div class="d-flex align-items-center gap-3">
-                                <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="view-btn">
-                                    View Details
-                                    <span class="material-symbols-outlined">trending_flat</span>
-                                </a>
-                            </div>
+                            <a href="<?= BASE_URL ?>/events/detail?id=<?= (int) $event['event_id']; ?>" class="view-btn">
+                                <span>View Details</span>
+                                <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -252,16 +293,26 @@ $highlights = array_values($highlights); // re-index
     </div>
 </section>
 <?php endif; ?>
-<!-- ====== Ongoing Events Section End ====== -->
 
 <!-- ====== Upcoming Events Section Start ====== -->
-<section id="upcoming-events" class="section-padding pb-0">
+<section id="upcoming-events" class="section-padding upcoming-events-section">
     <div class="container">
         <div class="row justify-content-center mb-4">
             <div class="col-lg-8 text-center">
-                <span class="tag-eyebrow">Connect &amp; Learn</span>
+                <span class="section-eyebrow">
+                    <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                        <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                    </svg>
+                    <span class="eyebrow-label-text">Connect &amp; Learn</span>
+                    <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                        <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                    </svg>
+                </span>
+                <br>
                 <h2 class="section-title">Upcoming <span>Events</span></h2>
-                <p class="section-subtitle">Join our vibrant community of tech enthusiasts, developers, and innovators. Stay ahead with our curated workshops and meetups.</p>
+                <p class="section-subtitle">Join our vibrant ecosystem of tech creators, engineers, and digital pioneers. Reserve your place in upcoming sessions.</p>
             </div>
         </div>
 
@@ -271,44 +322,60 @@ $highlights = array_values($highlights); // re-index
                     $date = strtotime($event['event_date']);
                     $day = date('d', $date);
                     $month = date('M', $date);
-                    $truncatedAddr = mb_strimwidth(strip_tags(stripslashes($event['event_address'] ?? '')), 0, 35, '…');
+                    $rawImg = trim($event['event_img'] ?? '');
+                    $hasImg = ($rawImg !== '');
+                    $finalImg = $hasImg ? resolvePath($rawImg) : '';
+                    $eTitle = trim(stripslashes($event['event_title'] ?? 'Event'));
+                    $eDesc = truncateEventDescWordAware($event['event_content'] ?? '', 118);
+                    $truncatedAddr = mb_strimwidth(strip_tags(stripslashes($event['event_address'] ?? '')), 0, 32, '…');
                 ?>
-                    <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="col-lg-4 col-md-6 mb-4 d-flex">
                         <div class="event-card">
                             <div class="card-img-wrap">
-                                <img src="<?= resolvePath($event['event_img']); ?>" alt="<?= htmlspecialchars($event['event_title']); ?>" onerror="this.src='<?= BASE_URL ?>/images/placeholder-banner.jpg'; this.onerror=null;">
+                                <span class="card-status-pill status-upcoming">
+                                    <span class="material-symbols-outlined status-icon">bolt</span>
+                                    <span>Upcoming</span>
+                                </span>
                                 <div class="card-date-badge">
                                     <span class="day"><?= $day ?></span>
                                     <span class="month"><?= $month ?></span>
                                 </div>
+                                <?php if ($hasImg): ?>
+                                    <img src="<?= htmlspecialchars($finalImg); ?>"
+                                         alt="<?= htmlspecialchars($eTitle); ?>"
+                                         loading="lazy"
+                                         decoding="async"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <?php endif; ?>
+                                <div class="event-img-fallback" style="display: <?= $hasImg ? 'none' : 'flex' ?>;" aria-hidden="true">
+                                    <svg class="fallback-svg-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="6" y="10" width="52" height="44" rx="6" stroke="currentColor" stroke-width="2.5" stroke-dasharray="4 3"/>
+                                        <path d="M18 24H46M18 34H36" stroke="#f48221" stroke-width="2.5" stroke-linecap="round"/>
+                                    </svg>
+                                    <span class="fallback-label">Spider Tech Event</span>
+                                </div>
                             </div>
                             <div class="card-content">
-                                <span class="card-status-pill status-upcoming">
-                                    <span class="material-symbols-outlined" style="font-size: 14px;">bolt</span>
-                                    Upcoming
-                                </span>
-                                <h3 class="card-title"><?= stripslashes($event['event_title']); ?></h3>
-                                <div class="card-desc"><?= strip_tags(stripslashes($event['event_content'])); ?></div>
+                                <h3 class="card-title" title="<?= htmlspecialchars($eTitle); ?>"><?= htmlspecialchars($eTitle); ?></h3>
+                                <div class="card-desc"><?= htmlspecialchars($eDesc); ?></div>
                                 <div class="card-meta-row">
                                     <?php if (!empty($event['event_time'])): ?>
                                     <div class="card-meta-item">
                                         <span class="material-symbols-outlined">schedule</span>
-                                        <?= htmlspecialchars($event['event_time']) ?>
+                                        <span><?= htmlspecialchars(stripslashes($event['event_time'])) ?></span>
                                     </div>
                                     <?php endif; ?>
                                     <?php if (!empty($event['event_address'])): ?>
                                     <div class="card-meta-item">
                                         <span class="material-symbols-outlined">location_on</span>
-                                        <?= htmlspecialchars($truncatedAddr) ?>
+                                        <span><?= htmlspecialchars($truncatedAddr) ?></span>
                                     </div>
                                     <?php endif; ?>
                                 </div>
-                                <div class="d-flex align-items-center gap-3">
-                                    <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="view-btn">
-                                        View Details
-                                        <span class="material-symbols-outlined">trending_flat</span>
-                                    </a>
-                                </div>
+                                <a href="<?= BASE_URL ?>/events/detail?id=<?= (int) $event['event_id']; ?>" class="view-btn">
+                                    <span>View Details</span>
+                                    <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -317,24 +384,34 @@ $highlights = array_values($highlights); // re-index
                 <div class="col-12">
                     <div class="empty-state">
                         <span class="material-symbols-outlined">calendar_today</span>
-                        <h4>No upcoming events right now</h4>
-                        <p class="text-muted">Stay tuned! We are planning something amazing for you.</p>
+                        <h4>No Upcoming Events Scheduled Right Now</h4>
+                        <p>We are finalizing dates for our next engineering hackathon and tech summit. Check back shortly!</p>
                     </div>
                 </div>
             <?php endif; ?>
         </div>
     </div>
 </section>
-<!-- ====== Upcoming Events Section End ====== -->
 
 <!-- ====== Past Events Section Start ====== -->
-<section id="past-events" class="section-padding">
+<section id="past-events" class="section-padding past-events-section">
     <div class="container">
         <div class="row justify-content-center mb-4">
             <div class="col-lg-8 text-center">
-                <span class="tag-eyebrow">Event Archives</span>
+                <span class="section-eyebrow">
+                    <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                        <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                    </svg>
+                    <span class="eyebrow-label-text">Event Archives</span>
+                    <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                        <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                    </svg>
+                </span>
+                <br>
                 <h2 class="section-title">Past <span>Events</span></h2>
-                <p class="section-subtitle">Relive the moments. Explore the insights, galleries, and recaps from our previous successful tech gatherings.</p>
+                <p class="section-subtitle">Relive key moments, presentations, and photo galleries from our previous gatherings and technical showcases.</p>
             </div>
         </div>
 
@@ -344,44 +421,60 @@ $highlights = array_values($highlights); // re-index
                     $date = strtotime($event['event_date']);
                     $day = date('d', $date);
                     $month = date('M', $date);
-                    $truncatedAddr = mb_strimwidth(strip_tags(stripslashes($event['event_address'] ?? '')), 0, 35, '…');
+                    $rawImg = trim($event['event_img'] ?? '');
+                    $hasImg = ($rawImg !== '');
+                    $finalImg = $hasImg ? resolvePath($rawImg) : '';
+                    $eTitle = trim(stripslashes($event['event_title'] ?? 'Event'));
+                    $eDesc = truncateEventDescWordAware($event['event_content'] ?? '', 118);
+                    $truncatedAddr = mb_strimwidth(strip_tags(stripslashes($event['event_address'] ?? '')), 0, 32, '…');
                 ?>
-                    <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="col-lg-4 col-md-6 mb-4 d-flex">
                         <div class="event-card">
                             <div class="card-img-wrap">
-                                <img src="<?= resolvePath($event['event_img']); ?>" alt="<?= htmlspecialchars($event['event_title']); ?>" onerror="this.src='<?= BASE_URL ?>/images/placeholder-banner.jpg'; this.onerror=null;">
+                                <span class="card-status-pill status-past">
+                                    <span class="material-symbols-outlined status-icon">history</span>
+                                    <span>Completed</span>
+                                </span>
                                 <div class="card-date-badge">
                                     <span class="day"><?= $day ?></span>
                                     <span class="month"><?= $month ?></span>
                                 </div>
+                                <?php if ($hasImg): ?>
+                                    <img src="<?= htmlspecialchars($finalImg); ?>"
+                                         alt="<?= htmlspecialchars($eTitle); ?>"
+                                         loading="lazy"
+                                         decoding="async"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <?php endif; ?>
+                                <div class="event-img-fallback" style="display: <?= $hasImg ? 'none' : 'flex' ?>;" aria-hidden="true">
+                                    <svg class="fallback-svg-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="6" y="10" width="52" height="44" rx="6" stroke="currentColor" stroke-width="2.5" stroke-dasharray="4 3"/>
+                                        <path d="M18 24H46M18 34H36" stroke="#f48221" stroke-width="2.5" stroke-linecap="round"/>
+                                    </svg>
+                                    <span class="fallback-label">Spider Tech Event</span>
+                                </div>
                             </div>
                             <div class="card-content">
-                                <span class="card-status-pill status-past">
-                                    <span class="material-symbols-outlined" style="font-size: 14px;">history</span>
-                                    Completed
-                                </span>
-                                <h3 class="card-title"><?= stripslashes($event['event_title']); ?></h3>
-                                <div class="card-desc"><?= strip_tags(stripslashes($event['event_content'])); ?></div>
+                                <h3 class="card-title" title="<?= htmlspecialchars($eTitle); ?>"><?= htmlspecialchars($eTitle); ?></h3>
+                                <div class="card-desc"><?= htmlspecialchars($eDesc); ?></div>
                                 <div class="card-meta-row">
                                     <?php if (!empty($event['event_time'])): ?>
                                     <div class="card-meta-item">
                                         <span class="material-symbols-outlined">schedule</span>
-                                        <?= htmlspecialchars($event['event_time']) ?>
+                                        <span><?= htmlspecialchars(stripslashes($event['event_time'])) ?></span>
                                     </div>
                                     <?php endif; ?>
                                     <?php if (!empty($event['event_address'])): ?>
                                     <div class="card-meta-item">
                                         <span class="material-symbols-outlined">location_on</span>
-                                        <?= htmlspecialchars($truncatedAddr) ?>
+                                        <span><?= htmlspecialchars($truncatedAddr) ?></span>
                                     </div>
                                     <?php endif; ?>
                                 </div>
-                                <div class="d-flex align-items-center gap-3">
-                                    <a href="<?= BASE_URL ?>/events/detail?id=<?= $event['event_id']; ?>" class="view-btn">
-                                        View Recap
-                                        <span class="material-symbols-outlined">trending_flat</span>
-                                    </a>
-                                </div>
+                                <a href="<?= BASE_URL ?>/events/detail?id=<?= (int) $event['event_id']; ?>" class="view-btn">
+                                    <span>View Recap</span>
+                                    <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -390,45 +483,43 @@ $highlights = array_values($highlights); // re-index
                 <div class="col-12">
                     <div class="empty-state">
                         <span class="material-symbols-outlined">history</span>
-                        <h4>No past events yet</h4>
-                        <p class="text-muted">No archives yet — check back after our next event.</p>
+                        <h4>No Past Event Archives Yet</h4>
+                        <p>Past event recaps and galleries will appear here once upcoming events conclude.</p>
                     </div>
                 </div>
             <?php endif; ?>
         </div>
-    </div>
 
-    <!-- ====== Premium CTA Block (within Past Events section) ====== -->
-    <div class="container mt-4">
+        <!-- Premium CTA Block (Synced with Trainings/Projects) -->
         <div class="premium-cta">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <span class="tag-eyebrow tag-eyebrow-light">Ready to Accelerate?</span>
-                    <h2 class="section-title">Unlock Your <span>Tech Potential</span></h2>
-                    <p class="section-subtitle mx-auto text-white opacity-75 mb-4">
-                        Beyond our community events, we offer specialized, high-impact training programs designed to fast-track your professional growth in the digital landscape.
+            <div class="row align-items-center justify-content-between">
+                <div class="col-lg-8 mb-3 mb-lg-0 text-lg-left text-center">
+                    <span class="section-eyebrow cta-eyebrow">
+                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                            <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="rgba(255,255,255,0.4)"/>
+                        </svg>
+                        <span class="eyebrow-label-text">Ready to Accelerate?</span>
+                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="rgba(255,255,255,0.4)"/>
+                            <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                        </svg>
+                    </span>
+                    <h2 class="premium-cta-title">Unlock Your <span>Tech Potential</span></h2>
+                    <p class="premium-cta-desc">
+                        Beyond community meetups, we offer industry-recognized certifications and intensive software bootcamps to advance your career.
                     </p>
-                    <div class="d-flex flex-wrap justify-content-center gap-3">
-                        <a href="<?= BASE_URL ?>/trainings" class="cta-button">
-                            Explore Certifications
-                            <span class="material-symbols-outlined">school</span>
-                        </a>
-                        <a href="<?= BASE_URL ?>/contact" class="cta-button cta-button-outline">
-                            Get in Touch
-                            <span class="material-symbols-outlined">rocket_launch</span>
-                        </a>
-                    </div>
-                    <div class="mt-4">
-                        <span style="color: var(--primary-orange); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px;">
-                            <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 18px; margin-right: 4px;">verified</span> Industry Recognized Professional Standards
-                        </span>
-                    </div>
+                </div>
+                <div class="col-lg-4 text-lg-right text-center d-flex flex-column flex-sm-row justify-content-lg-end gap-2">
+                    <a href="<?= BASE_URL ?>/trainings" class="cta-button">
+                        <span>Explore Certifications</span>
+                        <span class="material-symbols-outlined">school</span>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </section>
-<!-- ====== Past Events Section End ====== -->
 
 <!-- Include Modular Newsletter -->
 <?php include ROOT_PATH . '/views/layout/newsletter.php'; ?>

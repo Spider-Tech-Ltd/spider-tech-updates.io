@@ -22,51 +22,103 @@ unset($_SESSION['registration_errors']);
 unset($_SESSION['old_input']);
 ?>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/training-register.css" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/training-register.css?v=<?= filemtime(ROOT_PATH . '/css/training-register.css') ?>" />
 
 <div x-data="registrationHandler()">
     <?php if (!$training) : ?>
-        <section class="training-hero">
-            <div class="container hero-inner">
-                <h1 class="hero-title">Program Not Found</h1>
-                <p class="hero-subtitle">The program you're trying to register for does not exist or may have been removed.</p>
-                <div class="mt-4">
-                    <a class="cancel-btn d-inline-block w-auto" href="<?= BASE_URL ?>/trainings">Back to Programs</a>
+        <section class="page-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-title">Program <span>Not Found</span></h1>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb-custom">
+                                <li class="breadcrumb-item-custom">
+                                    <a href="<?= BASE_URL ?>/">Home</a>
+                                </li>
+                                <li class="breadcrumb-item-custom">
+                                    <a href="<?= BASE_URL ?>/trainings">Trainings</a>
+                                </li>
+                                <li class="breadcrumb-item-custom active" aria-current="page">
+                                    Register
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="registration-content">
+            <div class="container">
+                <div class="registration-form-wrapper text-center py-5">
+                    <span class="material-symbols-outlined" style="font-size: 3.5rem; color: var(--primary-orange); margin-bottom: 16px;">school</span>
+                    <h3 style="font-weight: 700; color: #111827;">Program Not Found</h3>
+                    <p class="text-muted mb-4">The program you are trying to register for does not exist or may have been archived.</p>
+                    <a class="cancel-btn d-inline-flex w-auto" href="<?= BASE_URL ?>/trainings">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                        <span>Back to All Programs</span>
+                    </a>
                 </div>
             </div>
         </section>
     <?php else : ?>
-        <section class="training-hero">
-            <div class="hero-blob hero-blob-left"></div>
-            <div class="hero-blob hero-blob-right"></div>
-            <div class="container hero-inner">
-                <span class="hero-eyebrow-pill">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">edit_note</span>
-                    Registration Form
-                </span>
-                <h1 class="hero-title"><?= htmlspecialchars(strip_tags($training['training_name'])); ?></h1>
-
-                <div class="breadcrumb-custom">
-                    <a href="<?= BASE_URL ?>/" title="Home">Home</a>
-                    <span>/</span>
-                    <a href="<?= BASE_URL ?>/trainings" title="Trainings">Trainings</a>
-                    <span>/</span>
-                    <a href="<?= BASE_URL ?>/trainings/detail?id=<?= $training['id']; ?>" title="<?= htmlspecialchars(strip_tags($training['training_name'])); ?>"><?= htmlspecialchars(strip_tags($training['training_name'])); ?></a>
-                    <span>/</span>
-                    <span style="color: #999;">Register</span>
+        <!-- ====== Page Header ====== -->
+        <section class="page-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-title">Program <span>Registration</span></h1>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb-custom">
+                                <li class="breadcrumb-item-custom">
+                                    <a href="<?= BASE_URL ?>/">Home</a>
+                                </li>
+                                <li class="breadcrumb-item-custom">
+                                    <a href="<?= BASE_URL ?>/trainings">Trainings</a>
+                                </li>
+                                <li class="breadcrumb-item-custom">
+                                    <a href="<?= BASE_URL ?>/trainings/detail?id=<?= $training['id']; ?>"><?= htmlspecialchars(mb_strimwidth(strip_tags($training['training_name']), 0, 24, '…')); ?></a>
+                                </li>
+                                <li class="breadcrumb-item-custom active" aria-current="page">
+                                    Register
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
                 </div>
-
-                <p class="hero-subtitle">Complete the form below to apply for this program. All fields marked with * are mandatory.</p>
             </div>
         </section>
 
         <section class="registration-content">
             <div class="container">
                 <div class="registration-form-wrapper">
+                    <!-- Eyebrow & Program Heading -->
+                    <div class="text-center mb-4">
+                        <span class="section-eyebrow">
+                            <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                                <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                            </svg>
+                            <span class="eyebrow-label-text">Official Application</span>
+                            <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                                <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                            </svg>
+                        </span>
+                        <h2 class="form-hero-title"><?= htmlspecialchars(strip_tags($training['training_name'])); ?></h2>
+                        <p class="form-hero-subtitle">Complete the form below to apply for this program. All fields marked with * are mandatory.</p>
+                    </div>
+
                     <!-- Program Information Box -->
                     <div class="program-info-box">
-                        <h4>About the Program</h4>
-                        <p class="mb-0 text-muted" style="line-height: 1.6;"><?= htmlspecialchars(strip_tags($training['training_description'])); ?></p>
+                        <div class="d-flex align-items-start gap-3">
+                            <span class="material-symbols-outlined program-info-icon">info</span>
+                            <div>
+                                <h4 class="program-info-title">About this Program</h4>
+                                <p class="mb-0 program-info-desc"><?= htmlspecialchars(strip_tags($training['training_description'])); ?></p>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Registration Form -->
@@ -95,7 +147,7 @@ unset($_SESSION['old_input']);
                                             }
                                             ?>
                                         </span>
-                                        <?= htmlspecialchars($section_name); ?>
+                                        <span><?= htmlspecialchars($section_name); ?></span>
                                     </h3>
 
                                     <div class="row">
@@ -110,31 +162,31 @@ unset($_SESSION['old_input']);
                             <div class="form-section">
                                 <h3 class="form-section-title">
                                     <span class="material-symbols-outlined">person</span>
-                                    Basic Information
+                                    <span>Basic Information</span>
                                 </h3>
                                 <div class="row">
                                     <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label>First Name <span class="text-danger">*</span></label>
-                                            <input type="text" name="firstname" class="form-control" style="border-radius: 50px; padding: 15px 24px; height: 56px;" placeholder="Enter first name" required>
+                                            <input type="text" name="firstname" class="form-control" placeholder="Enter first name" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label>Last Name <span class="text-danger">*</span></label>
-                                            <input type="text" name="lastname" class="form-control" style="border-radius: 50px; padding: 15px 24px; height: 56px;" placeholder="Enter last name" required>
+                                            <input type="text" name="lastname" class="form-control" placeholder="Enter last name" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label>Email Address <span class="text-danger">*</span></label>
-                                            <input type="email" name="email" class="form-control" style="border-radius: 50px; padding: 15px 24px; height: 56px;" placeholder="Enter email address" required>
+                                            <input type="email" name="email" class="form-control" placeholder="Enter email address" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label>Phone Number <span class="text-danger">*</span></label>
-                                            <input type="tel" name="phone_no" class="form-control" style="border-radius: 50px; padding: 15px 24px; height: 56px;" placeholder="Enter phone number" required>
+                                            <input type="tel" name="phone_no" class="form-control" placeholder="Enter phone number" required>
                                         </div>
                                     </div>
                                 </div>
@@ -142,24 +194,24 @@ unset($_SESSION['old_input']);
                         <?php endif; ?>
 
                         <!-- Action Buttons -->
-                        <div class="row mt-4">
-                            <div class="col-md-8 mb-3">
+                        <div class="row mt-4 align-items-center">
+                            <div class="col-md-8 mb-3 mb-md-0">
                                 <button type="submit" class="submit-btn" :disabled="loading">
                                     <template x-if="!loading">
-                                        <div class="d-flex align-items-center gap-2">
+                                        <div class="d-flex align-items-center justify-content-center gap-2">
                                             <span class="material-symbols-outlined">how_to_reg</span>
                                             <span>Complete Registration</span>
                                         </div>
                                     </template>
                                     <template x-if="loading">
-                                        <div class="d-flex align-items-center gap-2">
+                                        <div class="d-flex align-items-center justify-content-center gap-2">
                                             <div class="spinner-border spinner-border-sm" role="status"></div>
-                                            <span>Processing...</span>
+                                            <span>Processing Application...</span>
                                         </div>
                                     </template>
                                 </button>
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-4">
                                 <a href="<?= BASE_URL ?>/trainings/detail?id=<?= $program_id; ?>" class="cancel-btn">
                                     Cancel
                                 </a>
@@ -167,7 +219,7 @@ unset($_SESSION['old_input']);
                         </div>
 
                         <div class="required-note">
-                            By submitting this application, you agree to our <a href="#" class="text-orange">Terms & Conditions</a> and <a href="#" class="text-orange">Privacy Policy</a>.
+                            By submitting this application, you agree to our <a href="#" class="text-orange">Terms &amp; Conditions</a> and <a href="#" class="text-orange">Privacy Policy</a>.
                         </div>
                     </form>
                 </div>
@@ -230,7 +282,6 @@ unset($_SESSION['old_input']);
 
                     if (result.success) {
                         this.showToast(result.message, 'success');
-                        // Optional: Reset form or redirect
                         if (result.redirect) {
                             setTimeout(() => {
                                 window.location.href = result.redirect;
@@ -266,10 +317,10 @@ unset($_SESSION['old_input']);
         if (e.target.classList.contains('custom-file-input')) {
             const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose file';
             const label = e.target.nextElementSibling;
-            const nameSpan = label.querySelector('.file-name-text');
+            const nameSpan = label ? label.querySelector('.file-name-text') : null;
             if (nameSpan) {
                 nameSpan.textContent = fileName;
-                nameSpan.style.color = '#111';
+                nameSpan.style.color = '#111827';
             }
         }
     });
