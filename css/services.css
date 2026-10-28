@@ -292,6 +292,7 @@
         text-align: center;
     }
 
+    .services-show-more-btn,
     .services-view-more-btn {
         display: inline-flex;
         align-items: center;
@@ -315,10 +316,12 @@
                     box-shadow 0.25s ease;
     }
 
+    .services-show-more-btn span,
     .services-view-more-btn span {
         color: #ffffff !important;
     }
 
+    .services-show-more-btn:hover,
     .services-view-more-btn:hover {
         background: #e06d0b;
         border-color: #e06d0b;
@@ -326,17 +329,20 @@
         box-shadow: 0 12px 26px rgba(244, 130, 33, 0.34);
     }
 
+    .services-show-more-btn:focus,
     .services-view-more-btn:focus {
         outline: none;
         box-shadow: 0 0 0 3.5px rgba(244, 130, 33, 0.22), 0 8px 20px rgba(244, 130, 33, 0.24);
     }
 
+    .services-show-more-btn .toggle-chevron,
     .services-view-more-btn .toggle-chevron {
         font-size: 1.2rem;
         line-height: 1;
         transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
+    .services-show-more-btn .toggle-chevron.is-rotated,
     .services-view-more-btn .toggle-chevron.is-rotated {
         transform: rotate(180deg);
     }

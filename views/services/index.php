@@ -115,14 +115,14 @@ $extraServices = array_slice($allServices, 6);
             </div>
         </div>
 
-        <!-- View More / Show Less Action -->
+        <!-- Show More / Show Less Action -->
         <div class="services-more-actions">
             <button
                 type="button"
-                class="services-view-more-btn"
+                class="services-show-more-btn services-view-more-btn"
                 @click="showAllServices = !showAllServices"
                 :aria-expanded="showAllServices.toString()">
-                <span x-text="showAllServices ? 'Show Less' : 'View More'">View More</span>
+                <span x-text="showAllServices ? 'Show Less' : 'Show More'">Show More</span>
                 <span class="material-symbols-outlined toggle-chevron" :class="{ 'is-rotated': showAllServices }">expand_more</span>
             </button>
         </div>
