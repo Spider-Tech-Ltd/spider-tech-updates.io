@@ -3,13 +3,13 @@
  * Member Feed View
  */
 ?>
-<!-- Google Fonts for Forum styling & Material Icons -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet"/>
-<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-feed.css" />
+
+
+
+
+
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-feed.css?v=<?= filemtime(ROOT_PATH . '/css/forum-feed.css') ?>" />
 
 <?php include ROOT_PATH . '/views/forum/includes/feed-banner.php'; ?>
 

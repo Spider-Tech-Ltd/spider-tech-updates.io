@@ -6,7 +6,7 @@
  */
 ?>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-sidebar.css" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-sidebar.css?v=<?= filemtime(ROOT_PATH . '/css/forum-sidebar.css') ?>" />
 
 <aside class="forum-sidebar">
 

@@ -64,7 +64,7 @@
     color: #111111;
     transition: color 0.2s;
   }
-  .ranked-item:hover .ranked-name { color: #3b82f6; } /* Electric Blue */
+  .ranked-item:hover .ranked-name { color: var(--primary-orange, #f48221); }
   .ranked-count {
     font-family: 'Open Sans', sans-serif;
     font-size: 0.85rem;

@@ -1,10 +1,4 @@
-<?php include 'includes/header.php'; ?>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-profile.css" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-profile.css?v=<?= filemtime(ROOT_PATH . '/css/forum-profile.css') ?>" />
 
 <?php
 $member_name  = htmlspecialchars($member['name'] ?? 'Member', ENT_QUOTES);

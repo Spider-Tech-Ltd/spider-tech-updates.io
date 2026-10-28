@@ -31,10 +31,10 @@
   /* ── Card shell — mirrors .discussion-card ── */
   .pd-card {
     background: var(--sp-white);
-    border-radius: 20px;
+    border-radius: 16px;
     padding: 28px;
     box-shadow: 0 2px 12px rgba(17, 17, 17, 0.05);
-    border: 1px solid transparent;
+    border: 1px solid #e2e8f0;
   }
 
   /* ── Avatar ── */
@@ -309,7 +309,7 @@
   /* Avatar drop zone */
   .avatar-drop-zone {
     border: 2px dashed var(--sp-border);
-    border-radius: 20px;
+    border-radius: 16px;
     padding: 28px 24px;
     text-align: center;
     cursor: pointer;

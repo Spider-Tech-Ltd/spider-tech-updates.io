@@ -1,269 +1,259 @@
-  /* ====== Hero Section Styles ====== */
+  /* ====== Forum Hero Section Styles ====== */
   .forum-hero-section {
     position: relative;
-    background-color: #f4f4f4;
-    padding: 130px 16px 56px 16px;
-    /* Balanced top padding for fixed header */
+    background-color: #f8fafc;
+    padding: 120px 16px 54px 16px;
     overflow: hidden;
     text-align: center;
+    border-bottom: 1px solid #e2e8f0;
   }
 
-  /* Radial gradient glow centered behind content */
+  /* Ambient warm radial glow */
   .forum-hero-section::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at center, rgba(244, 130, 33, 0.08) 0%, transparent 68%);
+    background: radial-gradient(ellipse at 50% 30%, rgba(244, 130, 33, 0.08) 0%, rgba(244, 130, 33, 0.02) 45%, transparent 70%);
     pointer-events: none;
     z-index: 0;
   }
 
-  /* Decorative ambient blobs */
-  .forum-hero-blob {
+  .forum-hero-grid-pattern {
     position: absolute;
-    border-radius: 50%;
-    background-color: rgba(244, 130, 33, 0.06);
-    filter: blur(60px);
+    inset: 0;
+    background-image: radial-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+    background-size: 24px 24px;
     pointer-events: none;
-  }
-
-  .forum-hero-blob-left {
-    width: 280px;
-    height: 280px;
-    top: 20%;
-    left: -80px;
-  }
-
-  .forum-hero-blob-right {
-    width: 320px;
-    height: 320px;
-    bottom: 15%;
-    right: -80px;
+    z-index: 0;
   }
 
   .forum-hero-inner {
     position: relative;
     z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
   }
 
-  /* Eyebrow pill */
-  .hero-eyebrow-pill {
+  /* Signature Eyebrow */
+  .section-eyebrow {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 6px 18px;
-    border-radius: 50px;
-    background-color: rgba(244, 130, 33, 0.12);
-    border: 1px solid rgba(244, 130, 33, 0.25);
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
+    gap: 12px;
+    font-family: 'Chakra Petch', 'Poppins', sans-serif;
+    font-style: italic;
+    font-size: 0.82rem;
+    font-weight: 700;
     text-transform: uppercase;
-    color: #f48221;
-    margin-bottom: 28px;
+    letter-spacing: 2.2px;
+    color: var(--primary-orange, #f48221) !important;
   }
 
-  .hero-eyebrow-pill .material-symbols-outlined {
-    font-size: 16px;
-    text-transform: none;
-    /* Prevent uppercase from breaking ligatures */
+  .section-eyebrow .eyebrow-label-text {
+    color: var(--primary-orange, #f48221) !important;
+    display: inline-block;
+    transform: skewX(-5deg);
+  }
+
+  .eyebrow-line-svg {
+    display: block;
+    flex-shrink: 0;
+    transform: skewX(-8deg);
   }
 
   /* Main heading */
   .hero-heading {
     font-family: 'Poppins', sans-serif;
     font-weight: 800;
-    font-size: 3.5rem;
-    line-height: 1.2;
-    color: #111111;
-    max-width: 700px;
-    margin: 0 auto 20px;
+    font-size: clamp(2rem, 3.4vw, 2.85rem);
+    line-height: 1.22;
+    color: #0f172a;
+    letter-spacing: -0.6px;
+    margin: 0 auto 16px;
     animation: heroFadeUp 0.6s ease both;
+  }
+
+  .hero-heading span {
+    color: var(--primary-orange, #f48221);
   }
 
   @keyframes heroFadeUp {
     from {
       opacity: 0;
-      transform: translateY(18px);
+      transform: translateY(16px);
     }
-
     to {
       opacity: 1;
       transform: translateY(0);
     }
   }
 
-  @media (max-width: 768px) {
-    .hero-heading {
-      font-size: 2.2rem;
-    }
-
-    .forum-hero-section {
-      padding: 80px 16px 56px 16px;
-    }
-
-    /* Balanced top padding for mobile */
-  }
-
-  /* Subheading */
+  /* Subtext */
   .hero-subtext {
     font-family: 'Open Sans', sans-serif;
-    font-size: 1.15rem;
-    color: #555555;
-    max-width: 600px;
-    margin: 0 auto 32px;
+    font-size: 1rem;
     line-height: 1.7;
+    color: #64748b;
+    max-width: 640px;
+    margin: 0 auto 28px;
+    padding-bottom: 0;
   }
 
-  /* Action row container */
+  /* Actions Row */
   .hero-action-row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto 40px;
+    margin-bottom: 40px;
   }
 
-  /* Buttons */
   .hero-btn-group {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 16px;
-    flex-shrink: 0;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
   }
 
   .hero-btn-primary {
-    height: 48px;
-    padding: 0 16px;
-    background-color: #f48221;
-    color: #ffffff;
+    background: var(--primary-orange, #f48221);
+    color: #ffffff !important;
     font-family: 'Poppins', sans-serif;
-    font-weight: 600;
     font-size: 0.9rem;
-    border: none;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0.1px;
+    padding: 12px 28px;
     border-radius: 50px;
-    white-space: nowrap;
-    cursor: pointer;
-    box-shadow: 0 4px 20px rgba(244, 130, 33, 0.35);
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    text-decoration: none;
+    border: 1px solid var(--primary-orange, #f48221);
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 220px;
+    gap: 8px;
+    text-decoration: none !important;
+    box-shadow: 0 6px 18px rgba(244, 130, 33, 0.28);
+    transition: background-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .hero-btn-primary span {
+    color: #ffffff !important;
   }
 
   .hero-btn-primary:hover {
-    background-color: #e6751c;
-    color: #fff;
-    text-decoration: none;
-  }
-
-  .hero-btn-primary:active {
-    transform: scale(0.97);
+    background: #e06d0b;
+    border-color: #e06d0b;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(244, 130, 33, 0.38);
   }
 
   .hero-btn-secondary {
-    height: 48px;
-    padding: 0 16px;
-    background-color: transparent;
-    color: #f48221;
+    background: #ffffff;
+    color: #1e293b !important;
     font-family: 'Poppins', sans-serif;
-    font-weight: 600;
     font-size: 0.9rem;
-    border: 2px solid #f48221;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0.1px;
+    padding: 12px 28px;
     border-radius: 50px;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
-    text-decoration: none;
+    border: 1px solid #cbd5e1;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 220px;
+    gap: 8px;
+    text-decoration: none !important;
+    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+  }
+
+  .hero-btn-secondary span {
+    color: inherit !important;
   }
 
   .hero-btn-secondary:hover {
-    background-color: rgba(244, 130, 33, 0.07);
-    color: #f48221;
-    text-decoration: none;
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: var(--primary-orange, #f48221) !important;
+    transform: translateY(-2px);
   }
 
-  @media (max-width: 767px) {
-    .hero-action-row {
-      flex-direction: column;
-    }
-
-    .hero-btn-group {
-      width: 100%;
-      flex-direction: column;
-    }
-
-    .hero-btn-primary,
-    .hero-btn-secondary {
-      width: 100%;
-      justify-content: center;
-    }
+  .hero-btn-primary .material-symbols-outlined,
+  .hero-btn-secondary .material-symbols-outlined {
+    font-size: 18px;
   }
 
-  /* Stats row */
+  /* Precision Stats Row */
   .hero-stats-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 22px 28px;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.04);
+    max-width: 720px;
+    margin: 0 auto;
   }
 
   .hero-stat-item {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    padding: 0 40px;
+    justify-content: center;
+    gap: 14px;
+    text-align: left;
+    position: relative;
   }
 
-  .hero-stat-item:not(:last-child) {
-    border-right: 1px solid #e0e0e0;
+  .hero-stat-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: -8px;
+    top: 15%;
+    height: 70%;
+    width: 1px;
+    background: #e2e8f0;
+  }
+
+  .hero-stat-item .stat-icon {
+    font-size: 26px;
+    color: var(--primary-orange, #f48221);
+    background: rgba(244, 130, 33, 0.1);
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .hero-stat-item .stat-content {
+    display: flex;
+    flex-direction: column;
   }
 
   .hero-stat-number {
     font-family: 'Poppins', sans-serif;
+    font-size: 1.22rem;
     font-weight: 700;
-    font-size: 1.9rem;
-    color: #111111;
-    line-height: 1.1;
+    color: #0f172a;
+    line-height: 1.2;
   }
 
   .hero-stat-label {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 0.82rem;
-    color: #797979;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-top: 4px;
+    font-size: 0.76rem;
+    font-weight: 500;
+    color: #64748b;
+    margin-top: 2px;
   }
 
-  @media (max-width: 576px) {
+  @media (max-width: 768px) {
+    .forum-hero-section {
+      padding: 104px 16px 42px 16px;
+    }
     .hero-stats-row {
-      flex-direction: column;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      padding: 18px 20px;
     }
-
+    .hero-stat-item:not(:last-child)::after {
+      display: none;
+    }
     .hero-stat-item {
-      padding: 16px 20px;
-      border-right: none !important;
-      width: 100%;
-    }
-
-    .hero-stat-item:not(:last-child) {
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .hero-heading {
-      font-size: 1.8rem;
-    }
-
-    .hero-subtext {
-      font-size: 1rem;
-      margin-bottom: 32px;
+      justify-content: flex-start;
     }
   }

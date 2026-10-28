@@ -7,7 +7,7 @@
  */
 ?>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-feed-banner.css" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-feed-banner.css?v=<?= filemtime(ROOT_PATH . '/css/forum-feed-banner.css') ?>" />
 
 <section class="feed-member-banner">
   <div class="container">

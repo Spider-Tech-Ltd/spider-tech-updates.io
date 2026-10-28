@@ -1,28 +1,151 @@
-  /* Category Grid Additional Styles */
+  /* ====== Category Grid Styles ====== */
   .forum-categories-section {
     background-color: #ffffff;
-    padding: 56px 0;
+    padding: 60px 0 68px;
+    border-bottom: 1px solid #e2e8f0;
   }
-  .forum-category-card:hover {
-     border-color: #f48221;
-     box-shadow: 0 12px 28px rgba(244, 130, 33, 0.12);
-     transform: translateY(-5px);
-  }
+
   .category-grid-header {
     margin-bottom: 36px;
     text-align: center;
   }
+
   .category-grid-title {
     font-family: 'Poppins', sans-serif;
-    font-weight: 800;
-    font-size: 2.25rem;
-    color: #111111;
-    margin-bottom: 12px;
+    font-weight: 700;
+    font-size: clamp(1.65rem, 2.3vw, 2.05rem);
+    color: #0f172a;
+    margin-bottom: 8px;
+    letter-spacing: -0.4px;
+    line-height: 1.25;
   }
+
+  .category-grid-title span {
+    color: var(--primary-orange, #f48221);
+  }
+
   .category-grid-subtitle {
     font-family: 'Open Sans', sans-serif;
-    color: #555555;
-    font-size: 1.1rem;
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.65;
     max-width: 600px;
     margin: 0 auto;
+  }
+
+  .forum-category-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 26px 24px 22px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    text-decoration: none !important;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.025);
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.25s ease,
+                box-shadow 0.25s ease;
+    position: relative;
+  }
+
+  .forum-category-card:hover {
+    border-color: rgba(244, 130, 33, 0.35);
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(244, 130, 33, 0.08);
+    transform: translateY(-4px);
+  }
+
+  .forum-icon-wrapper {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(244, 130, 33, 0.1);
+    border: 1px solid rgba(244, 130, 33, 0.2);
+    color: var(--primary-orange, #f48221);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.25s ease, background-color 0.25s ease;
+  }
+
+  .forum-category-card:hover .forum-icon-wrapper {
+    background: var(--primary-orange, #f48221);
+    color: #ffffff;
+    transform: scale(1.05);
+  }
+
+  .forum-icon-wrapper .material-symbols-outlined {
+    font-size: 22px;
+  }
+
+  .forum-topic-badge {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 50px;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    letter-spacing: 0.3px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .forum-category-card:hover .forum-topic-badge {
+    background: rgba(244, 130, 33, 0.12);
+    color: var(--primary-orange, #f48221);
+    border-color: rgba(244, 130, 33, 0.25);
+  }
+
+  .category-card-title {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 1.12rem;
+    color: #0f172a !important;
+    margin-bottom: 8px;
+    transition: color 0.22s ease;
+  }
+
+  .forum-category-card:hover .category-card-title {
+    color: var(--primary-orange, #f48221) !important;
+  }
+
+  .category-card-desc {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.88rem;
+    line-height: 1.62;
+    color: #64748b;
+    margin-bottom: 18px;
+    flex-grow: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .forum-view-link {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid #f1f5f9;
+    margin-top: auto;
+    transition: color 0.22s ease;
+  }
+
+  .forum-view-link .arrow-icon {
+    font-size: 16px;
+    transition: transform 0.22s ease;
+  }
+
+  .forum-category-card:hover .forum-view-link {
+    color: var(--primary-orange, #f48221);
+  }
+
+  .forum-category-card:hover .forum-view-link .arrow-icon {
+    transform: translateX(4px);
   }

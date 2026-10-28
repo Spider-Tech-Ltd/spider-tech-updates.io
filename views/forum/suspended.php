@@ -140,7 +140,7 @@
     </div>
 </div>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-suspended.css" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-suspended.css?v=<?= filemtime(ROOT_PATH . '/css/forum-suspended.css') ?>" />
 
 <script>
 document.addEventListener('alpine:init', () => {

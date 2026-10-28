@@ -6,7 +6,7 @@
  */
 ?>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-guest-feed.css" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-guest-feed.css?v=<?= filemtime(ROOT_PATH . '/css/forum-guest-feed.css') ?>" />
 
 <div class="forum-feed-container">
 
@@ -24,7 +24,7 @@
   <div class="discussion-card-list">
     <?php if (!empty($feeds)): ?>
       <?php foreach ($feeds as $feed): ?>
-        <a href="<?= BASE_URL ?>/forum/sign-in" class="discussion-card <?= ($feed['is_pinned'] ?? false) ? 'is-pinned' : ''; ?> <?= ($feed['is_hot'] ?? false) ? 'is-hot' : ''; ?>">
+        <a href="<?= BASE_URL ?>/forum/discussion?uuid=<?= urlencode($feed['uuid'] ?? ''); ?>" class="discussion-card <?= ($feed['is_pinned'] ?? false) ? 'is-pinned' : ''; ?> <?= ($feed['is_hot'] ?? false) ? 'is-hot' : ''; ?>">
           <div class="card-top-row">
             <span class="category-badge"><?= htmlspecialchars($feed['category_name'] ?? 'General'); ?></span>
             <?php if ($feed['is_pinned'] ?? false): ?>
@@ -62,7 +62,7 @@
       <?php endforeach; ?>
     <?php else: ?>
       <!-- PINNED THREAD FALLBACK -->
-      <a href="<?= BASE_URL ?>/forum/sign-in" class="discussion-card is-pinned">
+      <a href="<?= BASE_URL ?>/forum/feed" class="discussion-card is-pinned">
         <div class="card-top-row">
           <span class="category-badge">⚙️ Community</span>
           <span class="badge-pinned-label">

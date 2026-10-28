@@ -4,12 +4,12 @@
  * Single Discussion View - High Fidelity Detail Alignment & Sidebar Polish
  */
 ?>
-<!-- Google Fonts for Forum styling -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
-<!-- Material Symbols for icons -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-view.css" />
+
+
+
+
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-view.css?v=<?= filemtime(ROOT_PATH . '/css/forum-view.css') ?>" />
 
 <?php
 // PHP logic to handle featured image extraction from content
@@ -54,7 +54,7 @@ if ($safe_replies_json === false) {
                     <?= $featured_image_html ?>
 
                     <span class="topic-category <?= $featured_image_html ? 'mt-3' : '' ?>"><?= htmlspecialchars($topic['category_name']) ?></span>
-                    <h1 class="topic-title" style="font-size: 2.2rem; letter-spacing: -0.02em;"><?= htmlspecialchars($topic['title']) ?></h1>
+                    <h1 class="topic-title"><?= htmlspecialchars($topic['title']) ?></h1>
 
                     <?php
                     $view_author = trim($topic['author_name']);
@@ -91,7 +91,7 @@ if ($safe_replies_json === false) {
                 </article>
 
                 <section class="replies-container">
-                    <h2 style="font-family:'Poppins'; font-weight:700; font-size:1.15rem; margin-bottom:24px; color:#111;">Discussion (<span x-text="replies.length"></span>)</h2>
+                    <h2 class="replies-heading">Discussion (<span x-text="replies.length"></span>)</h2>
 
                     <div class="replies-list">
                         <template x-for="reply in threadedReplies" :key="reply.uuid">

@@ -7,7 +7,7 @@
  */
 ?>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-members-sidebar.css" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-members-sidebar.css?v=<?= filemtime(ROOT_PATH . '/css/forum-members-sidebar.css') ?>" />
 
 <aside class="member-sidebar">
 
@@ -17,7 +17,7 @@
       <div class="widget-icon-box">
         <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">person</span>
       </div>
-      <h3 class="widget-title-premium">Your Dashboard 🎯</h3>
+      <h3 class="widget-title-premium">Your Dashboard</h3>
     </div>
 
     <div class="d-flex align-items-center gap-3 mb-4 p-2">
@@ -71,7 +71,7 @@
       <div class="widget-icon-box">
         <span class="material-symbols-outlined">group</span>
       </div>
-      <h3 class="widget-title-premium">Active Now 🌐</h3>
+      <h3 class="widget-title-premium">Active Now</h3>
     </div>
 
     <div class="d-flex flex-wrap gap-2 pt-1 mb-3">

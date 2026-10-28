@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="<?= BASE_URL ?>/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-verify-reset-code.css" />
+    <link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-verify-reset-code.css?v=<?= filemtime(ROOT_PATH . '/css/forum-verify-reset-code.css') ?>" />
 </head>
 <body>
 <div class="container">

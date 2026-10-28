@@ -6,7 +6,7 @@
  */
 ?>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-feed-filter-bar.css" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-feed-filter-bar.css?v=<?= filemtime(ROOT_PATH . '/css/forum-feed-filter-bar.css') ?>" />
 
 <div class="container" x-data="{ currentCat: '<?= $_GET['category'] ?? 'all' ?>', currentSort: 'latest' }">
   <div class="filter-bar-inner">
