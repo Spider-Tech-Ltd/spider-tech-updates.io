@@ -8,7 +8,8 @@ class ForumController extends BaseController {
         $category_filter = $_GET['category'] ?? null;
         $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
         $limit = 10;
-        $feeds = $forumModel->getFeeds($limit, $_SESSION['member_id'] ?? null, $category_filter, 'latest', $page);
+        $sort = in_array($_GET['sort'] ?? '', ['latest', 'hottest']) ? $_GET['sort'] : 'latest';
+        $feeds = $forumModel->getFeeds($limit, $_SESSION['member_id'] ?? null, $category_filter, $sort, $page);
         $total_feeds = $forumModel->getTotalFeedCount($category_filter);
         $total_pages = ceil($total_feeds / $limit);
 

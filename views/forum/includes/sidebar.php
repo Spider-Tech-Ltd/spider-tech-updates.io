@@ -1,8 +1,6 @@
 <?php
 /**
- * Forum Sidebar Component — Phase 3 Redesign
- * Generated via Stitch MCP (screen: d3161101ada444faa0722ae269be260c)
- * Translated to Bootstrap 4 + Vanilla CSS
+ * Forum Sidebar Component — Industrial Engineering Theme
  */
 ?>
 
@@ -12,15 +10,18 @@
 
   <!-- WIDGET 1: Top Categories -->
   <section class="sidebar-widget">
-    <h3 class="widget-title">Top Categories</h3>
+    <div class="sidebar-widget-header">
+      <span class="material-symbols-outlined widget-icon">hub</span>
+      <h3 class="widget-title">Top Categories</h3>
+    </div>
     <div class="ranked-list">
       <?php if (empty($top_categories)): ?>
         <p class="text-muted small">No categories found.</p>
       <?php else: ?>
         <?php foreach ($top_categories as $index => $cat): ?>
-          <a href="<?= BASE_URL ?>/forum?category=<?= $cat['slug'] ?>" class="ranked-item">
+          <a href="<?= BASE_URL ?>/forum?category=<?= urlencode($cat['slug']) ?>#feedSection" class="ranked-item">
             <div class="ranked-item-left">
-              <span class="ranked-badge"><?= ($index + 1) ?></span>
+              <span class="ranked-badge"><?= sprintf('%02d', $index + 1) ?></span>
               <span class="ranked-name"><?= htmlspecialchars($cat['name']) ?></span>
             </div>
             <span class="ranked-count"><?= Utils::formatNumber($cat['post_count']) ?></span>
@@ -32,7 +33,10 @@
 
   <!-- WIDGET 2: Top Contributors -->
   <section class="sidebar-widget">
-    <h3 class="widget-title">Top Technical Contributors</h3>
+    <div class="sidebar-widget-header">
+      <span class="material-symbols-outlined widget-icon">military_tech</span>
+      <h3 class="widget-title">Top Contributors</h3>
+    </div>
     <div class="contributor-list">
       <?php if (empty($top_contributors)): ?>
         <p class="text-muted small">No contributors yet.</p>
@@ -62,9 +66,13 @@
   <!-- WIDGET 3: Join CTA -->
   <?php if (!isset($_SESSION['member_uuid'])): ?>
   <section class="sidebar-join-card">
-    <h3 class="join-title">New Here?</h3>
+    <div class="join-card-accent"></div>
+    <div class="join-icon-wrap">
+      <span class="material-symbols-outlined">engineering</span>
+    </div>
+    <h3 class="join-title">New to Community?</h3>
     <p class="join-body">
-      Join the Spider Tech Community to start posting, ask questions, and connect with thousands of tech professionals.
+      Join verified engineers, troubleshoot technical problems, and share solutions across industrial systems.
     </p>
     <div class="join-btn-group">
       <a href="<?= BASE_URL ?>/forum/sign-up" class="join-btn-primary">Register Free</a>

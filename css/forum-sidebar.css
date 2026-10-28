@@ -1,4 +1,4 @@
-  /* ====== Sidebar Styles ====== */
+  /* ====== Sidebar Styles — Industrial Engineering ====== */
   .forum-sidebar {
     display: flex;
     flex-direction: column;
@@ -10,34 +10,51 @@
   /* Widget Card */
   .sidebar-widget {
     background-color: #ffffff;
-    border: 1px solid #e9ecef;
+    border: 1px solid #e2e8f0;
     border-radius: 16px;
     padding: 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+  }
+
+  .sidebar-widget-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .sidebar-widget-header .widget-icon {
+    font-size: 20px;
+    color: var(--primary-orange, #f48221);
   }
 
   .widget-title {
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
-    font-size: 1.15rem;
-    color: #111111;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    font-size: 1.05rem;
+    color: #0f172a;
+    margin-bottom: 0;
   }
 
   /* Ranked List */
   .ranked-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
   }
   .ranked-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
     text-decoration: none !important;
+    padding: 6px 8px;
+    border-radius: 8px;
+    transition: background-color 0.18s ease;
+  }
+  .ranked-item:hover {
+    background-color: #f8fafc;
   }
   .ranked-item-left {
     display: flex;
@@ -50,32 +67,37 @@
     justify-content: center;
     width: 28px;
     height: 28px;
-    background-color: rgba(245, 158, 11, 0.15); /* Warm Amber tint */
-    color: #f59e0b; /* Warm Amber */
-    border-radius: 50%;
-    font-family: 'Poppins', sans-serif;
+    background-color: rgba(244, 130, 33, 0.1);
+    color: var(--primary-orange, #f48221);
+    border-radius: 8px;
+    font-family: 'Chakra Petch', monospace, sans-serif;
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
   }
   .ranked-name {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    font-size: 0.95rem;
-    color: #111111;
+    font-size: 0.88rem;
+    color: #1e293b;
     transition: color 0.2s;
   }
   .ranked-item:hover .ranked-name { color: var(--primary-orange, #f48221); }
   .ranked-count {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 0.85rem;
-    color: #94a3b8; /* Cool Gray */
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.76rem;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 2px 8px;
+    border-radius: 50px;
   }
 
   /* Top Contributors */
   .contributor-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
   }
   .contributor-item {
     display: flex;
@@ -83,90 +105,137 @@
     gap: 12px;
   }
   .contributor-avatar {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 0.95rem;
+    color: #ffffff;
     flex-shrink: 0;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
   }
-  .avatar-orange { background-color: rgba(244, 130, 33, 0.12); color: #f48221; }
-  .avatar-blue   { background-color: #dbeafe; color: #2563eb; }
-  .avatar-green  { background-color: #d1fae5; color: #059669; }
-  .avatar-purple { background-color: #ede9fe; color: #7c3aed; }
-  .avatar-rose   { background-color: #ffe4e6; color: #e11d48; }
+  .avatar-orange { background-color: #f48221; }
+  .avatar-blue   { background-color: #0284c7; }
+  .avatar-green  { background-color: #059669; }
+  .avatar-purple { background-color: #7c3aed; }
+  .avatar-rose   { background-color: #e11d48; }
 
-  .contributor-info { flex: 1; }
+  .contributor-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+  }
   .contributor-name {
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    font-size: 0.95rem;
-    color: #111111;
-    display: block;
+    font-size: 0.88rem;
+    color: #0f172a;
   }
   .contributor-posts {
     font-family: 'Open Sans', sans-serif;
-    font-size: 0.8rem;
-    color: #797979;
+    font-size: 0.74rem;
+    color: #94a3b8;
   }
 
-  /* Join CTA Card - Guest */
+  /* Join CTA Card */
   .sidebar-join-card {
-    background-color: rgba(244, 130, 33, 0.06);
-    border: none;
-    border-left: 4px solid #f48221;
-    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     border-radius: 16px;
+    padding: 28px 24px;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.04);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
   }
+
+  .join-card-accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #f48221, #ea580c);
+  }
+
+  .join-icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(244, 130, 33, 0.1);
+    color: var(--primary-orange, #f48221);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .join-icon-wrap .material-symbols-outlined {
+    font-size: 24px;
+  }
+
   .join-title {
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
-    font-size: 1.25rem;
-    color: #111111;
+    font-size: 1.12rem;
+    color: #0f172a;
     margin-bottom: 8px;
   }
+
   .join-body {
     font-family: 'Open Sans', sans-serif;
-    font-size: 0.875rem;
-    color: #555555;
-    line-height: 1.6;
-    margin-bottom: 24px;
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: #64748b;
+    margin-bottom: 20px;
   }
+
   .join-btn-group {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
+
   .join-btn-primary {
-    background-color: #f48221;
-    color: #ffffff;
+    background: linear-gradient(135deg, #f48221 0%, #ea580c 100%);
+    color: #ffffff !important;
     font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 0.875rem;
-    padding: 10px;
+    font-weight: 700;
+    font-size: 0.86rem;
+    padding: 10px 18px;
     border-radius: 50px;
-    border: none;
-    text-align: center;
-    transition: background-color 0.2s;
     text-decoration: none !important;
+    display: block;
+    box-shadow: 0 4px 12px rgba(244, 130, 33, 0.25);
+    transition: all 0.2s ease;
   }
-  .join-btn-primary:hover { background-color: #e6751c; color: #ffffff; }
+
+  .join-btn-primary:hover {
+    background: linear-gradient(135deg, #e6751c 0%, #c2410c 100%);
+    box-shadow: 0 6px 16px rgba(244, 130, 33, 0.35);
+    transform: translateY(-1px);
+  }
 
   .join-btn-secondary {
-    background-color: transparent;
-    color: #f48221;
+    background: #f8fafc;
+    color: #334155 !important;
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
-    font-size: 0.875rem;
-    padding: 10px;
+    font-size: 0.84rem;
+    padding: 9px 18px;
     border-radius: 50px;
-    border: 1px solid #f48221;
-    text-align: center;
-    transition: background-color 0.2s;
+    border: 1px solid #e2e8f0;
     text-decoration: none !important;
+    display: block;
+    transition: all 0.2s ease;
   }
-  .join-btn-secondary:hover { background-color: rgba(244, 130, 33, 0.1); color: #f48221; }
+
+  .join-btn-secondary:hover {
+    border-color: var(--primary-orange, #f48221);
+    color: var(--primary-orange, #f48221) !important;
+  }

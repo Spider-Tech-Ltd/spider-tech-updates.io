@@ -77,11 +77,12 @@
   .category-badge {
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
-    font-size: 0.65rem;
+    font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    background-color: #f48221;
-    color: #ffffff;
+    letter-spacing: 0.05em;
+    background: rgba(244, 130, 33, 0.1);
+    color: var(--primary-orange, #f48221);
+    border: 1px solid rgba(244, 130, 33, 0.22);
     padding: 3px 12px;
     border-radius: 50px;
     white-space: nowrap;
