@@ -1,5 +1,6 @@
 /* ==========================================================================
    Spider Tech — Forum Category Tab Switcher (Matching Events Page Tabs)
+   With Accessible Horizontal Scrolling & Interactive Nav Chevrons
    ========================================================================== */
 
 :root {
@@ -25,8 +26,9 @@
   flex-wrap: wrap;
 }
 
-/* Category Tab Switcher (Matching Events Page Architecture) */
+/* Category Tab Switcher Wrap with Navigation Arrows */
 .forum-tab-switcher-wrap {
+  position: relative;
   display: flex;
   align-items: center;
   flex: 1;
@@ -34,23 +36,86 @@
   max-width: 100%;
 }
 
-.forum-tab-switcher {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
+/* Floating Navigation Arrows */
+.tab-scroll-arrow-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
   background: #ffffff;
-  padding: 4px;
+  border: 1px solid var(--sp-border);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+  color: var(--sp-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.tab-scroll-arrow-btn:hover {
+  background: var(--primary-orange);
+  border-color: var(--primary-orange);
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(244, 130, 33, 0.3);
+}
+
+.tab-scroll-arrow-btn.prev {
+  left: -8px;
+}
+
+.tab-scroll-arrow-btn.next {
+  right: -8px;
+}
+
+.tab-scroll-arrow-btn .material-symbols-outlined {
+  font-size: 19px;
+}
+
+/* Smooth Horizontal Scrollable Switcher Capsule */
+.forum-tab-switcher {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  padding: 4px 14px 4px 6px;
   border-radius: 50px;
   border: 1px solid var(--sp-border);
   box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
   max-width: 100%;
   overflow-x: auto;
-  scrollbar-width: none;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(203, 213, 225, 0.5) transparent;
   -webkit-overflow-scrolling: touch;
 }
 
+/* Micro-scrollbar for desktop mouse users */
 .forum-tab-switcher::-webkit-scrollbar {
-  display: none;
+  height: 3px;
+}
+
+.forum-tab-switcher::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.forum-tab-switcher::-webkit-scrollbar-thumb {
+  background: rgba(203, 213, 225, 0.6);
+  border-radius: 3px;
+}
+
+.forum-tab-switcher::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-orange);
+}
+
+.tab-scroll-end-spacer {
+  display: inline-block;
+  width: 12px;
+  flex-shrink: 0;
 }
 
 /* Slightly reduced vertical padding, maintaining balanced width */
@@ -70,6 +135,7 @@
   transition: all 0.2s ease;
   white-space: nowrap;
   text-decoration: none !important;
+  flex-shrink: 0;
 }
 
 .forum-tab-btn .tab-icon {
@@ -241,5 +307,11 @@
   }
   .forum-tab-switcher-wrap {
     width: 100%;
+  }
+  .tab-scroll-arrow-btn.prev {
+    left: 0;
+  }
+  .tab-scroll-arrow-btn.next {
+    right: 0;
   }
 }

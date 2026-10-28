@@ -1,7 +1,7 @@
 <?php
 /**
  * Feed Category Tab Switcher (Matching Events Page Design)
- * Displays unified capsule tab switcher with category badges + custom sort dropdown
+ * Displays unified capsule tab switcher with category badges, interactive horizontal scroll nav, and custom sort dropdown
  */
 $currentCat = $_GET['category'] ?? 'all';
 $currentSort = $_GET['sort'] ?? 'latest';
@@ -13,9 +13,27 @@ $currentSort = $_GET['sort'] ?? 'latest';
   <div class="container">
     <div class="forum-tabs-bar-inner">
 
-      <!-- Category Tab Switcher (Unified Capsule matching Events) -->
-      <div class="forum-tab-switcher-wrap">
-        <div class="forum-tab-switcher" role="tablist" aria-label="Discussion Categories">
+      <!-- Category Tab Switcher with Interactive Accessible Horizontal Scroll -->
+      <div class="forum-tab-switcher-wrap" x-data="categoryScrollNav()" x-init="initScrollNav()">
+        
+        <!-- Left Scroll Arrow Button -->
+        <button type="button" 
+                class="tab-scroll-arrow-btn prev" 
+                x-show="canScrollLeft" 
+                @click="scrollLeft()" 
+                aria-label="Scroll categories left"
+                style="display: none;">
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+
+        <!-- Scrollable Capsule Container -->
+        <div class="forum-tab-switcher" 
+             x-ref="switcher" 
+             @scroll.passive="updateScrollArrows()"
+             @wheel="handleWheel($event)"
+             role="tablist" 
+             aria-label="Discussion Categories">
+
           <a href="<?= BASE_URL ?>/forum?category=all&sort=<?= urlencode($currentSort) ?>#feedSection"
              class="forum-tab-btn <?= ($currentCat === 'all' || empty($currentCat)) ? 'active' : '' ?>">
             <span class="material-symbols-outlined tab-icon">grid_view</span>
@@ -35,7 +53,21 @@ $currentSort = $_GET['sort'] ?? 'latest';
               </a>
             <?php endforeach; ?>
           <?php endif; ?>
+
+          <!-- End Spacer to guarantee the rightmost tab ("Tech") is fully visible with buffer -->
+          <span class="tab-scroll-end-spacer" aria-hidden="true"></span>
         </div>
+
+        <!-- Right Scroll Arrow Button -->
+        <button type="button" 
+                class="tab-scroll-arrow-btn next" 
+                x-show="canScrollRight" 
+                @click="scrollRight()" 
+                aria-label="Scroll categories right"
+                style="display: none;">
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+
       </div>
 
       <!-- Custom Sort Filter Dropdown (Replaces default OS browser select) -->
@@ -81,3 +113,60 @@ $currentSort = $_GET['sort'] ?? 'latest';
     </div>
   </div>
 </div>
+
+<script>
+  function categoryScrollNav() {
+    return {
+      canScrollLeft: false,
+      canScrollRight: false,
+
+      initScrollNav() {
+        this.$nextTick(() => {
+          this.updateScrollArrows();
+          // Automatically scroll active tab into view if it was clipped on load
+          const switcher = this.$refs.switcher;
+          if (switcher) {
+            const activeTab = switcher.querySelector('.forum-tab-btn.active');
+            if (activeTab) {
+              activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+          }
+        });
+        window.addEventListener('resize', () => this.updateScrollArrows(), { passive: true });
+      },
+
+      updateScrollArrows() {
+        const el = this.$refs.switcher;
+        if (!el) return;
+        this.canScrollLeft = el.scrollLeft > 6;
+        this.canScrollRight = (el.scrollLeft + el.clientWidth) < (el.scrollWidth - 8);
+      },
+
+      scrollLeft() {
+        const el = this.$refs.switcher;
+        if (el) {
+          el.scrollBy({ left: -220, behavior: 'smooth' });
+          setTimeout(() => this.updateScrollArrows(), 320);
+        }
+      },
+
+      scrollRight() {
+        const el = this.$refs.switcher;
+        if (el) {
+          el.scrollBy({ left: 220, behavior: 'smooth' });
+          setTimeout(() => this.updateScrollArrows(), 320);
+        }
+      },
+
+      handleWheel(e) {
+        const el = this.$refs.switcher;
+        if (!el) return;
+        if (el.scrollWidth > el.clientWidth && Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+          e.preventDefault();
+          el.scrollLeft += e.deltaY;
+          this.updateScrollArrows();
+        }
+      }
+    };
+  }
+</script>
