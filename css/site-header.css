@@ -172,6 +172,15 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 16px;
+    }
+
+    /* ====== Left Cluster: Logo + Primary Nav Menu ====== */
+    .header-left-cluster {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      min-width: 0;
     }
 
     /* ====== Logo ====== */
@@ -180,47 +189,204 @@
       align-items: center;
       gap: 12px;
       text-decoration: none !important;
+      flex-shrink: 0;
     }
 
     .logo-img {
       height: 45px;
       width: auto;
+      display: block;
     }
 
-    /* ====== Desktop Navigation Links ====== */
-    .header-nav {
+    /* ====== Desktop Primary Navigation (Left Group) ====== */
+    .header-nav-primary {
       display: flex;
       align-items: center;
-      gap: 32px;
+      gap: 22px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
     }
 
     .nav-link-item {
       font-family: 'Poppins', sans-serif;
       font-weight: 500;
-      font-size: 0.9rem;
-      color: #111111;
+      font-size: 0.88rem;
+      color: #1e293b;
       text-decoration: none !important;
       position: relative;
-      transition: color 0.3s ease;
+      padding: 6px 0;
+      transition: color 0.25s ease;
+      white-space: nowrap;
     }
 
     .nav-link-item:hover {
       color: #f48221;
     }
 
-    /* Active link colour */
+    /* Active link style */
     .nav-link-item.active {
       color: #f48221;
-      font-weight: 700;
+      font-weight: 600;
     }
 
-    /* ====== Header Actions ====== */
-    .header-actions {
+    .nav-link-item.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: #f48221;
+      border-radius: 2px;
+    }
+
+    /* ====== Right Cluster: Secondary Nav + Mobile Toggle ====== */
+    .header-right-cluster {
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 16px;
+      flex-shrink: 0;
     }
 
+    /* ====== Desktop Secondary Navigation (Right Group) ====== */
+    .header-nav-secondary {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    /* Forum Community Nav Link */
+    .nav-link-forum {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      font-size: 0.88rem;
+      color: #334155;
+      text-decoration: none !important;
+      padding: 6px 12px;
+      border-radius: 50px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+    }
+
+    .nav-link-forum:hover {
+      color: #f48221;
+      background: rgba(244, 130, 33, 0.08);
+    }
+
+    .nav-link-forum.active {
+      color: #f48221;
+      font-weight: 600;
+      background: rgba(244, 130, 33, 0.1);
+    }
+
+    .nav-link-forum.active::after {
+      display: none;
+    }
+
+    .nav-forum-icon {
+      font-size: 18px;
+      line-height: 1;
+      color: inherit;
+    }
+
+    /* Subtle Vertical Divider */
+    .nav-secondary-divider {
+      width: 1px;
+      height: 20px;
+      background-color: #e2e8f0;
+      flex-shrink: 0;
+      margin: 0 2px;
+    }
+
+    /* ====== Tab Capsule for FAQ & Contact ====== */
+    .nav-tab-pill-group {
+      display: inline-flex;
+      align-items: center;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 50px;
+      padding: 3px;
+      gap: 3px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .nav-tab-pill-group:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    }
+
+    /* Tab Pill Link */
+    .nav-tab-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: #475569;
+      text-decoration: none !important;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+      border: 1px solid transparent;
+      line-height: 1.3;
+    }
+
+    .nav-tab-pill:hover {
+      color: #0f172a;
+      background: #ffffff;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+    }
+
+    .nav-tab-pill.active {
+      background: #ffffff;
+      color: #f48221;
+      font-weight: 600;
+      border-color: rgba(244, 130, 33, 0.25);
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+    }
+
+    /* Contact Tab Button (Maintains Signature Primary Orange Brand Color) */
+    .nav-tab-pill.nav-tab-cta {
+      background-color: #f48221;
+      border-color: #f48221;
+      color: #ffffff !important;
+      font-weight: 600;
+      padding: 6px 18px;
+      box-shadow: 0 2px 8px rgba(244, 130, 33, 0.28);
+    }
+
+    .nav-tab-pill.nav-tab-cta:hover {
+      background-color: #e6751c;
+      border-color: #e6751c;
+      color: #ffffff !important;
+      box-shadow: 0 4px 12px rgba(244, 130, 33, 0.38);
+      transform: translateY(-1px);
+    }
+
+    .nav-tab-pill.nav-tab-cta:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(244, 130, 33, 0.3);
+    }
+
+    .nav-tab-pill.nav-tab-cta:focus-visible {
+      outline: 2px solid #f48221;
+      outline-offset: 2px;
+    }
+
+    .nav-tab-pill.nav-tab-cta.active {
+      background-color: #e6751c;
+      border-color: #e6751c;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 0 2px rgba(244, 130, 33, 0.3);
+    }
+
+    /* ====== Legacy Button CTA support (mobile drawer CTA) ====== */
     .btn-header-cta {
       background-color: #f48221;
       color: #ffffff;
@@ -256,6 +422,7 @@
       outline: 2px solid #f48221;
       outline-offset: 3px;
     }
+
     /* ====== Hamburger Button ====== */
     .mobile-toggle {
       display: none;
@@ -280,10 +447,41 @@
       outline-offset: 2px;
     }
 
-    /* ====== Mobile Breakpoint ====== */
+    /* ====== Responsive Breakpoints ====== */
+    @media (min-width: 1025px) and (max-width: 1220px) {
+      .header-left-cluster {
+        gap: 20px;
+      }
+      .header-nav-primary {
+        gap: 14px;
+      }
+      .nav-link-item {
+        font-size: 0.84rem;
+      }
+      .header-right-cluster {
+        gap: 12px;
+      }
+      .header-nav-secondary {
+        gap: 10px;
+      }
+      .nav-link-forum {
+        font-size: 0.84rem;
+        padding: 5px 8px;
+      }
+      .nav-tab-pill {
+        padding: 5px 12px;
+        font-size: 0.8rem;
+      }
+      .nav-tab-pill.nav-tab-cta {
+        padding: 5px 14px;
+        font-size: 0.8rem;
+      }
+    }
+
     @media (max-width: 1024px) {
-      .header-nav {
-        display: none; /* Desktop nav hidden; replaced by drawer */
+      .header-nav-primary,
+      .header-nav-secondary {
+        display: none !important;
       }
 
       .mobile-toggle {
@@ -291,13 +489,8 @@
         align-items: center;
       }
 
-      /* Hide the desktop CTA button — it lives in the drawer on mobile */
-      .btn-cta-desktop {
-        display: none !important;
-      }
-
       .site-header {
-        padding: 14px 0;
+        padding: 12px 0;
       }
     }
 
@@ -369,10 +562,34 @@
     .drawer-links {
       display: flex;
       flex-direction: column;
-      padding: 20px 16px 0;
+      padding: 16px 16px 0;
       flex: 1;
       overflow-y: auto;
       gap: 2px;
+    }
+
+    .drawer-group-label {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #94a3b8;
+      padding: 10px 16px 4px;
+      display: block;
+    }
+
+    .drawer-divider {
+      height: 1px;
+      background: #f1f5f9;
+      margin: 10px 16px;
+    }
+
+    .drawer-link-icon {
+      font-size: 19px;
+      line-height: 1;
+      color: inherit;
+      margin-right: 10px;
     }
 
     .drawer-link {

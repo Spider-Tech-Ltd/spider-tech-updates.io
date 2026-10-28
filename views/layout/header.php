@@ -59,7 +59,7 @@
     </div>
   </div>
 
-  <link rel="stylesheet" href="<?= BASE_URL ?>/css/site-header.css" />
+  <link rel="stylesheet" href="<?= BASE_URL ?>/css/site-header.css?v=<?= filemtime(ROOT_PATH . '/css/site-header.css') ?>" />
 
   <div class="wraper">
     <?php
@@ -126,27 +126,47 @@
     <header class="site-header" id="mainHeader">
       <div class="header-container">
 
-        <!-- Logo -->
-        <a href="<?= BASE_URL ?>/home" class="header-logo">
-          <img src="<?= BASE_URL ?>/images/spider-tech.png" class="logo-img" alt="Spider Tech">
-        </a>
+        <!-- Left Cluster: Brand Logo + Primary Nav Menu -->
+        <div class="header-left-cluster">
+          <a href="<?= BASE_URL ?>/home" class="header-logo" aria-label="Spider Tech Home">
+            <img src="<?= BASE_URL ?>/images/spider-tech.png" class="logo-img" alt="Spider Tech">
+          </a>
 
-        <!-- Desktop Navigation -->
-        <nav class="header-nav" aria-label="Main navigation">
-          <a href="<?= BASE_URL ?>/home"      class="nav-link-item<?= navActive('home',      $navSegment) ?>">Home</a>
-          <a href="<?= BASE_URL ?>/about"     class="nav-link-item<?= navActive('about',     $navSegment) ?>">About Us</a>
-          <a href="<?= BASE_URL ?>/services"  class="nav-link-item<?= navActive('services',  $navSegment) ?>">Services</a>
-          <a href="<?= BASE_URL ?>/projects"  class="nav-link-item<?= navActive('projects',  $navSegment) ?>">Projects</a>
-          <a href="<?= BASE_URL ?>/events"    class="nav-link-item<?= navActive('events',    $navSegment) ?>">Events</a>
-          <a href="<?= BASE_URL ?>/trainings" class="nav-link-item<?= navActive('trainings', $navSegment) ?>">Trainings</a>
-          <a href="<?= BASE_URL ?>/forum"     class="nav-link-item<?= navActive('forum',     $navSegment) ?>">Forum</a>
-          <a href="<?= BASE_URL ?>/blog"      class="nav-link-item<?= navActive('blog',      $navSegment) ?>">Blog</a>
-        </nav>
+          <!-- Primary Navigation (Left Group) -->
+          <nav class="header-nav header-nav-primary" aria-label="Primary navigation">
+            <a href="<?= BASE_URL ?>/home"      class="nav-link-item<?= navActive('home',      $navSegment) ?>">Home</a>
+            <a href="<?= BASE_URL ?>/about"     class="nav-link-item<?= navActive('about',     $navSegment) ?>">About Us</a>
+            <a href="<?= BASE_URL ?>/services"  class="nav-link-item<?= navActive('services',  $navSegment) ?>">Services</a>
+            <a href="<?= BASE_URL ?>/projects"  class="nav-link-item<?= navActive('projects',  $navSegment) ?>">Projects</a>
+            <a href="<?= BASE_URL ?>/events"    class="nav-link-item<?= navActive('events',    $navSegment) ?>">Events</a>
+            <a href="<?= BASE_URL ?>/trainings" class="nav-link-item<?= navActive('trainings', $navSegment) ?>">Trainings</a>
+            <a href="<?= BASE_URL ?>/blog"      class="nav-link-item<?= navActive('blog',      $navSegment) ?>">Blog</a>
+          </nav>
+        </div>
 
-        <!-- Actions -->
-        <div class="header-actions">
-          <!-- Contact Us: desktop only. Hidden on mobile via .btn-cta-desktop -->
-          <a href="<?= BASE_URL ?>/contact" class="btn-header-cta btn-cta-desktop">Contact Us</a>
+        <!-- Right Cluster: Secondary Nav Menu (Forum, FAQ & Contact in Tab Style) + Mobile Toggle -->
+        <div class="header-right-cluster">
+          <!-- Secondary Navigation (Right Group) -->
+          <nav class="header-nav-secondary" aria-label="Secondary navigation">
+            <!-- Forum Community Link -->
+            <a href="<?= BASE_URL ?>/forum" class="nav-link-item nav-link-forum<?= navActive('forum', $navSegment) ?>" aria-label="Community Forum">
+              <span class="material-symbols-outlined nav-forum-icon" aria-hidden="true">forum</span>
+              <span>Forum</span>
+            </a>
+
+            <!-- Subtle Vertical Separator -->
+            <span class="nav-secondary-divider" aria-hidden="true"></span>
+
+            <!-- Tab-Style Capsule for FAQ & Contact -->
+            <div class="nav-tab-pill-group" role="group" aria-label="Help and Contact Actions">
+              <a href="<?= BASE_URL ?>/faq" class="nav-tab-pill<?= navActive('faq', $navSegment) ?>">
+                <span>FAQ</span>
+              </a>
+              <a href="<?= BASE_URL ?>/contact" class="nav-tab-pill nav-tab-cta<?= navActive('contact', $navSegment) ?>">
+                <span>Contact Us</span>
+              </a>
+            </div>
+          </nav>
 
           <!-- Mobile Hamburger Toggle -->
           <button
@@ -172,14 +192,26 @@
           <div class="mobile-dropdown-scrollable">
             <!-- Dropdown Nav Links -->
             <div class="drawer-links">
+              <span class="drawer-group-label">Navigation</span>
               <a href="<?= BASE_URL ?>/home"      class="drawer-link<?= navActive('home',      $navSegment) ?>">Home</a>
               <a href="<?= BASE_URL ?>/about"     class="drawer-link<?= navActive('about',     $navSegment) ?>">About Us</a>
               <a href="<?= BASE_URL ?>/services"  class="drawer-link<?= navActive('services',  $navSegment) ?>">Services</a>
               <a href="<?= BASE_URL ?>/projects"  class="drawer-link<?= navActive('projects',  $navSegment) ?>">Projects</a>
               <a href="<?= BASE_URL ?>/events"    class="drawer-link<?= navActive('events',    $navSegment) ?>">Events</a>
               <a href="<?= BASE_URL ?>/trainings" class="drawer-link<?= navActive('trainings', $navSegment) ?>">Trainings</a>
-              <a href="<?= BASE_URL ?>/forum"     class="drawer-link<?= navActive('forum',     $navSegment) ?>">Forum</a>
               <a href="<?= BASE_URL ?>/blog"      class="drawer-link<?= navActive('blog',      $navSegment) ?>">Blog</a>
+
+              <div class="drawer-divider"></div>
+
+              <span class="drawer-group-label">Community & Support</span>
+              <a href="<?= BASE_URL ?>/forum"     class="drawer-link<?= navActive('forum',     $navSegment) ?>">
+                <span class="material-symbols-outlined drawer-link-icon" aria-hidden="true">forum</span>
+                <span>Forum</span>
+              </a>
+              <a href="<?= BASE_URL ?>/faq"       class="drawer-link<?= navActive('faq',       $navSegment) ?>">
+                <span class="material-symbols-outlined drawer-link-icon" aria-hidden="true">help</span>
+                <span>FAQ</span>
+              </a>
             </div>
 
             <!-- Dropdown Footer — Contact CTA (mobile-only) -->
