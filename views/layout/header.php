@@ -77,8 +77,9 @@
       $topPhoneHref = preg_replace('/[^0-9+]/', '', $topPhone);
     ?>
     <!-- ====== Top Utility Bar (Scrolls away, not fixed) ====== -->
-    <div class="site-topbar" id="siteTopbar" role="region" aria-label="Company contact and social media links">
+    <div class="site-topbar" id="siteTopbar" role="region" aria-label="Company contact, quick links, and social media">
       <div class="topbar-container">
+        <!-- Left: Contact Details -->
         <div class="topbar-contact">
           <?php if (!empty($topEmail)): ?>
             <a href="mailto:<?= htmlspecialchars($topEmail) ?>" class="topbar-link" aria-label="Email us at <?= htmlspecialchars($topEmail) ?>">
@@ -97,76 +98,74 @@
           <?php endif; ?>
         </div>
 
-        <div class="topbar-social" aria-label="Social media links">
-          <?php
-            $hasSocial = false;
-            if (!empty($socialLinks)):
-              foreach ($socialLinks as $sl):
-                if (!empty($sl['url']) && $sl['url'] !== '#'):
-                  $hasSocial = true;
-          ?>
-            <a target="_blank" rel="noopener noreferrer" href="<?= htmlspecialchars($sl['url']) ?>" class="topbar-social-link" title="<?= htmlspecialchars($sl['platform']) ?>" aria-label="<?= htmlspecialchars($sl['platform']) ?>">
-              <i class="<?= htmlspecialchars($sl['icon_class']) ?>" aria-hidden="true"></i>
+        <!-- Right Group: Forum & FAQ Quick Links + Social Media -->
+        <div class="topbar-right-group">
+          <!-- Topbar Quick Links (Forum & FAQ with Redirect Icon) -->
+          <nav class="topbar-nav" aria-label="Quick links">
+            <a href="<?= BASE_URL ?>/forum" class="topbar-nav-item<?= navActive('forum', $navSegment) ?>" aria-label="Community Forum">
+              <span class="material-symbols-outlined topbar-nav-icon" aria-hidden="true">forum</span>
+              <span>Forum</span>
             </a>
-          <?php
-                endif;
-              endforeach;
-            endif;
-            if (!$hasSocial):
-          ?>
-            <a target="_blank" rel="noopener noreferrer" href="https://web.facebook.com/people/Spider-Hub-Spider-Technologies-Limited/61561284852721/" class="topbar-social-link" title="Facebook" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
-            <a target="_blank" rel="noopener noreferrer" href="https://x.com/spidertech_hub" class="topbar-social-link" title="X (Twitter)" aria-label="X (Twitter)"><i class="fab fa-x-twitter" aria-hidden="true"></i></a>
-            <a target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/channel/UCBg_EHRiMiwkJyCuva84zNw" class="topbar-social-link" title="YouTube" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
-            <a target="_blank" rel="noopener noreferrer" href="https://linkedin.com/company/spider-technologies-limited" class="topbar-social-link" title="LinkedIn" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
-            <a target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/spidertech.hub?igsh=bGhnbWU3OHE5cWtp" class="topbar-social-link" title="Instagram" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
-          <?php endif; ?>
+            <a href="<?= BASE_URL ?>/faq" class="topbar-nav-item<?= navActive('faq', $navSegment) ?>" aria-label="Frequently Asked Questions">
+              <span>FAQ</span>
+              <span class="material-symbols-outlined topbar-nav-icon redirect-icon" aria-hidden="true">arrow_outward</span>
+            </a>
+          </nav>
+
+          <span class="topbar-divider" aria-hidden="true"></span>
+
+          <!-- Social Links -->
+          <div class="topbar-social" aria-label="Social media links">
+            <?php
+              $hasSocial = false;
+              if (!empty($socialLinks)):
+                foreach ($socialLinks as $sl):
+                  if (!empty($sl['url']) && $sl['url'] !== '#'):
+                    $hasSocial = true;
+            ?>
+              <a target="_blank" rel="noopener noreferrer" href="<?= htmlspecialchars($sl['url']) ?>" class="topbar-social-link" title="<?= htmlspecialchars($sl['platform']) ?>" aria-label="<?= htmlspecialchars($sl['platform']) ?>">
+                <i class="<?= htmlspecialchars($sl['icon_class']) ?>" aria-hidden="true"></i>
+              </a>
+            <?php
+                  endif;
+                endforeach;
+              endif;
+              if (!$hasSocial):
+            ?>
+              <a target="_blank" rel="noopener noreferrer" href="https://web.facebook.com/people/Spider-Hub-Spider-Technologies-Limited/61561284852721/" class="topbar-social-link" title="Facebook" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+              <a target="_blank" rel="noopener noreferrer" href="https://x.com/spidertech_hub" class="topbar-social-link" title="X (Twitter)" aria-label="X (Twitter)"><i class="fab fa-x-twitter" aria-hidden="true"></i></a>
+              <a target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/channel/UCBg_EHRiMiwkJyCuva84zNw" class="topbar-social-link" title="YouTube" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+              <a target="_blank" rel="noopener noreferrer" href="https://linkedin.com/company/spider-technologies-limited" class="topbar-social-link" title="LinkedIn" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+              <a target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/spidertech.hub?igsh=bGhnbWU3OHE5cWtp" class="topbar-social-link" title="Instagram" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+            <?php endif; ?>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- ====== Main Site Header (Fixed on Scroll, Centered Nav, Right CTA) ====== -->
     <header class="site-header" id="mainHeader">
       <div class="header-container">
 
-        <!-- Left Cluster: Brand Logo + Primary Nav Menu -->
-        <div class="header-left-cluster">
-          <a href="<?= BASE_URL ?>/home" class="header-logo" aria-label="Spider Tech Home">
-            <img src="<?= BASE_URL ?>/images/spider-tech.png" class="logo-img" alt="Spider Tech">
-          </a>
+        <!-- Logo (Left) -->
+        <a href="<?= BASE_URL ?>/home" class="header-logo" aria-label="Spider Tech Home">
+          <img src="<?= BASE_URL ?>/images/spider-tech.png" class="logo-img" alt="Spider Tech">
+        </a>
 
-          <!-- Primary Navigation (Left Group) -->
-          <nav class="header-nav header-nav-primary" aria-label="Primary navigation">
-            <a href="<?= BASE_URL ?>/home"      class="nav-link-item<?= navActive('home',      $navSegment) ?>">Home</a>
-            <a href="<?= BASE_URL ?>/about"     class="nav-link-item<?= navActive('about',     $navSegment) ?>">About Us</a>
-            <a href="<?= BASE_URL ?>/services"  class="nav-link-item<?= navActive('services',  $navSegment) ?>">Services</a>
-            <a href="<?= BASE_URL ?>/projects"  class="nav-link-item<?= navActive('projects',  $navSegment) ?>">Projects</a>
-            <a href="<?= BASE_URL ?>/events"    class="nav-link-item<?= navActive('events',    $navSegment) ?>">Events</a>
-            <a href="<?= BASE_URL ?>/trainings" class="nav-link-item<?= navActive('trainings', $navSegment) ?>">Trainings</a>
-            <a href="<?= BASE_URL ?>/blog"      class="nav-link-item<?= navActive('blog',      $navSegment) ?>">Blog</a>
-          </nav>
-        </div>
+        <!-- Desktop Navigation (Centered) -->
+        <nav class="header-nav" aria-label="Main navigation">
+          <a href="<?= BASE_URL ?>/home"      class="nav-link-item<?= navActive('home',      $navSegment) ?>">Home</a>
+          <a href="<?= BASE_URL ?>/about"     class="nav-link-item<?= navActive('about',     $navSegment) ?>">About Us</a>
+          <a href="<?= BASE_URL ?>/services"  class="nav-link-item<?= navActive('services',  $navSegment) ?>">Services</a>
+          <a href="<?= BASE_URL ?>/projects"  class="nav-link-item<?= navActive('projects',  $navSegment) ?>">Projects</a>
+          <a href="<?= BASE_URL ?>/events"    class="nav-link-item<?= navActive('events',    $navSegment) ?>">Events</a>
+          <a href="<?= BASE_URL ?>/trainings" class="nav-link-item<?= navActive('trainings', $navSegment) ?>">Trainings</a>
+          <a href="<?= BASE_URL ?>/blog"      class="nav-link-item<?= navActive('blog',      $navSegment) ?>">Blog</a>
+        </nav>
 
-        <!-- Right Cluster: Secondary Nav Menu (Forum, FAQ & Contact in Tab Style) + Mobile Toggle -->
-        <div class="header-right-cluster">
-          <!-- Secondary Navigation (Right Group) -->
-          <nav class="header-nav-secondary" aria-label="Secondary navigation">
-            <!-- Forum Community Link -->
-            <a href="<?= BASE_URL ?>/forum" class="nav-link-item nav-link-forum<?= navActive('forum', $navSegment) ?>" aria-label="Community Forum">
-              <span class="material-symbols-outlined nav-forum-icon" aria-hidden="true">forum</span>
-              <span>Forum</span>
-            </a>
-
-            <!-- Subtle Vertical Separator -->
-            <span class="nav-secondary-divider" aria-hidden="true"></span>
-
-            <!-- Tab-Style Capsule for FAQ & Contact -->
-            <div class="nav-tab-pill-group" role="group" aria-label="Help and Contact Actions">
-              <a href="<?= BASE_URL ?>/faq" class="nav-tab-pill<?= navActive('faq', $navSegment) ?>">
-                <span>FAQ</span>
-              </a>
-              <a href="<?= BASE_URL ?>/contact" class="nav-tab-pill nav-tab-cta<?= navActive('contact', $navSegment) ?>">
-                <span>Contact Us</span>
-              </a>
-            </div>
-          </nav>
+        <!-- Actions (Right: Contact CTA + Mobile Hamburger) -->
+        <div class="header-actions">
+          <a href="<?= BASE_URL ?>/contact" class="btn-header-cta btn-cta-desktop<?= navActive('contact', $navSegment) ?>">Contact Us</a>
 
           <!-- Mobile Hamburger Toggle -->
           <button

@@ -1,15 +1,15 @@
     /* ====================================================
        HEADER — Industrial-Grade Design System
-       Phase 6: Mobile Accessibility & Active State + Top Bar
+       Modern Navbar with Centered Nav, Right CTA, and Topbar Quick Links
     ==================================================== */
 
-    /* ====== Top Utility Bar (Non-Fixed, Compact, Primary Orange) ====== */
+    /* ====== Top Utility Bar (Non-Fixed, Primary Orange) ====== */
     .site-topbar {
       position: relative;
       z-index: 1201;
       background-color: #f48221;
       color: #ffffff;
-      height: 36px;
+      min-height: 38px;
       border-bottom: 1px solid rgba(0, 0, 0, 0.06);
       font-family: 'Open Sans', sans-serif;
       font-size: 0.78rem;
@@ -28,6 +28,7 @@
       gap: 16px;
     }
 
+    /* Left: Contact Info */
     .topbar-contact {
       display: flex;
       align-items: center;
@@ -44,7 +45,7 @@
       text-decoration: none !important;
       font-weight: 600;
       letter-spacing: 0.2px;
-      transition: color 0.25s ease;
+      transition: color 0.22s ease;
       white-space: nowrap;
     }
 
@@ -54,7 +55,8 @@
     }
 
     .topbar-link:focus-visible,
-    .topbar-social-link:focus-visible {
+    .topbar-social-link:focus-visible,
+    .topbar-nav-item:focus-visible {
       outline: 2px solid #ffffff;
       outline-offset: 2px;
       border-radius: 4px;
@@ -64,7 +66,7 @@
       font-size: 15px !important;
       color: #ffffff;
       line-height: 1;
-      transition: color 0.25s ease;
+      transition: color 0.22s ease;
     }
 
     .topbar-link:hover .topbar-icon,
@@ -72,9 +74,78 @@
       color: #111111;
     }
 
+    /* Right Group: Quick Links (Forum & FAQ) + Divider + Social Links */
+    .topbar-right-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    /* Topbar Quick Links (Forum & FAQ) */
+    .topbar-nav {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .topbar-nav-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: #ffffff !important;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 0.75rem;
+      letter-spacing: 0.2px;
+      text-decoration: none !important;
+      padding: 3px 11px;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      line-height: 1.3;
+      white-space: nowrap;
+    }
+
+    .topbar-nav-item:hover {
+      background-color: #111111;
+      border-color: #111111;
+      color: #ffffff !important;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+    }
+
+    .topbar-nav-item.active {
+      background-color: #ffffff;
+      border-color: #ffffff;
+      color: #f48221 !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    }
+
+    .topbar-nav-item.active .topbar-nav-icon {
+      color: #f48221 !important;
+    }
+
+    .topbar-nav-icon {
+      font-size: 14px !important;
+      color: #ffffff;
+      line-height: 1;
+      transition: color 0.22s ease;
+    }
+
+    .topbar-nav-icon.redirect-icon {
+      font-size: 13px !important;
+      margin-left: 1px;
+    }
+
+    .topbar-nav-item:hover .topbar-nav-icon {
+      color: #ffffff;
+    }
+
     .topbar-divider {
       width: 1px;
-      height: 12px;
+      height: 14px;
       background-color: rgba(255, 255, 255, 0.35);
       flex-shrink: 0;
     }
@@ -97,7 +168,7 @@
       background-color: rgba(255, 255, 255, 0.18);
       font-size: 0.72rem;
       text-decoration: none !important;
-      transition: all 0.25s ease;
+      transition: all 0.22s ease;
     }
 
     .topbar-social-link:hover {
@@ -106,36 +177,10 @@
       transform: translateY(-1px);
     }
 
-    @media (max-width: 576px) {
-      .site-topbar {
-        height: 32px;
-        font-size: 0.72rem;
-      }
-
-      .topbar-container {
-        padding: 0 12px;
-        gap: 8px;
-      }
-
-      .topbar-contact {
-        gap: 10px;
-      }
-
-      .topbar-social {
-        gap: 4px;
-      }
-
-      .topbar-social-link {
-        width: 22px;
-        height: 22px;
-        font-size: 0.68rem;
-      }
-    }
-
     /* ====== Modern Header Reset & Base (Fixed on Scroll, Constant Narrow Height) ====== */
     .site-header {
       position: fixed;
-      top: 36px;
+      top: 38px;
       left: 0;
       right: 0;
       z-index: 1200;
@@ -158,7 +203,7 @@
     .site-header.is-scrolled {
       top: 0;
       padding: 14px 0;
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: rgba(255, 255, 255, 0.85);
       backdrop-filter: saturate(180%) blur(16px);
       -webkit-backdrop-filter: saturate(180%) blur(16px);
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
@@ -172,18 +217,10 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 20px;
     }
 
-    /* ====== Left Cluster: Logo + Primary Nav Menu ====== */
-    .header-left-cluster {
-      display: flex;
-      align-items: center;
-      gap: 32px;
-      min-width: 0;
-    }
-
-    /* ====== Logo ====== */
+    /* ====== Logo (Left) ====== */
     .header-logo {
       display: flex;
       align-items: center;
@@ -198,20 +235,21 @@
       display: block;
     }
 
-    /* ====== Desktop Primary Navigation (Left Group) ====== */
-    .header-nav-primary {
+    /* ====== Centered Desktop Navigation ====== */
+    .header-nav {
       display: flex;
       align-items: center;
-      gap: 22px;
-      list-style: none;
-      margin: 0;
+      justify-content: center;
+      gap: 28px;
+      margin: 0 auto;
       padding: 0;
+      list-style: none;
     }
 
     .nav-link-item {
       font-family: 'Poppins', sans-serif;
       font-weight: 500;
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       color: #1e293b;
       text-decoration: none !important;
       position: relative;
@@ -224,7 +262,7 @@
       color: #f48221;
     }
 
-    /* Active link style */
+    /* Active link style with subtle underline indicator */
     .nav-link-item.active {
       color: #f48221;
       font-weight: 600;
@@ -241,152 +279,14 @@
       border-radius: 2px;
     }
 
-    /* ====== Right Cluster: Secondary Nav + Mobile Toggle ====== */
-    .header-right-cluster {
+    /* ====== Header Actions (Right: CTA + Mobile Toggle) ====== */
+    .header-actions {
       display: flex;
       align-items: center;
       gap: 16px;
       flex-shrink: 0;
     }
 
-    /* ====== Desktop Secondary Navigation (Right Group) ====== */
-    .header-nav-secondary {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    /* Forum Community Nav Link */
-    .nav-link-forum {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 500;
-      font-size: 0.88rem;
-      color: #334155;
-      text-decoration: none !important;
-      padding: 6px 12px;
-      border-radius: 50px;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      white-space: nowrap;
-    }
-
-    .nav-link-forum:hover {
-      color: #f48221;
-      background: rgba(244, 130, 33, 0.08);
-    }
-
-    .nav-link-forum.active {
-      color: #f48221;
-      font-weight: 600;
-      background: rgba(244, 130, 33, 0.1);
-    }
-
-    .nav-link-forum.active::after {
-      display: none;
-    }
-
-    .nav-forum-icon {
-      font-size: 18px;
-      line-height: 1;
-      color: inherit;
-    }
-
-    /* Subtle Vertical Divider */
-    .nav-secondary-divider {
-      width: 1px;
-      height: 20px;
-      background-color: #e2e8f0;
-      flex-shrink: 0;
-      margin: 0 2px;
-    }
-
-    /* ====== Tab Capsule for FAQ & Contact ====== */
-    .nav-tab-pill-group {
-      display: inline-flex;
-      align-items: center;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 50px;
-      padding: 3px;
-      gap: 3px;
-      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .nav-tab-pill-group:hover {
-      border-color: #cbd5e1;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
-    }
-
-    /* Tab Pill Link */
-    .nav-tab-pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 6px 16px;
-      border-radius: 50px;
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.84rem;
-      font-weight: 500;
-      color: #475569;
-      text-decoration: none !important;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      white-space: nowrap;
-      border: 1px solid transparent;
-      line-height: 1.3;
-    }
-
-    .nav-tab-pill:hover {
-      color: #0f172a;
-      background: #ffffff;
-      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
-    }
-
-    .nav-tab-pill.active {
-      background: #ffffff;
-      color: #f48221;
-      font-weight: 600;
-      border-color: rgba(244, 130, 33, 0.25);
-      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
-    }
-
-    /* Contact Tab Button (Maintains Signature Primary Orange Brand Color) */
-    .nav-tab-pill.nav-tab-cta {
-      background-color: #f48221;
-      border-color: #f48221;
-      color: #ffffff !important;
-      font-weight: 600;
-      padding: 6px 18px;
-      box-shadow: 0 2px 8px rgba(244, 130, 33, 0.28);
-    }
-
-    .nav-tab-pill.nav-tab-cta:hover {
-      background-color: #e6751c;
-      border-color: #e6751c;
-      color: #ffffff !important;
-      box-shadow: 0 4px 12px rgba(244, 130, 33, 0.38);
-      transform: translateY(-1px);
-    }
-
-    .nav-tab-pill.nav-tab-cta:active {
-      transform: translateY(0);
-      box-shadow: 0 2px 6px rgba(244, 130, 33, 0.3);
-    }
-
-    .nav-tab-pill.nav-tab-cta:focus-visible {
-      outline: 2px solid #f48221;
-      outline-offset: 2px;
-    }
-
-    .nav-tab-pill.nav-tab-cta.active {
-      background-color: #e6751c;
-      border-color: #e6751c;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 0 2px rgba(244, 130, 33, 0.3);
-    }
-
-    /* ====== Legacy Button CTA support (mobile drawer CTA) ====== */
     .btn-header-cta {
       background-color: #f48221;
       color: #ffffff;
@@ -408,6 +308,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      white-space: nowrap;
     }
 
     .btn-header-cta:hover {
@@ -423,7 +324,7 @@
       outline-offset: 3px;
     }
 
-    /* ====== Hamburger Button ====== */
+    /* Hamburger Button */
     .mobile-toggle {
       display: none;
       background: none;
@@ -448,40 +349,22 @@
     }
 
     /* ====== Responsive Breakpoints ====== */
-    @media (min-width: 1025px) and (max-width: 1220px) {
-      .header-left-cluster {
-        gap: 20px;
-      }
-      .header-nav-primary {
-        gap: 14px;
+    @media (min-width: 1025px) and (max-width: 1200px) {
+      .header-nav {
+        gap: 18px;
       }
       .nav-link-item {
+        font-size: 0.85rem;
+      }
+      .btn-header-cta {
+        padding: 8px 18px;
         font-size: 0.84rem;
-      }
-      .header-right-cluster {
-        gap: 12px;
-      }
-      .header-nav-secondary {
-        gap: 10px;
-      }
-      .nav-link-forum {
-        font-size: 0.84rem;
-        padding: 5px 8px;
-      }
-      .nav-tab-pill {
-        padding: 5px 12px;
-        font-size: 0.8rem;
-      }
-      .nav-tab-pill.nav-tab-cta {
-        padding: 5px 14px;
-        font-size: 0.8rem;
       }
     }
 
     @media (max-width: 1024px) {
-      .header-nav-primary,
-      .header-nav-secondary {
-        display: none !important;
+      .header-nav {
+        display: none !important; /* Desktop nav hidden; replaced by drawer */
       }
 
       .mobile-toggle {
@@ -489,14 +372,52 @@
         align-items: center;
       }
 
+      /* Hide the desktop CTA button — it lives in the drawer on mobile */
+      .btn-cta-desktop {
+        display: none !important;
+      }
+
       .site-header {
         padding: 12px 0;
       }
     }
 
+    @media (max-width: 768px) {
+      .site-topbar {
+        min-height: auto;
+        padding: 6px 0;
+      }
+      .topbar-container {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+      }
+      .topbar-contact {
+        width: 100%;
+        justify-content: center;
+        gap: 10px;
+        font-size: 0.74rem;
+      }
+      .topbar-right-group {
+        width: 100%;
+        justify-content: center;
+        gap: 10px;
+      }
+    }
+
     @media (max-width: 576px) {
-      .site-header {
-        top: 32px;
+      .topbar-contact {
+        font-size: 0.72rem;
+        gap: 8px;
+      }
+      .topbar-social-link {
+        width: 22px;
+        height: 22px;
+        font-size: 0.68rem;
+      }
+      .topbar-nav-item {
+        font-size: 0.72rem;
+        padding: 2px 8px;
       }
     }
 
@@ -595,11 +516,11 @@
     .drawer-link {
       font-family: 'Poppins', sans-serif;
       font-weight: 600;
-      font-size: 0.97rem;
+      font-size: 0.95rem;
       color: #374151;
       text-decoration: none !important;
-      padding: 13px 16px;
-      border-radius: 14px;
+      padding: 12px 16px;
+      border-radius: 12px;
       transition: all 0.25s ease;
       display: flex;
       align-items: center;
