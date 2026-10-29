@@ -1,13 +1,9 @@
 <?php
 
 /**
- * Single Discussion View - High Fidelity Detail Alignment & Sidebar Polish
+ * Single Discussion View - Polished High Fidelity Detail Alignment & Sidebar Polish
  */
 ?>
-
-
-
-
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-view.css?v=<?= filemtime(ROOT_PATH . '/css/forum-view.css') ?>" />
 
@@ -37,81 +33,143 @@ $safe_replies_json = json_encode($safe_replies, JSON_HEX_TAG | JSON_INVALID_UTF8
 if ($safe_replies_json === false) {
     $safe_replies_json = '[]';
 }
+
+$view_author = trim($topic['author_name'] ?? '');
+if (empty($view_author)) $view_author = 'Anonymous';
 ?>
 
 <div class="view-wrapper" x-data="discussionDetail()">
     <div class="container">
         <div class="row">
+            <!-- Left Column: Discussion & Replies -->
             <div class="col-lg-8">
                 <nav class="detail-nav">
                     <a href="<?= BASE_URL ?>/forum/feed" class="back-link">
                         <span class="material-symbols-outlined">arrow_back</span>
-                        Back to Feed
+                        <span>Back to Community Feed</span>
                     </a>
                 </nav>
 
-                <article class="article-minimal">
+                <!-- Primary Discussion Card -->
+                <article class="discussion-main-card">
                     <?= $featured_image_html ?>
 
-                    <span class="topic-category <?= $featured_image_html ? 'mt-3' : '' ?>"><?= htmlspecialchars($topic['category_name']) ?></span>
-                    <h1 class="topic-title"><?= htmlspecialchars($topic['title']) ?></h1>
+                    <div class="card-meta-header">
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <span class="topic-category-chip"><?= htmlspecialchars($topic['category_name']) ?></span>
+                            <?php if (!empty($topic['is_pinned'])): ?>
+                                <span class="topic-badge-pinned">
+                                    <span class="material-symbols-outlined">push_pin</span>
+                                    <span>Pinned</span>
+                                </span>
+                            <?php endif; ?>
+                            <?php if (!empty($topic['is_hot'])): ?>
+                                <span class="topic-badge-hot">
+                                    <span class="material-symbols-outlined">local_fire_department</span>
+                                    <span>Trending</span>
+                                </span>
+                            <?php endif; ?>
+                        </div>
+                        <span class="topic-thread-id">#THREAD-<?= strtoupper(substr($safe_uuid, 0, 8)) ?></span>
+                    </div>
 
-                    <?php
-                    $view_author = trim($topic['author_name']);
-                    if (empty($view_author)) $view_author = 'Anonymous';
-                    ?>
-                    <div class="author-meta-premium border-0 pb-0 mb-4 mt-3">
-                        <img src="<?= !empty($topic['author_avatar']) ? BASE_URL . $topic['author_avatar'] : "https://ui-avatars.com/api/?name=" . urlencode($view_author) . "&background=f48221&color=fff&size=48" ?>" class="author-avatar-lg" style="width:48px; height:48px;" alt="Avatar">
+                    <h1 class="topic-main-title"><?= htmlspecialchars($topic['title']) ?></h1>
+
+                    <div class="author-meta-premium">
+                        <div class="position-relative">
+                            <img src="<?= !empty($topic['author_avatar']) ? BASE_URL . $topic['author_avatar'] : "https://ui-avatars.com/api/?name=" . urlencode($view_author) . "&background=f48221&color=fff&size=48" ?>" class="author-avatar-lg" alt="Avatar">
+                            <span class="author-status-dot"></span>
+                        </div>
                         <div class="author-info-group">
-                            <span style="font-family:'Poppins'; font-weight:700; font-size:1.1rem; color:#111;"><?= htmlspecialchars($view_author) ?></span><br>
-                            <span style="font-size:0.85rem; color:#797979;">Published on <?= date('F j, Y', strtotime($topic['created_at'])) ?></span>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="author-display-name"><?= htmlspecialchars($view_author) ?></span>
+                                <span class="author-verified-tag">Verified Member</span>
+                            </div>
+                            <div class="author-publish-meta">
+                                <span class="material-symbols-outlined">calendar_today</span>
+                                <span>Published on <?= date('F j, Y', strtotime($topic['created_at'])) ?></span>
+                                <span class="meta-dot-divider">•</span>
+                                <span class="material-symbols-outlined">schedule</span>
+                                <span><?= date('H:i', strtotime($topic['created_at'])) ?></span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="topic-content-rich mt-4">
+                    <div class="topic-content-rich">
                         <?= $content ?>
                     </div>
 
-                    <div class="card-interaction-bar mt-5 pt-3 border-top d-flex gap-2">
-                        <button class="btn-interact" :class="{ 'liked': isLiked }" @click="toggleLike()">
+                    <!-- Interaction Bar -->
+                    <div class="card-interaction-bar">
+                        <button type="button" class="btn-interact" :class="{ 'liked': isLiked }" @click="toggleLike()" title="Support this discussion">
                             <span class="material-symbols-outlined" :style="isLiked ? 'font-variation-settings: \'FILL\' 1;' : ''">thumb_up</span>
-                            <span x-text="likes"></span>
+                            <span>Support Topic</span>
+                            <span class="badge-count" x-text="likes"></span>
                         </button>
-                        <button class="btn-interact" @click="scrollToReply()">
+                        <button type="button" class="btn-interact" @click="scrollToReply()" title="Jump to comments">
                             <span class="material-symbols-outlined">chat_bubble</span>
-                            <span x-text="replies.length"></span>
+                            <span>Discussion</span>
+                            <span class="badge-count" x-text="replies.length"></span>
                         </button>
                         <div class="ms-auto">
-                            <button class="btn-interact btn-bookmark-prominent" @click="triggerBrowserBookmark()" title="Bookmark this thread in your browser">
+                            <button type="button" class="btn-interact btn-bookmark-prominent" @click="triggerBrowserBookmark()" title="Bookmark this thread in your browser">
                                 <span class="material-symbols-outlined">bookmark_add</span>
-                                <span>Bookmark Page</span>
+                                <span>Bookmark</span>
                             </button>
                         </div>
                     </div>
                 </article>
 
+                <!-- Threaded Responses Section -->
                 <section class="replies-container">
-                    <h2 class="replies-heading">Discussion (<span x-text="replies.length"></span>)</h2>
+                    <div class="replies-header-strip">
+                        <div class="replies-heading-wrap">
+                            <span class="material-symbols-outlined replies-heading-icon">forum</span>
+                            <h2 class="replies-heading">Community Responses</h2>
+                            <span class="replies-count-badge" x-text="`${replies.length} replies`"><?= count($topic['replies'] ?? []) ?> replies</span>
+                        </div>
+                        <button type="button" class="btn-jump-reply" @click="scrollToReply()">
+                            <span class="material-symbols-outlined">add_comment</span>
+                            <span>Write Response</span>
+                        </button>
+                    </div>
 
-                    <div class="replies-list">
+                    <!-- Empty replies state -->
+                    <template x-if="threadedReplies.length === 0">
+                        <div class="replies-empty-state">
+                            <span class="material-symbols-outlined empty-bubble-icon">chat</span>
+                            <h4 class="empty-reply-title">No replies yet</h4>
+                            <p class="empty-reply-subtext">Be the first engineer to share your thoughts or provide a solution.</p>
+                        </div>
+                    </template>
+
+                    <!-- Replies List -->
+                    <div class="replies-list" x-show="threadedReplies.length > 0">
                         <template x-for="reply in threadedReplies" :key="reply.uuid">
                             <div class="reply-card-wrapper"
-                                :style="`margin-left: ${Math.min(reply.depth * 32, 160)}px`"
+                                :style="`margin-left: ${Math.min(reply.depth * 28, 140)}px`"
                                 :class="reply.depth > 0 ? 'reply-nested' : ''">
                                 <div class="reply-card">
                                     <div class="reply-header">
-                                        <img :src="reply.author_avatar ? '<?= BASE_URL ?>' + reply.author_avatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(reply.author_name)}&background=f48221&color=fff&size=26`" class="reply-avatar" alt="Avatar">
-                                        <span class="reply-author" x-text="reply.author_name"></span>
-                                        <span class="reply-time" x-text="formatTime(reply.created_at)"></span>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img :src="reply.author_avatar ? '<?= BASE_URL ?>' + reply.author_avatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(reply.author_name)}&background=f48221&color=fff&size=28`" class="reply-avatar" alt="Avatar">
+                                            <span class="reply-author" x-text="reply.author_name"></span>
+                                            <span class="reply-badge-pill" x-show="reply.depth > 0">Nested</span>
+                                        </div>
+                                        <span class="reply-time">
+                                            <span class="material-symbols-outlined" style="font-size:12px;">schedule</span>
+                                            <span x-text="formatTime(reply.created_at)"></span>
+                                        </span>
                                     </div>
                                     <div class="reply-body" x-text="reply.content"></div>
                                     <div class="reply-actions">
-                                        <button class="btn-mini-interact" @click="toggleReplyLike(reply)" :class="{ 'liked': reply.is_liked == 1 }">
+                                        <button type="button" class="btn-mini-interact" @click="toggleReplyLike(reply)" :class="{ 'liked': reply.is_liked == 1 }">
                                             <span class="material-symbols-outlined" :style="reply.is_liked == 1 ? 'font-variation-settings: \'FILL\' 1;' : ''">thumb_up</span>
                                             <span x-text="reply.likes || 0"></span>
                                         </button>
-                                        <button class="btn-mini-interact" @click="setReplyTo(reply.uuid, reply.author_name)">
-                                            <span class="material-symbols-outlined">reply</span> Reply
+                                        <button type="button" class="btn-mini-interact" @click="setReplyTo(reply.uuid, reply.author_name)">
+                                            <span class="material-symbols-outlined">reply</span>
+                                            <span>Reply</span>
                                         </button>
                                     </div>
                                 </div>
@@ -119,21 +177,28 @@ if ($safe_replies_json === false) {
                         </template>
                     </div>
 
-                    <div class="reply-entry-area mt-5">
-                        <div class="reply-to-tag" x-show="replyingToName" x-transition>
-                            <span>Replying to <em x-text="replyingToName"></em></span>
-                            <span class="material-symbols-outlined" style="font-size:12px; cursor:pointer;" @click="cancelReply()">close</span>
+                    <!-- Reply Entry Area -->
+                    <div class="reply-entry-card" id="reply-box-anchor">
+                        <div class="reply-entry-header">
+                            <span class="material-symbols-outlined">edit_note</span>
+                            <span>Share Your Technical Insight</span>
                         </div>
-                        <div class="reply-input-row border-0 pt-0 mt-0">
-                            <img src="<?= !empty($_SESSION['member_avatar']) ? BASE_URL . $_SESSION['member_avatar'] : "https://ui-avatars.com/api/?name=" . urlencode($_SESSION['member_name'] ?? 'Me') . "&background=f48221&color=fff&size=32" ?>" style="width:32px; height:32px; border-radius:50%;" alt="Me">
+                        <div class="reply-to-tag" x-show="replyingToName" x-transition>
+                            <span>Replying to <strong x-text="replyingToName"></strong></span>
+                            <button type="button" class="btn-cancel-reply" @click="cancelReply()" title="Cancel reply target">
+                                <span class="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <div class="reply-input-row">
+                            <img src="<?= !empty($_SESSION['member_avatar']) ? BASE_URL . $_SESSION['member_avatar'] : "https://ui-avatars.com/api/?name=" . urlencode($_SESSION['member_name'] ?? 'Me') . "&background=f48221&color=fff&size=36" ?>" class="reply-user-avatar" alt="Me">
                             <div class="reply-field-container">
                                 <input type="text" id="reply-input"
                                     class="reply-field"
-                                    :placeholder="replyingToName ? `Write a reply...` : 'Share your thought...'"
+                                    :placeholder="replyingToName ? `Write your reply to ${replyingToName}...` : 'Share your engineering insight or feedback...'"
                                     x-model="newReply"
                                     @keydown.enter="submitReply()">
-                                <button class="btn-submit-pill" @click="submitReply()" :disabled="submitting">
-                                    <span x-show="!submitting" class="material-symbols-outlined" style="font-size:18px;">arrow_upward</span>
+                                <button type="button" class="btn-submit-pill" @click="submitReply()" :disabled="submitting || !newReply.trim()" title="Send reply">
+                                    <span x-show="!submitting" class="material-symbols-outlined">send</span>
                                     <span x-show="submitting" class="spinner-border spinner-border-sm"></span>
                                 </button>
                             </div>
@@ -142,16 +207,17 @@ if ($safe_replies_json === false) {
                 </section>
             </div>
 
+            <!-- Right Column: Topic Insight & Sidebar -->
             <div class="col-lg-4">
-                <div class="sidebar-widget">
+                <div class="topic-insight-widget">
                     <div class="widget-header-premium">
                         <div class="widget-icon-box"><span class="material-symbols-outlined">insights</span></div>
-                        <h3 class="widget-title-premium">Topic Insight 📈</h3>
+                        <h3 class="widget-title-premium">Topic Telemetry</h3>
                     </div>
                     <div class="metric-row-premium">
                         <div class="metric-label-group">
                             <span class="material-symbols-outlined">chat_bubble</span>
-                            <span class="metric-label">Community Reply</span>
+                            <span class="metric-label">Community Replies</span>
                         </div>
                         <span class="metric-value-badge" x-text="`${replies.length} entries`"><?= count($topic['replies']) ?> entries</span>
                     </div>
@@ -162,7 +228,15 @@ if ($safe_replies_json === false) {
                         </div>
                         <span class="metric-value-badge" x-text="`${likes} votes`"><?= $topic['likes'] ?> votes</span>
                     </div>
+                    <div class="metric-row-premium">
+                        <div class="metric-label-group">
+                            <span class="material-symbols-outlined">sensors</span>
+                            <span class="metric-label">Thread Status</span>
+                        </div>
+                        <span class="metric-value-badge" style="color: #16a34a;">Active</span>
+                    </div>
                 </div>
+
                 <?php include ROOT_PATH . '/views/forum/includes/members-sidebar.php'; ?>
             </div>
         </div>

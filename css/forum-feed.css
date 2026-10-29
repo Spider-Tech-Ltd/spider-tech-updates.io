@@ -671,3 +671,73 @@
   .btn-submit-pill:hover { background-color: #e6751c; transform: translateY(-50%) scale(1.05); }
   .btn-submit-pill:disabled { background-color: #d6d6d6; cursor: not-allowed; }
   .reply-to-tag { display: inline-flex; align-items: center; gap: 6px; background-color: #fffbf7; color: var(--spider-orange); font-family: 'Poppins'; font-weight: 700; font-size: 0.7rem; padding: 4px 12px; border-radius: 50px; border: 1px solid rgba(244,130,33,0.1); margin-bottom: 8px; }
+
+
+/* ============================
+   ROW STAT LIKE BUTTON & PAGINATION
+   ============================ */
+.row-stat-like-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  justify-content: center;
+}
+.row-stat-like-btn:hover .row-stat-icon,
+.row-stat-like-btn.is-liked .row-stat-icon {
+  color: var(--primary-orange, #f48221);
+}
+.row-stat-like-btn:hover .row-stat-num,
+.row-stat-like-btn.is-liked .row-stat-num {
+  color: var(--primary-orange, #f48221);
+  font-weight: 700;
+}
+.member-feed-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+.member-feed-pagination .pag-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px;
+  border-radius: 50px;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  color: #1e293b;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02);
+  transition: all 0.2s ease;
+  text-decoration: none !important;
+}
+.member-feed-pagination .pag-btn:hover:not(:disabled) {
+  border-color: #f48221;
+  color: #f48221;
+  background: rgba(244, 130, 33, 0.04);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(244, 130, 33, 0.12);
+}
+.member-feed-pagination .pag-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.member-feed-pagination .pag-info {
+  font-family: "Chakra Petch", monospace, sans-serif;
+  font-size: 0.82rem;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+.member-feed-pagination .pag-info strong {
+  color: #0f172a;
+  font-weight: 700;
+}

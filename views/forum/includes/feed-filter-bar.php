@@ -5,6 +5,9 @@
  */
 $currentCat = $_GET['category'] ?? 'all';
 $currentSort = $_GET['sort'] ?? 'latest';
+$requestUri = $_SERVER['REQUEST_URI'] ?? '';
+$isFeedPage = (strpos($requestUri, 'forum/feed') !== false);
+$baseFilterUrl = $isFeedPage ? (BASE_URL . '/forum/feed') : (BASE_URL . '/forum');
 ?>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-feed-filter-bar.css?v=<?= filemtime(ROOT_PATH . '/css/forum-feed-filter-bar.css') ?>" />
@@ -42,7 +45,7 @@ $currentSort = $_GET['sort'] ?? 'latest';
              role="tablist" 
              aria-label="Discussion Categories">
 
-          <a href="<?= BASE_URL ?>/forum?category=all&sort=<?= urlencode($currentSort) ?>#feedSection"
+          <a href="<?= $baseFilterUrl ?>?category=all&sort=<?= urlencode($currentSort) ?>#feedSection"
              class="forum-tab-btn <?= ($currentCat === 'all' || empty($currentCat)) ? 'active' : '' ?>">
             <span class="material-symbols-outlined tab-icon">grid_view</span>
             <span>All Topics</span>
@@ -53,7 +56,7 @@ $currentSort = $_GET['sort'] ?? 'latest';
             <?php foreach ($categories as $cat): ?>
               <?php $catKey = $cat['slug'] ?? $cat['uuid']; ?>
               <?php $isActive = ($currentCat === $catKey); ?>
-              <a href="<?= BASE_URL ?>/forum?category=<?= urlencode($catKey) ?>&sort=<?= urlencode($currentSort) ?>#feedSection"
+              <a href="<?= $baseFilterUrl ?>?category=<?= urlencode($catKey) ?>&sort=<?= urlencode($currentSort) ?>#feedSection"
                  class="forum-tab-btn <?= $isActive ? 'active' : '' ?>">
                 <span class="material-symbols-outlined tab-icon"><?= htmlspecialchars($cat['icon'] ?? 'label') ?></span>
                 <span><?= htmlspecialchars($cat['name']) ?></span>
@@ -101,7 +104,7 @@ $currentSort = $_GET['sort'] ?? 'latest';
           </button>
 
           <div class="custom-sort-menu" x-show="sortOpen" x-transition.origin.top.right x-cloak style="display: none;">
-            <a href="<?= BASE_URL ?>/forum?category=<?= urlencode($currentCat) ?>&sort=latest#feedSection"
+            <a href="<?= $baseFilterUrl ?>?category=<?= urlencode($currentCat) ?>&sort=latest#feedSection"
                class="custom-sort-item <?= ($currentSort === 'latest') ? 'active' : '' ?>">
               <div class="d-flex align-items-center gap-2">
                 <span class="material-symbols-outlined item-icon">schedule</span>
@@ -112,7 +115,7 @@ $currentSort = $_GET['sort'] ?? 'latest';
               <?php endif; ?>
             </a>
 
-            <a href="<?= BASE_URL ?>/forum?category=<?= urlencode($currentCat) ?>&sort=hottest#feedSection"
+            <a href="<?= $baseFilterUrl ?>?category=<?= urlencode($currentCat) ?>&sort=hottest#feedSection"
                class="custom-sort-item <?= ($currentSort === 'hottest') ? 'active' : '' ?>">
               <div class="d-flex align-items-center gap-2">
                 <span class="material-symbols-outlined item-icon">local_fire_department</span>

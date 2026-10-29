@@ -1,14 +1,16 @@
 <?php
 /**
- * Member Feed View
+ * Member Feed View — Synchronized with Forum Landing Anti-Scroll Engineering Rows
  */
+$initialFeedsJson = json_encode($feeds ?? [], JSON_HEX_TAG | JSON_INVALID_UTF8_SUBSTITUTE);
+if ($initialFeedsJson === false) { $initialFeedsJson = '[]'; }
+$initialTotalPages = (int)($total_pages ?? 1);
+$initialCurrentPage = (int)($current_page ?? 1);
+$initialCategory = json_encode($category_filter ?? 'all');
+$initialSort = json_encode($_GET['sort'] ?? 'latest');
 ?>
 
-
-
-
-
-
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-guest-feed.css?v=<?= filemtime(ROOT_PATH . '/css/forum-guest-feed.css') ?>" />
 <link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-feed.css?v=<?= filemtime(ROOT_PATH . '/css/forum-feed.css') ?>" />
 
 <?php include ROOT_PATH . '/views/forum/includes/feed-banner.php'; ?>
@@ -16,77 +18,144 @@
 <!-- Filter Bar -->
 <?php include ROOT_PATH . '/views/forum/includes/feed-filter-bar.php'; ?>
 
-<section class="member-feed-section py-5" x-data="forumFeed()">
+<section class="member-feed-section py-5" x-data="forumFeedController()">
   <div class="container">
     <div class="row">
       <!-- Left Column: Discussion Feed -->
       <div class="col-lg-8">
-        <!-- Feed Header -->
-        <div class="member-feed-header">
-          <h2 class="member-feed-title">Latest Discussions</h2>
-          <span class="feed-count-badge" x-text="`${discussions.length} threads`"><?= count($feeds ?? []); ?> threads</span>
+        
+        <!-- Feed Section Header -->
+        <div class="feed-header-wrap mb-4">
+          <div class="feed-header-meta">
+            <div class="feed-eyebrow">
+              <span class="eyebrow-accent">|–</span>
+              <span>ENGINEERING THREADS</span>
+              <span class="eyebrow-accent">–|</span>
+            </div>
+            <h2 class="feed-title">Latest Discussions</h2>
+            <p class="feed-subtitle">
+              Showing <span class="feed-count-highlight" x-text="discussions.length"><?= count($feeds ?? []) ?></span> discussions in current view
+            </p>
+          </div>
+
+          <div class="feed-header-actions">
+            <a href="<?= BASE_URL ?>/forum/new-topic" class="btn-new-topic">
+              <span class="material-symbols-outlined">add_circle</span>
+              <span>Start Topic</span>
+            </a>
+          </div>
         </div>
 
-        <!-- Discussion Cards -->
-        <div class="discussion-card-list" id="discussionFeed">
+        <!-- Discussion Cards (Streamlined Anti-Scroll Engineering Rows) -->
+        <div class="discussion-feed-list" id="discussionFeed" role="feed" aria-label="Community discussions">
+          <!-- Loading State -->
           <div x-show="loading" class="text-center py-5">
             <div class="spinner-border text-primary" role="status"></div>
-            <p class="mt-2 text-muted">Loading discussions...</p>
+            <p class="mt-2 text-muted" style="font-family:'Poppins', sans-serif; font-size:0.88rem;">Loading discussions...</p>
           </div>
-          
+
+          <!-- Empty State -->
           <template x-if="!loading && discussions.length === 0">
-            <p class="text-center py-5 text-muted">No discussions found.</p>
+            <div class="discussion-empty-card text-center py-5">
+              <span class="material-symbols-outlined empty-icon" style="font-size: 48px; color: #cbd5e1;">forum</span>
+              <h4 class="empty-title mt-2" style="font-family:'Poppins', sans-serif; font-weight:700; color:#1e293b;">No Discussions in This Category Yet</h4>
+              <p class="empty-subtext text-muted" style="font-size:0.88rem;">Be the first engineer to start a conversation in this topic hub.</p>
+              <a href="<?= BASE_URL ?>/forum/new-topic" class="btn-new-topic mt-3">
+                <span class="material-symbols-outlined">add_circle</span>
+                <span>Start First Discussion</span>
+              </a>
+            </div>
           </template>
 
+          <!-- Streamlined Row Cards (Matching Forum Landing Page) -->
           <template x-for="feed in discussions" :key="feed.uuid">
-            <div class="discussion-card" 
-                 :class="{ 'is-pinned': feed.is_pinned, 'is-hot': feed.is_hot, 'expanded': expanded }"
-                 x-data="feedCard(feed.uuid, feed.upvotes, feed.is_liked, feed.replies)">
-              <div class="card-top-row">
-                <span class="category-badge" x-text="feed.category_name"></span>
-                <span class="badge-pinned-label" x-show="feed.is_pinned">
-                  <span class="material-symbols-outlined" style="font-size:13px; font-variation-settings:'FILL' 1;">push_pin</span>
-                  Pinned
-                </span>
-                <span class="badge-hot-label" x-show="feed.is_hot">
-                  <span class="material-symbols-outlined">local_fire_department</span> HOT
-                </span>
-              </div>
-              <a :href="`<?= BASE_URL ?>/forum/discussion?uuid=${feed.uuid}`" class="text-decoration-none">
-                <h3 class="card-title" x-text="feed.title"></h3>
-              </a>
-              <div class="card-excerpt shadow-none border-0 p-0" x-html="feed.content"></div>
-              <div class="card-author-row">
-                <img :src="feed.author_avatar ? '<?= BASE_URL ?>' + feed.author_avatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(feed.author_name)}&background=f48221&color=fff&size=32`" class="author-avatar-sm" alt="Author">
-                <span class="author-name" x-text="feed.author_name"></span>
-                <span class="author-time" x-text="formatDate(feed.created_at)"></span>
-              </div>
-              <div class="card-interaction-bar">
-                <button class="btn-interact btn-like" 
-                        :class="{ 'liked': isLiked }" 
-                        title="Like" 
-                        @click="toggleLike()">
-                  <span class="material-symbols-outlined" :style="isLiked ? 'font-variation-settings: \'FILL\' 1;' : ''">thumb_up</span>
-                  <span class="vote-count" x-text="likes"></span>
-                </button>
-                <a :href="`<?= BASE_URL ?>/forum/discussion?uuid=${feed.uuid}#discussion`" class="btn-interact btn-reply" title="Replies">
-                  <span class="material-symbols-outlined">chat_bubble</span>
-                  <span class="reply-count" x-text="replies.length"></span>
-                </a>
-              </div>
+            <div class="discussion-item-wrap feed-item-fade-in" x-show="!loading">
+              <a :href="`<?= BASE_URL ?>/forum/discussion?uuid=${feed.uuid}`"
+                 class="discussion-row-card"
+                 :class="{ 'is-pinned': feed.is_pinned, 'is-hot': feed.is_hot }"
+                 role="article"
+                 :aria-label="feed.title">
 
+                <!-- Left: Stat Counters (Upvotes & Replies in compact dual-pill) -->
+                <div class="row-stats-box" :aria-label="`${feed.likes || feed.upvotes || 0} upvotes, ${feed.replies_count || (feed.replies ? feed.replies.length : 0)} replies`">
+                  <button type="button"
+                          class="row-stat-col row-stat-like-btn"
+                          :class="{ 'is-liked': feed.is_liked }"
+                          title="Support topic"
+                          @click.prevent.stop="toggleLike(feed)">
+                    <span class="material-symbols-outlined row-stat-icon" :style="feed.is_liked ? 'font-variation-settings: \'FILL\' 1;' : ''">thumb_up</span>
+                    <span class="row-stat-num" x-text="feed.likes !== undefined ? feed.likes : (feed.upvotes || 0)"></span>
+                  </button>
+                  <div class="row-stat-divider"></div>
+                  <div class="row-stat-col" :class="{ 'has-replies': ((feed.replies_count || (feed.replies ? feed.replies.length : 0)) > 0) }" title="Discussion replies">
+                    <span class="material-symbols-outlined row-stat-icon">chat_bubble</span>
+                    <span class="row-stat-num" x-text="feed.replies_count !== undefined ? feed.replies_count : (feed.replies ? feed.replies.length : 0)"></span>
+                  </div>
+                </div>
+
+                <!-- Center: Topic Content -->
+                <div class="row-content-body">
+                  <!-- Top Inline Meta: Badges + Time -->
+                  <div class="row-meta-inline">
+                    <span class="row-category-chip" x-text="feed.category_name || 'General'"></span>
+                    <template x-if="feed.is_pinned">
+                      <span class="row-badge-pinned">
+                        <span class="material-symbols-outlined">push_pin</span>
+                        <span>Pinned</span>
+                      </span>
+                    </template>
+                    <template x-if="feed.is_hot">
+                      <span class="row-badge-hot">
+                        <span class="material-symbols-outlined">local_fire_department</span>
+                        <span>Trending</span>
+                      </span>
+                    </template>
+                    <span class="row-meta-separator">•</span>
+                    <span class="row-time-ago">
+                      <span class="material-symbols-outlined">schedule</span>
+                      <span x-text="formatDate(feed.created_at)"></span>
+                    </span>
+                  </div>
+
+                  <!-- Title -->
+                  <h3 class="row-topic-title" x-text="feed.title"></h3>
+
+                  <!-- Compact Excerpt Preview -->
+                  <p class="row-topic-excerpt" x-text="cleanExcerpt(feed.content)"></p>
+
+                  <!-- Author Meta Line -->
+                  <div class="row-author-meta">
+                    <img :src="feed.author_avatar ? '<?= BASE_URL ?>' + feed.author_avatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(feed.author_name || 'Member')}&background=f48221&color=fff&size=24`"
+                         class="row-author-avatar"
+                         :alt="feed.author_name || 'Member'"
+                         loading="lazy">
+                    <span class="row-author-name" x-text="feed.author_name || 'Member'"></span>
+                    <span class="row-author-role">Member</span>
+                  </div>
+                </div>
+
+                <!-- Right: Action Arrow -->
+                <div class="row-arrow-box" aria-hidden="true">
+                  <span class="material-symbols-outlined row-arrow-icon">arrow_forward</span>
+                </div>
+
+              </a>
             </div>
           </template>
         </div>
 
         <!-- Pagination -->
         <div class="member-feed-pagination" x-show="totalPages > 1">
-          <button class="pag-btn" @click="prevPage()" :disabled="currentPage <= 1" :style="currentPage <= 1 ? 'opacity:0.5; cursor:not-allowed;' : ''">
-            <span class="material-symbols-outlined">chevron_left</span> Previous
+          <button class="pag-btn" @click="prevPage()" :disabled="currentPage <= 1">
+            <span class="material-symbols-outlined">chevron_left</span>
+            <span>Previous</span>
           </button>
-          <span class="pag-info">Page <span x-text="currentPage"></span> of <span x-text="totalPages"></span></span>
-          <button class="pag-btn" @click="nextPage()" :disabled="currentPage >= totalPages" :style="currentPage >= totalPages ? 'opacity:0.5; cursor:not-allowed;' : ''">
-            Next <span class="material-symbols-outlined">chevron_right</span>
+          <span class="pag-info">
+            Page <strong x-text="currentPage"></strong> of <strong x-text="totalPages"></strong>
+          </span>
+          <button class="pag-btn" @click="nextPage()" :disabled="currentPage >= totalPages">
+            <span>Next</span>
+            <span class="material-symbols-outlined">chevron_right</span>
           </button>
         </div>
       </div>
@@ -100,29 +169,27 @@
 </section>
 
 <!-- Mobile FAB -->
-<a href="<?= BASE_URL ?>/forum/new-topic" class="member-fab-mobile">
+<a href="<?= BASE_URL ?>/forum/new-topic" class="member-fab-mobile" title="Start a Topic">
   <span class="member-fab-pulse-ring"></span>
   <span class="material-symbols-outlined">edit</span>
 </a>
 
 <script>
 document.addEventListener('alpine:init', () => {
-    Alpine.data('forumFeed', () => ({
-        discussions: [],
+    Alpine.data('forumFeedController', () => ({
+        discussions: <?= $initialFeedsJson ?>,
         loading: false,
-        currentCategory: 'all',
-        currentSort: 'latest',
-        currentPage: <?= $current_page ?? 1 ?>,
-        totalPages: <?= $total_pages ?? 1 ?>,
+        currentCategory: <?= $initialCategory ?>,
+        currentSort: <?= $initialSort ?>,
+        currentPage: <?= $initialCurrentPage ?>,
+        totalPages: <?= $initialTotalPages ?>,
 
         init() {
-            this.fetchDiscussions();
-            
             // Listen for filter updates from the filter bar
             window.addEventListener('filter-changed', (e) => {
                 if (e.detail.category !== undefined) this.currentCategory = e.detail.category;
                 if (e.detail.sort !== undefined) this.currentSort = e.detail.sort;
-                this.currentPage = 1; // Reset to page 1 on filter change
+                this.currentPage = 1;
                 this.fetchDiscussions();
             });
         },
@@ -145,7 +212,33 @@ document.addEventListener('alpine:init', () => {
                 console.error('Error fetching discussions:', error);
             } finally {
                 this.loading = false;
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                const feedEl = document.getElementById('feedSection') || document.getElementById('discussionFeed');
+                if (feedEl) {
+                    feedEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        },
+
+        async toggleLike(feed) {
+            try {
+                const response = await fetch('<?= BASE_URL ?>/forum/feed/like', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        feed_uuid: feed.uuid,
+                        csrf_token: '<?= CSRF::generateToken() ?>'
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    feed.likes = data.likes;
+                    feed.upvotes = data.likes;
+                    feed.is_liked = data.is_liked;
+                } else if (data.message && data.message.includes('sign in')) {
+                    window.location.href = '<?= BASE_URL ?>/forum/sign-in';
+                }
+            } catch (error) {
+                console.error('Error toggling like:', error);
             }
         },
 
@@ -164,152 +257,21 @@ document.addEventListener('alpine:init', () => {
         },
 
         formatDate(dateStr) {
+            if (!dateStr) return '';
             const date = new Date(dateStr);
             return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         },
 
-        formatTime(dateStr) {
-            if (!dateStr) return '';
-            const date = new Date(dateStr);
-            return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
-        }
-    }));
-
-    Alpine.data('feedCard', (uuid, initialLikes, initialIsLiked, initialReplies) => ({
-        uuid: uuid,
-        likes: initialLikes,
-        isLiked: initialIsLiked,
-        replies: initialReplies,
-        expanded: false,
-        newReplyContent: '',
-        parent_uuid: null,
-        replyingToName: '',
-        submitting: false,
-
-        get threadedReplies() {
-            const list = [];
-            const map = {};
-            
-            this.replies.forEach(r => {
-                const pid = r.parent_uuid || 'root';
-                if (!map[pid]) map[pid] = [];
-                map[pid].push(r);
-            });
-
-            const flatten = (pid, depth) => {
-                if (!map[pid]) return;
-                map[pid].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-                map[pid].forEach(child => {
-                    list.push({ ...child, depth: depth });
-                    flatten(child.uuid, depth + 1);
-                });
-            };
-
-            flatten('root', 0);
-            return list;
-        },
-
-        setReplyTo(replyUuid, authorName) {
-            this.parent_uuid = replyUuid;
-            this.replyingToName = authorName;
-            this.expanded = true;
-            this.$nextTick(() => {
-                const input = this.$el.querySelector('.reply-input-field');
-                if (input) input.focus();
-            });
-        },
-
-        cancelReplyTo() {
-            this.parent_uuid = null;
-            this.replyingToName = '';
-        },
-
-        async toggleReplyLike(reply) {
-            try {
-                const response = await fetch('<?= BASE_URL ?>/forum/feed/like-reply', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        reply_uuid: reply.uuid,
-                        csrf_token: '<?= CSRF::generateToken() ?>'
-                    })
-                });
-                const data = await response.json();
-                if (data.success) {
-                    reply.likes = data.likes;
-                    reply.is_liked = data.is_liked;
-                } else {
-                    alert(data.message);
-                    if (data.message.includes('sign in')) window.location.href = '<?= BASE_URL ?>/forum/sign-in';
-                }
-            } catch (error) {
-                console.error('Error toggling reply like:', error);
+        cleanExcerpt(html) {
+            if (!html) return '';
+            const tmp = document.createElement('div');
+            tmp.innerHTML = html;
+            const text = tmp.textContent || tmp.innerText || '';
+            const trimmed = text.trim();
+            if (trimmed.length > 135) {
+                return trimmed.substring(0, 135) + '...';
             }
-        },
-
-        async toggleLike() {
-            try {
-                const response = await fetch('<?= BASE_URL ?>/forum/feed/like', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        feed_uuid: this.uuid,
-                        csrf_token: '<?= CSRF::generateToken() ?>'
-                    })
-                });
-                const data = await response.json();
-                if (data.success) {
-                    this.likes = data.likes;
-                    this.isLiked = data.is_liked;
-                } else {
-                    alert(data.message);
-                    if (data.message.includes('sign in')) window.location.href = '<?= BASE_URL ?>/forum/sign-in';
-                }
-            } catch (error) {
-                console.error('Error toggling like:', error);
-            }
-        },
-
-        async submitReply() {
-            if (!this.newReplyContent.trim() || this.submitting) return;
-            this.submitting = true;
-            try {
-                const response = await fetch('<?= BASE_URL ?>/forum/feed/reply', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        feed_uuid: this.uuid,
-                        content: this.newReplyContent,
-                        parent_uuid: this.parent_uuid || '',
-                        csrf_token: '<?= CSRF::generateToken() ?>'
-                    })
-                });
-                const data = await response.json();
-                if (data.success) {
-                    // Update reply list with full data
-                    const newReply = {
-                        ...data.reply,
-                        likes: 0,
-                        is_liked: false
-                    };
-                    this.replies.push(newReply);
-                    this.newReplyContent = '';
-                    this.cancelReplyTo();
-                } else {
-                    alert(data.message);
-                }
-            } catch (error) {
-                console.error('Error submitting reply:', error);
-            } finally {
-                this.submitting = false;
-            }
-        },
-
-        formatTime(dateStr) {
-            if (!dateStr) return '';
-            const parts = dateStr.split(' ');
-            if (parts.length > 1) return parts[1].substring(0, 5);
-            return dateStr;
+            return trimmed;
         }
     }));
 });
