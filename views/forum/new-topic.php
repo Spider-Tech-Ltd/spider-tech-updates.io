@@ -29,205 +29,209 @@
         </div>
     </template>
 
-    <div class="container">
-        <!-- Back Navigation -->
-        <div class="detail-nav">
-            <a href="feed" class="back-link">
-                <span class="material-symbols-outlined">arrow_back</span>
-                <span>Back to Feed</span>
-            </a>
-        </div>
-
-        <!-- Composition Header -->
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="comp-header">
-                    <div class="comp-header-meta">
-                        <div class="comp-eyebrow">
-                            <span class="material-symbols-outlined" style="font-size:13px;">terminal</span>
-                            <span>Discussion Composition</span>
-                        </div>
-                        <h1 class="comp-title">Start a New Discussion</h1>
-                        <p class="comp-subtitle" x-show="!draftRecovered">Share technical challenges, insights, or project inquiries with the community.</p>
-                        <p class="text-success" x-show="draftRecovered" x-transition style="font-size: 0.82rem; margin: 4px 0 0 0; font-family:'Poppins', sans-serif; font-weight:600;">
-                            <span class="material-symbols-outlined" style="font-size:14px; vertical-align:middle;">history</span> Draft restored from your previous session.
-                        </p>
-                    </div>
-                    <button type="button" class="btn-discard" @click="discard()">
-                        <span class="material-symbols-outlined">delete_outline</span>
-                        <span>Discard Draft</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <!-- Main Editor Column -->
-            <div class="col-lg-8">
-                <section class="editor-card">
-                    <!-- Title Input -->
-                    <div class="mb-4" :class="{ 'has-error': errors.title }">
-                        <label class="field-label">
-                            <span>Discussion Title</span>
-                            <span class="field-label-desc">— Keep it clear and descriptive</span>
-                        </label>
-                        <input type="text" 
-                               class="topic-title-input" 
-                               placeholder="e.g. Optimizing embedded edge telemetry via MQTT and ESP32..." 
-                               x-model="title" 
-                               maxlength="100"
-                               @input="errors.title = false"
-                               autofocus>
-                        <div class="d-flex justify-content-between mt-2">
-                            <span class="field-error-text" x-show="errors.title">
-                                <span class="material-symbols-outlined" style="font-size:14px;">error</span>
-                                Please provide a descriptive title (min. 5 chars).
-                            </span>
-                            <div class="ml-auto">
-                                <small :class="title.length >= 90 ? 'text-danger fw-bold' : 'text-muted'" style="font-size: 0.72rem; font-family:'Chakra Petch', monospace;">
-                                    <span x-text="title.length"></span>/100
-                                </small>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Category Selection -->
-                    <div class="mb-4" :class="{ 'has-error': errors.category }">
-                        <label class="field-label">
-                            <span>Select Category</span>
-                            <span class="field-label-desc">— Assign your topic to the most relevant field</span>
-                        </label>
-                        <div class="cat-pill-group mb-2">
-                            <?php if (!empty($categories)): ?>
-                                <?php foreach ($categories as $cat): ?>
-                                    <button type="button" class="cat-pill" 
-                                         :class="{ 'active': category_id === '<?= $cat['uuid'] ?>' }"
-                                         @click="category_id = '<?= $cat['uuid'] ?>'; errors.category = false">
-                                        <span class="material-symbols-outlined"><?= htmlspecialchars($cat['icon'] ?? 'label') ?></span>
-                                        <span><?= htmlspecialchars($cat['name']) ?></span>
-                                    </button>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </div>
-                        <span class="field-error-text" x-show="errors.category">
-                            <span class="material-symbols-outlined" style="font-size:14px;">error</span>
-                            Please select a category for your topic.
-                        </span>
-                    </div>
-
-                    <!-- Rich Text Editor -->
-                    <div :class="{ 'has-error': errors.content }">
-                        <label class="field-label">
-                            <span>Discussion Content</span>
-                            <span class="field-label-desc">— Technical details, code, and schematics</span>
-                        </label>
-                        <div class="editor-area-wrapper">
-                            <div class="editor-toolbar">
-                                <button type="button" class="tool-btn" title="Bold" @click="formatText('bold')" :class="{ 'active': activeStates.bold }">
-                                    <span class="material-symbols-outlined">format_bold</span>
-                                </button>
-                                <button type="button" class="tool-btn" title="Italic" @click="formatText('italic')" :class="{ 'active': activeStates.italic }">
-                                    <span class="material-symbols-outlined">format_italic</span>
-                                </button>
-                                <button type="button" class="tool-btn" title="Insert Link" @click="addLink()" :class="{ 'active': activeStates.link }">
-                                    <span class="material-symbols-outlined">link</span>
-                                </button>
-                                <button type="button" class="tool-btn" title="Code Block" @click="formatText('formatBlock', 'PRE')" :class="{ 'active': activeStates.code }">
-                                    <span class="material-symbols-outlined">code</span>
-                                </button>
-                                <div class="tool-divider"></div>
-                                <button type="button" class="tool-btn" title="Attach Technical Image" @click="$refs.imageInput.click()" :disabled="uploading">
-                                    <span class="material-symbols-outlined" x-show="!uploading">image</span>
-                                    <div class="spinner-border spinner-border-sm" x-show="uploading"></div>
-                                </button>
-                                <input type="file" x-ref="imageInput" class="d-none" accept="image/*" @change="handleImageUpload($event)">
-                            </div>
-                            <div class="editor-contenteditable" 
-                                 contenteditable="true"
-                                 placeholder="Describe your technical challenge, implementation findings, system architecture, or questions in detail..." 
-                                 x-ref="editor"
-                                 @input="content = $el.innerHTML; errors.content = false"
-                                 @blur="saveDraft()"></div>
-                        </div>
-                        <div class="d-flex justify-content-between mt-2">
-                            <span class="field-error-text" x-show="errors.content">
-                                <span class="material-symbols-outlined" style="font-size:14px;">error</span>
-                                Content is too short. Please elaborate with sufficient details (min. 10 chars).
-                            </span>
-                            <div class="ml-auto">
-                                <small :class="content.length >= 1900 ? 'text-danger fw-bold' : 'text-muted'" style="font-size: 0.72rem; font-family:'Chakra Petch', monospace;">
-                                    <span x-text="content.length"></span>/2000 characters
-                                </small>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+    <!-- Top Banner Section (Soft Light Orange Grid) -->
+    <section class="new-topic-banner">
+        <div class="container">
+            <!-- Back Navigation -->
+            <div class="detail-nav">
+                <a href="feed" class="back-link">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    <span>Back to Feed</span>
+                </a>
             </div>
 
-            <!-- Sidebar Column -->
-            <div class="col-lg-4">
-                <!-- Action Card -->
-                <div class="sidebar-card action-card">
-                    <button type="button" class="btn-post" @click="submitTopic()" :disabled="submitting">
-                        <span class="material-symbols-outlined" x-show="!submitting">send</span>
-                        <span class="spinner-border spinner-border-sm" x-show="submitting" role="status" aria-hidden="true"></span>
-                        <span x-text="submitting ? 'Publishing Discussion...' : 'Publish Discussion'"></span>
-                    </button>
-                    <p style="font-size: 0.78rem; color: #64748b; margin-top: 14px; margin-bottom: 0; text-align:center; line-height: 1.5;">
-                        Your topic will be indexed and visible immediately across the technical feed.
+            <!-- Composition Header -->
+            <div class="comp-header">
+                <div class="comp-header-meta">
+                    <div class="comp-eyebrow">
+                        <span class="material-symbols-outlined" style="font-size:13px;">terminal</span>
+                        <span>Discussion Composition</span>
+                    </div>
+                    <h1 class="comp-title">Start a New Discussion</h1>
+                    <p class="comp-subtitle" x-show="!draftRecovered">Share technical challenges, insights, or project inquiries with the community.</p>
+                    <p class="text-success" x-show="draftRecovered" x-transition style="font-size: 0.82rem; margin: 4px 0 0 0; font-family:'Poppins', sans-serif; font-weight:600;">
+                        <span class="material-symbols-outlined" style="font-size:14px; vertical-align:middle;">history</span> Draft restored from your previous session.
                     </p>
                 </div>
+                <button type="button" class="btn-discard" @click="discard()">
+                    <span class="material-symbols-outlined">delete_outline</span>
+                    <span>Discard Draft</span>
+                </button>
+            </div>
+        </div>
+    </section>
 
-                <!-- Community Guidelines -->
-                <div class="sidebar-card">
-                    <h3 class="sidebar-card-title">
-                        <span class="material-symbols-outlined">verified</span>
-                        <span>Posting Guidelines</span>
-                    </h3>
-                    <ul class="guidelines-list">
-                        <li>
-                            <span class="material-symbols-outlined">check_circle</span>
-                            <span>Search existing discussions before posting to prevent duplicate inquiries.</span>
-                        </li>
-                        <li>
-                            <span class="material-symbols-outlined">check_circle</span>
-                            <span>Provide specific hardware versions, firmware builds, or error traces when asking questions.</span>
-                        </li>
-                        <li>
-                            <span class="material-symbols-outlined">check_circle</span>
-                            <span>Maintain professional, collaborative, and constructive communication.</span>
-                        </li>
-                        <li>
-                            <span class="material-symbols-outlined">check_circle</span>
-                            <span>Format code and configuration blocks cleanly using the code tool.</span>
-                        </li>
-                    </ul>
+    <!-- Main Content Section -->
+    <section class="new-topic-content-section">
+        <div class="container">
+            <div class="row">
+                <!-- Main Editor Column -->
+                <div class="col-lg-8">
+                    <section class="editor-card">
+                        <!-- Title Input -->
+                        <div class="mb-4" :class="{ 'has-error': errors.title }">
+                            <label class="field-label">
+                                <span>Discussion Title</span>
+                                <span class="field-label-desc">— Keep it clear and descriptive</span>
+                            </label>
+                            <input type="text" 
+                                   class="topic-title-input" 
+                                   placeholder="e.g. Optimizing embedded edge telemetry via MQTT and ESP32..." 
+                                   x-model="title" 
+                                   maxlength="100"
+                                   @input="errors.title = false"
+                                   autofocus>
+                            <div class="d-flex justify-content-between mt-2">
+                                <span class="field-error-text" x-show="errors.title">
+                                    <span class="material-symbols-outlined" style="font-size:14px;">error</span>
+                                    Please provide a descriptive title (min. 5 chars).
+                                </span>
+                                <div class="ml-auto">
+                                    <small :class="title.length >= 90 ? 'text-danger fw-bold' : 'text-muted'" style="font-size: 0.72rem; font-family:'Chakra Petch', monospace;">
+                                        <span x-text="title.length"></span>/100
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Category Selection -->
+                        <div class="mb-4" :class="{ 'has-error': errors.category }">
+                            <label class="field-label">
+                                <span>Select Category</span>
+                                <span class="field-label-desc">— Assign your topic to the most relevant field</span>
+                            </label>
+                            <div class="cat-pill-group mb-2">
+                                <?php if (!empty($categories)): ?>
+                                    <?php foreach ($categories as $cat): ?>
+                                        <button type="button" class="cat-pill" 
+                                             :class="{ 'active': category_id === '<?= $cat['uuid'] ?>' }"
+                                             @click="category_id = '<?= $cat['uuid'] ?>'; errors.category = false">
+                                            <span class="material-symbols-outlined"><?= htmlspecialchars($cat['icon'] ?? 'label') ?></span>
+                                            <span><?= htmlspecialchars($cat['name']) ?></span>
+                                        </button>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </div>
+                            <span class="field-error-text" x-show="errors.category">
+                                <span class="material-symbols-outlined" style="font-size:14px;">error</span>
+                                Please select a category for your topic.
+                            </span>
+                        </div>
+
+                        <!-- Rich Text Editor -->
+                        <div :class="{ 'has-error': errors.content }">
+                            <label class="field-label">
+                                <span>Discussion Content</span>
+                                <span class="field-label-desc">— Technical details, code, and schematics</span>
+                            </label>
+                            <div class="editor-area-wrapper">
+                                <div class="editor-toolbar">
+                                    <button type="button" class="tool-btn" title="Bold" @click="formatText('bold')" :class="{ 'active': activeStates.bold }">
+                                        <span class="material-symbols-outlined">format_bold</span>
+                                    </button>
+                                    <button type="button" class="tool-btn" title="Italic" @click="formatText('italic')" :class="{ 'active': activeStates.italic }">
+                                        <span class="material-symbols-outlined">format_italic</span>
+                                    </button>
+                                    <button type="button" class="tool-btn" title="Insert Link" @click="addLink()" :class="{ 'active': activeStates.link }">
+                                        <span class="material-symbols-outlined">link</span>
+                                    </button>
+                                    <button type="button" class="tool-btn" title="Code Block" @click="formatText('formatBlock', 'PRE')" :class="{ 'active': activeStates.code }">
+                                        <span class="material-symbols-outlined">code</span>
+                                    </button>
+                                    <div class="tool-divider"></div>
+                                    <button type="button" class="tool-btn" title="Attach Technical Image" @click="$refs.imageInput.click()" :disabled="uploading">
+                                        <span class="material-symbols-outlined" x-show="!uploading">image</span>
+                                        <div class="spinner-border spinner-border-sm" x-show="uploading"></div>
+                                    </button>
+                                    <input type="file" x-ref="imageInput" class="d-none" accept="image/*" @change="handleImageUpload($event)">
+                                </div>
+                                <div class="editor-contenteditable" 
+                                     contenteditable="true"
+                                     placeholder="Describe your technical challenge, implementation findings, system architecture, or questions in detail..." 
+                                     x-ref="editor"
+                                     @input="content = $el.innerHTML; errors.content = false"
+                                     @blur="saveDraft()"></div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2">
+                                <span class="field-error-text" x-show="errors.content">
+                                    <span class="material-symbols-outlined" style="font-size:14px;">error</span>
+                                    Content is too short. Please elaborate with sufficient details (min. 10 chars).
+                                </span>
+                                <div class="ml-auto">
+                                    <small :class="content.length >= 1900 ? 'text-danger fw-bold' : 'text-muted'" style="font-size: 0.72rem; font-family:'Chakra Petch', monospace;">
+                                        <span x-text="content.length"></span>/2000 characters
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </div>
 
-                <!-- Formatting Tips -->
-                <div class="sidebar-card">
-                    <h3 class="sidebar-card-title">
-                        <span class="material-symbols-outlined">lightbulb</span>
-                        <span>Formatting Tips</span>
-                    </h3>
-                    <ul class="guidelines-list">
-                        <li>
-                            <span class="material-symbols-outlined">code</span>
-                            <span>Use the code tool to cleanly present scripts, logs, or API payloads.</span>
-                        </li>
-                        <li>
-                            <span class="material-symbols-outlined">image</span>
-                            <span>Upload wiring schematics or diagnostic screenshots to clarify edge issues.</span>
-                        </li>
-                        <li>
-                            <span class="material-symbols-outlined">save</span>
-                            <span>Drafts automatically persist in your local browser storage if interrupted.</span>
-                        </li>
-                    </ul>
+                <!-- Sidebar Column -->
+                <div class="col-lg-4">
+                    <!-- Action Card -->
+                    <div class="sidebar-card action-card">
+                        <button type="button" class="btn-post" @click="submitTopic()" :disabled="submitting">
+                            <span class="material-symbols-outlined" x-show="!submitting">send</span>
+                            <span class="spinner-border spinner-border-sm" x-show="submitting" role="status" aria-hidden="true"></span>
+                            <span x-text="submitting ? 'Publishing Discussion...' : 'Publish Discussion'"></span>
+                        </button>
+                        <p style="font-size: 0.78rem; color: #64748b; margin-top: 14px; margin-bottom: 0; text-align:center; line-height: 1.5;">
+                            Your topic will be indexed and visible immediately across the technical feed.
+                        </p>
+                    </div>
+
+                    <!-- Community Guidelines -->
+                    <div class="sidebar-card">
+                        <h3 class="sidebar-card-title">
+                            <span class="material-symbols-outlined">verified</span>
+                            <span>Posting Guidelines</span>
+                        </h3>
+                        <ul class="guidelines-list">
+                            <li>
+                                <span class="material-symbols-outlined">check_circle</span>
+                                <span>Search existing discussions before posting to prevent duplicate inquiries.</span>
+                            </li>
+                            <li>
+                                <span class="material-symbols-outlined">check_circle</span>
+                                <span>Provide specific hardware versions, firmware builds, or error traces when asking questions.</span>
+                            </li>
+                            <li>
+                                <span class="material-symbols-outlined">check_circle</span>
+                                <span>Maintain professional, collaborative, and constructive communication.</span>
+                            </li>
+                            <li>
+                                <span class="material-symbols-outlined">check_circle</span>
+                                <span>Format code and configuration blocks cleanly using the code tool.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Formatting Tips -->
+                    <div class="sidebar-card">
+                        <h3 class="sidebar-card-title">
+                            <span class="material-symbols-outlined">lightbulb</span>
+                            <span>Formatting Tips</span>
+                        </h3>
+                        <ul class="guidelines-list">
+                            <li>
+                                <span class="material-symbols-outlined">code</span>
+                                <span>Use the code tool to cleanly present scripts, logs, or API payloads.</span>
+                            </li>
+                            <li>
+                                <span class="material-symbols-outlined">image</span>
+                                <span>Upload wiring schematics or diagnostic screenshots to clarify edge issues.</span>
+                            </li>
+                            <li>
+                                <span class="material-symbols-outlined">save</span>
+                                <span>Drafts automatically persist in your local browser storage if interrupted.</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 </div>
 
 <script>
