@@ -94,24 +94,79 @@
                             </div>
                         </div>
 
-                        <!-- Category Selection -->
+                        <!-- Category Selection with Accessible Horizontal Scroll -->
                         <div class="mb-4" :class="{ 'has-error': errors.category }">
                             <label class="field-label">
                                 <span>Select Category</span>
                                 <span class="field-label-desc">— Assign your topic to the most relevant field</span>
                             </label>
-                            <div class="cat-pill-group mb-2">
-                                <?php if (!empty($categories)): ?>
-                                    <?php foreach ($categories as $cat): ?>
-                                        <button type="button" class="cat-pill" 
-                                             :class="{ 'active': category_id === '<?= $cat['uuid'] ?>' }"
-                                             @click="category_id = '<?= $cat['uuid'] ?>'; errors.category = false">
-                                            <span class="material-symbols-outlined"><?= htmlspecialchars($cat['icon'] ?? 'label') ?></span>
-                                            <span><?= htmlspecialchars($cat['name']) ?></span>
-                                        </button>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
+
+                            <div class="form-category-switcher-wrap" x-ref="catSwitcherWrap">
+                                <!-- Left Blur Fade Overlay -->
+                                <div class="cat-scroll-blur left" 
+                                     x-show="canScrollLeft" 
+                                     x-transition.opacity.duration.250ms
+                                     aria-hidden="true" 
+                                     style="display: none;"></div>
+
+                                <!-- Left Inward Arrow Button -->
+                                <button type="button" 
+                                        class="cat-scroll-arrow-btn prev" 
+                                        x-show="canScrollLeft" 
+                                        x-transition.opacity.duration.200ms
+                                        @click="scrollCatLeft()" 
+                                        aria-label="Scroll categories left"
+                                        style="display: none;">
+                                    <span class="material-symbols-outlined">chevron_left</span>
+                                </button>
+
+                                <!-- Scrollable Capsule Container -->
+                                <div class="form-category-switcher" 
+                                     x-ref="catSwitcher" 
+                                     @scroll.passive="updateCatScrollArrows()"
+                                     @wheel="handleCatWheel($event)"
+                                     role="tablist" 
+                                     aria-label="Topic Categories">
+                                    <?php if (!empty($categories)): ?>
+                                        <?php foreach ($categories as $cat): ?>
+                                            <button type="button" 
+                                                    class="form-category-btn" 
+                                                    :class="{ 'active': category_id === '<?= $cat['uuid'] ?>' }"
+                                                    @click="selectCategory('<?= $cat['uuid'] ?>', $el)"
+                                                    role="tab"
+                                                    :aria-selected="(category_id === '<?= $cat['uuid'] ?>').toString()">
+                                                <span class="material-symbols-outlined cat-btn-icon"><?= htmlspecialchars($cat['icon'] ?? 'label') ?></span>
+                                                <span class="cat-btn-name"><?= htmlspecialchars($cat['name']) ?></span>
+                                                <?php if (isset($cat['topic_count'])): ?>
+                                                    <span class="cat-btn-badge"><?= $cat['topic_count'] ?></span>
+                                                <?php endif; ?>
+                                            </button>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+
+                                    <!-- End Spacer so rightmost tab never clips -->
+                                    <span class="cat-scroll-end-spacer" aria-hidden="true"></span>
+                                </div>
+
+                                <!-- Right Blur Fade Overlay -->
+                                <div class="cat-scroll-blur right" 
+                                     x-show="canScrollRight" 
+                                     x-transition.opacity.duration.250ms
+                                     aria-hidden="true" 
+                                     style="display: none;"></div>
+
+                                <!-- Right Inward Arrow Button -->
+                                <button type="button" 
+                                        class="cat-scroll-arrow-btn next" 
+                                        x-show="canScrollRight" 
+                                        x-transition.opacity.duration.200ms
+                                        @click="scrollCatRight()" 
+                                        aria-label="Scroll categories right"
+                                        style="display: none;">
+                                    <span class="material-symbols-outlined">chevron_right</span>
+                                </button>
                             </div>
+
                             <span class="field-error-text" x-show="errors.category">
                                 <span class="material-symbols-outlined" style="font-size:14px;">error</span>
                                 Please select a category for your topic.
@@ -165,16 +220,19 @@
                             </div>
                         </div>
 
-                        <!-- Form Actions Footer (In-Form Publish) -->
+                        <!-- Form Actions Footer (Notice Above, Balanced Buttons Below) -->
                         <div class="form-actions-footer">
-                            <div class="form-publish-meta">
+                            <!-- Full-Width Notice (Unbroken single line) -->
+                            <div class="form-publish-notice">
                                 <span class="material-symbols-outlined">info</span>
                                 <span>Your topic will be indexed and visible immediately across the technical feed.</span>
                             </div>
-                            <div class="form-publish-btns">
+
+                            <!-- Balanced Action Buttons -->
+                            <div class="form-publish-buttons">
                                 <button type="button" class="btn-discard" @click="discard()">
                                     <span class="material-symbols-outlined">delete_outline</span>
-                                    <span>Discard</span>
+                                    <span>Discard Draft</span>
                                 </button>
                                 <button type="button" class="btn-post" @click="submitTopic()" :disabled="submitting">
                                     <span class="material-symbols-outlined" x-show="!submitting">send</span>
@@ -252,6 +310,8 @@ function newTopicForm() {
         draftRecovered: false,
         showSuccess: false,
         newPostUrl: '',
+        canScrollLeft: false,
+        canScrollRight: false,
         errors: {
             title: false,
             content: false,
@@ -295,7 +355,10 @@ function newTopicForm() {
                 this.category_id = this.categoryMap[catSlug];
             }
 
-            // 3. Auto-save watcher
+            // 3. Initialize Category Scroll Nav
+            this.initCatScrollNav();
+
+            // 4. Auto-save watcher
             this.$watch('title', () => this.saveDraft());
             this.$watch('content', () => this.saveDraft());
             this.$watch('category_id', (id) => {
@@ -303,13 +366,70 @@ function newTopicForm() {
                 this.syncUrl(id);
             });
 
-            // 4. Update active states on selection
+            // 5. Update active states on selection
             document.addEventListener('selectionchange', () => {
                 const sel = window.getSelection();
                 if (sel && sel.rangeCount > 0 && this.$refs.editor && this.$refs.editor.contains(sel.anchorNode)) {
                     this.updateActiveStates();
                 }
             });
+        },
+
+        initCatScrollNav() {
+            this.$nextTick(() => {
+                this.updateCatScrollArrows();
+                const switcher = this.$refs.catSwitcher;
+                if (switcher) {
+                    const activeTab = switcher.querySelector('.form-category-btn.active');
+                    if (activeTab) {
+                        activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    }
+                }
+            });
+            window.addEventListener('resize', () => this.updateCatScrollArrows(), { passive: true });
+        },
+
+        updateCatScrollArrows() {
+            const el = this.$refs.catSwitcher;
+            if (!el) return;
+            this.canScrollLeft = el.scrollLeft > 6;
+            this.canScrollRight = (el.scrollLeft + el.clientWidth) < (el.scrollWidth - 8);
+        },
+
+        scrollCatLeft() {
+            const el = this.$refs.catSwitcher;
+            if (el) {
+                el.scrollBy({ left: -220, behavior: 'smooth' });
+                setTimeout(() => this.updateCatScrollArrows(), 320);
+            }
+        },
+
+        scrollCatRight() {
+            const el = this.$refs.catSwitcher;
+            if (el) {
+                el.scrollBy({ left: 220, behavior: 'smooth' });
+                setTimeout(() => this.updateCatScrollArrows(), 320);
+            }
+        },
+
+        handleCatWheel(e) {
+            const el = this.$refs.catSwitcher;
+            if (!el) return;
+            if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+            if (el.scrollWidth > el.clientWidth) {
+                e.preventDefault();
+                el.scrollLeft += e.deltaY;
+                this.updateCatScrollArrows();
+            }
+        },
+
+        selectCategory(uuid, element) {
+            this.category_id = uuid;
+            this.errors.category = false;
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+            setTimeout(() => this.updateCatScrollArrows(), 300);
         },
 
         updateActiveStates() {

@@ -145,7 +145,7 @@ body {
   margin-bottom: 0;
 }
 
-.btn-discard {
+.comp-header .btn-discard {
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   font-size: 0.82rem;
@@ -161,13 +161,13 @@ body {
   gap: 6px;
 }
 
-.btn-discard:hover {
+.comp-header .btn-discard:hover {
   background-color: #fef2f2;
   color: #dc2626;
   border-color: #fecaca;
 }
 
-.btn-discard .material-symbols-outlined {
+.comp-header .btn-discard .material-symbols-outlined {
   font-size: 16px;
 }
 
@@ -242,58 +242,177 @@ body {
   letter-spacing: 0.01em;
 }
 
-/* Category Pills */
-.cat-pill-group {
+/* ====================================================
+   FORM CATEGORY TABS SWITCHER (Matching Feed Filter Design)
+   With Accessible Horizontal Scrolling & Inward Chevrons
+   ==================================================== */
+.form-category-switcher-wrap {
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  border: 1px solid transparent;
-  border-radius: 12px;
-  transition: all 0.2s ease;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 6px;
 }
 
-.cat-pill {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 600;
-  font-size: 0.78rem;
-  padding: 7px 16px;
-  border-radius: 50px;
+/* Blur Fade Overlays (Softly masks overflowing tabs at capsule curve) */
+.cat-scroll-blur {
+  position: absolute;
+  top: 1px;
+  bottom: 1px;
+  width: 48px;
+  pointer-events: none;
+  z-index: 8;
+  transition: opacity 0.25s ease;
+}
+
+.cat-scroll-blur.left {
+  left: 1px;
+  border-top-left-radius: 50px;
+  border-bottom-left-radius: 50px;
+  background: linear-gradient(90deg, #ffffff 25%, rgba(255, 255, 255, 0.85) 60%, rgba(255, 255, 255, 0) 100%);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.cat-scroll-blur.right {
+  right: 1px;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
+  background: linear-gradient(270deg, #ffffff 25%, rgba(255, 255, 255, 0.85) 60%, rgba(255, 255, 255, 0) 100%);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+/* Floating Navigation Arrows - Inward Positioned inside the Capsule */
+.cat-scroll-arrow-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 12;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ffffff;
   border: 1px solid var(--sp-border);
-  background: #f8fafc;
-  color: #475569;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
+  color: var(--dark-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  display: inline-flex;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0;
+}
+
+.cat-scroll-arrow-btn:hover {
+  background: var(--primary-orange);
+  border-color: var(--primary-orange);
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(244, 130, 33, 0.35);
+  transform: translateY(-50%) scale(1.08);
+}
+
+.cat-scroll-arrow-btn.prev {
+  left: 6px;
+}
+
+.cat-scroll-arrow-btn.next {
+  right: 6px;
+}
+
+.cat-scroll-arrow-btn .material-symbols-outlined {
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* Smooth Horizontal Scrollable Switcher Capsule (Scrollbar Completely Hidden) */
+.form-category-switcher {
+  display: flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  background: #f8fafc;
+  padding: 5px 12px 5px 6px;
+  border-radius: 50px;
+  border: 1.5px solid var(--sp-border);
+  width: 100%;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.cat-pill .material-symbols-outlined {
-  font-size: 15px;
+.form-category-switcher::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.cat-scroll-end-spacer {
+  display: inline-block;
+  width: 24px;
+  flex-shrink: 0;
+}
+
+/* Form Category Tab Button */
+.form-category-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 18px;
+  border-radius: 50px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #475569;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.form-category-btn .cat-btn-icon {
+  font-size: 16px;
   color: #94a3b8;
   transition: color 0.2s ease;
 }
 
-.cat-pill:hover {
-  border-color: var(--primary-orange);
-  color: var(--primary-orange);
-  background: rgba(244, 130, 33, 0.04);
-  transform: translateY(-1px);
-}
-
-.cat-pill:hover .material-symbols-outlined {
-  color: var(--primary-orange);
-}
-
-.cat-pill.active {
-  background-color: var(--primary-orange);
-  border-color: var(--primary-orange);
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(244, 130, 33, 0.28);
+.form-category-btn .cat-btn-badge {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.68rem;
   font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 50px;
+  background: #e2e8f0;
+  color: #475569;
+  transition: all 0.2s ease;
 }
 
-.cat-pill.active .material-symbols-outlined {
+.form-category-btn:hover {
+  color: #1e293b;
+  background: #ffffff;
+}
+
+.form-category-btn:hover .cat-btn-icon {
+  color: var(--primary-orange);
+}
+
+.form-category-btn.active {
+  background: linear-gradient(135deg, #f48221 0%, #ea580c 100%);
+  color: #ffffff !important;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(244, 130, 33, 0.28);
+}
+
+.form-category-btn.active .cat-btn-icon {
+  color: #ffffff !important;
+}
+
+.form-category-btn.active .cat-btn-badge {
+  background: rgba(255, 255, 255, 0.28);
   color: #ffffff;
 }
 
@@ -404,48 +523,83 @@ body {
   color: #ea580c;
 }
 
-/* ============================
-   FORM ACTIONS FOOTER (IN-FORM PUBLISH)
-   ============================ */
+/* ====================================================
+   FORM ACTIONS FOOTER — BALANCED BUTTONS & UNBROKEN NOTICE
+   ==================================================== */
 .form-actions-footer {
   border-top: 1px solid var(--sp-border);
-  padding-top: 24px;
+  padding-top: 22px;
   margin-top: 26px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
   gap: 16px;
-  flex-wrap: wrap;
 }
 
-.form-publish-meta {
+/* Notice text on its own line across full width (Don't break text!) */
+.form-publish-notice {
   font-family: 'Open Sans', sans-serif;
-  font-size: 0.80rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
   display: flex;
   align-items: center;
   gap: 8px;
-  max-width: 380px;
-  line-height: 1.45;
+  line-height: 1.5;
+  width: 100%;
 }
 
-.form-publish-meta .material-symbols-outlined {
+.form-publish-notice .material-symbols-outlined {
   color: var(--primary-orange);
-  font-size: 16px;
+  font-size: 17px;
   flex-shrink: 0;
 }
 
-.form-publish-btns {
+.form-publish-buttons {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
+/* Discard Button — Matched in Size, Height, and Font with Post Button */
+.form-publish-buttons .btn-discard {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: #475569;
+  background-color: #ffffff;
+  border: 1.5px solid var(--sp-border);
+  padding: 12px 28px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 160px;
+  height: 48px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.form-publish-buttons .btn-discard:hover {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+  box-shadow: 0 3px 10px rgba(220, 38, 38, 0.12);
+  transform: translateY(-1px);
+}
+
+.form-publish-buttons .btn-discard .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* Publish Discussion Button — Matching Height & Geometry */
 .btn-post {
   background: linear-gradient(135deg, #f48221 0%, #ea580c 100%);
   color: #ffffff;
   border: none;
-  padding: 11px 28px;
+  padding: 12px 30px;
   border-radius: 50px;
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
@@ -457,8 +611,8 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  width: auto;
-  min-width: 180px;
+  min-width: 190px;
+  height: 48px;
 }
 
 .btn-post:hover:not(:disabled) {
@@ -578,7 +732,7 @@ body {
 
 .has-error .topic-title-input,
 .has-error .editor-area-wrapper,
-.has-error .cat-pill-group {
+.has-error .form-category-switcher {
   border-color: #dc2626 !important;
   background-color: rgba(220, 38, 38, 0.02);
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
@@ -719,25 +873,13 @@ body {
     align-items: flex-start;
   }
 
-  .form-actions-footer {
-    flex-direction: column-reverse;
-    align-items: stretch;
-    gap: 16px;
-  }
-
-  .form-publish-meta {
-    max-width: 100%;
-    text-align: center;
-    justify-content: center;
-  }
-
-  .form-publish-btns {
+  .form-publish-buttons {
     flex-direction: column-reverse;
     width: 100%;
   }
 
-  .form-publish-btns .btn-discard,
-  .form-publish-btns .btn-post {
+  .form-publish-buttons .btn-discard,
+  .form-publish-buttons .btn-post {
     width: 100%;
     justify-content: center;
   }
