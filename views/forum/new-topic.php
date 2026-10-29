@@ -164,23 +164,30 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Form Actions Footer (In-Form Publish) -->
+                        <div class="form-actions-footer">
+                            <div class="form-publish-meta">
+                                <span class="material-symbols-outlined">info</span>
+                                <span>Your topic will be indexed and visible immediately across the technical feed.</span>
+                            </div>
+                            <div class="form-publish-btns">
+                                <button type="button" class="btn-discard" @click="discard()">
+                                    <span class="material-symbols-outlined">delete_outline</span>
+                                    <span>Discard</span>
+                                </button>
+                                <button type="button" class="btn-post" @click="submitTopic()" :disabled="submitting">
+                                    <span class="material-symbols-outlined" x-show="!submitting">send</span>
+                                    <span class="spinner-border spinner-border-sm" x-show="submitting" role="status" aria-hidden="true"></span>
+                                    <span x-text="submitting ? 'Publishing Discussion...' : 'Publish Discussion'"></span>
+                                </button>
+                            </div>
+                        </div>
                     </section>
                 </div>
 
-                <!-- Sidebar Column -->
+                <!-- Sidebar Column (Lifted & Aligned to Form Top) -->
                 <div class="col-lg-4">
-                    <!-- Action Card -->
-                    <div class="sidebar-card action-card">
-                        <button type="button" class="btn-post" @click="submitTopic()" :disabled="submitting">
-                            <span class="material-symbols-outlined" x-show="!submitting">send</span>
-                            <span class="spinner-border spinner-border-sm" x-show="submitting" role="status" aria-hidden="true"></span>
-                            <span x-text="submitting ? 'Publishing Discussion...' : 'Publish Discussion'"></span>
-                        </button>
-                        <p style="font-size: 0.78rem; color: #64748b; margin-top: 14px; margin-bottom: 0; text-align:center; line-height: 1.5;">
-                            Your topic will be indexed and visible immediately across the technical feed.
-                        </p>
-                    </div>
-
                     <!-- Community Guidelines -->
                     <div class="sidebar-card">
                         <h3 class="sidebar-card-title">
