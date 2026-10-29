@@ -56,7 +56,7 @@
             </div>
 
             <!-- Article Content -->
-            <article class="article-content">
+            <article class="article-content rich-text-content">
                 <?= $blog['content'] ?>
             </article>
 

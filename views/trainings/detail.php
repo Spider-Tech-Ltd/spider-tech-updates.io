@@ -87,7 +87,7 @@
                         <h3>About this <span>Program</span></h3>
                         <div class="program-lead-text"><?= nl2br(htmlspecialchars(stripslashes($training['training_description'] ?? ''))); ?></div>
                         <?php if (!empty($training['training_details'])): ?>
-                            <div class="training-rich-content">
+                            <div class="training-rich-content rich-text-content">
                                 <?= stripslashes($training['training_details']); ?>
                             </div>
                         <?php endif; ?>

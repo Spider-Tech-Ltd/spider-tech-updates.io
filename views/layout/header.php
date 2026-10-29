@@ -41,6 +41,7 @@
   <link rel="stylesheet" href="<?= BASE_URL ?>/css/header.css" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/css/style.css" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/css/responsive.css" />
+  <link rel="stylesheet" href="<?= BASE_URL ?>/css/rich-text.css?v=<?= filemtime(ROOT_PATH . '/css/rich-text.css') ?>" />
   <!-- Global Header Section — Phase 6 Redesign -->
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,600;0,700;1,600;1,700&family=Poppins:wght@500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1" />

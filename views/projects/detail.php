@@ -114,7 +114,7 @@
                             <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
                         </svg>
                     </span>
-                    <div class="project-narrative">
+                    <div class="project-narrative rich-text-content">
                         <?= stripslashes($project['project_description']); ?>
                     </div>
                 </div>

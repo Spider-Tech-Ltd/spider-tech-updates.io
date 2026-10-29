@@ -49,8 +49,15 @@
                     <h2 class="service-main-title"><?= htmlspecialchars(stripslashes($service['service_name'])); ?></h2>
                 </div>
 
-                <div class="service-full-desc">
-                    <?= nl2br(htmlspecialchars(stripslashes($service['service_description']))); ?>
+                <div class="service-full-desc rich-text-content">
+                    <?php if (!empty($service['service_description']) && (empty($service['service_detail']) || stripos($service['service_detail'], substr(trim($service['service_description']), 0, 30)) === false)): ?>
+                        <p class="service-lead-summary"><strong><?= htmlspecialchars(stripslashes($service['service_description'])); ?></strong></p>
+                    <?php endif; ?>
+                    <?php if (!empty($service['service_detail'])): ?>
+                        <?= stripslashes($service['service_detail']); ?>
+                    <?php elseif (!empty($service['service_description'])): ?>
+                        <p><?= nl2br(htmlspecialchars(stripslashes($service['service_description']))); ?></p>
+                    <?php endif; ?>
                 </div>
 
                 <h3 class="benefits-heading">Key Expertise &amp; <span>Delivery Standards</span></h3>

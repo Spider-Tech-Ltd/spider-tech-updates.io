@@ -129,7 +129,7 @@
                     </span>
                     <h2 class="article-heading">About this <span>Gathering</span></h2>
                 </div>
-                <div class="article-content">
+                <div class="article-content rich-text-content">
                     <?= stripslashes($event['event_detail'] ?? '') ?>
                 </div>
             </article>
