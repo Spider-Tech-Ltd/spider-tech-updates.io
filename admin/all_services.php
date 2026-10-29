@@ -2,14 +2,15 @@
 require('superadmin_functions.php');
 require('secured-login.php');
 
+$success_message = isset($_GET['deleted']) ? 'Service deleted successfully.' : (isset($_GET['success']) ? $_GET['success'] : '');
+
 // Handle delete action
 if (isset($_GET['delete_service'])) {
     $service_id = mysqli_real_escape_string($spider_tech_db, $_GET['delete_service']);
     
     // Delete the service from the database
-    $delete_query = "DELETE FROM services_tb WHERE id = '$service_id'";
+    $delete_query = "DELETE FROM services_tb WHERE id = '$service_id' LIMIT 1";
     if (mysqli_query($spider_tech_db, $delete_query)) {
-        // Successfully deleted
         header('Location: all_services.php?deleted=1');
         exit();
     } else {
@@ -18,121 +19,146 @@ if (isset($_GET['delete_service'])) {
 }
 
 // Query services
-$service_query = mysqli_query($spider_tech_db, "SELECT * FROM services_tb") or die(mysqli_error($spider_tech_db));
-$service_row = mysqli_fetch_assoc($service_query);
+$service_query = mysqli_query($spider_tech_db, "SELECT * FROM services_tb ORDER BY id ASC") or die(mysqli_error($spider_tech_db));
 
 if (isset($_GET['service'])) {
     $service_id = mysqli_real_escape_string($spider_tech_db, $_GET['service']);
     $_SESSION['service'] = $service_id;
     header('location:edit_services.php');
+    exit();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
-<!-- BEGIN HEAD -->
 
 <head>
 	<?php require('head-section.html'); ?>
 </head>
-<!-- END HEAD -->
 
 <body class="<?php require('body-tag-css.html'); ?>">
 	<div class="page-wrapper">
-		<!-- start header -->
+		<!-- Header -->
 		<?php require('header-section.php'); ?>
-		<!-- end header -->
-		<!-- start color quick setting -->
-		<?php require('setting-section.html'); ?>
-		<!-- end color quick setting -->
-		<!-- start page container -->
+
 		<div class="page-container">
-			<!-- start sidebar menu -->
+			<!-- Sidebar -->
 			<?php require('side-menu-section.php'); ?>
-			<!-- end sidebar menu -->
-			<!-- start page content -->
+
+			<!-- Page Content -->
 			<div class="page-content-wrapper">
 				<div class="page-content">
+					
 					<div class="page-bar">
-						<div class="page-title-breadcrumb">
-							<div class=" pull-left">
-								<div class="page-title">All Services</div>
-							</div>
-							<ol class="breadcrumb page-breadcrumb pull-right">
-								<li><i class="fa fa-home"></i>&nbsp;<a class="parent-item" href="dashboard.php">Dashboard</a>&nbsp;<i class="fa fa-angle-right"></i></li>
-								<li><a class="parent-item" href="">Services</a>&nbsp;<i class="fa fa-angle-right"></i></li>
-								<li class="active">Service List</li>
-							</ol>
-						</div>
+						<h1 class="page-title">Active Services</h1>
+						<ol class="page-breadcrumb">
+							<li><i class="fa fa-home"></i>&nbsp;<a href="dashboard.php">Dashboard</a>&nbsp;<i class="fa fa-angle-right"></i></li>
+							<li><a href="all_services.php">Services</a>&nbsp;<i class="fa fa-angle-right"></i></li>
+							<li class="active">Service List</li>
+						</ol>
 					</div>
+
+					<!-- Success Alerts -->
+					<?php if (!empty($success_message)): ?>
+						<div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 10px; background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46;">
+							<i class="fa fa-check-circle m-r-10"></i> <?= htmlspecialchars($success_message); ?>
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close" style="color: #065f46;">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+					<?php endif; ?>
+
 					<div class="row">
-						<div class="col-md-12 col-sm-12">
+						<div class="col-md-12">
 							<div class="card card-box">
 								<div class="card-head">
-									<header>Services Table</header>
+									<header>All Published Services</header>
+									<div class="tools">
+										<a href="add_services.php" class="btn btn-primary">
+											<i class="fa fa-plus"></i> Add New Service
+										</a>
+									</div>
 								</div>
-								<div class="card-body" id="bar-parent">
-                                    <div class="row">
-                                        <div class="col-md-6 col-sm-6 col-6">
-                                            <div class="btn-group">
-                                                <a href="add_services.php" id="addRow" class="btn btn-info">Add New <i class="fa fa-plus"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-scrollable">				
-                                            <table id="exportTable" class="display nowrap table-hover" style="width:100%">
-                                                <thead>
-                                                    <tr>
-                                                        <th>#</th>
-                                                        <th>Service Icon</th>
-                                                        <th>Service Name</th>
-                                                        <th>Service Description</th>
-                                                        <th>Service Details</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                <?php
-                                                $no = 1;
-                                                do {
-                                                    $service_id = $service_row['id'];
-                                                    echo
-                                                        '<tr>
-                                                           <td>' . $no++ . '</td>
-                                                           <td class="patient-img"><i class="' . stripslashes($service_row['service_icon']) . '"></i></td>
-                                                           <td>' . stripslashes($service_row['service_name']) . '</td>
-                                                           <td>' . substr(stripslashes($service_row['service_description']), 0, 20) . '</td>
-                                                           <td>' . substr(stripslashes(strip_tags($service_row['service_detail'])), 0, 20) . '..</td>
-                                                           <td>
-                                                               <a href="all_services.php?service=' . $service_id . '" class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i> Edit</a>
-                                                               <a href="all_services.php?delete_service=' . $service_id . '" class="btn btn-danger btn-xs" onclick="return confirm(\'Are you sure you want to delete this service?\');"><i class="fa fa-trash"></i> Delete</a>
-                                                           </td>
-                                                        </tr>';
-                                                } while ($service_row = mysqli_fetch_assoc($service_query));
-                                                ?>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+								<div class="card-body">
+									<div class="table-scrollable">				
+										<table id="exportTable" class="display nowrap table-hover" style="width:100%">
+											<thead>
+												<tr>
+													<th style="width: 50px;">#</th>
+													<th style="width: 70px;">Icon</th>
+													<th>Service Name</th>
+													<th>Short Overview</th>
+													<th>Content Breakdown</th>
+													<th class="text-right" style="width: 210px;">Actions</th>
+												</tr>
+											</thead>
+											<tbody>
+												<?php if ($service_query && mysqli_num_rows($service_query) > 0): ?>
+													<?php 
+													$no = 1;
+													while ($row = mysqli_fetch_assoc($service_query)): 
+														$sId = (int)$row['id'];
+														$sName = stripslashes($row['service_name']);
+														$sIcon = stripslashes($row['service_icon'] ?? 'flaticon-technical-support');
+														$sDesc = stripslashes($row['service_description'] ?? '');
+														$sDetail = strip_tags(stripslashes($row['service_detail'] ?? ''));
+														$sDetailShort = mb_strimwidth($sDetail, 0, 50, '...');
+													?>
+														<tr>
+															<td style="font-family: 'Chakra Petch', monospace; font-weight: 600; color: #64748b;"><?= $no++; ?></td>
+															<td>
+																<div class="table-img-fallback" style="color: var(--admin-primary); font-size: 1.25rem;">
+																	<i class="<?= htmlspecialchars($sIcon); ?>"></i>
+																</div>
+															</td>
+															<td>
+																<strong style="color: #0f172a; font-family: 'Poppins', sans-serif;"><?= htmlspecialchars($sName); ?></strong>
+															</td>
+															<td>
+																<span style="color: #475569; font-size: 0.86rem;"><?= htmlspecialchars(mb_strimwidth($sDesc, 0, 45, '...')); ?></span>
+															</td>
+															<td>
+																<span title="<?= htmlspecialchars($sDetail); ?>" style="color: #64748b; font-size: 0.84rem;">
+																	<?= htmlspecialchars($sDetailShort ?: 'Detailed specification'); ?>
+																</span>
+															</td>
+															<td class="text-right">
+																<div class="table-action-group">
+																	<a href="../services/detail?id=<?= $sId; ?>" target="_blank" class="btn-action-view" title="Preview on live site">
+																		<i class="fa fa-external-link"></i> View
+																	</a>
+																	<a href="all_services.php?service=<?= $sId; ?>" class="btn-action-edit" title="Edit service">
+																		<i class="fa fa-pencil"></i> Edit
+																	</a>
+																	<a href="#" 
+																	   data-delete-url="all_services.php?delete_service=<?= $sId; ?>" 
+																	   data-item-name="<?= htmlspecialchars($sName); ?>" 
+																	   class="btn-action-delete trigger-delete-modal" 
+																	   title="Delete service">
+																		<i class="fa fa-trash"></i> Delete
+																	</a>
+																</div>
+															</td>
+														</tr>
+													<?php endwhile; ?>
+												<?php endif; ?>
+											</tbody>
+										</table>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
+
 				</div>
 			</div>
-			<!-- end page content -->
-			<!-- start chat sidebar -->
-			<?php require('setting_and_chat_section.php'); ?>
-			<!-- end chat sidebar -->
+			<!-- End Page Content -->
 		</div>
-		<!-- end page container -->
-		<!-- start footer -->
+
+		<!-- Footer -->
 		<?php require('footer-section.html'); ?>
-		<!-- end footer -->
 	</div>
-	<!-- start js include path -->
+
+	<!-- JS includes -->
     <?php require('js-section.html'); ?>
-	<!-- end js include path -->
 </body>
 </html>

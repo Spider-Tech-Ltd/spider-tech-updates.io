@@ -830,3 +830,385 @@ body {
     display: inline-block;
     box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
 }
+
+
+/* ==========================================================================
+   Modern DataTables & Custom Action Modals (Phase 3)
+   ========================================================================== */
+
+/* DataTables Global Styling */
+.table-scrollable {
+    border: none !important;
+    margin: 16px 0 !important;
+}
+
+#exportTable {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    width: 100% !important;
+    border: 1px solid var(--admin-border) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+}
+
+#exportTable thead th {
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.8px !important;
+    padding: 14px 18px !important;
+    border-top: none !important;
+    border-bottom: 2px solid var(--admin-border) !important;
+}
+
+#exportTable tbody td {
+    padding: 14px 18px !important;
+    vertical-align: middle !important;
+    font-size: 0.9rem !important;
+    color: #334155 !important;
+    border-bottom: 1px solid var(--admin-border-subtle) !important;
+    transition: background 0.15s ease;
+}
+
+#exportTable tbody tr:hover td {
+    background-color: #f8fafc !important;
+}
+
+#exportTable tbody tr:last-child td {
+    border-bottom: none !important;
+}
+
+/* Modern Filter & Export Controls */
+.dataTables_filter {
+    margin-bottom: 14px !important;
+}
+
+.dataTables_filter label {
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.85rem !important;
+    color: #475569 !important;
+    font-weight: 500 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.dataTables_filter input {
+    height: 38px !important;
+    border-radius: 8px !important;
+    border: 1px solid var(--admin-border) !important;
+    padding: 6px 14px !important;
+    font-family: 'Open Sans', sans-serif !important;
+    font-size: 0.88rem !important;
+    color: #0f172a !important;
+    outline: none !important;
+    transition: all 0.2s ease !important;
+}
+
+.dataTables_filter input:focus {
+    border-color: var(--admin-primary) !important;
+    box-shadow: 0 0 0 3px rgba(244, 130, 33, 0.15) !important;
+}
+
+/* DataTables Export Buttons */
+.dt-buttons {
+    margin-bottom: 14px !important;
+}
+
+.dt-buttons .dt-button {
+    border-radius: 8px !important;
+    background: #ffffff !important;
+    border: 1px solid var(--admin-border) !important;
+    color: #475569 !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.8rem !important;
+    font-weight: 500 !important;
+    padding: 7px 14px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+    transition: all 0.2s ease !important;
+    margin-right: 6px !important;
+}
+
+.dt-buttons .dt-button:hover {
+    background: var(--admin-primary-soft) !important;
+    border-color: var(--admin-primary) !important;
+    color: var(--admin-primary) !important;
+}
+
+/* Pagination Styling */
+.dataTables_paginate {
+    padding-top: 14px !important;
+}
+
+.dataTables_paginate .paginate_button {
+    border-radius: 8px !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    padding: 6px 12px !important;
+    transition: all 0.15s ease !important;
+}
+
+.dataTables_paginate .paginate_button.current,
+.dataTables_paginate .paginate_button.current:hover {
+    background: var(--admin-primary) !important;
+    border-color: var(--admin-primary) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(244, 130, 33, 0.25) !important;
+}
+
+.dataTables_paginate .paginate_button:hover {
+    background: var(--admin-primary-soft) !important;
+    border-color: var(--admin-primary) !important;
+    color: var(--admin-primary) !important;
+}
+
+/* Table Thumbnail Images */
+.table-img-thumb {
+    width: 52px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid var(--admin-border);
+    display: inline-block;
+}
+
+.table-img-fallback {
+    width: 52px;
+    height: 40px;
+    border-radius: 8px;
+    background: #f1f5f9;
+    border: 1px solid var(--admin-border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 1rem;
+}
+
+/* Table Category & Status Pills */
+.table-pill {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.table-pill-orange {
+    background: rgba(244, 130, 33, 0.12);
+    color: #c25e0c;
+    border: 1px solid rgba(244, 130, 33, 0.25);
+}
+
+.table-pill-slate {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+.table-pill-green {
+    background: #ecfdf5;
+    color: #059669;
+    border: 1px solid #a7f3d0;
+}
+
+/* Modern Action Buttons */
+.table-action-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.btn-action-edit {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #0f172a;
+    background: #f8fafc;
+    border: 1px solid var(--admin-border);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none !important;
+    transition: all 0.2s ease;
+}
+
+.btn-action-edit:hover {
+    background: var(--admin-primary);
+    border-color: var(--admin-primary);
+    color: #ffffff;
+}
+
+.btn-action-delete {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #ef4444;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-action-delete:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
+}
+
+.btn-action-view {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #0284c7;
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none !important;
+    transition: all 0.2s ease;
+}
+
+.btn-action-view:hover {
+    background: #0284c7;
+    border-color: #0284c7;
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   Custom Branded Confirmation Modal
+   ========================================================================== */
+.admin-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.admin-modal-dialog {
+    background: #ffffff;
+    border: 1px solid var(--admin-border);
+    border-radius: 20px;
+    padding: 32px 30px;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2);
+    text-align: center;
+    animation: modalZoomIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalZoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.admin-modal-icon-wrap {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: #fef2f2;
+    border: 1px solid #fee2e2;
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.55rem;
+    margin: 0 auto 18px auto;
+}
+
+.admin-modal-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.admin-modal-text {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.92rem;
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+.admin-modal-text strong {
+    color: #0f172a;
+}
+
+.admin-modal-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+}
+
+.admin-modal-btn {
+    flex: 1;
+    height: 44px;
+    border-radius: 50px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none !important;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.admin-modal-btn-cancel {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.admin-modal-btn-cancel:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.admin-modal-btn-confirm {
+    background: #ef4444;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25);
+}
+
+.admin-modal-btn-confirm:hover {
+    background: #dc2626;
+    box-shadow: 0 6px 18px rgba(239, 68, 68, 0.35);
+}
