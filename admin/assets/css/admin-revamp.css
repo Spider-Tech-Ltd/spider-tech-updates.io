@@ -1,0 +1,563 @@
+/* ==========================================================================
+   Spider Tech Admin Console - Design Revamp System
+   Aligned with Spider Tech Website Design System (Phase 1)
+   Colors: Primary Orange (#f48221), Dark Slate (#0f172a), Soft Slate (#f8fafc)
+   Typography: Poppins (Headings), Open Sans (Body), Chakra Petch (Telemetry)
+   ========================================================================== */
+
+:root {
+    --admin-primary: #f48221;
+    --admin-primary-hover: #e07216;
+    --admin-primary-soft: rgba(244, 130, 33, 0.08);
+    --admin-primary-border: rgba(244, 130, 33, 0.25);
+    --admin-dark: #0f172a;
+    --admin-dark-surface: #1e293b;
+    --admin-body-bg: #f8fafc;
+    --admin-card-bg: #ffffff;
+    --admin-border: #e2e8f0;
+    --admin-border-subtle: #f1f5f9;
+    --admin-text-main: #0f172a;
+    --admin-text-muted: #64748b;
+    --admin-radius: 16px;
+    --admin-radius-sm: 8px;
+    --admin-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+    --admin-shadow-hover: 0 8px 24px rgba(15, 23, 42, 0.07);
+}
+
+/* --------------------------------------------------------------------------
+   Global Layout & Clean Modern Reset
+   -------------------------------------------------------------------------- */
+body {
+    background-color: var(--admin-body-bg) !important;
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    color: #334155 !important;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.page-wrapper {
+    background-color: var(--admin-body-bg) !important;
+}
+
+.page-container {
+    background-color: var(--admin-body-bg) !important;
+}
+
+.page-content-wrapper {
+    background-color: var(--admin-body-bg) !important;
+}
+
+.page-content {
+    background-color: var(--admin-body-bg) !important;
+    padding: 24px 30px !important;
+    min-height: calc(100vh - 120px);
+}
+
+/* --------------------------------------------------------------------------
+   Top Navigation Bar (Header)
+   -------------------------------------------------------------------------- */
+.page-header.navbar {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid var(--admin-border) !important;
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.03) !important;
+    height: 64px !important;
+    min-height: 64px !important;
+}
+
+.page-header.navbar .page-header-inner {
+    height: 64px !important;
+    display: flex;
+    align-items: center;
+}
+
+/* Logo Area */
+.page-header.navbar .page-logo {
+    background-color: #0f172a !important;
+    height: 64px !important;
+    display: flex;
+    align-items: center;
+    padding: 0 20px !important;
+    width: 250px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.page-header.navbar .page-logo a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #ffffff;
+}
+
+.admin-brand-title {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+    line-height: 1;
+}
+
+.admin-brand-title span {
+    color: var(--admin-primary);
+}
+
+.admin-brand-badge {
+    display: inline-block;
+    background: rgba(244, 130, 33, 0.16);
+    color: var(--admin-primary);
+    font-family: 'Chakra Petch', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(244, 130, 33, 0.3);
+    margin-left: 6px;
+}
+
+/* Header Action Controls */
+.menu-toggler.sidebar-toggler {
+    color: #64748b !important;
+    padding: 10px 14px !important;
+    transition: color 0.2s ease;
+}
+
+.menu-toggler.sidebar-toggler:hover {
+    color: var(--admin-primary) !important;
+}
+
+.header-view-website {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f8fafc;
+    border: 1px solid var(--admin-border);
+    color: #475569 !important;
+    padding: 7px 14px;
+    border-radius: 50px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none !important;
+    margin-left: 16px;
+    transition: all 0.2s ease;
+}
+
+.header-view-website:hover {
+    background: var(--admin-primary-soft);
+    border-color: var(--admin-primary);
+    color: var(--admin-primary) !important;
+}
+
+.header-view-website i {
+    font-size: 0.85rem;
+    color: var(--admin-primary);
+}
+
+/* User Menu in Header */
+.top-menu .nav > li > a {
+    color: #475569 !important;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+}
+
+.top-menu .nav > li > a:hover {
+    background-color: #f8fafc !important;
+}
+
+.dropdown-user .username {
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 0.86rem !important;
+    color: #0f172a !important;
+    margin-left: 8px;
+}
+
+.admin-avatar-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f48221 0%, #1e293b 100%);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 0.88rem;
+    box-shadow: 0 2px 6px rgba(244, 130, 33, 0.25);
+}
+
+.dropdown-menu-default {
+    border-radius: 14px !important;
+    border: 1px solid var(--admin-border) !important;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08) !important;
+    padding: 8px !important;
+    min-width: 190px !important;
+    margin-top: 6px !important;
+}
+
+.dropdown-menu-default > li > a {
+    padding: 9px 14px !important;
+    font-size: 0.85rem !important;
+    font-family: 'Open Sans', sans-serif !important;
+    color: #334155 !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: all 0.15s ease !important;
+}
+
+.dropdown-menu-default > li > a:hover {
+    background-color: var(--admin-primary-soft) !important;
+    color: var(--admin-primary) !important;
+}
+
+.dropdown-menu-default > li > a i {
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+.dropdown-menu-default > li > a:hover i {
+    color: var(--admin-primary);
+}
+
+.dropdown-menu-default .logout-link:hover {
+    background-color: #fef2f2 !important;
+    color: #ef4444 !important;
+}
+
+.dropdown-menu-default .logout-link:hover i {
+    color: #ef4444 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Modern Dark Sidebar Architecture
+   -------------------------------------------------------------------------- */
+.sidebar-container {
+    background-color: #0f172a !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sidemenu-container {
+    background-color: #0f172a !important;
+}
+
+.sidemenu {
+    padding-top: 14px !important;
+    padding-bottom: 40px !important;
+}
+
+/* Sidebar Section Headers */
+.sidebar-section-heading {
+    padding: 16px 20px 6px 20px !important;
+    font-family: 'Chakra Petch', monospace !important;
+    font-size: 0.68rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1.4px !important;
+    color: #64748b !important;
+    display: block !important;
+}
+
+/* Sidebar Links */
+.sidemenu > li > a {
+    padding: 10px 18px !important;
+    margin: 2px 10px !important;
+    border-radius: 10px !important;
+    color: #94a3b8 !important;
+    font-family: 'Open Sans', sans-serif !important;
+    font-size: 0.88rem !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    border-left: 3px solid transparent !important;
+    transition: all 0.2s ease !important;
+}
+
+.sidemenu > li > a .title {
+    flex-grow: 1;
+}
+
+.sidemenu > li > a i.material-icons,
+.sidemenu > li > a i.fa {
+    font-size: 1.15rem !important;
+    width: 20px;
+    text-align: center;
+    color: #64748b !important;
+    transition: color 0.2s ease;
+}
+
+.sidemenu > li > a:hover {
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    color: #ffffff !important;
+}
+
+.sidemenu > li > a:hover i.material-icons,
+.sidemenu > li > a:hover i.fa {
+    color: var(--admin-primary) !important;
+}
+
+/* Active & Open Menu States */
+.sidemenu > li.active > a,
+.sidemenu > li.open > a {
+    background: linear-gradient(90deg, rgba(244, 130, 33, 0.16) 0%, rgba(244, 130, 33, 0.04) 100%) !important;
+    border-left: 3.5px solid var(--admin-primary) !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
+.sidemenu > li.active > a i.material-icons,
+.sidemenu > li.active > a i.fa,
+.sidemenu > li.open > a i.material-icons,
+.sidemenu > li.open > a i.fa {
+    color: var(--admin-primary) !important;
+}
+
+/* Sidebar Submenus */
+.sidemenu .sub-menu {
+    background-color: rgba(15, 23, 42, 0.45) !important;
+    margin: 2px 10px 4px 10px !important;
+    padding: 6px 0 6px 14px !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 0 0 10px 10px;
+}
+
+.sidemenu .sub-menu > li > a {
+    padding: 7px 14px !important;
+    font-size: 0.84rem !important;
+    color: #94a3b8 !important;
+    border-radius: 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: all 0.15s ease !important;
+}
+
+.sidemenu .sub-menu > li > a:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: #ffffff !important;
+}
+
+.sidemenu .sub-menu > li.active > a {
+    color: var(--admin-primary) !important;
+    font-weight: 600 !important;
+    background-color: rgba(244, 130, 33, 0.1) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Page Bar, Headings & Breadcrumbs
+   -------------------------------------------------------------------------- */
+.page-bar {
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin-bottom: 24px !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.page-title {
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 1.55rem !important;
+    color: #0f172a !important;
+    letter-spacing: -0.4px !important;
+    margin: 0 !important;
+}
+
+.page-breadcrumb {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-family: 'Open Sans', sans-serif !important;
+    font-size: 0.82rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+.page-breadcrumb li {
+    display: inline-flex !important;
+    align-items: center !important;
+    color: #64748b !important;
+}
+
+.page-breadcrumb li a {
+    color: #64748b !important;
+    text-decoration: none !important;
+    transition: color 0.15s ease;
+}
+
+.page-breadcrumb li a:hover {
+    color: var(--admin-primary) !important;
+}
+
+.page-breadcrumb li.active {
+    color: var(--admin-primary) !important;
+    font-weight: 600 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Cards, Panels & Surfaces
+   -------------------------------------------------------------------------- */
+.card,
+.card-box {
+    background: #ffffff !important;
+    border: 1px solid var(--admin-border) !important;
+    border-radius: var(--admin-radius) !important;
+    box-shadow: var(--admin-shadow) !important;
+    overflow: hidden;
+    margin-bottom: 24px;
+    transition: box-shadow 0.25s ease;
+}
+
+.card-head {
+    background: #ffffff !important;
+    border-bottom: 1px solid var(--admin-border-subtle) !important;
+    padding: 18px 24px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    min-height: auto !important;
+}
+
+.card-head header {
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 1.05rem !important;
+    color: #0f172a !important;
+    letter-spacing: -0.2px !important;
+    padding: 0 !important;
+    line-height: 1.3 !important;
+}
+
+.card-body {
+    padding: 24px !important;
+}
+
+/* --------------------------------------------------------------------------
+   Buttons & Interactive Elements
+   -------------------------------------------------------------------------- */
+.btn {
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 500 !important;
+    text-transform: none !important;
+    border-radius: 8px !important;
+    padding: 8px 18px !important;
+    font-size: 0.88rem !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+}
+
+.btn-info,
+.btn-primary {
+    background-color: var(--admin-primary) !important;
+    border-color: var(--admin-primary) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(244, 130, 33, 0.22) !important;
+}
+
+.btn-info:hover,
+.btn-primary:hover {
+    background-color: var(--admin-primary-hover) !important;
+    border-color: var(--admin-primary-hover) !important;
+    box-shadow: 0 4px 12px rgba(244, 130, 33, 0.32) !important;
+}
+
+.btn-default {
+    background-color: #f8fafc !important;
+    border-color: var(--admin-border) !important;
+    color: #475569 !important;
+}
+
+.btn-default:hover {
+    background-color: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
+}
+
+.btn-danger {
+    background-color: #ef4444 !important;
+    border-color: #ef4444 !important;
+    color: #ffffff !important;
+}
+
+.btn-danger:hover {
+    background-color: #dc2626 !important;
+    border-color: #dc2626 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Modern Footer Section
+   -------------------------------------------------------------------------- */
+.page-footer {
+    background-color: #ffffff !important;
+    border-top: 1px solid var(--admin-border) !important;
+    color: #64748b !important;
+    padding: 16px 30px !important;
+    font-family: 'Open Sans', sans-serif !important;
+    font-size: 0.82rem !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.page-footer-inner {
+    float: none !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.page-footer a {
+    color: var(--admin-primary) !important;
+    text-decoration: none !important;
+    font-weight: 600;
+}
+
+.scroll-to-top {
+    background-color: #f1f5f9 !important;
+    border-radius: 8px !important;
+    color: #475569 !important;
+    transition: all 0.2s ease;
+}
+
+.scroll-to-top:hover {
+    background-color: var(--admin-primary) !important;
+    color: #ffffff !important;
+}
+
+
+/* --------------------------------------------------------------------------
+   Responsive & Mobile Adjustments
+   -------------------------------------------------------------------------- */
+@media (max-width: 991px) {
+    .page-header.navbar .page-logo {
+        width: auto !important;
+    }
+    .header-view-website {
+        display: none !important;
+    }
+    .page-content {
+        padding: 16px !important;
+    }
+    .sidemenu-container.navbar-collapse {
+        background-color: #0f172a !important;
+    }
+    .page-header.navbar .menu-toggler.responsive-toggler {
+        color: #475569 !important;
+    }
+}
