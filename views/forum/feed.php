@@ -1,6 +1,6 @@
 <?php
 /**
- * Member Feed View — Synchronized with Forum Landing Anti-Scroll Engineering Rows
+ * Member Feed View — Synchronized with Forum Landing Anti-Scroll Engineering Rows & Progressive Show More
  */
 $initialFeedsJson = json_encode($feeds ?? [], JSON_HEX_TAG | JSON_INVALID_UTF8_SUBSTITUTE);
 if ($initialFeedsJson === false) { $initialFeedsJson = '[]'; }
@@ -34,7 +34,7 @@ $initialSort = json_encode($_GET['sort'] ?? 'latest');
             </div>
             <h2 class="feed-title">Latest Discussions</h2>
             <p class="feed-subtitle">
-              Showing <span class="feed-count-highlight" x-text="discussions.length"><?= count($feeds ?? []) ?></span> discussions in current view
+              Showing <span class="feed-count-highlight" x-text="Math.min(visibleCount, discussions.length)"><?= min(6, count($feeds ?? [])) ?></span> of <span x-text="discussions.length"><?= count($feeds ?? []) ?></span> discussions in current view
             </p>
           </div>
 
@@ -67,9 +67,9 @@ $initialSort = json_encode($_GET['sort'] ?? 'latest');
             </div>
           </template>
 
-          <!-- Streamlined Row Cards (Matching Forum Landing Page) -->
-          <template x-for="feed in discussions" :key="feed.uuid">
-            <div class="discussion-item-wrap feed-item-fade-in" x-show="!loading">
+          <!-- Streamlined Row Cards (Matching Forum Landing Page) with Progressive Reveal -->
+          <template x-for="(feed, index) in discussions" :key="feed.uuid">
+            <div class="discussion-item-wrap feed-item-fade-in" x-show="!loading && index < visibleCount">
               <a :href="`<?= BASE_URL ?>/forum/discussion?uuid=${feed.uuid}`"
                  class="discussion-row-card"
                  :class="{ 'is-pinned': feed.is_pinned, 'is-hot': feed.is_hot }"
@@ -144,6 +144,17 @@ $initialSort = json_encode($_GET['sort'] ?? 'latest');
           </template>
         </div>
 
+        <!-- Progressive Reveal: Show More / Show Less Button (Anti-Scroll Control) -->
+        <div class="feed-more-actions" x-show="!loading && discussions.length > 6">
+          <button type="button" 
+                  class="feed-show-more-btn"
+                  @click="toggleFeedRows()"
+                  :aria-expanded="(visibleCount >= discussions.length).toString()">
+            <span x-text="visibleCount >= discussions.length ? 'Show Less' : 'Show More Discussions'">Show More Discussions</span>
+            <span class="material-symbols-outlined toggle-chevron" :class="{ 'is-rotated': visibleCount >= discussions.length }">expand_more</span>
+          </button>
+        </div>
+
         <!-- Pagination -->
         <div class="member-feed-pagination" x-show="totalPages > 1">
           <button class="pag-btn" @click="prevPage()" :disabled="currentPage <= 1">
@@ -183,6 +194,8 @@ document.addEventListener('alpine:init', () => {
         currentSort: <?= $initialSort ?>,
         currentPage: <?= $initialCurrentPage ?>,
         totalPages: <?= $initialTotalPages ?>,
+        visibleCount: 6,
+        step: 6,
 
         init() {
             // Listen for filter updates from the filter bar
@@ -190,8 +203,21 @@ document.addEventListener('alpine:init', () => {
                 if (e.detail.category !== undefined) this.currentCategory = e.detail.category;
                 if (e.detail.sort !== undefined) this.currentSort = e.detail.sort;
                 this.currentPage = 1;
+                this.visibleCount = 6;
                 this.fetchDiscussions();
             });
+        },
+
+        toggleFeedRows() {
+            if (this.visibleCount >= this.discussions.length) {
+                this.visibleCount = 6;
+                const feedEl = document.getElementById('discussionFeed') || document.getElementById('feedSection');
+                if (feedEl) {
+                    feedEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            } else {
+                this.visibleCount = Math.min(this.visibleCount + this.step, this.discussions.length);
+            }
         },
 
         async fetchDiscussions() {
@@ -206,6 +232,7 @@ document.addEventListener('alpine:init', () => {
                 const data = await response.json();
                 if (data.success) {
                     this.discussions = data.feeds;
+                    this.visibleCount = 6;
                     if (data.total_pages !== undefined) this.totalPages = data.total_pages;
                 }
             } catch (error) {
@@ -245,6 +272,7 @@ document.addEventListener('alpine:init', () => {
         nextPage() {
             if (this.currentPage < this.totalPages) {
                 this.currentPage++;
+                this.visibleCount = 6;
                 this.fetchDiscussions();
             }
         },
@@ -252,6 +280,7 @@ document.addEventListener('alpine:init', () => {
         prevPage() {
             if (this.currentPage > 1) {
                 this.currentPage--;
+                this.visibleCount = 6;
                 this.fetchDiscussions();
             }
         },

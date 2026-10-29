@@ -5,39 +5,58 @@
  */
 ?>
 
-
-
-
 <link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-new-topic.css?v=<?= filemtime(ROOT_PATH . '/css/forum-new-topic.css') ?>" />
 
 <div class="new-topic-wrapper" x-data="newTopicForm()">
-    <!-- Success Celebration Overlay -->
+    <!-- Success Celebration Modal Overlay -->
     <template x-if="showSuccess">
         <div class="success-overlay" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
-            <div class="success-circle">
-                <span class="material-symbols-outlined" style="font-size: 48px;">check</span>
-            </div>
-            <h2 class="success-title">Topic Published!</h2>
-            <p class="success-subtitle">Your industrial discussion is now live.</p>
-            <div class="success-actions">
-                <a :href="newPostUrl" class="btn-view-post">View Post</a>
-                <a href="feed" class="btn-back-feed">Back to Feed</a>
+            <div class="success-modal-card">
+                <div class="success-circle">
+                    <span class="material-symbols-outlined">check</span>
+                </div>
+                <h2 class="success-title">Topic Published!</h2>
+                <p class="success-subtitle">Your discussion is now live and visible to the technical community.</p>
+                <div class="success-actions">
+                    <a :href="newPostUrl" class="btn-view-post">
+                        <span>View Discussion</span>
+                    </a>
+                    <a href="feed" class="btn-back-feed">
+                        <span>Back to Feed</span>
+                    </a>
+                </div>
             </div>
         </div>
     </template>
 
     <div class="container">
+        <!-- Back Navigation -->
+        <div class="detail-nav">
+            <a href="feed" class="back-link">
+                <span class="material-symbols-outlined">arrow_back</span>
+                <span>Back to Feed</span>
+            </a>
+        </div>
+
+        <!-- Composition Header -->
         <div class="row">
             <div class="col-lg-12">
-                <!-- Composition Header -->
                 <div class="comp-header">
-                    <div>
+                    <div class="comp-header-meta">
+                        <div class="comp-eyebrow">
+                            <span class="material-symbols-outlined" style="font-size:13px;">terminal</span>
+                            <span>Discussion Composition</span>
+                        </div>
                         <h1 class="comp-title">Start a New Discussion</h1>
-                        <p class="text-muted" x-show="draftRecovered" x-transition style="font-size: 0.8rem; margin-top: -5px;">
-                            <span class="material-symbols-outlined" style="font-size:12px; vertical-align:middle;">history</span> Draft restored from your last session.
+                        <p class="comp-subtitle" x-show="!draftRecovered">Share technical challenges, insights, or project inquiries with the community.</p>
+                        <p class="text-success" x-show="draftRecovered" x-transition style="font-size: 0.82rem; margin: 4px 0 0 0; font-family:'Poppins', sans-serif; font-weight:600;">
+                            <span class="material-symbols-outlined" style="font-size:14px; vertical-align:middle;">history</span> Draft restored from your previous session.
                         </p>
                     </div>
-                    <button class="btn-discard" @click="discard()">Discard Draft</button>
+                    <button type="button" class="btn-discard" @click="discard()">
+                        <span class="material-symbols-outlined">delete_outline</span>
+                        <span>Discard Draft</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -48,18 +67,24 @@
                 <section class="editor-card">
                     <!-- Title Input -->
                     <div class="mb-4" :class="{ 'has-error': errors.title }">
-                        <label class="field-label">Discussion Title</label>
+                        <label class="field-label">
+                            <span>Discussion Title</span>
+                            <span class="field-label-desc">— Keep it clear and descriptive</span>
+                        </label>
                         <input type="text" 
                                class="topic-title-input" 
-                               placeholder="What's on your mind?..." 
+                               placeholder="e.g. Optimizing embedded edge telemetry via MQTT and ESP32..." 
                                x-model="title" 
                                maxlength="100"
                                @input="errors.title = false"
                                autofocus>
-                        <div class="d-flex justify-content-between mt-1">
-                            <span class="field-error-text" x-show="errors.title">Please provide a descriptive title (min. 5 chars).</span>
+                        <div class="d-flex justify-content-between mt-2">
+                            <span class="field-error-text" x-show="errors.title">
+                                <span class="material-symbols-outlined" style="font-size:14px;">error</span>
+                                Please provide a descriptive title (min. 5 chars).
+                            </span>
                             <div class="ml-auto">
-                                <small :class="title.length >= 90 ? 'text-danger' : 'text-muted'" style="font-size: 0.7rem;">
+                                <small :class="title.length >= 90 ? 'text-danger fw-bold' : 'text-muted'" style="font-size: 0.72rem; font-family:'Chakra Petch', monospace;">
                                     <span x-text="title.length"></span>/100
                                 </small>
                             </div>
@@ -68,24 +93,34 @@
 
                     <!-- Category Selection -->
                     <div class="mb-4" :class="{ 'has-error': errors.category }">
-                        <label class="field-label">Select Category</label>
+                        <label class="field-label">
+                            <span>Select Category</span>
+                            <span class="field-label-desc">— Assign your topic to the most relevant field</span>
+                        </label>
                         <div class="cat-pill-group mb-2">
                             <?php if (!empty($categories)): ?>
                                 <?php foreach ($categories as $cat): ?>
                                     <button type="button" class="cat-pill" 
                                          :class="{ 'active': category_id === '<?= $cat['uuid'] ?>' }"
                                          @click="category_id = '<?= $cat['uuid'] ?>'; errors.category = false">
-                                        <span class="material-symbols-outlined" style="font-size: 14px;"><?= htmlspecialchars($cat['icon'] ?? 'label') ?></span>
-                                        <?= htmlspecialchars($cat['name']) ?>
+                                        <span class="material-symbols-outlined"><?= htmlspecialchars($cat['icon'] ?? 'label') ?></span>
+                                        <span><?= htmlspecialchars($cat['name']) ?></span>
                                     </button>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </div>
-                        <span class="field-error-text" x-show="errors.category">Please select a category for your topic.</span>
+                        <span class="field-error-text" x-show="errors.category">
+                            <span class="material-symbols-outlined" style="font-size:14px;">error</span>
+                            Please select a category for your topic.
+                        </span>
                     </div>
 
                     <!-- Rich Text Editor -->
                     <div :class="{ 'has-error': errors.content }">
+                        <label class="field-label">
+                            <span>Discussion Content</span>
+                            <span class="field-label-desc">— Technical details, code, and schematics</span>
+                        </label>
                         <div class="editor-area-wrapper">
                             <div class="editor-toolbar">
                                 <button type="button" class="tool-btn" title="Bold" @click="formatText('bold')" :class="{ 'active': activeStates.bold }">
@@ -94,13 +129,14 @@
                                 <button type="button" class="tool-btn" title="Italic" @click="formatText('italic')" :class="{ 'active': activeStates.italic }">
                                     <span class="material-symbols-outlined">format_italic</span>
                                 </button>
-                                <button type="button" class="tool-btn" title="Link" @click="addLink()" :class="{ 'active': activeStates.link }">
+                                <button type="button" class="tool-btn" title="Insert Link" @click="addLink()" :class="{ 'active': activeStates.link }">
                                     <span class="material-symbols-outlined">link</span>
                                 </button>
-                                <button type="button" class="tool-btn" title="Code" @click="formatText('formatBlock', 'PRE')" :class="{ 'active': activeStates.code }">
+                                <button type="button" class="tool-btn" title="Code Block" @click="formatText('formatBlock', 'PRE')" :class="{ 'active': activeStates.code }">
                                     <span class="material-symbols-outlined">code</span>
                                 </button>
-                                <button type="button" class="tool-btn" title="Attach Image" @click="$refs.imageInput.click()" :disabled="uploading">
+                                <div class="tool-divider"></div>
+                                <button type="button" class="tool-btn" title="Attach Technical Image" @click="$refs.imageInput.click()" :disabled="uploading">
                                     <span class="material-symbols-outlined" x-show="!uploading">image</span>
                                     <div class="spinner-border spinner-border-sm" x-show="uploading"></div>
                                 </button>
@@ -108,15 +144,18 @@
                             </div>
                             <div class="editor-contenteditable" 
                                  contenteditable="true"
-                                 placeholder="Describe your topic in detail..." 
+                                 placeholder="Describe your technical challenge, implementation findings, system architecture, or questions in detail..." 
                                  x-ref="editor"
                                  @input="content = $el.innerHTML; errors.content = false"
                                  @blur="saveDraft()"></div>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <span class="field-error-text" x-show="errors.content">Content is too short. Please elaborate.</span>
+                        <div class="d-flex justify-content-between mt-2">
+                            <span class="field-error-text" x-show="errors.content">
+                                <span class="material-symbols-outlined" style="font-size:14px;">error</span>
+                                Content is too short. Please elaborate with sufficient details (min. 10 chars).
+                            </span>
                             <div class="ml-auto">
-                                <small :class="content.length >= 1900 ? 'text-danger' : 'text-muted'" style="font-size: 0.7rem;">
+                                <small :class="content.length >= 1900 ? 'text-danger fw-bold' : 'text-muted'" style="font-size: 0.72rem; font-family:'Chakra Petch', monospace;">
                                     <span x-text="content.length"></span>/2000 characters
                                 </small>
                             </div>
@@ -128,27 +167,61 @@
             <!-- Sidebar Column -->
             <div class="col-lg-4">
                 <!-- Action Card -->
-                <div class="sidebar-card" style="background: #fffbf7; border: 1px dashed #f48221;">
-                    <button class="btn-post" @click="submitTopic()" :disabled="submitting">
+                <div class="sidebar-card action-card">
+                    <button type="button" class="btn-post" @click="submitTopic()" :disabled="submitting">
                         <span class="material-symbols-outlined" x-show="!submitting">send</span>
-                        <span x-text="submitting ? 'Posting...' : 'Post Discussion'"></span>
+                        <span class="spinner-border spinner-border-sm" x-show="submitting" role="status" aria-hidden="true"></span>
+                        <span x-text="submitting ? 'Publishing Discussion...' : 'Publish Discussion'"></span>
                     </button>
-                    <p style="font-size: 0.75rem; color: #797979; margin-top: 15px; margin-bottom: 0; text-align:center;">
-                        Your topic will be visible to the community instantly.
+                    <p style="font-size: 0.78rem; color: #64748b; margin-top: 14px; margin-bottom: 0; text-align:center; line-height: 1.5;">
+                        Your topic will be indexed and visible immediately across the technical feed.
                     </p>
                 </div>
 
                 <!-- Community Guidelines -->
                 <div class="sidebar-card">
-                    <h3 style="font-family:'Poppins'; font-weight:700; font-size:1rem; margin-bottom:16px; color:#111;">Guidelines</h3>
+                    <h3 class="sidebar-card-title">
+                        <span class="material-symbols-outlined">verified</span>
+                        <span>Posting Guidelines</span>
+                    </h3>
                     <ul class="guidelines-list">
                         <li>
                             <span class="material-symbols-outlined">check_circle</span>
-                            <span>Search before posting to avoid duplicates.</span>
+                            <span>Search existing discussions before posting to prevent duplicate inquiries.</span>
                         </li>
                         <li>
                             <span class="material-symbols-outlined">check_circle</span>
-                            <span>Keep discussions professional and technical.</span>
+                            <span>Provide specific hardware versions, firmware builds, or error traces when asking questions.</span>
+                        </li>
+                        <li>
+                            <span class="material-symbols-outlined">check_circle</span>
+                            <span>Maintain professional, collaborative, and constructive communication.</span>
+                        </li>
+                        <li>
+                            <span class="material-symbols-outlined">check_circle</span>
+                            <span>Format code and configuration blocks cleanly using the code tool.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Formatting Tips -->
+                <div class="sidebar-card">
+                    <h3 class="sidebar-card-title">
+                        <span class="material-symbols-outlined">lightbulb</span>
+                        <span>Formatting Tips</span>
+                    </h3>
+                    <ul class="guidelines-list">
+                        <li>
+                            <span class="material-symbols-outlined">code</span>
+                            <span>Use the code tool to cleanly present scripts, logs, or API payloads.</span>
+                        </li>
+                        <li>
+                            <span class="material-symbols-outlined">image</span>
+                            <span>Upload wiring schematics or diagnostic screenshots to clarify edge issues.</span>
+                        </li>
+                        <li>
+                            <span class="material-symbols-outlined">save</span>
+                            <span>Drafts automatically persist in your local browser storage if interrupted.</span>
                         </li>
                     </ul>
                 </div>
@@ -222,7 +295,7 @@ function newTopicForm() {
             // 4. Update active states on selection
             document.addEventListener('selectionchange', () => {
                 const sel = window.getSelection();
-                if (sel.rangeCount > 0 && this.$refs.editor.contains(sel.anchorNode)) {
+                if (sel && sel.rangeCount > 0 && this.$refs.editor && this.$refs.editor.contains(sel.anchorNode)) {
                     this.updateActiveStates();
                 }
             });
@@ -321,8 +394,6 @@ function newTopicForm() {
 
             this.submitting = true;
             try {
-                // Fix pathing: Page is at 'forum/new-topic', endpoint is 'forum/feed/store'
-                // Relative to 'forum/', the path is 'feed/store'.
                 const response = await fetch('<?= BASE_URL ?>/forum/feed/store', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
