@@ -29,6 +29,46 @@
         </div>
     </template>
 
+    <!-- Custom Branded Discard Confirmation Modal -->
+    <template x-if="showDiscardModal">
+        <div class="modal-backdrop-blur" 
+             x-transition:enter="transition ease-out duration-250" 
+             x-transition:enter-start="opacity-0" 
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             @click.self="showDiscardModal = false"
+             @keydown.escape.window="showDiscardModal = false"
+             tabindex="-1">
+            <div class="discard-modal-card" 
+                 x-transition:enter="transition ease-out duration-300" 
+                 x-transition:enter-start="opacity-0 scale-90 translate-y-3" 
+                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 scale-90 translate-y-3">
+                <div class="discard-circle">
+                    <span class="material-symbols-outlined">delete_forever</span>
+                </div>
+                <h2 class="discard-modal-title">Discard Discussion Draft?</h2>
+                <p class="discard-modal-subtitle">
+                    Are you sure you want to discard this draft? All unsaved title, content, and category selections will be permanently cleared.
+                </p>
+                <div class="discard-modal-actions">
+                    <button type="button" class="btn-modal-cancel" @click="showDiscardModal = false">
+                        <span class="material-symbols-outlined">edit</span>
+                        <span>Keep Editing</span>
+                    </button>
+                    <button type="button" class="btn-modal-discard" @click="confirmDiscard()">
+                        <span class="material-symbols-outlined">delete</span>
+                        <span>Discard &amp; Exit</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
     <!-- Top Banner Section (Soft Light Orange Grid) -->
     <section class="new-topic-banner">
         <div class="container">
@@ -309,6 +349,7 @@ function newTopicForm() {
         uploading: false,
         draftRecovered: false,
         showSuccess: false,
+        showDiscardModal: false,
         newPostUrl: '',
         canScrollLeft: false,
         canScrollRight: false,
@@ -552,13 +593,18 @@ function newTopicForm() {
         },
 
         discard() {
-            if (confirm('Are you sure you want to discard this draft? This cannot be undone.')) {
-                localStorage.removeItem('spider_forum_draft');
-                this.title = '';
-                this.content = '';
+            this.showDiscardModal = true;
+        },
+
+        confirmDiscard() {
+            localStorage.removeItem('spider_forum_draft');
+            this.title = '';
+            this.content = '';
+            if (this.$refs.editor) {
                 this.$refs.editor.innerHTML = '';
-                window.location.href = 'feed';
             }
+            this.showDiscardModal = false;
+            window.location.href = 'feed';
         }
     }
 }
