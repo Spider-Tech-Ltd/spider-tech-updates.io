@@ -95,8 +95,8 @@ function isSubActive($page, $currentPage) {
 						<li <?= isSubActive('all_events.php', $currentPage); ?>>
 							<a href="all_events.php" class="nav-link"><span class="title">All Events</span></a>
 						</li>
-						<li <?= isSubActive('add_events.php', $currentPage); ?>>
-							<a href="add_events.php" class="nav-link"><span class="title">Add New Event</span></a>
+						<li <?= isSubActive(['add_event.php', 'add_events.php'], $currentPage); ?>>
+							<a href="add_event.php" class="nav-link"><span class="title">Add New Event</span></a>
 						</li>
 					</ul>
 				</li>

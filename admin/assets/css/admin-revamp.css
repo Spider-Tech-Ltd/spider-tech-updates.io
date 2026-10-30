@@ -1212,3 +1212,500 @@ body {
     background: #dc2626;
     box-shadow: 0 6px 18px rgba(239, 68, 68, 0.35);
 }
+
+/* ==========================================================================
+   Phase 4: Content Creation Forms, File Uploads & Rich Content UI
+   ========================================================================== */
+
+/* Modern Form Workspace Grid */
+.admin-workspace-grid {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -12px;
+    margin-left: -12px;
+}
+
+.admin-workspace-main {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding-right: 12px;
+    padding-left: 12px;
+}
+
+.admin-workspace-sidebar {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding-right: 12px;
+    padding-left: 12px;
+}
+
+@media (min-width: 992px) {
+    .admin-workspace-main {
+        flex: 0 0 68%;
+        max-width: 68%;
+    }
+    .admin-workspace-sidebar {
+        flex: 0 0 32%;
+        max-width: 32%;
+    }
+}
+
+/* Form Section Cards */
+.form-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.02);
+    margin-bottom: 24px;
+    overflow: hidden;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-card:hover {
+    border-color: #cbd5e1;
+}
+
+.form-card-head {
+    padding: 18px 24px;
+    border-bottom: 1px solid #f1f5f9;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.form-card-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+
+.form-card-title i {
+    color: #f48221;
+    font-size: 1.15rem;
+}
+
+.form-card-body {
+    padding: 24px;
+}
+
+/* Modern Form Controls & Field Groups */
+.form-group-modern {
+    margin-bottom: 22px;
+}
+
+.form-group-modern:last-child {
+    margin-bottom: 0;
+}
+
+.form-label-modern {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 8px;
+}
+
+.form-label-modern .required-star {
+    color: #ef4444;
+    margin-left: 3px;
+}
+
+.form-label-tag {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.form-control-modern {
+    width: 100%;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.92rem;
+    color: #1e293b;
+    background-color: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 11px 16px;
+    line-height: 1.5;
+    transition: all 0.2s ease;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.form-control-modern:focus {
+    border-color: #f48221;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3.5px rgba(244, 130, 33, 0.15);
+}
+
+.form-control-modern::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+select.form-control-modern {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 16px;
+    padding-right: 40px;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.form-help-modern {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-top: 6px;
+    line-height: 1.4;
+}
+
+.form-error-modern {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.8rem;
+    color: #ef4444;
+    font-weight: 550;
+    margin-top: 6px;
+}
+
+.form-error-modern i {
+    font-size: 0.95rem;
+}
+
+/* Modern Alerts */
+.admin-alert-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    animation: fadeInSlide 0.3s ease;
+}
+
+.admin-alert-success {
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+}
+
+.admin-alert-success i {
+    color: #22c55e;
+    font-size: 1.25rem;
+    margin-top: 1px;
+}
+
+.admin-alert-danger {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+}
+
+.admin-alert-danger i {
+    color: #ef4444;
+    font-size: 1.25rem;
+    margin-top: 1px;
+}
+
+/* Interactive Dropzone Component */
+.admin-dropzone-wrap {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.admin-dropzone {
+    border: 2px dashed #cbd5e1;
+    border-radius: 14px;
+    background: #f8fafc;
+    padding: 24px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: block;
+}
+
+.admin-dropzone:hover,
+.admin-dropzone.is-dragover {
+    border-color: #f48221;
+    background: rgba(244, 130, 33, 0.04);
+}
+
+.admin-dropzone-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 12px;
+    border-radius: 50%;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f48221;
+    font-size: 1.35rem;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    transition: transform 0.2s ease;
+}
+
+.admin-dropzone:hover .admin-dropzone-icon {
+    transform: translateY(-2px);
+}
+
+.admin-dropzone-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 4px;
+}
+
+.admin-dropzone-title span {
+    color: #f48221;
+    text-decoration: underline;
+}
+
+.admin-dropzone-desc {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-bottom: 10px;
+}
+
+.admin-dim-badge {
+    display: inline-block;
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #f48221;
+    background: rgba(244, 130, 33, 0.1);
+    border-radius: 50px;
+    padding: 3px 10px;
+    letter-spacing: 0.3px;
+}
+
+.admin-dropzone input[type="file"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Image Preview Container */
+.admin-preview-container {
+    margin-top: 14px;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    background: #0f172a;
+}
+
+.admin-preview-container img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+}
+
+.admin-preview-meta {
+    padding: 10px 14px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #f1f5f9;
+}
+
+.admin-preview-filename {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #0f172a;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-preview-remove {
+    background: none;
+    border: none;
+    color: #ef4444;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: background 0.15s ease;
+}
+
+.admin-preview-remove:hover {
+    background: #fef2f2;
+}
+
+/* Existing / Current Asset Card (Edit Pages) */
+.admin-current-asset-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+    padding: 14px;
+    margin-bottom: 16px;
+}
+
+.admin-current-asset-card .asset-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #0369a1;
+    background: #e0f2fe;
+    padding: 3px 10px;
+    border-radius: 50px;
+    margin-bottom: 10px;
+}
+
+.admin-current-asset-thumbnail {
+    width: 100%;
+    height: 160px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* Sidebar Action Buttons */
+.admin-actions-card {
+    position: sticky;
+    top: 90px;
+    z-index: 10;
+}
+
+.btn-admin-primary {
+    width: 100%;
+    height: 46px;
+    background: #f48221;
+    color: #ffffff !important;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(244, 130, 33, 0.25);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 10px;
+    text-decoration: none !important;
+}
+
+.btn-admin-primary:hover {
+    background: #ea720e;
+    box-shadow: 0 6px 20px rgba(244, 130, 33, 0.35);
+    transform: translateY(-1px);
+}
+
+.btn-admin-cancel {
+    width: 100%;
+    height: 44px;
+    background: #f1f5f9;
+    color: #475569 !important;
+    border: 1px solid #e2e8f0;
+    border-radius: 50px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none !important;
+}
+
+.btn-admin-cancel:hover {
+    background: #e2e8f0;
+    color: #0f172a !important;
+}
+
+/* Summernote Editor Parity & Polish */
+.note-editor.note-frame {
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: none !important;
+    transition: border-color 0.2s ease;
+}
+
+.note-editor.note-frame:focus-within {
+    border-color: #f48221 !important;
+    box-shadow: 0 0 0 3.5px rgba(244, 130, 33, 0.15) !important;
+}
+
+.note-toolbar {
+    background: #f8fafc !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding: 8px !important;
+}
+
+.note-btn {
+    border-radius: 6px !important;
+    border: 1px solid #e2e8f0 !important;
+    background: #ffffff !important;
+    color: #334155 !important;
+    font-size: 0.82rem !important;
+    transition: all 0.15s ease !important;
+}
+
+.note-btn:hover,
+.note-btn.active {
+    background: #f48221 !important;
+    border-color: #f48221 !important;
+    color: #ffffff !important;
+}
+
+.note-editable {
+    font-family: 'Open Sans', sans-serif !important;
+    font-size: 0.95rem !important;
+    line-height: 1.7 !important;
+    color: #1e293b !important;
+    background: #ffffff !important;
+    padding: 20px !important;
+}
+
+.note-statusbar {
+    background: #f8fafc !important;
+    border-top: 1px solid #f1f5f9 !important;
+}

@@ -5,14 +5,12 @@ require('secured-login.php');
 <!DOCTYPE html>
 <html lang="en">
 <!-- BEGIN HEAD -->
-
 <head>
-	<?php require'head-section.html'; ?>
+	<?php require('head-section.html'); ?>
 </head>
 <!-- END HEAD -->
 
-<body
-class="<?php require('body-tag-css.html'); ?>">
+<body class="<?php require('body-tag-css.html'); ?>">
 	<div class="page-wrapper">
 		<!-- start header -->
 		<?php require('header-section.php'); ?>
@@ -30,217 +28,228 @@ class="<?php require('body-tag-css.html'); ?>">
 				<div class="page-content">
 					<div class="page-bar">
 						<div class="page-title-breadcrumb">
-							<div class=" pull-left">
-								<div class="page-title">Add Events</div>
+							<div class="pull-left">
+								<div class="page-title">Add New Event</div>
 							</div>
 							<ol class="breadcrumb page-breadcrumb pull-right">
-								<li><i class="fa fa-home"></i>&nbsp;<a class="parent-item"
-										href="dashboard">Dashboard</a>&nbsp;<i class="fa fa-angle-right"></i>
-								</li>
-								<li><a class="parent-item" href="all_events">Events</a>&nbsp;<i class="fa fa-angle-right"></i>
-								</li>
-								<li class="active">Add Events</li>
+								<li><i class="fa fa-home"></i>&nbsp;<a class="parent-item" href="dashboard.php">Dashboard</a>&nbsp;<i class="fa fa-angle-right"></i></li>
+								<li><a class="parent-item" href="all_events.php">Events</a>&nbsp;<i class="fa fa-angle-right"></i></li>
+								<li class="active">Add Event</li>
 							</ol>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-md-12 col-sm-12">
-							<div class="card card-box">
-								<div class="card-head">
-									<header>Basic Information</header>
-									<!--
-                                    <button id="panel-button"
-										class="mdl-button mdl-js-button mdl-button--icon pull-right"
-										data-upgraded=",MaterialButton">
-										<i class="material-icons">more_vert</i>
-									</button>
-									<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
-										data-mdl-for="panel-button">
-										<li class="mdl-menu__item"><i class="material-icons">assistant_photo</i>Action
-										</li>
-										<li class="mdl-menu__item"><i class="material-icons">print</i>Another action
-										</li>
-										<li class="mdl-menu__item"><i class="material-icons">favorite</i>Something else
-											here</li>
-                                    </ul>
-                                    -->
+
+					<!-- Alerts -->
+					<?php if (!empty($event_error_counter)): ?>
+						<div class="admin-alert-banner admin-alert-danger">
+							<i class="material-icons">error_outline</i>
+							<div><strong>Action Needed:</strong> <?= strip_tags($event_error_counter); ?></div>
+						</div>
+					<?php endif; ?>
+					<?php if (!empty($event_success_msg)): ?>
+						<div class="admin-alert-banner admin-alert-success">
+							<i class="material-icons">check_circle</i>
+							<div><strong>Success:</strong> <?= strip_tags($event_success_msg); ?></div>
+						</div>
+					<?php endif; ?>
+
+					<form id="event_form" method="POST" enctype="multipart/form-data">
+						<div class="admin-workspace-grid">
+							<!-- Main Content (68%) -->
+							<div class="admin-workspace-main">
+								<div class="form-card">
+									<div class="form-card-head">
+										<h2 class="form-card-title"><i class="material-icons">event</i> Event Agenda & Specifications</h2>
+										<span class="form-label-tag">Event Details</span>
+									</div>
+									<div class="form-card-body">
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="event_title">
+												<span>Event Title <span class="required-star">*</span></span>
+												<span class="form-help-modern">Headline name of the event or conference</span>
+											</label>
+											<input type="text" id="event_title" name="event_title" 
+												placeholder="E.g. AI & Cloud Architecture Summit 2026"
+												class="form-control-modern" 
+												value="<?php if(isset($_POST['add_event'])) { echo htmlspecialchars(stripslashes($event_title)); } ?>" 
+												required />
+											<?php if(!empty($event_titleErr)): ?>
+												<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($event_titleErr); ?></div>
+											<?php endif; ?>
+										</div>
+
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="event_content">
+												<span>Brief Executive Excerpt</span>
+												<span class="form-help-modern">Short description for cards and teasers</span>
+											</label>
+											<input type="text" id="event_content" name="event_content" 
+												placeholder="Short 1-2 sentence overview of the event..."
+												class="form-control-modern" 
+												value="<?php if(isset($_POST['add_event'])) { echo htmlspecialchars(stripslashes($event_content)); } ?>" />
+											<?php if(!empty($event_contentErr)): ?>
+												<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($event_contentErr); ?></div>
+											<?php endif; ?>
+										</div>
+
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="formsummernote">
+												<span>Detailed Agenda, Speakers & Registration Details <span class="required-star">*</span></span>
+												<span class="form-help-modern">Full rich-text formatting supported</span>
+											</label>
+											<textarea id="formsummernote" name="event_detail" required><?php 
+												if(isset($_POST['add_event'])) { echo htmlspecialchars(stripslashes($_POST['event_detail'])); }
+											?></textarea>
+											<?php if(!empty($event_detailErr)): ?>
+												<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($event_detailErr); ?></div>
+											<?php endif; ?>
+										</div>
+									</div>
 								</div>
-								<div class="card-body" id="bar-parent">
-									<form id="form_sample_1" class="form-horizontal" method="POST" enctype="multipart/form-data">
-										<div class="form-body">
-                                            <div class="form-group row">
-                                                <div class=" col-md-3">
-                                                </div>
-												<div class="col-md-5">
-                                                    <?php 
-                                                        if(!empty($event_error_counter)) 
-                                                        {
-                                                            echo $event_error_counter; 
-                                                            }
-                                                        if(!empty($event_success_msg))
-                                                        {
-                                                            echo $event_success_msg;
-                                                            }
-                                                    ?>
-                                                </div>
-                                            </div>
-											<div class="form-group row">
-												<label class="control-label col-md-3">Event Title
-													<span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-													<input type="text" name="event_title" placeholder="Enter event title"
-                                                        class="form-control input-height" value="<?php if(isset($_POST['add_event'])) 
-                                                        {echo stripslashes($event_title); }?>" required max-size="10" /> 
-                                                        <?php if(isset($_POST['add_event'])) {echo $event_titleErr; }?>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-												<label class="control-label col-md-3">Event Date
-													<span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-													<div class="input-append date">
-														<div id="dateIcon" class="input-group datePicker">
-															<input class="formDatePicker form-control" name="event_date" type="text"
-																placeholder="Select Date.." value="<?php if(isset($_POST['add_event'])) 
-                                                                {echo stripslashes($event_date); }?>" data-input>
-															<span class="dateBtn">
-																<a class="input-button" title="toggle" data-toggle>
-																	<i class="icon-calendar"></i>
-																</a>
-																<a class="input-button" title="clear" data-clear>
-																	<i class="icon-close"></i>
-																</a>
-															</span>
-														</div>
-                                                    </div>
-                                                    <?php if(isset($_POST['add_event'])) {echo $event_dateErr; }?>
+							</div>
+
+							<!-- Sidebar Controls (32%) -->
+							<div class="admin-workspace-sidebar">
+								<!-- Logistics & Schedule -->
+								<div class="form-card">
+									<div class="form-card-head">
+										<h3 class="form-card-title"><i class="material-icons">schedule</i> Schedule & Logistics</h3>
+									</div>
+									<div class="form-card-body">
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="event_status">
+												<span>Event Status <span class="required-star">*</span></span>
+											</label>
+											<select id="event_status" class="form-control-modern" name="event_status" required>
+												<?php $s = isset($_POST['add_event']) ? strtolower(trim($event_status ?? '')) : 'upcoming'; ?>
+												<option value="Upcoming" <?= $s === 'upcoming' ? 'selected' : ''; ?>>Upcoming</option>
+												<option value="Ongoing" <?= $s === 'ongoing' ? 'selected' : ''; ?>>Ongoing</option>
+												<option value="Past" <?= $s === 'past' ? 'selected' : ''; ?>>Past / Completed</option>
+											</select>
+											<?php if(!empty($event_statusErr)): ?>
+												<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($event_statusErr); ?></div>
+											<?php endif; ?>
+										</div>
+
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="event_date">
+												<span>Start Date <span class="required-star">*</span></span>
+											</label>
+											<input type="text" id="event_date" name="event_date" 
+												placeholder="YYYY-MM-DD or Month DD, YYYY"
+												class="form-control-modern" 
+												value="<?php if(isset($_POST['add_event'])) { echo htmlspecialchars(stripslashes($event_date)); } ?>" 
+												required />
+											<?php if(!empty($event_dateErr)): ?>
+												<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($event_dateErr); ?></div>
+											<?php endif; ?>
+										</div>
+
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="event_date2">
+												<span>End Date</span>
+												<span class="form-help-modern">Optional</span>
+											</label>
+											<input type="text" id="event_date2" name="event_date2" 
+												placeholder="Optional end date..."
+												class="form-control-modern" 
+												value="<?php if(isset($_POST['add_event'])) { echo htmlspecialchars(stripslashes($event_date2)); } ?>" />
+										</div>
+
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="event_time">
+												<span>Event Time / Hours <span class="required-star">*</span></span>
+											</label>
+											<input type="text" id="event_time" name="event_time" 
+												placeholder="E.g. 09:00 AM - 04:00 PM WAT"
+												class="form-control-modern" 
+												value="<?php if(isset($_POST['add_event'])) { echo htmlspecialchars(stripslashes($event_time)); } ?>" 
+												required />
+											<?php if(!empty($event_timeErr)): ?>
+												<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($event_timeErr); ?></div>
+											<?php endif; ?>
+										</div>
+
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="event_address">
+												<span>Location / Venue <span class="required-star">*</span></span>
+											</label>
+											<input type="text" id="event_address" name="event_address" 
+												placeholder="E.g. Spider Tech Innovation Lab or Virtual Zoom"
+												class="form-control-modern" 
+												value="<?php if(isset($_POST['add_event'])) { echo htmlspecialchars(stripslashes($event_address)); } ?>" 
+												required />
+											<?php if(!empty($event_addressErr)): ?>
+												<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($event_addressErr); ?></div>
+											<?php endif; ?>
+										</div>
+									</div>
+								</div>
+
+								<!-- Featured Poster Upload -->
+								<div class="form-card">
+									<div class="form-card-head">
+										<h3 class="form-card-title"><i class="material-icons">image</i> Event Banner</h3>
+										<span class="admin-dim-badge">900 × 590</span>
+									</div>
+									<div class="form-card-body">
+										<div class="admin-dropzone-wrap">
+											<div class="admin-dropzone">
+												<div class="admin-dropzone-icon">
+													<i class="material-icons">cloud_upload</i>
 												</div>
+												<div class="admin-dropzone-title"><span>Click to browse</span> or drag banner</div>
+												<div class="admin-dropzone-desc">JPG, PNG, WebP up to 3MB</div>
+												<input type="file" name="img" accept="image/*" required>
 											</div>
-											<div class="form-group row">
-												<label class="control-label col-md-3">Event Date2
-													<span class="required"> * </span>
-												</label>
-											<div class="col-md-5">
-													<div class="input-append date">
-														<div id="dateIcon" class="input-group datePicker">
-															<input class="formDatePicker form-control" name="event_date2" type="text"
-																placeholder="Select Date.." value="<?php if(isset($_POST['add_event'])) 
-                                                                {echo stripslashes($event_date); }?>" data-input>
-															<span class="dateBtn">
-																<a class="input-button" title="toggle" data-toggle>
-																	<i class="icon-calendar"></i>
-																</a>
-																<a class="input-button" title="clear" data-clear>
-																	<i class="icon-close"></i>
-																</a>
-															</span>
-														</div>
-                                                    </div>
-                                                    <?php if(isset($_POST['add_event'])) {echo $event_date2Err; }?>
-												</div>
-											</div>
-                                            <div class="form-group row">
-												<label class="control-label col-md-3">Event Time
-													<span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-													<input type="text" name="event_time" placeholder="Select time..."
-                                                        class="form-control input-height" value="<?php if(isset($_POST['add_event'])) 
-                                                        {echo stripslashes($event_time); }?>"  required /> 
-                                                        <?php if(isset($_POST['add_event'])) {echo $event_timeErr; }?>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-												<label class="control-label col-md-3">Event Address
-													<span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-													<input type="text" name="event_address" placeholder="Enter address"
-                                                        class="form-control input-height" value="<?php if(isset($_POST['add_event'])) 
-                                                        {echo stripslashes($event_address); }?>" required max-size="10" /> 
-                                                        <?php if(isset($_POST['add_event'])) {echo $event_addressErr; }?>
-                                                </div>
-                                            </div>
-											<div class="form-group row">
-												<label class="control-label col-md-3">Breif Description
-													<span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-													<input type="text" name="event_content" placeholder="Enter description"
-                                                        class="form-control input-height" value="<?php if(isset($_POST['add_event'])) 
-                                                        {echo stripslashes($event_content); }?>" /> 
-                                                        <?php if(isset($_POST['add_event'])) {echo $event_contentErr; }?>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-												<label class="control-label col-md-3">Event Status
-													<span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-													<select class="form-control input-height" name="event_status" required>
-                                                        <?php
-                                                        $selectedStatus = isset($_POST['add_event']) ? strtolower(trim($event_status ?? '')) : '';
-                                                        ?>
-                                                        <option value="" <?= $selectedStatus === '' ? 'selected' : '' ?>>Select...</option>
-                                                        <option value="Upcoming" <?= $selectedStatus === 'upcoming' ? 'selected' : '' ?>>Upcoming event</option>
-                                                        <option value="Ongoing" <?= $selectedStatus === 'ongoing' ? 'selected' : '' ?>>Ongoing event</option>
-                                                        <option value="Past" <?= $selectedStatus === 'past' ? 'selected' : '' ?>>Past event</option>
-                                                    </select>
-                                                    <?php if(isset($_POST['add_event'])) {echo $event_statusErr; }?>
-												</div>
-											</div>
-                                            <div class="form-group row">
-												<label class="control-label col-md-3">Upload Picture 
-                                                    <span class="required"> * </span>
-												</label>
-												<div class="col-md-5 ">
-													<input type="file" class="default" name="img" required>
-                                                    <?php if(isset($_POST['add_event'])) {echo '<div>'.$event_imgErr.'</div>'; }?>
-												</div>
-                                            </div>
-                                            <div class="form-group row">
-												<label class="control-label col-md-3">Brief Description
-													<span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-													<textarea id="formsummernote" placeholder="Enter Content"
-                                                        class="form-control-textarea" rows="3" name="event_detail" required><?php if(isset($_POST['add_event'])) 
-                                                        {echo stripslashes($_POST['event_detail']); }?></textarea>
-                                                        <?php if(isset($_POST['add_event'])) {echo $event_detailErr; }?>
-												</div>
-                                            </div>
-											<div class="form-actions">
-												<div class="row">
-													<div class="offset-md-3 col-md-9">
-														<button type="submit"
-															class="btn btn-info m-r-20" name="add_event">Submit</button>
-														<button type="button" class="btn btn-default">Cancel</button>
-													</div>
+
+											<div class="admin-preview-container" style="display: none;">
+												<img class="admin-preview-img" src="" alt="Selected Preview">
+												<div class="admin-preview-meta">
+													<span class="admin-preview-filename"></span>
+													<button type="button" class="admin-preview-remove">
+														<i class="material-icons">close</i> Remove
+													</button>
 												</div>
 											</div>
 										</div>
-									</form>
+										<?php if(!empty($event_imgErr)): ?>
+											<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($event_imgErr); ?></div>
+										<?php endif; ?>
+									</div>
+								</div>
+
+								<!-- Action Card -->
+								<div class="form-card admin-actions-card">
+									<div class="form-card-head">
+										<h3 class="form-card-title"><i class="material-icons">publish</i> Publication</h3>
+									</div>
+									<div class="form-card-body">
+										<button type="submit" name="add_event" class="btn-admin-primary">
+											<i class="material-icons">check_circle</i> Save & Publish Event
+										</button>
+										<a href="all_events.php" class="btn-admin-cancel">
+											<i class="material-icons">arrow_back</i> Discard & Return
+										</a>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
+					</form>
 				</div>
 			</div>
 			<!-- end page content -->
 			<!-- start chat sidebar -->
-			<?php require'setting_and_chat_section.php';?>
+			<?php require('setting_and_chat_section.php');?>
 			<!-- end chat sidebar -->
 		</div>
 		<!-- end page container -->
 		<!-- start footer -->
-		<?php require'footer-section.html'; ?>
+		<?php require('footer-section.html'); ?>
 		<!-- end footer -->
 	</div>
 	<!-- start js include path -->
-	<?php require'js-section.html'; ?>
+	<?php require('js-section.html'); ?>
 	<!-- end js include path -->
 </body>
-
 </html>
