@@ -14,9 +14,9 @@ class ProjectController extends BaseController
         $this->render("projects/index", $data);
     }
 
-    public function detail()
+    public function detail($id = null)
     {
-        $id = $_GET['id'] ?? null;
+        $id = $id ?? $_GET['id'] ?? null;
         $projectModel = new ProjectModel($this->db);
         $homeModel = new HomeModel($this->db);
         $data = [

@@ -1,6 +1,6 @@
 <div class="content-header">
     <div class="d-flex align-items-center gap-3">
-        <a href="<?= BASE_URL ?>/admin/blog" class="btn-action"><span class="material-symbols-outlined">arrow_back</span></a>
+        <a href="<?= BASE_URL ?>/admin/blog" class="btn-action btn-back-header me-3 mr-3" title="Back"><span class="material-symbols-outlined">arrow_back</span></a>
         <div>
             <h1><?= ($mode == 'add') ? 'Add New' : 'Edit' ?> Blog Post</h1>
             <p>Publish and manage articles and insights.</p>
@@ -23,7 +23,7 @@
 
                     <div class="mb-4">
                         <label class="form-label-custom">Article Title</label>
-                        <input type="text" name="title" class="form-control-custom" value="<?= $item['title'] ?? '' ?>" required>
+                        <input type="text" name="title" class="form-control-custom" value="<?= htmlspecialchars($item['title'] ?? '') ?>" required>
                     </div>
 
                     <div class="row mb-4">
@@ -49,14 +49,25 @@
 
                     <div class="mb-4">
                         <label class="form-label-custom">Summary (Meta Description)</label>
-                        <textarea name="summary" class="form-control-custom" rows="3" required><?= $item['summary'] ?? '' ?></textarea>
+                        <textarea name="summary" class="form-control-custom" rows="3" required><?= htmlspecialchars($item['summary'] ?? '') ?></textarea>
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label-custom">Featured Image</label>
-                        <?php if (isset($item['image_path']) && !empty($item['image_path'])): ?>
+                        <?php
+                        $previewImg = '';
+                        if (isset($item['image_path']) && !empty($item['image_path'])) {
+                            if (preg_match('#^https?://#i', $item['image_path'])) {
+                                $previewImg = $item['image_path'];
+                            } else {
+                                $cleanRel = ltrim(preg_replace('#^(\.\./)+#', '', $item['image_path']), './');
+                                $previewImg = BASE_URL . '/' . $cleanRel;
+                            }
+                        }
+                        ?>
+                        <?php if (!empty($previewImg)): ?>
                             <div class="mb-2">
-                                <img src="<?= BASE_URL . '/' . ltrim($item['image_path'], './') ?>" alt="Preview" style="max-height: 150px; border-radius: 8px;">
+                                <img src="<?= htmlspecialchars($previewImg) ?>" alt="Preview" style="max-height: 150px; border-radius: 8px; border: 1px solid var(--border-color);">
                             </div>
                         <?php endif; ?>
                         <input type="file" name="image_path" class="form-control-custom" accept="image/*">
@@ -65,11 +76,11 @@
 
                     <div class="mb-4">
                         <label class="form-label-custom">Content (Rich Text Editor)</label>
-                        <textarea name="content" class="form-control-custom rich-editor" rows="15"><?= $item['content'] ?? '' ?></textarea>
+                        <textarea name="content" class="form-control-custom rich-editor" rows="15"><?= htmlspecialchars($item['content'] ?? '') ?></textarea>
                     </div>
 
                     <div class="d-flex justify-content-end gap-3 mt-5">
-                        <a href="<?= BASE_URL ?>/admin/blog" class="btn btn-light px-4">Cancel</a>
+                        <a href="<?= BASE_URL ?>/admin/blog" class="btn-pill-cancel px-4">Cancel</a>
                         <button type="submit" class="btn btn-primary-custom px-5">
                             <?= ($mode == 'add') ? 'Publish Post' : 'Save Changes' ?>
                         </button>

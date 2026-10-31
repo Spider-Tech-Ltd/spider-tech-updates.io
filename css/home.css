@@ -182,6 +182,66 @@
         outline: 2px solid #ffffff;
         outline-offset: 3px;
     }
+    /* Hero Slider Controls */
+    .hero-nav-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(15, 23, 42, 0.45);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 20;
+        transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .hero-nav-arrow:hover {
+        background: var(--primary-orange);
+        border-color: var(--primary-orange);
+        color: #ffffff;
+        transform: translateY(-50%) scale(1.08);
+        box-shadow: 0 4px 16px rgba(244, 130, 33, 0.4);
+    }
+
+    .hero-nav-prev { left: 24px; }
+    .hero-nav-next { right: 24px; }
+
+    .hero-slide-dots {
+        position: absolute;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        z-index: 20;
+    }
+
+    .hero-dot {
+        width: 10px;
+        height: 6px;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.35);
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .hero-dot.active {
+        width: 28px;
+        background: var(--primary-orange);
+        box-shadow: 0 0 10px rgba(244, 130, 33, 0.6);
+    }
+
     /* Hero Stats */
     .hero-stats {
         display: flex;

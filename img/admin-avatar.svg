@@ -1,0 +1,18 @@
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="adminBg" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="accentOrange" x1="20" y1="16" x2="60" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f48221"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+  </defs>
+  <rect width="80" height="80" rx="40" fill="url(#adminBg)"/>
+  <circle cx="40" cy="40" r="38" stroke="#f48221" stroke-width="2" stroke-opacity="0.35"/>
+  <!-- Head -->
+  <circle cx="40" cy="30" r="13" fill="url(#accentOrange)"/>
+  <!-- Body -->
+  <path d="M18 64.5C18 53.73 27.85 45 40 45C52.15 45 62 53.73 62 64.5C62 66.43 60.43 68 58.5 68H21.5C19.57 68 18 66.43 18 64.5Z" fill="url(#accentOrange)"/>
+</svg>

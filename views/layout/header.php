@@ -3,8 +3,10 @@
   $currentUrl = rtrim($_GET['url'] ?? 'home', '/');
   // Normalize: "events/detail" → "events", "" → "home"
   $navSegment = explode('/', $currentUrl ?: 'home')[0];
-  function navActive(string $segment, string $current): string {
-      return ($segment === $current) ? ' active' : '';
+  if (!function_exists('navActive')) {
+      function navActive(string $segment, string $current): string {
+          return ($segment === $current) ? ' active' : '';
+      }
   }
 ?>
 <!doctype html>
@@ -98,6 +100,65 @@
             </a>
           <?php endif; ?>
         </div>
+
+        <!-- Center: Active Cohort Registration Announcement Banner -->
+        <?php
+          if (!isset($topbarAnnouncements)) {
+              $topbarGm = isset($headerGm) ? $headerGm : new GeneralModel($this->db);
+              $topbarAnnouncements = $topbarGm->getActiveCohortAnnouncements();
+          }
+        ?>
+        <?php if (!empty($topbarAnnouncements)): ?>
+          <div class="topbar-announcement-wrap" role="status" aria-live="polite">
+            <span class="topbar-announce-tag">
+              <span class="topbar-tag-bullet" aria-hidden="true"></span>
+              <span>New Cohort</span>
+            </span>
+            <div class="topbar-announce-ticker">
+              <div class="topbar-announce-track">
+                <?php for ($g = 0; $g < 2; $g++): ?>
+                  <div class="topbar-announce-group" <?= $g === 1 ? 'aria-hidden="true"' : '' ?>>
+                    <?php foreach ($topbarAnnouncements as $annCohort): ?>
+                      <?php
+                        if (!empty($annCohort['custom_announcement'])) {
+                            $annSentence = trim($annCohort['custom_announcement']);
+                        } else {
+                            $rawName = trim($annCohort['training_name'] ?? '');
+                            $tFormatted = ucwords(strtolower($rawName));
+                            $tFormatted = preg_replace_callback('/\b(For|And|Of|In|To|The|With)\b/', function($m) {
+                                return strtolower($m[0]);
+                            }, $tFormatted);
+                            $acronym = '';
+                            if (stripos($rawName, 'Digital Skills') !== false && stripos($rawName, 'Entrepreneurs') !== false) {
+                                $acronym = ' (DSE)';
+                            } elseif (stripos($rawName, 'Jobberman') !== false) {
+                                $acronym = ' (JSS)';
+                            } elseif (stripos($rawName, 'We Code') !== false) {
+                                $acronym = ' (WC)';
+                            }
+                            $cNum = $annCohort['cohort_number'] ?? '';
+                            $cPart = $cNum ? " – Cohort {$cNum}" : '';
+                            $annSentence = "Registration for {$tFormatted}{$acronym}{$cPart} is now open";
+                        }
+                        $regLink = BASE_URL . '/trainings/register?cohort=' . urlencode($annCohort['slug']);
+                      ?>
+                      <a href="<?= $regLink ?>" class="topbar-announce-item" title="Click to apply for <?= htmlspecialchars($annCohort['cohort_name']) ?>">
+                        <span class="announce-text"><?= htmlspecialchars($annSentence) ?></span>
+                        <span class="topbar-announce-cta">
+                          <span>Apply</span>
+                          <svg class="cta-arrow" width="9" height="9" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M2 5H8M5.5 2.5L8 5L5.5 7.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </span>
+                      </a>
+                      <span class="topbar-announce-sep" aria-hidden="true">&bull;</span>
+                    <?php endforeach; ?>
+                  </div>
+                <?php endfor; ?>
+              </div>
+            </div>
+          </div>
+        <?php endif; ?>
 
         <!-- Right Group: Forum & FAQ Quick Links + Social Media -->
         <div class="topbar-right-group">

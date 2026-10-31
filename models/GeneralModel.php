@@ -65,11 +65,30 @@ class GeneralModel {
 
     public function getPartners() {
         try {
-            $stmt = $this->conn->query("SELECT * FROM partners_tb WHERE status = 1 ORDER BY sort_order ASC, id ASC");
+            $stmt = $this->conn->query("SELECT * FROM partners_tb WHERE is_active = 1 ORDER BY sort_order ASC, id ASC");
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return [];
+        }
+    }
+
+    public function getActiveCohortAnnouncements() {
+        try {
+            $stmt = $this->conn->query("
+                SELECT tc.*, 
+                       t.training_name,
+                       t.id as training_id
+                FROM training_cohorts tc
+                JOIN trainings_tb t ON t.id = tc.training_id
+                WHERE tc.show_topbar_banner = 1
+                  AND tc.registration_open = 1
+                  AND tc.status IN ('open', 'upcoming')
+                  AND (tc.registration_deadline IS NULL OR tc.registration_deadline >= NOW())
+                ORDER BY tc.cohort_number DESC, tc.id DESC
+            ");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             return [];
         }
     }
 }
-?>

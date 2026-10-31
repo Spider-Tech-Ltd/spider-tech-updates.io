@@ -90,6 +90,9 @@ class BaseController {
             if (empty($data['socialLinks'])) {
                 $data['socialLinks'] = $gm->getSocialLinks();
             }
+            if (!isset($data['topbarAnnouncements'])) {
+                $data['topbarAnnouncements'] = $gm->getActiveCohortAnnouncements();
+            }
         }
         extract($data);
         $header = ROOT_PATH . "/views/layout/header.php";

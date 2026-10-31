@@ -50,27 +50,41 @@ class AdminModel
         return $data;
     }
 
-    public function getUnifiedApplications($programId = 'all', $page = 1, $limit = 10)
+    public function getUnifiedApplications($programId = 'all', $page = 1, $limit = 10, $cohortId = 'all', $search = '')
     {
         $offset = ($page - 1) * $limit;
 
-        $where = "";
+        $conditions = [];
         $params = [];
-        if ($programId !== 'all') {
-            $where = " WHERE tr.program_id = :program_id";
+        if ($programId !== 'all' && $programId !== '') {
+            $conditions[] = "tr.program_id = :program_id";
             $params[':program_id'] = $programId;
         }
+        if ($cohortId !== 'all' && $cohortId !== '') {
+            $conditions[] = "tr.cohort_id = :cohort_id";
+            $params[':cohort_id'] = $cohortId;
+        }
+        if (!empty($search)) {
+            $conditions[] = "(tr.user_data LIKE :search OR tc.cohort_name LIKE :search OR t.training_name LIKE :search)";
+            $params[':search'] = '%' . $search . '%';
+        }
 
-        $countSql = "SELECT COUNT(*) FROM training_registrations tr" . $where;
+        $where = !empty($conditions) ? " WHERE " . implode(" AND ", $conditions) : "";
+
+        $countSql = "SELECT COUNT(*) FROM training_registrations tr
+                     LEFT JOIN trainings_tb t ON tr.program_id = t.id
+                     LEFT JOIN training_cohorts tc ON tr.cohort_id = tc.id" . $where;
         $stmt = $this->db->prepare($countSql);
         foreach ($params as $key => $val) {
             $stmt->bindValue($key, $val);
         }
         $stmt->execute();
-        $total = $stmt->fetchColumn();
-        $totalPages = ceil($total / $limit);
+        $total = (int)$stmt->fetchColumn();
+        $totalPages = $limit > 0 ? (int)ceil($total / $limit) : 1;
 
         $sql = "SELECT tr.*,
+                tc.cohort_name,
+                tc.cohort_number,
                 CASE
                     WHEN tr.registration_type = 'event' THEN e.event_title
                     ELSE t.training_name
@@ -78,15 +92,22 @@ class AdminModel
                 FROM training_registrations tr
                 LEFT JOIN trainings_tb t ON tr.program_id = t.id
                 LEFT JOIN events e ON tr.program_id = e.event_id
+                LEFT JOIN training_cohorts tc ON tr.cohort_id = tc.id
                 $where
-                ORDER BY tr.created_at DESC LIMIT :limit OFFSET :offset";
+                ORDER BY tr.created_at DESC";
+
+        if ($limit > 0) {
+            $sql .= " LIMIT :limit OFFSET :offset";
+        }
 
         $stmt = $this->db->prepare($sql);
         foreach ($params as $key => $val) {
             $stmt->bindValue($key, $val);
         }
-        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        if ($limit > 0) {
+            $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        }
         $stmt->execute();
 
         return [
@@ -94,6 +115,78 @@ class AdminModel
             'total_pages' => $totalPages,
             'current_page' => $page,
             'total_records' => $total
+        ];
+    }
+
+    public function getApplicationStats()
+    {
+        $total = (int)$this->db->query("SELECT COUNT(*) FROM training_registrations")->fetchColumn();
+        $cohort4 = (int)$this->db->query("SELECT COUNT(*) FROM training_registrations WHERE cohort_id = 4")->fetchColumn();
+        $today = (int)$this->db->query("SELECT COUNT(*) FROM training_registrations WHERE DATE(created_at) = CURRENT_DATE()")->fetchColumn();
+        $programs = (int)$this->db->query("SELECT COUNT(DISTINCT program_id) FROM training_registrations")->fetchColumn();
+
+        return [
+            'total' => $total,
+            'cohort4' => $cohort4,
+            'today' => $today,
+            'programs' => $programs
+        ];
+    }
+
+    public function getAllCohorts($trainingId = 'all', $status = 'all', $search = '')
+    {
+        $conditions = [];
+        $params = [];
+
+        if ($trainingId !== 'all' && !empty($trainingId)) {
+            $conditions[] = "tc.training_id = :training_id";
+            $params[':training_id'] = (int)$trainingId;
+        }
+
+        if ($status !== 'all' && !empty($status)) {
+            if ($status === 'open') {
+                $conditions[] = "(tc.registration_open = 1 OR tc.status = 'open')";
+            } else {
+                $conditions[] = "tc.status = :status";
+                $params[':status'] = $status;
+            }
+        }
+
+        if (!empty($search)) {
+            $conditions[] = "(tc.cohort_name LIKE :search OR tc.slug LIKE :search OR t.training_name LIKE :search)";
+            $params[':search'] = '%' . $search . '%';
+        }
+
+        $where = !empty($conditions) ? " WHERE " . implode(" AND ", $conditions) : "";
+
+        $sql = "SELECT tc.*, t.training_name, COUNT(tr.id) as applicant_count
+                FROM training_cohorts tc
+                JOIN trainings_tb t ON t.id = tc.training_id
+                LEFT JOIN training_registrations tr ON tr.cohort_id = tc.id
+                $where
+                GROUP BY tc.id
+                ORDER BY tc.training_id ASC, tc.cohort_number DESC";
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getCohortStats()
+    {
+        $total = (int)$this->db->query("SELECT COUNT(*) FROM training_cohorts")->fetchColumn();
+        $open = (int)$this->db->query("SELECT COUNT(*) FROM training_cohorts WHERE registration_open = 1 OR status = 'open'")->fetchColumn();
+        $completed = (int)$this->db->query("SELECT COUNT(*) FROM training_cohorts WHERE status = 'completed'")->fetchColumn();
+        $enrolled = (int)$this->db->query("SELECT COUNT(*) FROM training_registrations WHERE cohort_id IS NOT NULL")->fetchColumn();
+
+        return [
+            'total' => $total,
+            'open' => $open,
+            'completed' => $completed,
+            'enrolled' => $enrolled
         ];
     }
 
@@ -122,23 +215,36 @@ class AdminModel
         return $stats;
     }
 
-    public function getPaginated($table, $page = 1, $limit = 6, $orderBy = 'id DESC', $filters = [])
+    public function getPaginated($table, $page = 1, $limit = 6, $orderBy = 'id DESC', $filters = [], $search = '', $searchColumns = [])
     {
         $offset = ($page - 1) * $limit;
         $allowedTables = ['services_tb', 'projects_tb', 'events', 'trainings_tb', 'blogs', 'members', 'faq_tb', 'testimonials_tb', 'banners_tb'];
-        if (!in_array($table, $allowedTables)) return ['data' => [], 'total_pages' => 0];
+        if (!in_array($table, $allowedTables)) return ['data' => [], 'total_pages' => 0, 'total_records' => 0, 'current_page' => $page, 'limit' => $limit];
 
         $where = "";
         $params = [];
+        $conditions = [];
+
         if (!empty($filters)) {
-            $conditions = [];
             foreach ($filters as $column => $value) {
-                if ($value !== 'all') {
+                if ($value !== 'all' && $value !== null) {
                     $conditions[] = "$column = :$column";
                     $params[":$column"] = $value;
                 }
             }
-            if (!empty($conditions)) $where = " WHERE " . implode(' AND ', $conditions);
+        }
+
+        if (!empty($search) && !empty($searchColumns)) {
+            $searchParts = [];
+            foreach ($searchColumns as $idx => $col) {
+                $searchParts[] = "$col LIKE :search_$idx";
+                $params[":search_$idx"] = '%' . $search . '%';
+            }
+            $conditions[] = '(' . implode(' OR ', $searchParts) . ')';
+        }
+
+        if (!empty($conditions)) {
+            $where = " WHERE " . implode(' AND ', $conditions);
         }
 
         $totalSql = "SELECT COUNT(*) FROM $table" . $where;
@@ -146,7 +252,7 @@ class AdminModel
         foreach ($params as $k => $v) $stmt->bindValue($k, $v);
         $stmt->execute();
         $total = $stmt->fetchColumn();
-        $totalPages = ceil($total / $limit);
+        $totalPages = ($limit > 0) ? (int)ceil($total / $limit) : 1;
 
         if ($table === 'blogs') {
             $sql = "SELECT b.*, bc.name
@@ -165,9 +271,90 @@ class AdminModel
 
         return [
             'data' => $stmt->fetchAll(PDO::FETCH_ASSOC),
-            'total_pages' => $totalPages,
-            'current_page' => $page
+            'total_pages' => (int)$totalPages,
+            'total_records' => (int)$total,
+            'current_page' => (int)$page,
+            'limit' => (int)$limit
         ];
+    }
+
+    public function getPaginatedBlogs($page = 1, $limit = 6, $orderBy = 'b.created_at DESC', $categoryFilter = 'all', $statusFilter = 'all', $search = '')
+    {
+        $offset = ($page - 1) * $limit;
+        $where = [];
+        $params = [];
+
+        if ($categoryFilter !== 'all' && !empty($categoryFilter)) {
+            $where[] = "(b.category_id = :category_id OR c.slug = :category_slug)";
+            $params[':category_id'] = (int)$categoryFilter;
+            $params[':category_slug'] = $categoryFilter;
+        }
+
+        if ($statusFilter !== 'all' && !empty($statusFilter)) {
+            $where[] = "b.status = :status";
+            $params[':status'] = $statusFilter;
+        }
+
+        if (!empty($search)) {
+            $where[] = "(b.title LIKE :search OR b.summary LIKE :search OR b.content LIKE :search OR c.name LIKE :search)";
+            $params[':search'] = '%' . $search . '%';
+        }
+
+        $whereSql = !empty($where) ? " WHERE " . implode(' AND ', $where) : "";
+
+        $countSql = "SELECT COUNT(*) FROM blogs b LEFT JOIN blog_categories c ON b.category_id = c.id" . $whereSql;
+        $countStmt = $this->db->prepare($countSql);
+        foreach ($params as $k => $v) $countStmt->bindValue($k, $v);
+        $countStmt->execute();
+        $total = $countStmt->fetchColumn();
+        $totalPages = ($limit > 0) ? (int)ceil($total / $limit) : 1;
+
+        $sql = "SELECT b.*, c.name as category_name, c.slug as category_slug, c.icon_name as category_icon
+                FROM blogs b
+                LEFT JOIN blog_categories c ON b.category_id = c.id
+                $whereSql
+                ORDER BY $orderBy LIMIT :limit OFFSET :offset";
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $k => $v) $stmt->bindValue($k, $v);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return [
+            'data' => $stmt->fetchAll(PDO::FETCH_ASSOC),
+            'total_pages' => (int)$totalPages,
+            'total_records' => (int)$total,
+            'current_page' => (int)$page,
+            'limit' => (int)$limit
+        ];
+    }
+
+    public function getTotalBlogsCount()
+    {
+        return (int)$this->db->query("SELECT COUNT(*) FROM blogs")->fetchColumn();
+    }
+
+    public function getAll($table, $orderBy = null)
+    {
+        $allowedTables = [
+            'services_tb' => 'id',
+            'projects_tb' => 'project_id',
+            'events' => 'event_id',
+            'trainings_tb' => 'training_id',
+            'blogs' => 'id',
+            'blog_categories' => 'id',
+            'members' => 'id',
+            'faq_tb' => 'faq_id',
+            'testimonials_tb' => 'id',
+            'banners_tb' => 'banner_id'
+        ];
+        if (!array_key_exists($table, $allowedTables)) return [];
+        $pk = $allowedTables[$table];
+        if ($orderBy === null) {
+            $orderBy = "$pk DESC";
+        }
+        $stmt = $this->db->query("SELECT * FROM $table ORDER BY $orderBy");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getById($table, $pk, $id)
@@ -229,25 +416,183 @@ class AdminModel
         return false;
     }
 
-    public function getPaginatedProjects($page = 1, $limit = 6)
+    public function getPaginatedEvents($page = 1, $limit = 6, $orderBy = 'event_date DESC', $statusFilter = 'all', $search = '')
     {
         $offset = ($page - 1) * $limit;
-        $total = $this->db->query("SELECT COUNT(*) FROM projects_tb")->fetchColumn();
-        $totalPages = ceil($total / $limit);
+        $where = [];
+        $params = [];
 
-        $sql = "SELECT p.*, s.service_name
-                FROM projects_tb p
-                LEFT JOIN services_tb s ON p.service_id = s.id
-                ORDER BY p.project_id DESC LIMIT :limit OFFSET :offset";
+        if ($statusFilter !== 'all' && !empty($statusFilter)) {
+            $where[] = "LOWER(event_status) = :event_status";
+            $params[':event_status'] = strtolower($statusFilter);
+        }
+
+        if (!empty($search)) {
+            $where[] = "(event_title LIKE :search OR event_content LIKE :search OR event_address LIKE :search)";
+            $params[':search'] = '%' . $search . '%';
+        }
+
+        $whereSql = !empty($where) ? " WHERE " . implode(' AND ', $where) : "";
+
+        $countSql = "SELECT COUNT(*) FROM events" . $whereSql;
+        $countStmt = $this->db->prepare($countSql);
+        foreach ($params as $k => $v) $countStmt->bindValue($k, $v);
+        $countStmt->execute();
+        $total = $countStmt->fetchColumn();
+        $totalPages = ($limit > 0) ? (int)ceil($total / $limit) : 1;
+
+        $sql = "SELECT * FROM events $whereSql ORDER BY $orderBy LIMIT :limit OFFSET :offset";
         $stmt = $this->db->prepare($sql);
+        foreach ($params as $k => $v) $stmt->bindValue($k, $v);
         $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
         $stmt->execute();
 
         return [
             'data' => $stmt->fetchAll(PDO::FETCH_ASSOC),
-            'total_pages' => $totalPages,
-            'current_page' => $page
+            'total_pages' => (int)$totalPages,
+            'total_records' => (int)$total,
+            'current_page' => (int)$page,
+            'limit' => (int)$limit
+        ];
+    }
+
+    public function getEventStats()
+    {
+        $stmt = $this->db->query("
+            SELECT 
+                COUNT(*) AS total_events,
+                SUM(CASE WHEN LOWER(event_status) = 'upcoming' THEN 1 ELSE 0 END) AS upcoming_events,
+                SUM(CASE WHEN LOWER(event_status) = 'ongoing' THEN 1 ELSE 0 END) AS ongoing_events,
+                SUM(CASE WHEN LOWER(event_status) = 'past' THEN 1 ELSE 0 END) AS past_events
+            FROM events
+        ");
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: [
+            'total_events' => 0,
+            'upcoming_events' => 0,
+            'ongoing_events' => 0,
+            'past_events' => 0
+        ];
+    }
+    public function getPaginatedTrainings($page = 1, $limit = 6, $orderBy = 't.sort_order ASC, t.id DESC', $statusFilter = 'all', $search = '')
+    {
+        $offset = ($page - 1) * $limit;
+        $where = [];
+        $params = [];
+
+        if ($statusFilter === 'open') {
+            $where[] = "t.registration_available = 1";
+        } elseif ($statusFilter === 'closed') {
+            $where[] = "t.registration_available = 0";
+        } elseif ($statusFilter === 'featured') {
+            $where[] = "t.show_on_home = 1";
+        }
+
+        if (!empty($search)) {
+            $where[] = "(t.training_name LIKE :search OR t.training_description LIKE :search)";
+            $params[':search'] = '%' . $search . '%';
+        }
+
+        $whereSql = !empty($where) ? " WHERE " . implode(' AND ', $where) : "";
+
+        $countSql = "SELECT COUNT(*) FROM trainings_tb t" . $whereSql;
+        $countStmt = $this->db->prepare($countSql);
+        foreach ($params as $k => $v) $countStmt->bindValue($k, $v);
+        $countStmt->execute();
+        $total = $countStmt->fetchColumn();
+        $totalPages = ($limit > 0) ? (int)ceil($total / $limit) : 1;
+
+        $sql = "SELECT t.*,
+                       COUNT(DISTINCT tc.id) AS total_cohorts,
+                       COUNT(DISTINCT CASE WHEN tc.registration_open = 1 AND tc.status = 'open' THEN tc.id END) AS open_cohorts,
+                       COUNT(DISTINCT tr.id) AS total_applications
+                FROM trainings_tb t
+                LEFT JOIN training_cohorts tc ON tc.training_id = t.id
+                LEFT JOIN training_registrations tr ON tr.program_id = t.id
+                $whereSql
+                GROUP BY t.id
+                ORDER BY $orderBy LIMIT :limit OFFSET :offset";
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $k => $v) $stmt->bindValue($k, $v);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return [
+            'data' => $stmt->fetchAll(PDO::FETCH_ASSOC),
+            'total_pages' => (int)$totalPages,
+            'total_records' => (int)$total,
+            'current_page' => (int)$page,
+            'limit' => (int)$limit
+        ];
+    }
+
+    public function getTrainingStats()
+    {
+        $stmt = $this->db->query("
+            SELECT 
+                COUNT(*) AS total_trainings,
+                SUM(CASE WHEN registration_available = 1 THEN 1 ELSE 0 END) AS active_programs,
+                (SELECT COUNT(*) FROM training_cohorts) AS total_cohorts,
+                (SELECT COUNT(*) FROM training_registrations) AS total_applications
+            FROM trainings_tb
+        ");
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: [
+            'total_trainings' => 0,
+            'active_programs' => 0,
+            'total_cohorts' => 0,
+            'total_applications' => 0
+        ];
+    }
+
+    public function toggleTrainingRegistration($id)
+    {
+        $stmt = $this->db->prepare("UPDATE trainings_tb SET registration_available = IF(registration_available = 1, 0, 1) WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+
+    public function getPaginatedProjects($page = 1, $limit = 6, $orderBy = 'p.project_id DESC', $serviceFilter = 'all', $search = '')
+    {
+        $offset = ($page - 1) * $limit;
+        $where = [];
+        $params = [];
+
+        if ($serviceFilter !== 'all' && !empty($serviceFilter)) {
+            $where[] = "p.service_id = :service_id";
+            $params[':service_id'] = (int)$serviceFilter;
+        }
+
+        if (!empty($search)) {
+            $where[] = "(p.project_name LIKE :search OR p.project_description LIKE :search OR p.project_year LIKE :search OR s.service_name LIKE :search)";
+            $params[':search'] = '%' . $search . '%';
+        }
+
+        $whereSql = !empty($where) ? " WHERE " . implode(' AND ', $where) : "";
+
+        $countSql = "SELECT COUNT(*) FROM projects_tb p LEFT JOIN services_tb s ON p.service_id = s.id" . $whereSql;
+        $countStmt = $this->db->prepare($countSql);
+        foreach ($params as $k => $v) $countStmt->bindValue($k, $v);
+        $countStmt->execute();
+        $total = $countStmt->fetchColumn();
+        $totalPages = ($limit > 0) ? (int)ceil($total / $limit) : 1;
+
+        $sql = "SELECT p.*, s.service_name
+                FROM projects_tb p
+                LEFT JOIN services_tb s ON p.service_id = s.id
+                $whereSql
+                ORDER BY $orderBy LIMIT :limit OFFSET :offset";
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $k => $v) $stmt->bindValue($k, $v);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return [
+            'data' => $stmt->fetchAll(PDO::FETCH_ASSOC),
+            'total_pages' => (int)$totalPages,
+            'total_records' => (int)$total,
+            'current_page' => (int)$page,
+            'limit' => (int)$limit
         ];
     }
 
@@ -261,7 +606,8 @@ class AdminModel
             'testimonial' => ['table' => 'testimonials_tb', 'pk' => 'id', 'fields' => ['name', 'organization', 'title', 'testimonial'], 'upload' => 'image', 'path' => 'images/pictures/'],
             'event' => ['table' => 'events', 'pk' => 'event_id', 'fields' => ['event_title', 'event_content', 'event_detail', 'event_date', 'event_time', 'event_address', 'event_status', 'show_on_home', 'sort_order', 'video_url', 'video_type'], 'upload' => 'event_img', 'path' => 'images/pictures/'],
             'training' => ['table' => 'trainings_tb', 'pk' => 'id', 'fields' => ['training_name', 'training_description', 'training_details', 'training_icon', 'show_on_home', 'sort_order', 'registration_available', 'start_date', 'end_date', 'training_time', 'certified_count'], 'upload' => 'training_image', 'path' => 'images/pictures/'],
-            'blog' => ['table' => 'blogs', 'pk' => 'uuid', 'fields' => ['category_id', 'title', 'slug', 'summary', 'content', 'status'], 'upload' => 'image_path', 'path' => 'images/blog/']
+            'blog' => ['table' => 'blogs', 'pk' => 'uuid', 'fields' => ['category_id', 'title', 'slug', 'summary', 'content', 'status'], 'upload' => 'image_path', 'path' => 'images/blog/'],
+            'partner' => ['table' => 'partners_tb', 'pk' => 'id', 'fields' => ['name', 'website_url', 'sort_order', 'is_active'], 'upload' => 'logo', 'path' => 'images/partners/']
         ];
         if (!isset($allowedTypes[$type])) return false;
 
@@ -299,7 +645,7 @@ class AdminModel
                 $sets = [];
                 $values = [];
                 foreach ($fields as $field) {
-                    if ($field === 'show_on_home' || $field === 'registration_available') {
+                    if ($field === 'show_on_home' || $field === 'registration_available' || $field === 'is_active') {
                         $sets[] = "$field = ?";
                         // Safeguard checkbox state checking
                         $values[] = (isset($data[$field]) && $data[$field]) ? 1 : 0;
@@ -357,7 +703,7 @@ class AdminModel
                 $fieldNames = implode(',', $fields);
                 $values = [];
                 foreach ($fields as $field) {
-                    if ($field === 'show_on_home' || $field === 'registration_available') {
+                    if ($field === 'show_on_home' || $field === 'registration_available' || $field === 'is_active') {
                         $values[] = (isset($data[$field]) && $data[$field]) ? 1 : 0;
                     } elseif ($field === 'sort_order') {
                         $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
@@ -519,6 +865,70 @@ class AdminModel
         return $result;
     }
 
+    public function getMemberStats()
+    {
+        $stmt = $this->db->query("
+            SELECT 
+                COUNT(*) AS total_members,
+                SUM(CASE WHEN is_verified = 1 AND status != 'Suspended' THEN 1 ELSE 0 END) AS verified_members,
+                SUM(CASE WHEN is_verified = 0 AND status != 'Suspended' THEN 1 ELSE 0 END) AS pending_members,
+                SUM(CASE WHEN status = 'Suspended' THEN 1 ELSE 0 END) AS suspended_members,
+                (SELECT COUNT(*) FROM suspension_reviews WHERE status = 'Pending') AS pending_reviews
+            FROM members
+        ");
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: [
+            'total_members' => 0,
+            'verified_members' => 0,
+            'pending_members' => 0,
+            'suspended_members' => 0,
+            'pending_reviews' => 0
+        ];
+    }
+    public function getFaqStats()
+    {
+        try {
+            $total = (int)$this->db->query("SELECT COUNT(*) FROM faq_tb")->fetchColumn();
+            $items = $this->db->query("SELECT faq_question, faq_answer FROM faq_tb")->fetchAll(PDO::FETCH_ASSOC);
+            $totalWords = 0;
+            foreach ($items as $item) {
+                $text = strip_tags($item['faq_answer'] ?? '');
+                $totalWords += str_word_count($text);
+            }
+            $avgWords = $total > 0 ? (int)round($totalWords / $total) : 0;
+            return [
+                'total_faqs' => $total,
+                'total_words' => $totalWords,
+                'avg_words' => $avgWords
+            ];
+        } catch (Exception $e) {
+            return [
+                'total_faqs' => 0,
+                'total_words' => 0,
+                'avg_words' => 0
+            ];
+        }
+    }
+
+    public function getTestimonialStats()
+    {
+        try {
+            $total = (int)$this->db->query("SELECT COUNT(*) FROM testimonials_tb")->fetchColumn();
+            $orgCount = (int)$this->db->query("SELECT COUNT(DISTINCT organization) FROM testimonials_tb")->fetchColumn();
+            $withPhotos = (int)$this->db->query("SELECT COUNT(*) FROM testimonials_tb WHERE image IS NOT NULL AND image != ''")->fetchColumn();
+            return [
+                'total_testimonials' => $total,
+                'total_organizations' => $orgCount,
+                'with_photos' => $withPhotos
+            ];
+        } catch (Exception $e) {
+            return [
+                'total_testimonials' => 0,
+                'total_organizations' => 0,
+                'with_photos' => 0
+            ];
+        }
+    }
+
     public function getSuspensionReviews()
     {
         return $this->db->query("
@@ -573,12 +983,80 @@ class AdminModel
             'banner' => ['table' => 'banners_tb', 'pk' => 'banner_id'],
             'member' => ['table' => 'members', 'pk' => 'id'],
             'faq' => ['table' => 'faq_tb', 'pk' => 'faq_id'],
-            'testimonial' => ['table' => 'testimonials_tb', 'pk' => 'id']
+            'testimonial' => ['table' => 'testimonials_tb', 'pk' => 'id'],
+            'admin' => ['table' => 'admin_tb', 'pk' => 'admin_id'],
+            'partner' => ['table' => 'partners_tb', 'pk' => 'id']
         ];
         if (!isset($allowedTypes[$type])) return false;
+        if ($type === 'admin' && isset($_SESSION['admin_id']) && (int)$id === (int)$_SESSION['admin_id']) {
+            return false;
+        }
         $table = $allowedTypes[$type]['table'];
         $pk = $allowedTypes[$type]['pk'];
         $stmt = $this->db->prepare("DELETE FROM $table WHERE $pk = ?");
+        return $stmt->execute([$id]);
+    }
+
+    public function createAdmin($name, $password, $privilege = 'Admin')
+    {
+        $chk = $this->db->prepare("SELECT admin_id FROM admin_tb WHERE admin_name = ?");
+        $chk->execute([$name]);
+        if ($chk->fetch()) {
+            throw new Exception("An administrator with username '{$name}' already exists.");
+        }
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $this->db->prepare("INSERT INTO admin_tb (admin_name, admin_password, privilege, lastlogin) VALUES (?, ?, ?, NOW())");
+        return $stmt->execute([$name, $hash, $privilege]);
+    }
+
+    public function getAllPartners($status = 'all', $search = '', $sort = 'order_asc')
+    {
+        $where = [];
+        $params = [];
+
+        if ($status === 'active') {
+            $where[] = "is_active = 1";
+        } elseif ($status === 'inactive') {
+            $where[] = "is_active = 0";
+        }
+
+        if (!empty($search)) {
+            $where[] = "(name LIKE ? OR website_url LIKE ?)";
+            $params[] = "%{$search}%";
+            $params[] = "%{$search}%";
+        }
+
+        $whereClause = !empty($where) ? "WHERE " . implode(" AND ", $where) : "";
+
+        $orderBy = match ($sort) {
+            'order_desc' => "sort_order DESC, id DESC",
+            'name_asc'   => "name ASC",
+            'name_desc'  => "name DESC",
+            'id_desc'    => "id DESC",
+            'id_asc'     => "id ASC",
+            default      => "sort_order ASC, id ASC"
+        };
+
+        $stmt = $this->db->prepare("SELECT * FROM partners_tb {$whereClause} ORDER BY {$orderBy}");
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getPartnerStats()
+    {
+        $total = (int)$this->db->query("SELECT COUNT(*) FROM partners_tb")->fetchColumn();
+        $active = (int)$this->db->query("SELECT COUNT(*) FROM partners_tb WHERE is_active = 1")->fetchColumn();
+        $inactive = $total - $active;
+        return [
+            'total'    => $total,
+            'active'   => $active,
+            'inactive' => $inactive
+        ];
+    }
+
+    public function togglePartnerStatus($id)
+    {
+        $stmt = $this->db->prepare("UPDATE partners_tb SET is_active = IF(is_active = 1, 0, 1) WHERE id = ?");
         return $stmt->execute([$id]);
     }
 }

@@ -44,6 +44,47 @@
         $rawDetailImg = trim($training['image_url'] ?? $training['training_image'] ?? '');
         $detailImage = $rawDetailImg !== '' ? resolvePath($rawDetailImg) : '';
         $hasDetailImg = ($rawDetailImg !== '');
+
+        // Resolve dynamic cohort and training schedule
+        $cohortDates = !empty($active_cohort) ? $active_cohort : (!empty($upcoming_cohort) ? $upcoming_cohort : null);
+        $effectiveStartDate = !empty($cohortDates['start_date']) ? $cohortDates['start_date'] : ($training['start_date'] ?? '');
+        $effectiveEndDate   = !empty($cohortDates['end_date']) ? $cohortDates['end_date'] : ($training['end_date'] ?? '');
+
+        // Dynamic schedule strings
+        if (!empty($effectiveStartDate)) {
+            $scheduleSidebar = date('M d, Y', strtotime($effectiveStartDate));
+            $scheduleDetails = date('jS F, Y', strtotime($effectiveStartDate));
+            if (!empty($effectiveEndDate)) {
+                $scheduleSidebar .= ' – ' . date('M d, Y', strtotime($effectiveEndDate));
+                $scheduleDetails .= ' – ' . date('jS F, Y', strtotime($effectiveEndDate));
+            }
+        } else {
+            $scheduleSidebar = "Flexible / TBD";
+            $scheduleDetails = "Flexible / TBD";
+        }
+
+        // Dynamic duration string
+        $durationText = "Self-Paced / Cohort";
+        if (!empty($effectiveStartDate) && !empty($effectiveEndDate)) {
+            $start = new DateTime($effectiveStartDate);
+            $end = new DateTime($effectiveEndDate);
+            $interval = $start->diff($end);
+            $days = (int) $interval->days + 1;
+            $weeks = intdiv($days, 7);
+            $remDays = $days % 7;
+            $parts = [];
+            if ($weeks > 0) $parts[] = $weeks . ' ' . ($weeks === 1 ? 'Week' : 'Weeks');
+            if ($remDays > 0) $parts[] = $remDays . ' ' . ($remDays === 1 ? 'Day' : 'Days');
+            $durationText = !empty($parts) ? implode(', ', $parts) : '1 Day';
+        } elseif (!empty($effectiveStartDate)) {
+            $durationText = "1 Day";
+        }
+
+        // Dynamic Session Time
+        $sessionTime = !empty($training['training_time']) ? htmlspecialchars(stripslashes($training['training_time'])) : '08:00AM – 01:00PM';
+
+        // Cohort Label
+        $cohortBadgeLabel = !empty($active_cohort['cohort_name']) ? $active_cohort['cohort_name'] : (!empty($upcoming_cohort['cohort_name']) ? $upcoming_cohort['cohort_name'] : 'Cohort Intake');
     ?>
         <div class="container">
             <div class="mb-4">
@@ -87,8 +128,43 @@
                         <h3>About this <span>Program</span></h3>
                         <div class="program-lead-text"><?= nl2br(htmlspecialchars(stripslashes($training['training_description'] ?? ''))); ?></div>
                         <?php if (!empty($training['training_details'])): ?>
+                            <?php
+                            $rawDetails = stripslashes($training['training_details']);
+
+                            $detailsBoxHtml = '<div class="programme-details-minimal">
+                                <h4 class="details-heading">Programme Details</h4>
+                                <div class="details-spec-grid">
+                                    <div class="spec-row">
+                                        <span class="spec-key">Date:</span>
+                                        <span class="spec-val">' . htmlspecialchars($scheduleDetails) . '</span>
+                                    </div>
+                                    <div class="spec-row">
+                                        <span class="spec-key">Duration:</span>
+                                        <span class="spec-val">' . htmlspecialchars($durationText) . '</span>
+                                    </div>
+                                    <div class="spec-row">
+                                        <span class="spec-key">Days:</span>
+                                        <span class="spec-val">Mondays – Thursdays</span>
+                                    </div>
+                                    <div class="spec-row">
+                                        <span class="spec-key">Time:</span>
+                                        <span class="spec-val">' . $sessionTime . ' daily</span>
+                                    </div>
+                                    <div class="spec-row full-width">
+                                        <span class="spec-key">Location:</span>
+                                        <span class="spec-val">Flat 3, Abinsa House, Zaria road, Kano</span>
+                                    </div>
+                                </div>
+                            </div>';
+
+                            if (preg_match('/<p><strong>Programme Details:<\/strong><\/p>\s*<ul>.*?<\/ul>/si', $rawDetails)) {
+                                $processedDetails = preg_replace('/<p><strong>Programme Details:<\/strong><\/p>\s*<ul>.*?<\/ul>/si', $detailsBoxHtml, $rawDetails);
+                            } else {
+                                $processedDetails = $rawDetails . "\n" . $detailsBoxHtml;
+                            }
+                            ?>
                             <div class="training-rich-content rich-text-content">
-                                <?= stripslashes($training['training_details']); ?>
+                                <?= $processedDetails; ?>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -107,60 +183,25 @@
                                 </span>
                                 <div class="info-meta">
                                     <span class="info-label">Schedule</span>
-                                    <span class="info-value">
-                                        <?php
-                                        if (!empty($training['start_date'])) {
-                                            echo date('M d, Y', strtotime($training['start_date']));
-                                            if (!empty($training['end_date'])) {
-                                                echo ' – ' . date('M d, Y', strtotime($training['end_date']));
-                                            }
-                                        } else {
-                                            echo "Flexible / TBD";
-                                        }
-                                        ?>
-                                    </span>
+                                    <span class="info-value"><?= htmlspecialchars($scheduleSidebar) ?></span>
                                 </div>
                             </li>
-                            <?php if (!empty($training['training_time'])): ?>
                             <li class="info-item">
                                 <span class="info-icon-box">
                                     <span class="material-symbols-outlined">schedule</span>
                                 </span>
                                 <div class="info-meta">
                                     <span class="info-label">Session Time</span>
-                                    <span class="info-value"><?= htmlspecialchars(stripslashes($training['training_time'])) ?></span>
+                                    <span class="info-value"><?= $sessionTime ?></span>
                                 </div>
                             </li>
-                            <?php endif; ?>
                             <li class="info-item">
                                 <span class="info-icon-box">
                                     <span class="material-symbols-outlined">hourglass_empty</span>
                                 </span>
                                 <div class="info-meta">
                                     <span class="info-label">Duration</span>
-                                    <span class="info-value">
-                                        <?php
-                                        if (!empty($training['start_date']) && !empty($training['end_date'])) {
-                                            $start = new DateTime($training['start_date']);
-                                            $end = new DateTime($training['end_date']);
-                                            $interval = $start->diff($end);
-                                            $days = $interval->days + 1;
-
-                                            $weeks = floor($days / 7);
-                                            $remaining_days = $days % 7;
-
-                                            $duration = "";
-                                            if ($weeks > 0) $duration .= $weeks . " " . ($weeks == 1 ? "Week" : "Weeks");
-                                            if ($remaining_days > 0) $duration .= ($duration ? ", " : "") . $remaining_days . " " . ($remaining_days == 1 ? "Day" : "Days");
-
-                                            echo htmlspecialchars($duration ?: "1 Day");
-                                        } elseif (!empty($training['start_date'])) {
-                                            echo "1 Day";
-                                        } else {
-                                            echo "Self-Paced / Cohort";
-                                        }
-                                        ?>
-                                    </span>
+                                    <span class="info-value"><?= htmlspecialchars($durationText) ?></span>
                                 </div>
                             </li>
                             <li class="info-item">
@@ -183,15 +224,59 @@
                             </li>
                         </ul>
 
-                        <?php if (!empty($training['registration_available'])): ?>
-                            <a href="<?= BASE_URL ?>/trainings/register?id=<?= (int) $training['id']; ?>" class="register-btn-large">
-                                <span class="material-symbols-outlined">how_to_reg</span>
-                                <span>Enroll in Program</span>
+                        <?php if (!empty($training['registration_available']) && !empty($active_cohort)): ?>
+                            <?php
+                            $cCode = 'DSE';
+                            if (!empty($training['training_name']) && stripos($training['training_name'], 'Digital Skills') === false) {
+                                $words = preg_split('/\s+/', trim(strip_tags($training['training_name'])));
+                                $cCode = '';
+                                foreach ($words as $w) {
+                                    if (strlen($w) > 2) $cCode .= strtoupper($w[0]);
+                                }
+                                if (!$cCode) $cCode = 'Cohort';
+                            }
+                            $cohortNum = $active_cohort['cohort_number'] ?? 4;
+                            $badgeLabel = $cCode . ' Cohort ' . $cohortNum . ' Registration Open';
+                            $btnLabel = 'Enroll for DSE - Cohort ' . $cohortNum;
+                            ?>
+                            <div class="cohort-callout-panel">
+                                <div class="cohort-callout-header">
+                                    <span class="cohort-status-pill">
+                                        <span class="cohort-status-dot"></span>
+                                        <?= htmlspecialchars($badgeLabel) ?>
+                                    </span>
+                                </div>
+                                <h6 class="cohort-panel-name"><?= htmlspecialchars($active_cohort['cohort_name']) ?></h6>
+                                <div class="cohort-panel-meta">
+                                    <div class="cohort-meta-line">
+                                        <span class="material-symbols-outlined">calendar_month</span>
+                                        <span>Classes start <strong><?= date('M d, Y', strtotime($active_cohort['start_date'])) ?></strong></span>
+                                    </div>
+                                    <?php if (!empty($active_cohort['registration_deadline'])): ?>
+                                        <div class="cohort-meta-line deadline">
+                                            <span class="material-symbols-outlined">alarm</span>
+                                            <span>Deadline: <strong><?= date('M d, Y', strtotime($active_cohort['registration_deadline'])) ?></strong></span>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+
+                            <a href="<?= BASE_URL ?>/trainings/register?id=<?= (int) $training['id']; ?>&cohort=<?= (int) $active_cohort['id']; ?>" class="register-btn-large">
+                                <span><?= htmlspecialchars($btnLabel) ?></span>
+                                <span class="material-symbols-outlined">arrow_forward</span>
                             </a>
+                        <?php elseif (!empty($upcoming_cohort)): ?>
+                            <div class="registration-closed-box">
+                                <span class="material-symbols-outlined">event_upcoming</span>
+                                <div>
+                                    <div class="fw-600"><?= htmlspecialchars($upcoming_cohort['cohort_name']) ?></div>
+                                    <span class="fs-085 text-muted">Registration opens soon. Classes begin <?= date('M d, Y', strtotime($upcoming_cohort['start_date'])) ?>.</span>
+                                </div>
+                            </div>
                         <?php else: ?>
                             <div class="registration-closed-box">
                                 <span class="material-symbols-outlined">info</span>
-                                <span>Registration is currently closed for this cohort</span>
+                                <span>Registration is currently closed for this program</span>
                             </div>
                         <?php endif; ?>
                     </div>

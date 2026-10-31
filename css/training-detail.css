@@ -469,6 +469,7 @@
     }
 
     .register-btn-large {
+        white-space: nowrap;
         background-color: var(--primary-orange);
         color: #ffffff !important;
         padding: 13px 24px;
@@ -568,4 +569,141 @@
         .project_description {
             padding: 24px 20px;
         }
+    }
+
+
+    /* Cohort Callout Card & Button Improvements */
+    .cohort-callout-panel {
+        background: #fbfcfe;
+        border: 1px solid #e2e8f0;
+        border-left: 3px solid var(--primary-orange);
+        border-radius: 14px;
+        padding: 16px 16px 14px 16px;
+        margin-bottom: 16px;
+    }
+
+    .cohort-callout-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+
+    .cohort-status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(244, 130, 33, 0.09);
+        border: 1px solid rgba(244, 130, 33, 0.28);
+        color: #c25e00;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.74rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        padding: 3px 10px;
+        border-radius: 20px;
+    }
+
+    .cohort-status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: var(--primary-orange);
+        display: inline-block;
+        box-shadow: 0 0 0 2px rgba(244, 130, 33, 0.25);
+    }
+
+    .cohort-panel-name {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #0f172a;
+        margin: 0 0 8px 0;
+        line-height: 1.35;
+    }
+
+    .cohort-panel-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        font-size: 0.8rem;
+        color: #64748b;
+    }
+
+    .cohort-meta-line {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .cohort-meta-line .material-symbols-outlined {
+        font-size: 15px;
+        color: var(--primary-orange);
+    }
+
+    .cohort-meta-line.deadline .material-symbols-outlined {
+        color: #dc2626;
+    }
+
+    .cohort-meta-line.deadline {
+        color: #475569;
+    }
+
+    .cohort-meta-line strong {
+        color: #1e293b;
+        font-weight: 600;
+    }
+
+
+    /* Minimalist Programme Details */
+    .training-rich-content .programme-details-minimal {
+        margin: 26px 0 20px;
+        padding-top: 16px;
+        border-top: 1px solid #eef2f6;
+    }
+
+    .training-rich-content .programme-details-minimal .details-heading {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 12px;
+        letter-spacing: -0.1px;
+    }
+
+    .training-rich-content .programme-details-minimal .details-spec-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 9px 24px;
+    }
+
+    @media (max-width: 600px) {
+        .training-rich-content .programme-details-minimal .details-spec-grid {
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+    }
+
+    .training-rich-content .programme-details-minimal .spec-row {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .training-rich-content .programme-details-minimal .spec-row.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .training-rich-content .programme-details-minimal .spec-key {
+        font-weight: 600;
+        color: #1e293b;
+        min-width: 65px;
+        flex-shrink: 0;
+    }
+
+    .training-rich-content .programme-details-minimal .spec-val {
+        color: #475569;
     }

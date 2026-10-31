@@ -1,5 +1,5 @@
-<!-- Reading Progress Bar -->
-<div id="progress-bar" class="reading-progress"></div>
+<!-- Reading Progress Bar (Fixed Above Header) -->
+<div id="progress-bar" class="reading-progress" role="progressbar" aria-label="Reading progress" aria-valuemin="0" aria-valuemax="100"></div>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/css/blog-detail.css?v=<?= filemtime(ROOT_PATH . '/css/blog-detail.css') ?>" />
 
@@ -113,15 +113,42 @@
         if (!progressBar) return;
 
         const updateProgress = () => {
-            const h = document.documentElement,
-                b = document.body,
-                st = 'scrollTop',
-                sh = 'scrollHeight';
-            const percent = (h[st] || b[st]) / ((h[sh] || b[sh]) - h.clientHeight) * 100;
-            progressBar.style.width = Math.min(100, Math.max(0, percent)) + '%';
+            const readingArea = document.querySelector('.reading-container') || document.querySelector('.article-content');
+            if (readingArea) {
+                const rect = readingArea.getBoundingClientRect();
+                const scrollY = window.scrollY || window.pageYOffset;
+                const areaTop = rect.top + scrollY;
+                const areaHeight = readingArea.offsetHeight;
+                const viewportHeight = window.innerHeight;
+
+                const start = Math.max(0, areaTop - 180);
+                const end = areaTop + areaHeight - (viewportHeight * 0.7);
+
+                let percent = 0;
+                if (scrollY <= start) {
+                    percent = 0;
+                } else if (scrollY >= end) {
+                    percent = 100;
+                } else {
+                    percent = ((scrollY - start) / (end - start)) * 100;
+                }
+                percent = Math.min(100, Math.max(0, percent));
+                progressBar.style.width = percent + '%';
+                progressBar.setAttribute('aria-valuenow', Math.round(percent));
+            } else {
+                const h = document.documentElement,
+                    b = document.body;
+                const total = (h.scrollHeight || b.scrollHeight) - window.innerHeight;
+                const current = h.scrollTop || b.scrollTop;
+                const percent = total > 0 ? (current / total) * 100 : 0;
+                progressBar.style.width = Math.min(100, Math.max(0, percent)) + '%';
+            }
         };
 
         window.addEventListener('scroll', updateProgress, {
+            passive: true
+        });
+        window.addEventListener('resize', updateProgress, {
             passive: true
         });
         updateProgress();

@@ -1,6 +1,3 @@
-<!-- Reading Progress Bar -->
-<div id="progress-bar-inner" class="reading-progress" style="width: 0%;"></div>
-
 <div class="container">
 
     <!-- Back Button -->

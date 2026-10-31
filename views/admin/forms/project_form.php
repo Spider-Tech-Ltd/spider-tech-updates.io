@@ -1,9 +1,9 @@
-<div class="content-header">
+<div class="dashboard-header mb-4">
     <div class="d-flex align-items-center gap-3">
-        <a href="<?= BASE_URL ?>/admin/projects" class="btn-action"><span class="material-symbols-outlined">arrow_back</span></a>
+        <a href="<?= BASE_URL ?>/admin/projects" class="btn-action btn-back-header me-3 mr-3" title="Back to Projects"><span class="material-symbols-outlined">arrow_back</span></a>
         <div>
-            <h1><?= ($mode == 'add') ? 'Add New' : 'Edit' ?> Project</h1>
-            <p>Manage the project portfolio entries.</p>
+            <h1 class="dashboard-title"><?= ($mode == 'add') ? 'Add New' : 'Edit' ?> Project</h1>
+            <p class="dashboard-subtitle">Manage project portfolio showcase entries and gallery assets.</p>
         </div>
     </div>
 </div>
@@ -155,10 +155,11 @@
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-end gap-3 mt-5">
-                        <a href="<?= BASE_URL ?>/admin/projects" class="btn btn-light px-4">Cancel</a>
-                        <button type="submit" class="btn btn-primary-custom px-5">
-                            <?= ($mode == 'add') ? 'Create Project' : 'Save Changes' ?>
+                    <div class="d-flex justify-content-end gap-3 pt-3 border-top mt-4">
+                        <a href="<?= BASE_URL ?>/admin/projects" class="btn-admin-cancel px-4">Cancel</a>
+                        <button type="submit" class="btn-primary-custom px-4">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">check</span>
+                            <span><?= ($mode == 'add') ? 'Create Project' : 'Save Changes' ?></span>
                         </button>
                     </div>
                 </form>
@@ -316,8 +317,9 @@ function deleteGalleryImage(mediaId) {
             }
         });
     } else {
-        // Fallback
-        if (confirm('Are you sure you want to delete this image?')) {
+        setTimeout(() => deleteGalleryImage(mediaId), 100);
+        return;
+        if (false) {
             (async () => {
                 const formData = new FormData();
                 formData.append('id', mediaId);

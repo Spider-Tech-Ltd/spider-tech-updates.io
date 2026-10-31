@@ -95,6 +95,34 @@ if (!function_exists('truncateTrainingDescWordAware')) {
                             </div>
                         </div>
                         <div class="card-body-content">
+                            <?php if (!empty($training['active_cohort'])): ?>
+                                <?php
+                                $cCode = 'DSE';
+                                if (!empty($training['training_name']) && stripos($training['training_name'], 'Digital Skills') === false) {
+                                    $words = preg_split('/\s+/', trim(strip_tags($training['training_name'])));
+                                    $cCode = '';
+                                    foreach ($words as $w) {
+                                        if (strlen($w) > 2) $cCode .= strtoupper($w[0]);
+                                    }
+                                    if (!$cCode) $cCode = 'Cohort';
+                                }
+                                $cNum = $training['active_cohort']['cohort_number'] ?? 4;
+                                $badgeLabel = $cCode . ' Cohort ' . $cNum . ' Registration Open';
+                                ?>
+                                <div class="card-cohort-wrap mb-2">
+                                    <span class="card-cohort-badge open">
+                                        <span class="cohort-pulse-dot"></span>
+                                        <span><?= htmlspecialchars($badgeLabel) ?></span>
+                                    </span>
+                                </div>
+                            <?php elseif (!empty($training['upcoming_cohort'])): ?>
+                                <div class="card-cohort-wrap mb-2">
+                                    <span class="card-cohort-badge upcoming">
+                                        <span class="cohort-dot-upcoming"></span>
+                                        <span>Upcoming: Starts <?= date('M d', strtotime($training['upcoming_cohort']['start_date'])) ?></span>
+                                    </span>
+                                </div>
+                            <?php endif; ?>
                             <a href="<?= BASE_URL ?>/trainings/detail?id=<?= (int) $training['id']; ?>" class="card-title-link">
                                 <h3><?= htmlspecialchars($tName) ?></h3>
                             </a>

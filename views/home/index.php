@@ -109,6 +109,13 @@ foreach ($banners as &$banner) {
             </div>
         </div>
     </div>
+
+    <!-- Hero Slide Indicators -->
+    <div class="hero-slide-dots" aria-label="Slide indicators">
+        <template x-for="(slide, index) in slides" :key="index">
+            <button @click="activeSlide = index" class="hero-dot" :class="{ 'active': activeSlide === index }" :aria-label="'Go to slide ' + (index + 1)"></button>
+        </template>
+    </div>
 </section>
 
 <!-- ====== About Us Section ====== -->

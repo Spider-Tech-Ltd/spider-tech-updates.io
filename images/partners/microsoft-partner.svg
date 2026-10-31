@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 170 48" fill="none">
+  <!-- Microsoft 4 square tile -->
+  <g transform="translate(6, 10)">
+    <rect x="0" y="0" width="13" height="13" fill="#F25022"/>
+    <rect x="15" y="0" width="13" height="13" fill="#7FBA00"/>
+    <rect x="0" y="15" width="13" height="13" fill="#00A4EF"/>
+    <rect x="15" y="15" width="13" height="13" fill="#FFB900"/>
+  </g>
+  <text x="44" y="24" fill="#0f172a" font-family="'Segoe UI', sans-serif" font-weight="700" font-size="13.5" letter-spacing="-0.2">Microsoft</text>
+  <text x="44" y="34" fill="#64748b" font-family="'Segoe UI', sans-serif" font-weight="500" font-size="8.5">Tech Impact</text>
+</svg>

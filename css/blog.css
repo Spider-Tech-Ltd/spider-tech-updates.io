@@ -6,16 +6,18 @@
         --card-bg: #ffffff;
     }
 
-    /* ====== Reading Progress Bar ====== */
+    /* ====== Reading Progress Bar (Fixed Above Header) ====== */
     .reading-progress {
-        height: 3px;
-        background: var(--primary-orange);
+        height: 3.5px;
+        background: linear-gradient(90deg, #f48221 0%, #ff9d42 100%);
         position: fixed;
         top: 0;
         left: 0;
-        z-index: 1000;
+        z-index: 99999;
         width: 0%;
-        transition: width 0.1s ease-out;
+        transition: width 0.08s ease-out;
+        box-shadow: 0 0 10px rgba(244, 130, 33, 0.55);
+        pointer-events: none;
     }
 
     /* ====== Unified Inner-Page Header ====== */
@@ -194,40 +196,72 @@
         padding-bottom: 0;
     }
 
-    /* ====== Filter Navigation ====== */
+    /* ====== Blog Category Tab Switcher (Segmented, Compact, Balanced) ====== */
+    .blog-tab-switcher-wrap,
     .filter-container {
         display: flex;
         justify-content: center;
-        gap: 8px;
-        margin: 28px 0 36px;
-        flex-wrap: wrap;
+        margin: 20px 0 34px;
+        padding: 0 16px;
     }
 
-    .filter-pill {
-        padding: 8px 20px;
-        border-radius: 50px;
+    .blog-tab-switcher {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
         background: #ffffff;
-        border: 1px solid #cbd5e1;
-        font-family: 'Poppins', sans-serif;
-        font-weight: 500;
-        font-size: 0.84rem;
+        padding: 4px 5px;
+        border-radius: 50px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+        max-width: 100%;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .blog-tab-switcher::-webkit-scrollbar {
+        display: none;
+    }
+
+    .blog-tab-btn,
+    .filter-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 6px 18px;
+        border-radius: 50px;
+        border: 1px solid transparent;
+        background: transparent;
         color: #475569;
-        transition: all 0.22s ease;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.82rem;
+        font-weight: 500;
+        line-height: 1.4;
         cursor: pointer;
+        transition: all 0.22s ease;
+        white-space: nowrap;
         text-decoration: none !important;
     }
 
-    .filter-pill:hover {
-        background: #f1f5f9;
-        border-color: #94a3b8;
-        color: #111827;
+    .blog-tab-btn span,
+    .filter-pill span {
+        color: inherit !important;
     }
 
+    .blog-tab-btn:hover,
+    .filter-pill:hover {
+        color: #1e293b;
+        background: #f8fafc;
+    }
+
+    .blog-tab-btn.active,
     .filter-pill.active {
         background: var(--primary-orange);
         color: #ffffff !important;
-        border-color: var(--primary-orange);
-        box-shadow: 0 4px 14px rgba(244, 130, 33, 0.25);
+        box-shadow: 0 4px 14px rgba(244, 130, 33, 0.28);
+        border-color: transparent;
     }
 
     /* ====== Research Cards (Synchronized Design) ====== */
@@ -429,7 +463,7 @@
 
     /* ====== Article Detail Container in SPA ====== */
     .article-main {
-        padding: 56px 0 64px;
+        padding: 134px 0 64px;
         background-color: #f8fafc;
         border-bottom: 1px solid #e2e8f0;
     }
@@ -470,19 +504,21 @@
 
     .hero-wrap {
         position: relative;
-        aspect-ratio: 16 / 8;
+        width: 100%;
+        height: 380px;
+        margin: 0 auto 28px;
         border-radius: 18px;
         overflow: hidden;
-        margin-bottom: 32px;
         box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
         border: 1px solid rgba(15, 23, 42, 0.08);
-        background: #000000;
+        background: #0b0f19;
     }
 
     .hero-wrap img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        object-position: center 30%;
         display: block;
     }
 
@@ -499,8 +535,8 @@
     .hero-overlay {
         position: absolute;
         inset: 0;
-        background: linear-gradient(to top, rgba(17, 15, 13, 0.92) 0%, rgba(17, 15, 13, 0.4) 60%, transparent 100%);
-        padding: 36px 40px;
+        background: linear-gradient(to top, rgba(15, 23, 42, 0.94) 0%, rgba(15, 23, 42, 0.45) 55%, transparent 100%);
+        padding: 28px 34px;
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
@@ -516,16 +552,18 @@
         text-transform: uppercase;
         letter-spacing: 0.8px;
         width: fit-content;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 8px rgba(244, 130, 33, 0.35);
     }
 
     .hero-overlay h1 {
         color: #ffffff !important;
         font-family: 'Poppins', sans-serif;
-        font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+        font-size: clamp(1.5rem, 2.8vw, 2.1rem);
         font-weight: 700;
         line-height: 1.25;
         margin-bottom: 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
     }
 
     .reading-container {
@@ -748,14 +786,33 @@
         display: none !important;
     }
 
+    @media (max-width: 991px) {
+        .article-main {
+            padding: 126px 0 54px;
+        }
+
+        .hero-wrap {
+            height: 320px;
+        }
+    }
+
     @media (max-width: 768px) {
         .page-header {
             padding: 112px 0 46px;
         }
 
-        .blog-content,
-        .article-main {
+        .blog-content {
             padding: 40px 0 48px;
+        }
+
+        .article-main {
+            padding: 120px 0 48px;
+        }
+
+        .hero-wrap {
+            height: 240px;
+            border-radius: 14px;
+            margin-bottom: 22px;
         }
 
         .article-content {
@@ -763,10 +820,16 @@
         }
 
         .hero-overlay {
-            padding: 24px 20px;
+            padding: 20px 20px;
         }
 
         .hero-overlay h1 {
-            font-size: 1.4rem;
+            font-size: 1.35rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .hero-wrap {
+            height: 210px;
         }
     }
