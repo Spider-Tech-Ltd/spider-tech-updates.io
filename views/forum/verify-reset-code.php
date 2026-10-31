@@ -1,62 +1,69 @@
+<?php
+/**
+ * Forum Verify Reset Code View — Engineered Precision Auth
+ */
+?>
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Verify Reset Code - Spider Tech Forum</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet"/>
+    <title>Verify Reset Code — Spider Tech Forum</title>
+    <link rel="shortcut icon" type="image/x-icon" href="<?= BASE_URL ?>/images/favicon.ico" />
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,600;0,700;1,600;1,700&family=Poppins:wght@500;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="<?= BASE_URL ?>/css/bootstrap.min.css" />
-    <style>
-        body { background-color: #f8f9fa; font-family: 'Open Sans', sans-serif; }
-        .auth-card {
-            background-color: #ffffff;
-            border: 1px solid #e9ecef;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            max-width: 450px;
-            margin: 80px auto;
-        }
-        .auth-heading { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1.8rem; color: #111111; margin-bottom: 8px; text-align: center; }
-        .auth-subtext { font-size: 1rem; color: #555555; margin-bottom: 32px; text-align: center; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.9rem; color: #111111; display: block; margin-bottom: 8px; }
-        .auth-input { height: 56px; border-radius: 50px; padding: 0 24px; border: 1px solid #e9ecef; font-size: 1rem; width: 100%; text-align: center; letter-spacing: 5px; font-weight: 700; }
-        .auth-input:focus { border-color: #f48221; outline: none; box-shadow: 0 0 0 4px rgba(244, 130, 33, 0.1); }
-        .auth-btn { background-color: #f48221; color: #ffffff; height: 56px; border-radius: 50px; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1rem; width: 100%; border: none; transition: background-color 0.3s; cursor: pointer; margin-top: 10px; }
-        .auth-btn:hover { background-color: #e6751c; }
-        .back-to-login { text-align: center; margin-top: 20px; }
-        .back-to-login a { color: #797979; font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
-        .back-to-login a:hover { color: #f48221; }
-        .alert { padding: 15px; border-radius: 12px; margin-bottom: 20px; font-size: 0.9rem; }
-        .alert-danger { background-color: #fff5f5; color: #e53e3e; border: 1px solid #feb2b2; }
-    </style>
+    <link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-verify-reset-code.css?v=<?= filemtime(ROOT_PATH . '/css/forum-verify-reset-code.css') ?>" />
 </head>
 <body>
-<div class="container">
+<div class="auth-container">
+
+    <div class="auth-brand">
+        <a href="<?= BASE_URL ?>/home" title="Spider Tech Home">
+            <img src="<?= BASE_URL ?>/images/spider-tech.png" alt="Spider Tech" class="auth-brand-logo">
+        </a>
+    </div>
+
     <div class="auth-card">
-        <h1 class="auth-heading">Verification Code</h1>
-        <p class="auth-subtext">Enter the 6-digit code sent to your email <strong><?= htmlspecialchars($email) ?></strong></p>
+
+        <div class="auth-eyebrow">
+            <span class="auth-eyebrow-accent">|–</span>
+            <span>SECURITY CHALLENGE</span>
+            <span class="auth-eyebrow-accent">–|</span>
+        </div>
+
+        <h1 class="auth-heading">Verify Reset Code</h1>
+        <p class="auth-subtext">Enter the 6-digit verification code sent to <strong><?= htmlspecialchars($email) ?></strong></p>
 
         <?php if ($error): ?>
-            <div class="alert alert-danger text-center"><?= htmlspecialchars($error); ?></div>
+            <div class="alert alert-danger text-center">
+                <span class="material-symbols-outlined align-middle me-1" style="font-size: 18px;">error</span>
+                <?= htmlspecialchars($error); ?>
+            </div>
         <?php endif; ?>
 
         <form action="<?= BASE_URL ?>/forum/verify-reset-code" method="POST">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
             <div class="form-group">
-                <label>Reset Code</label>
-                <input type="text" name="code" class="auth-input" placeholder="000000" maxlength="6" pattern="[0-9]{6}" required autofocus>
+                <label for="codeInput">6-Digit Code</label>
+                <input type="text" id="codeInput" name="code" class="auth-code-input" placeholder="000000" maxlength="6" pattern="[0-9]{6}" required autofocus>
             </div>
-            <button type="submit" class="auth-btn">Verify Code</button>
+            <button type="submit" class="auth-btn">
+                <span>Confirm Code</span>
+                <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+            </button>
         </form>
 
         <div class="back-to-login">
             <a href="<?= BASE_URL ?>/forum/forgot-password">
-                <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span>
-                Change Email
+                <span class="material-symbols-outlined">arrow_back</span>
+                <span>Use Different Email</span>
             </a>
+        </div>
+
+        <div class="auth-trust-note">
+            <span class="material-symbols-outlined">verified_user</span>
+            <span>Spider Tech Industrial Network • End-to-End Moderated</span>
         </div>
     </div>
 </div>

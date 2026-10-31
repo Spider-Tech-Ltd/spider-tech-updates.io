@@ -1,192 +1,11 @@
 <?php
-
 /**
- * Feed Banner — Member Welcome Banner (Phase 2)
- * Compact slim banner visible only to logged-in members.
- * Replaces the large hero section from index.php.
+ * Feed Banner — Member Welcome Banner
+ * Compact technical banner for logged-in members with telemetry chips and modern CTA.
  */
 ?>
 
-<style>
-  /* ============================
-     FEED BANNER
-     ============================ */
-  .feed-member-banner {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    border-bottom: 1px solid #e9ecef;
-    padding: 140px 0 28px 0;
-    /* Increased top padding to match hero section and push below fixed header */
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* Subtle geometric background lines */
-  .feed-member-banner::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image:
-      linear-gradient(rgba(244, 130, 33, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(244, 130, 33, 0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-  }
-
-  /* Orange accent line at top */
-  .feed-member-banner::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #f48221, #e6751c 60%, transparent);
-  }
-
-  .banner-inner {
-    container-type: inline-size;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    position: relative;
-    z-index: 1;
-
-    @container (max-width: 600px) {
-      .banner-cta-group {
-        display: none;
-      }
-    }
-  }
-
-  @media (max-width: 600px) {
-    .banner-inner {
-      padding-block-start: 1.2rem;
-    }
-
-    /* Reduced top padding for mobile to match hero section */
-  }
-
-  .banner-greeting {
-    font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
-    font-weight: 800;
-    font-size: 1.6rem;
-    color: #111111;
-    margin-bottom: 4px;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-  }
-
-  .banner-greeting span {
-    color: #f48221;
-  }
-
-  .banner-subtitle {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 0.9rem;
-    color: #555555;
-    margin-bottom: 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .banner-subtitle .notif-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background-color: rgba(244, 130, 33, 0.1);
-    color: #f48221;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 0.72rem;
-    padding: 2px 10px;
-    border-radius: 50px;
-  }
-
-  .banner-cta-group {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-shrink: 0;
-  }
-
-  .btn-start-discussion {
-    background: linear-gradient(135deg, #f48221, #e6751c);
-    color: #ffffff;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    padding: 12px 28px;
-    border-radius: 50px;
-    border: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 16px rgba(244, 130, 33, 0.3);
-    transition: all 0.25s ease;
-    text-decoration: none !important;
-    white-space: nowrap;
-  }
-
-  .btn-start-discussion:hover {
-    background: linear-gradient(135deg, #e6751c, #d9690e);
-    color: #ffffff;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(244, 130, 33, 0.4);
-  }
-
-  .btn-start-discussion .material-symbols-outlined {
-    font-size: 18px;
-  }
-
-  /* Banner stats row */
-  .banner-stats {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    margin-top: 14px;
-  }
-
-  .banner-stat {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'Open Sans', sans-serif;
-    font-size: 0.8rem;
-    color: #797979;
-  }
-
-  .banner-stat .material-symbols-outlined {
-    font-size: 16px;
-    color: #f48221;
-  }
-
-  .banner-stat strong {
-    color: #111111;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-  }
-
-  /* Divider dot */
-  .banner-stat-divider {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background-color: #d6d6d6;
-  }
-
-  @media (max-width: 768px) {
-    .feed-member-banner {
-      padding: 80px 0 28px 0;
-    }
-
-    /* Reduced top padding for mobile to match hero section */
-  }
-</style>
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-feed-banner.css?v=<?= filemtime(ROOT_PATH . '/css/forum-feed-banner.css') ?>" />
 
 <section class="feed-member-banner">
   <div class="container">
@@ -194,11 +13,15 @@
 
       <!-- Left: Welcome Text -->
       <div class="banner-text-group">
+        <div class="banner-eyebrow">
+          <span class="material-symbols-outlined eyebrow-icon">verified_user</span>
+          <span>Verified Engineering Member</span>
+        </div>
         <h2 class="banner-greeting">
-          Welcome back, <span><?php echo htmlspecialchars($member['name']); ?></span>. 👋
+          Welcome back, <span><?php echo htmlspecialchars($member['name']); ?></span> 👋
         </h2>
         <p class="banner-subtitle">
-          Stay ahead of the curve.
+          Collaborate, innovate, and architect high-impact solutions with engineers across Africa.
           <?php if (($member['new_replies'] ?? 0) > 0): ?>
             <span class="notif-pill">
               <span class="material-symbols-outlined" style="font-size:12px;">chat_bubble</span>
@@ -207,21 +30,21 @@
           <?php endif; ?>
         </p>
 
-        <!-- Quick stats -->
+        <!-- Quick stats telemetry chips -->
         <div class="banner-stats">
           <div class="banner-stat">
             <span class="material-symbols-outlined">article</span>
-            <strong><?= Utils::formatNumber($member_stats['post_count'] ?? 0) ?></strong> Posts
+            <span class="stat-meta"><strong><?= Utils::formatNumber($member_stats['post_count'] ?? 0) ?></strong> Your Posts</span>
           </div>
           <div class="banner-stat-divider"></div>
           <div class="banner-stat">
             <span class="material-symbols-outlined">people</span>
-            <strong><?= Utils::formatNumber($global_stats['total_members'] ?? 0) ?></strong> Members
+            <span class="stat-meta"><strong><?= Utils::formatNumber($global_stats['total_members'] ?? 0) ?></strong> Members</span>
           </div>
           <div class="banner-stat-divider"></div>
           <div class="banner-stat">
             <span class="material-symbols-outlined">forum</span>
-            <strong><?= Utils::formatNumber($global_stats['total_discussions'] ?? 0) ?></strong> Discussions
+            <span class="stat-meta"><strong><?= Utils::formatNumber($global_stats['total_discussions'] ?? 0) ?></strong> Discussions</span>
           </div>
         </div>
       </div>
@@ -229,8 +52,8 @@
       <!-- Right: CTA -->
       <div class="banner-cta-group">
         <a href="<?= BASE_URL ?>/forum/new-topic" class="btn-start-discussion" id="btnStartDiscussion">
-          <span class="material-symbols-outlined">edit</span>
-          Start a Discussion
+          <span class="material-symbols-outlined">add_circle</span>
+          <span>Start Topic</span>
         </a>
       </div>
 

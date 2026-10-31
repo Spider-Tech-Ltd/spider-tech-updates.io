@@ -1,0 +1,18 @@
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="userBg" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fff7ed"/>
+      <stop offset="100%" stop-color="#ffedd5"/>
+    </linearGradient>
+    <linearGradient id="userIconGrad" x1="20" y1="18" x2="60" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f48221"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+  </defs>
+  <rect width="80" height="80" rx="20" fill="url(#userBg)"/>
+  <rect x="1" y="1" width="78" height="78" rx="19" stroke="#fed7aa" stroke-width="2"/>
+  <!-- Head -->
+  <circle cx="40" cy="30" r="13" fill="url(#userIconGrad)"/>
+  <!-- Body -->
+  <path d="M18 64.5C18 53.73 27.85 45 40 45C52.15 45 62 53.73 62 64.5C62 66.43 60.43 68 58.5 68H21.5C19.57 68 18 66.43 18 64.5Z" fill="url(#userIconGrad)"/>
+</svg>

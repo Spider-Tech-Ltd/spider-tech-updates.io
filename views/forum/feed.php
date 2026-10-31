@@ -1,766 +1,172 @@
 <?php
 /**
- * Member Feed View
+ * Member Feed View — Synchronized with Forum Landing Anti-Scroll Engineering Rows & Progressive Show More
  */
+$initialFeedsJson = json_encode($feeds ?? [], JSON_HEX_TAG | JSON_INVALID_UTF8_SUBSTITUTE);
+if ($initialFeedsJson === false) { $initialFeedsJson = '[]'; }
+$initialTotalPages = (int)($total_pages ?? 1);
+$initialCurrentPage = (int)($current_page ?? 1);
+$initialCategory = json_encode($category_filter ?? 'all');
+$initialSort = json_encode($_GET['sort'] ?? 'latest');
 ?>
-<!-- Google Fonts for Forum styling & Material Icons -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet"/>
-<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 
-<style>
-  /* ============================
-     MEMBER FEED
-     ============================ */
-  .member-feed-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 24px;
-  }
-
-  .member-feed-title {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 1.4rem;
-    color: #111111;
-    margin-bottom: 0;
-  }
-
-  .feed-count-badge {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 0.78rem;
-    color: #797979;
-    background-color: #f1f3f5;
-    padding: 4px 12px;
-    border-radius: 50px;
-  }
-
-  /* ============================
-     DISCUSSION CARDS
-     ============================ */
-  .discussion-card-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .discussion-card {
-    background-color: #ffffff;
-    border-radius: 20px;
-    padding: 24px;
-    box-shadow: 0 2px 12px rgba(17, 17, 17, 0.05);
-    border: 1px solid transparent;
-    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
-    text-decoration: none !important;
-    color: inherit;
-    display: block;
-  }
-
-  .discussion-card:hover {
-    border-color: rgba(244, 130, 33, 0.25);
-    box-shadow: 0 8px 24px rgba(244, 130, 33, 0.08);
-    transform: translateY(-3px);
-    color: inherit;
-    text-decoration: none !important;
-  }
-
-  /* Hot card highlight */
-  .discussion-card.is-hot {
-    border-left: 3px solid #e11d48;
-  }
-
-  /* Pinned card */
-  .discussion-card.is-pinned {
-    border-left: 3px solid #f48221;
-    background-color: #fffbf7;
-  }
-
-  /* --- Card Top Row --- */
-  .card-top-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 14px;
-    flex-wrap: wrap;
-  }
-
-  .category-badge {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    background-color: #f48221;
-    color: #ffffff;
-    padding: 3px 12px;
-    border-radius: 50px;
-    white-space: nowrap;
-  }
-
-  .category-badge.cat-energy     { background-color: #ca8a04; }
-  .category-badge.cat-automation { background-color: #0284c7; }
-  .category-badge.cat-ai         { background-color: #7c3aed; }
-  .category-badge.cat-logistics  { background-color: #059669; }
-  .category-badge.cat-infra      { background-color: #374151; }
-
-  .badge-hot-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background-color: #fff0f3;
-    color: #e11d48;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 0.65rem;
-    padding: 3px 10px;
-    border-radius: 50px;
-  }
-
-  .badge-hot-label .material-symbols-outlined {
-    font-size: 13px;
-    font-variation-settings: 'FILL' 1;
-  }
-
-  .badge-pinned-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    color: #f48221;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-
-  /* --- Card Title --- */
-  .card-title {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 1.05rem;
-    color: #111111;
-    line-height: 1.45;
-    margin-bottom: 8px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    transition: color 0.2s;
-  }
-
-  .discussion-card:hover .card-title {
-    color: #f48221;
-  }
-
-  /* --- Card Excerpt --- */
-  .card-excerpt {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 0.875rem;
-    color: #555555;
-    line-height: 1.6;
-    margin-bottom: 8px;
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    position: relative;
-  }
-  .card-excerpt img,
-  .card-excerpt video,
-  .card-excerpt iframe {
-    display: none !important;
-  }
-
-  .read-full-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 0.75rem;
-    color: #f48221;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 16px;
-    cursor: pointer;
-    transition: color 0.2s;
-    text-decoration: none !important;
-  }
-  .read-full-link:hover { color: #db7015; }
-  .read-full-link .material-symbols-outlined { font-size: 14px; }
-
-  /* --- Author Row --- */
-  .card-author-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-
-  .author-avatar-sm {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-  }
-
-  .author-name {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 0.85rem;
-    color: #111111;
-  }
-
-  .author-time {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 0.78rem;
-    color: #797979;
-    margin-left: auto;
-  }
-
-  /* --- Interaction Bar --- */
-  .card-interaction-bar {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding-top: 16px;
-    border-top: 1px solid #f1f3f5;
-  }
-
-  .btn-interact {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 0.78rem;
-    color: #797979;
-    background: none;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-decoration: none !important;
-  }
-
-  .btn-interact .material-symbols-outlined {
-    font-size: 17px;
-    transition: font-variation-settings 0.2s;
-  }
-
-  .btn-interact:hover {
-    background-color: rgba(244, 130, 33, 0.08);
-    color: #f48221;
-  }
-
-  /* Like Interaction */
-  .btn-like:hover {
-    color: #f48221;
-    background-color: rgba(244, 130, 33, 0.08);
-  }
-  .btn-like.active {
-    color: #f48221;
-    background-color: rgba(244, 130, 33, 0.1);
-  }
-  .btn-like.active .material-symbols-outlined {
-    font-variation-settings: 'FILL' 1;
-    transform: scale(1.2);
-    transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-
-  /* Reply Interaction */
-  .btn-reply:hover {
-    color: #f48221;
-    background-color: rgba(244, 130, 33, 0.08);
-  }
-  .btn-reply:hover span:not(.material-symbols-outlined) {
-    text-decoration: underline;
-    text-decoration-color: #f48221;
-  }
-
-  /* Bookmark Interaction */
-  .btn-bookmark:hover {
-    color: #f59e0b;
-    background-color: rgba(245, 158, 11, 0.08);
-  }
-  .btn-bookmark.bookmarked {
-    color: #f59e0b;
-  }
-  .btn-bookmark.bookmarked .material-symbols-outlined {
-    font-variation-settings: 'FILL' 1;
-    transform: scale(1.1);
-    transition: transform 0.1s ease;
-  }
-
-  /* spacer pushes bookmark to far right */
-  .interact-spacer { flex: 1; }
-
-  /* ============================
-     PHASE 6: INLINE REPLY THREADS
-     ============================ */
-  .reply-thread-wrapper {
-    display: none;
-    margin-top: 16px;
-    padding: 16px 20px;
-    background-color: #f3f4f5; /* surface-container-low */
-    border-radius: 12px;
-    border-left: 2px solid #e9ecef;
-    animation: fadeIn 0.3s ease;
-  }
-
-  .discussion-card.expanded .reply-thread-wrapper {
-    display: block;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-/* ============================
-     PREMIUM THREADED REPLIES
-     ============================ */
-.replies-container {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #f1f3f5;
-}
-
-.reply-card-wrapper {
-  position: relative;
-  margin-bottom: 4px;
-  transition: all 0.2s ease;
-}
-
-/* Vertical Thread Line */
-.reply-nested::before {
-  content: '';
-  position: absolute;
-  left: -14px;
-  top: -12px; /* Connects to previous */
-  bottom: 12px;
-  width: 2px;
-  background: #e9ecef;
-  border-radius: 4px;
-  transition: background 0.2s ease;
-}
-
-.reply-card-wrapper:hover > .reply-nested::before {
-  background: #f48221; /* Highlight current branch */
-}
-
-.reply-card {
-  padding: 10px 0 10px 12px;
-  border-radius: 8px;
-  transition: background 0.2s ease;
-  background: transparent;
-}
-
-.reply-card:hover {
-  background: rgba(244, 130, 33, 0.02);
-}
-
-.reply-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 4px;
-}
-
-.reply-avatar {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  border: 1.5px solid #ffffff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.reply-author {
-  font-weight: 700;
-  font-size: 0.82rem;
-  color: #2d3436;
-}
-
-.reply-time {
-  font-size: 0.75rem;
-  color: #a0a0a0;
-  font-weight: 400;
-}
-
-.reply-body {
-  font-size: 0.9rem;
-  line-height: 1.5;
-  color: #4a4a4a;
-  margin-left: 36px;
-  margin-bottom: 6px;
-}
-
-.reply-actions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-left: 36px;
-}
-
-.btn-mini-interact {
-  background: none;
-  border: none;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #8c8c8c;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.btn-mini-interact:hover {
-  color: #f48221;
-}
-
-.btn-mini-interact .material-symbols-outlined {
-  font-size: 16px;
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* Like Bump Animation */
-@keyframes like-bump {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.4) translateY(-3px); }
-  100% { transform: scale(1); }
-}
-
-.btn-interact.liked .material-symbols-outlined,
-.btn-mini-interact.liked .material-symbols-outlined {
-  animation: like-bump 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  color: #f48221 !important;
-  font-variation-settings: 'FILL' 1;
-}
-
-.btn-mini-interact:hover .material-symbols-outlined {
-  transform: scale(1.1);
-}
-
-.reply-input-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px dashed #f1f3f5;
-  position: relative;
-}
-
-  .reply-input-row img {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 1px solid #e1e3e4;
-  }
-
-  .reply-input-field {
-    flex: 1;
-    background-color: #ffffff;
-    border: 1px solid #e1e3e4;
-    border-radius: 50px;
-    padding: 10px 48px 10px 16px;
-    font-family: 'Open Sans', sans-serif;
-    font-size: 0.85rem;
-    color: #111111;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-
-  .reply-input-field:focus {
-    outline: none;
-    border-color: #f48221;
-    box-shadow: 0 0 0 3px rgba(244, 130, 33, 0.1);
-  }
-
-  .reply-to-tag {
-    position: absolute;
-    top: -24px;
-    left: 44px;
-    background-color: #fff7ed;
-    color: #f48221;
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 2px 10px;
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    border: 1px solid rgba(244, 130, 33, 0.2);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    z-index: 5;
-    transition: all 0.3s ease;
-  }
-
-  .btn-submit-reply {
-    position: absolute;
-    right: 8px;
-    top: calc(50% + 6px); /* Adjusted to account for container padding-top: 12px */
-    transform: translateY(-50%);
-    background-color: #f48221;
-    color: #ffffff;
-    border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-submit-reply:hover { background-color: #db7015; transform: translateY(-50%) scale(1.05); }
-  .btn-submit-reply:disabled { opacity: 0.5; cursor: not-allowed; }
-  .btn-submit-reply .material-symbols-outlined { font-size: 18px; }
-
-  /* ============================
-     MOBILE FAB
-     ============================ */
-  .member-fab-mobile {
-    display: none; /* hidden on desktop */
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 56px;
-    height: 56px;
-    background-color: #f48221; /* Primary Orange */
-    color: #ffffff;
-    border-radius: 50%;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 14px rgba(244, 130, 33, 0.4);
-    z-index: 1000;
-  }
-  .member-fab-mobile .material-symbols-outlined { font-size: 24px; }
-
-  .member-fab-pulse-ring {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    border: 2px solid #f48221;
-    animation: fabPulse 5s infinite cubic-bezier(0.25, 0.8, 0.25, 1);
-  }
-
-  @keyframes fabPulse {
-    0% { transform: scale(1); opacity: 0.8; }
-    20%, 100% { transform: scale(1.6); opacity: 0; }
-  }
-
-  /* ============================
-     PAGINATION
-     ============================ */
-  .member-feed-pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    margin-top: 40px;
-  }
-
-  .pag-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 0.85rem;
-    color: #f48221;
-    background: none;
-    border: 1.5px solid #f48221;
-    padding: 8px 20px;
-    border-radius: 50px;
-    transition: all 0.2s ease;
-    text-decoration: none !important;
-  }
-
-  .pag-btn:hover {
-    background-color: #f48221;
-    color: #ffffff;
-  }
-
-  .pag-info {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 0.85rem;
-    color: #797979;
-  }
-
-  @media (max-width: 576px) {
-    .discussion-card { padding: 18px; }
-    .card-title { font-size: 0.95rem; }
-
-    /* Give buttons more breathing room on mobile */
-    .card-interaction-bar { gap: 16px; }
-
-    /* Convert stat counts to badges on mobile */
-    .btn-interact {
-      position: relative;
-      padding: 6px;
-      margin-right: 12px;
-    }
-    .btn-interact span:not(.material-symbols-outlined) {
-      display: flex;
-      position: absolute;
-      top: -4px;
-      right: -14px;
-      background-color: #f48221; /* primary orange */
-      color: #ffffff;
-      font-size: 0.6rem;
-      padding: 2px 5px;
-      border-radius: 20px;
-      font-weight: 700;
-      line-height: 1;
-      border: 2px solid #ffffff;
-      align-items: center;
-      justify-content: center;
-      min-width: 12px;
-    }
-
-    .btn-interact:hover span:not(.material-symbols-outlined) {
-      background-color: #db7015; /* darker orange for active/hover */
-    }
-
-    .author-time { display: none; }
-    .member-fab-mobile { display: flex; }
-  }
-
-  /* ============================
-     INLINE REPLIES UI
-     ============================ */
-  .reply-card-wrapper {
-    position: relative;
-    margin-top: 4px;
-    margin-bottom: 4px;
-  }
-  .reply-nested::before {
-    content: '';
-    position: absolute;
-    left: -14px;
-    top: -12px;
-    bottom: 12px;
-    width: 2px;
-    background: #e9ecef;
-    border-radius: 4px;
-    transition: background 0.2s ease;
-  }
-  .reply-card-wrapper:hover > .reply-nested::before {
-    background: var(--spider-orange);
-  }
-
-  .reply-card {
-    padding: 10px 0 10px 12px;
-    border-radius: 8px;
-    transition: background 0.2s ease;
-    background: transparent;
-  }
-  .reply-card:hover { background: rgba(244, 130, 33, 0.02); }
-
-  .reply-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
-  .reply-avatar { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-  .reply-author { font-weight: 700; font-size: 0.82rem; color: var(--spider-dark); }
-  .reply-time { font-size: 0.75rem; color: #a0a0a0; }
-  .reply-body { font-size: 0.9rem; line-height: 1.5; color: #4a4a4a; margin-left: 36px; margin-bottom: 6px; }
-  .reply-actions { display: flex; align-items: center; gap: 16px; margin-left: 36px; }
-  .btn-mini-interact { background: none; border: none; padding: 0; display: flex; align-items: center; gap: 4px; font-size: 0.75rem; font-weight: 600; color: #8c8c8c; cursor: pointer; transition: color 0.2s; }
-  .btn-mini-interact:hover { color: var(--spider-orange); }
-
-  /* Input Area */
-  .reply-input-row { display: flex; align-items: center; gap: 12px; margin-top: 16px; padding-top: 16px; }
-  .reply-field-container { position: relative; flex-grow: 1; }
-  .reply-field { width: 100%; background-color: #f1f3f5; border: 1px solid transparent; border-radius: 50px; padding: 10px 50px 10px 18px; font-family: 'Open Sans', sans-serif; font-size: 0.875rem; }
-  .reply-field:focus { outline: none; background-color: #ffffff; border-color: var(--spider-orange); }
-  .btn-submit-pill { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; background-color: var(--spider-orange); color: #ffffff; border: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-  .btn-submit-pill:hover { background-color: #e6751c; transform: translateY(-50%) scale(1.05); }
-  .btn-submit-pill:disabled { background-color: #d6d6d6; cursor: not-allowed; }
-  .reply-to-tag { display: inline-flex; align-items: center; gap: 6px; background-color: #fffbf7; color: var(--spider-orange); font-family: 'Poppins'; font-weight: 700; font-size: 0.7rem; padding: 4px 12px; border-radius: 50px; border: 1px solid rgba(244,130,33,0.1); margin-bottom: 8px; }
-
-</style>
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-guest-feed.css?v=<?= filemtime(ROOT_PATH . '/css/forum-guest-feed.css') ?>" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-feed.css?v=<?= filemtime(ROOT_PATH . '/css/forum-feed.css') ?>" />
 
 <?php include ROOT_PATH . '/views/forum/includes/feed-banner.php'; ?>
 
 <!-- Filter Bar -->
 <?php include ROOT_PATH . '/views/forum/includes/feed-filter-bar.php'; ?>
 
-<section class="member-feed-section py-5" x-data="forumFeed()">
+<section class="member-feed-section py-5" x-data="forumFeedController()">
   <div class="container">
     <div class="row">
       <!-- Left Column: Discussion Feed -->
       <div class="col-lg-8">
-        <!-- Feed Header -->
-        <div class="member-feed-header">
-          <h2 class="member-feed-title">Latest Discussions</h2>
-          <span class="feed-count-badge" x-text="`${discussions.length} threads`"><?= count($feeds ?? []); ?> threads</span>
+        
+        <!-- Feed Section Header -->
+        <div class="feed-header-wrap mb-4">
+          <div class="feed-header-meta">
+            <div class="feed-eyebrow">
+              <span class="eyebrow-accent">|–</span>
+              <span>ENGINEERING THREADS</span>
+              <span class="eyebrow-accent">–|</span>
+            </div>
+            <h2 class="feed-title">Latest Discussions</h2>
+            <p class="feed-subtitle">
+              Showing <span class="feed-count-highlight" x-text="Math.min(visibleCount, discussions.length)"><?= min(6, count($feeds ?? [])) ?></span> of <span x-text="discussions.length"><?= count($feeds ?? []) ?></span> discussions in current view
+            </p>
+          </div>
+
+          <div class="feed-header-actions">
+            <a href="<?= BASE_URL ?>/forum/new-topic" class="btn-new-topic">
+              <span class="material-symbols-outlined">add_circle</span>
+              <span>Start Topic</span>
+            </a>
+          </div>
         </div>
 
-        <!-- Discussion Cards -->
-        <div class="discussion-card-list" id="discussionFeed">
+        <!-- Discussion Cards (Streamlined Anti-Scroll Engineering Rows) -->
+        <div class="discussion-feed-list" id="discussionFeed" role="feed" aria-label="Community discussions">
+          <!-- Loading State -->
           <div x-show="loading" class="text-center py-5">
             <div class="spinner-border text-primary" role="status"></div>
-            <p class="mt-2 text-muted">Loading discussions...</p>
+            <p class="mt-2 text-muted" style="font-family:'Poppins', sans-serif; font-size:0.88rem;">Loading discussions...</p>
           </div>
-          
+
+          <!-- Empty State -->
           <template x-if="!loading && discussions.length === 0">
-            <p class="text-center py-5 text-muted">No discussions found.</p>
+            <div class="discussion-empty-card text-center py-5">
+              <span class="material-symbols-outlined empty-icon" style="font-size: 48px; color: #cbd5e1;">forum</span>
+              <h4 class="empty-title mt-2" style="font-family:'Poppins', sans-serif; font-weight:700; color:#1e293b;">No Discussions in This Category Yet</h4>
+              <p class="empty-subtext text-muted" style="font-size:0.88rem;">Be the first engineer to start a conversation in this topic hub.</p>
+              <a href="<?= BASE_URL ?>/forum/new-topic" class="btn-new-topic mt-3">
+                <span class="material-symbols-outlined">add_circle</span>
+                <span>Start First Discussion</span>
+              </a>
+            </div>
           </template>
 
-          <template x-for="feed in discussions" :key="feed.uuid">
-            <div class="discussion-card" 
-                 :class="{ 'is-pinned': feed.is_pinned, 'is-hot': feed.is_hot, 'expanded': expanded }"
-                 x-data="feedCard(feed.uuid, feed.upvotes, feed.is_liked, feed.replies)">
-              <div class="card-top-row">
-                <span class="category-badge" x-text="feed.category_name"></span>
-                <span class="badge-pinned-label" x-show="feed.is_pinned">
-                  <span class="material-symbols-outlined" style="font-size:13px; font-variation-settings:'FILL' 1;">push_pin</span>
-                  Pinned
-                </span>
-                <span class="badge-hot-label" x-show="feed.is_hot">
-                  <span class="material-symbols-outlined">local_fire_department</span> HOT
-                </span>
-              </div>
-              <a :href="`<?= BASE_URL ?>/forum/discussion?uuid=${feed.uuid}`" class="text-decoration-none">
-                <h3 class="card-title" x-text="feed.title"></h3>
-              </a>
-              <div class="card-excerpt shadow-none border-0 p-0" x-html="feed.content"></div>
-              <div class="card-author-row">
-                <img :src="feed.author_avatar ? '<?= BASE_URL ?>' + feed.author_avatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(feed.author_name)}&background=f48221&color=fff&size=32`" class="author-avatar-sm" alt="Author">
-                <span class="author-name" x-text="feed.author_name"></span>
-                <span class="author-time" x-text="formatDate(feed.created_at)"></span>
-              </div>
-              <div class="card-interaction-bar">
-                <button class="btn-interact btn-like" 
-                        :class="{ 'liked': isLiked }" 
-                        title="Like" 
-                        @click="toggleLike()">
-                  <span class="material-symbols-outlined" :style="isLiked ? 'font-variation-settings: \'FILL\' 1;' : ''">thumb_up</span>
-                  <span class="vote-count" x-text="likes"></span>
-                </button>
-                <a :href="`<?= BASE_URL ?>/forum/discussion?uuid=${feed.uuid}#discussion`" class="btn-interact btn-reply" title="Replies">
-                  <span class="material-symbols-outlined">chat_bubble</span>
-                  <span class="reply-count" x-text="replies.length"></span>
-                </a>
-              </div>
+          <!-- Streamlined Row Cards (Matching Forum Landing Page) with Progressive Reveal -->
+          <template x-for="(feed, index) in discussions" :key="feed.uuid">
+            <div class="discussion-item-wrap feed-item-fade-in" x-show="!loading && index < visibleCount">
+              <a :href="`<?= BASE_URL ?>/forum/discussion?uuid=${feed.uuid}`"
+                 class="discussion-row-card"
+                 :class="{ 'is-pinned': feed.is_pinned, 'is-hot': feed.is_hot }"
+                 role="article"
+                 :aria-label="feed.title">
 
+                <!-- Left: Stat Counters (Upvotes & Replies in compact dual-pill) -->
+                <div class="row-stats-box" :aria-label="`${feed.likes || feed.upvotes || 0} upvotes, ${feed.replies_count || (feed.replies ? feed.replies.length : 0)} replies`">
+                  <button type="button"
+                          class="row-stat-col row-stat-like-btn"
+                          :class="{ 'is-liked': feed.is_liked }"
+                          title="Support topic"
+                          @click.prevent.stop="toggleLike(feed)">
+                    <span class="material-symbols-outlined row-stat-icon" :style="feed.is_liked ? 'font-variation-settings: \'FILL\' 1;' : ''">thumb_up</span>
+                    <span class="row-stat-num" x-text="feed.likes !== undefined ? feed.likes : (feed.upvotes || 0)"></span>
+                  </button>
+                  <div class="row-stat-divider"></div>
+                  <div class="row-stat-col" :class="{ 'has-replies': ((feed.replies_count || (feed.replies ? feed.replies.length : 0)) > 0) }" title="Discussion replies">
+                    <span class="material-symbols-outlined row-stat-icon">chat_bubble</span>
+                    <span class="row-stat-num" x-text="feed.replies_count !== undefined ? feed.replies_count : (feed.replies ? feed.replies.length : 0)"></span>
+                  </div>
+                </div>
+
+                <!-- Center: Topic Content -->
+                <div class="row-content-body">
+                  <!-- Top Inline Meta: Badges + Time -->
+                  <div class="row-meta-inline">
+                    <span class="row-category-chip" x-text="feed.category_name || 'General'"></span>
+                    <template x-if="feed.is_pinned">
+                      <span class="row-badge-pinned">
+                        <span class="material-symbols-outlined">push_pin</span>
+                        <span>Pinned</span>
+                      </span>
+                    </template>
+                    <template x-if="feed.is_hot">
+                      <span class="row-badge-hot">
+                        <span class="material-symbols-outlined">local_fire_department</span>
+                        <span>Trending</span>
+                      </span>
+                    </template>
+                    <span class="row-meta-separator">•</span>
+                    <span class="row-time-ago">
+                      <span class="material-symbols-outlined">schedule</span>
+                      <span x-text="formatDate(feed.created_at)"></span>
+                    </span>
+                  </div>
+
+                  <!-- Title -->
+                  <h3 class="row-topic-title" x-text="feed.title"></h3>
+
+                  <!-- Compact Excerpt Preview -->
+                  <p class="row-topic-excerpt" x-text="cleanExcerpt(feed.content)"></p>
+
+                  <!-- Author Meta Line -->
+                  <div class="row-author-meta">
+                    <img :src="feed.author_avatar ? '<?= BASE_URL ?>' + feed.author_avatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(feed.author_name || 'Member')}&background=f48221&color=fff&size=24`"
+                         class="row-author-avatar"
+                         :alt="feed.author_name || 'Member'"
+                         loading="lazy">
+                    <span class="row-author-name" x-text="feed.author_name || 'Member'"></span>
+                    <span class="row-author-role">Member</span>
+                  </div>
+                </div>
+
+                <!-- Right: Action Arrow -->
+                <div class="row-arrow-box" aria-hidden="true">
+                  <span class="material-symbols-outlined row-arrow-icon">arrow_forward</span>
+                </div>
+
+              </a>
             </div>
           </template>
         </div>
 
+        <!-- Progressive Reveal: Show More / Show Less Button (Anti-Scroll Control) -->
+        <div class="feed-more-actions" x-show="!loading && discussions.length > 6">
+          <button type="button" 
+                  class="feed-show-more-btn"
+                  @click="toggleFeedRows()"
+                  :aria-expanded="(visibleCount >= discussions.length).toString()">
+            <span x-text="visibleCount >= discussions.length ? 'Show Less' : 'Show More Discussions'">Show More Discussions</span>
+            <span class="material-symbols-outlined toggle-chevron" :class="{ 'is-rotated': visibleCount >= discussions.length }">expand_more</span>
+          </button>
+        </div>
+
         <!-- Pagination -->
         <div class="member-feed-pagination" x-show="totalPages > 1">
-          <button class="pag-btn" @click="prevPage()" :disabled="currentPage <= 1" :style="currentPage <= 1 ? 'opacity:0.5; cursor:not-allowed;' : ''">
-            <span class="material-symbols-outlined">chevron_left</span> Previous
+          <button class="pag-btn" @click="prevPage()" :disabled="currentPage <= 1">
+            <span class="material-symbols-outlined">chevron_left</span>
+            <span>Previous</span>
           </button>
-          <span class="pag-info">Page <span x-text="currentPage"></span> of <span x-text="totalPages"></span></span>
-          <button class="pag-btn" @click="nextPage()" :disabled="currentPage >= totalPages" :style="currentPage >= totalPages ? 'opacity:0.5; cursor:not-allowed;' : ''">
-            Next <span class="material-symbols-outlined">chevron_right</span>
+          <span class="pag-info">
+            Page <strong x-text="currentPage"></strong> of <strong x-text="totalPages"></strong>
+          </span>
+          <button class="pag-btn" @click="nextPage()" :disabled="currentPage >= totalPages">
+            <span>Next</span>
+            <span class="material-symbols-outlined">chevron_right</span>
           </button>
         </div>
       </div>
@@ -774,31 +180,44 @@
 </section>
 
 <!-- Mobile FAB -->
-<a href="<?= BASE_URL ?>/forum/new-topic" class="member-fab-mobile">
+<a href="<?= BASE_URL ?>/forum/new-topic" class="member-fab-mobile" title="Start a Topic">
   <span class="member-fab-pulse-ring"></span>
   <span class="material-symbols-outlined">edit</span>
 </a>
 
 <script>
 document.addEventListener('alpine:init', () => {
-    Alpine.data('forumFeed', () => ({
-        discussions: [],
+    Alpine.data('forumFeedController', () => ({
+        discussions: <?= $initialFeedsJson ?>,
         loading: false,
-        currentCategory: 'all',
-        currentSort: 'latest',
-        currentPage: <?= $current_page ?? 1 ?>,
-        totalPages: <?= $total_pages ?? 1 ?>,
+        currentCategory: <?= $initialCategory ?>,
+        currentSort: <?= $initialSort ?>,
+        currentPage: <?= $initialCurrentPage ?>,
+        totalPages: <?= $initialTotalPages ?>,
+        visibleCount: 6,
+        step: 6,
 
         init() {
-            this.fetchDiscussions();
-            
             // Listen for filter updates from the filter bar
             window.addEventListener('filter-changed', (e) => {
                 if (e.detail.category !== undefined) this.currentCategory = e.detail.category;
                 if (e.detail.sort !== undefined) this.currentSort = e.detail.sort;
-                this.currentPage = 1; // Reset to page 1 on filter change
+                this.currentPage = 1;
+                this.visibleCount = 6;
                 this.fetchDiscussions();
             });
+        },
+
+        toggleFeedRows() {
+            if (this.visibleCount >= this.discussions.length) {
+                this.visibleCount = 6;
+                const feedEl = document.getElementById('discussionFeed') || document.getElementById('feedSection');
+                if (feedEl) {
+                    feedEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            } else {
+                this.visibleCount = Math.min(this.visibleCount + this.step, this.discussions.length);
+            }
         },
 
         async fetchDiscussions() {
@@ -813,19 +232,47 @@ document.addEventListener('alpine:init', () => {
                 const data = await response.json();
                 if (data.success) {
                     this.discussions = data.feeds;
+                    this.visibleCount = 6;
                     if (data.total_pages !== undefined) this.totalPages = data.total_pages;
                 }
             } catch (error) {
                 console.error('Error fetching discussions:', error);
             } finally {
                 this.loading = false;
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                const feedEl = document.getElementById('feedSection') || document.getElementById('discussionFeed');
+                if (feedEl) {
+                    feedEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        },
+
+        async toggleLike(feed) {
+            try {
+                const response = await fetch('<?= BASE_URL ?>/forum/feed/like', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        feed_uuid: feed.uuid,
+                        csrf_token: '<?= CSRF::generateToken() ?>'
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    feed.likes = data.likes;
+                    feed.upvotes = data.likes;
+                    feed.is_liked = data.is_liked;
+                } else if (data.message && data.message.includes('sign in')) {
+                    window.location.href = '<?= BASE_URL ?>/forum/sign-in';
+                }
+            } catch (error) {
+                console.error('Error toggling like:', error);
             }
         },
 
         nextPage() {
             if (this.currentPage < this.totalPages) {
                 this.currentPage++;
+                this.visibleCount = 6;
                 this.fetchDiscussions();
             }
         },
@@ -833,157 +280,27 @@ document.addEventListener('alpine:init', () => {
         prevPage() {
             if (this.currentPage > 1) {
                 this.currentPage--;
+                this.visibleCount = 6;
                 this.fetchDiscussions();
             }
         },
 
         formatDate(dateStr) {
+            if (!dateStr) return '';
             const date = new Date(dateStr);
             return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         },
 
-        formatTime(dateStr) {
-            if (!dateStr) return '';
-            const date = new Date(dateStr);
-            return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
-        }
-    }));
-
-    Alpine.data('feedCard', (uuid, initialLikes, initialIsLiked, initialReplies) => ({
-        uuid: uuid,
-        likes: initialLikes,
-        isLiked: initialIsLiked,
-        replies: initialReplies,
-        expanded: false,
-        newReplyContent: '',
-        parent_uuid: null,
-        replyingToName: '',
-        submitting: false,
-
-        get threadedReplies() {
-            const list = [];
-            const map = {};
-            
-            this.replies.forEach(r => {
-                const pid = r.parent_uuid || 'root';
-                if (!map[pid]) map[pid] = [];
-                map[pid].push(r);
-            });
-
-            const flatten = (pid, depth) => {
-                if (!map[pid]) return;
-                map[pid].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-                map[pid].forEach(child => {
-                    list.push({ ...child, depth: depth });
-                    flatten(child.uuid, depth + 1);
-                });
-            };
-
-            flatten('root', 0);
-            return list;
-        },
-
-        setReplyTo(replyUuid, authorName) {
-            this.parent_uuid = replyUuid;
-            this.replyingToName = authorName;
-            this.expanded = true;
-            this.$nextTick(() => {
-                const input = this.$el.querySelector('.reply-input-field');
-                if (input) input.focus();
-            });
-        },
-
-        cancelReplyTo() {
-            this.parent_uuid = null;
-            this.replyingToName = '';
-        },
-
-        async toggleReplyLike(reply) {
-            try {
-                const response = await fetch('<?= BASE_URL ?>/forum/feed/like-reply', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        reply_uuid: reply.uuid,
-                        csrf_token: '<?= CSRF::generateToken() ?>'
-                    })
-                });
-                const data = await response.json();
-                if (data.success) {
-                    reply.likes = data.likes;
-                    reply.is_liked = data.is_liked;
-                } else {
-                    alert(data.message);
-                    if (data.message.includes('sign in')) window.location.href = '<?= BASE_URL ?>/forum/sign-in';
-                }
-            } catch (error) {
-                console.error('Error toggling reply like:', error);
+        cleanExcerpt(html) {
+            if (!html) return '';
+            const tmp = document.createElement('div');
+            tmp.innerHTML = html;
+            const text = tmp.textContent || tmp.innerText || '';
+            const trimmed = text.trim();
+            if (trimmed.length > 135) {
+                return trimmed.substring(0, 135) + '...';
             }
-        },
-
-        async toggleLike() {
-            try {
-                const response = await fetch('<?= BASE_URL ?>/forum/feed/like', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        feed_uuid: this.uuid,
-                        csrf_token: '<?= CSRF::generateToken() ?>'
-                    })
-                });
-                const data = await response.json();
-                if (data.success) {
-                    this.likes = data.likes;
-                    this.isLiked = data.is_liked;
-                } else {
-                    alert(data.message);
-                    if (data.message.includes('sign in')) window.location.href = '<?= BASE_URL ?>/forum/sign-in';
-                }
-            } catch (error) {
-                console.error('Error toggling like:', error);
-            }
-        },
-
-        async submitReply() {
-            if (!this.newReplyContent.trim() || this.submitting) return;
-            this.submitting = true;
-            try {
-                const response = await fetch('<?= BASE_URL ?>/forum/feed/reply', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        feed_uuid: this.uuid,
-                        content: this.newReplyContent,
-                        parent_uuid: this.parent_uuid || '',
-                        csrf_token: '<?= CSRF::generateToken() ?>'
-                    })
-                });
-                const data = await response.json();
-                if (data.success) {
-                    // Update reply list with full data
-                    const newReply = {
-                        ...data.reply,
-                        likes: 0,
-                        is_liked: false
-                    };
-                    this.replies.push(newReply);
-                    this.newReplyContent = '';
-                    this.cancelReplyTo();
-                } else {
-                    alert(data.message);
-                }
-            } catch (error) {
-                console.error('Error submitting reply:', error);
-            } finally {
-                this.submitting = false;
-            }
-        },
-
-        formatTime(dateStr) {
-            if (!dateStr) return '';
-            const parts = dateStr.split(' ');
-            if (parts.length > 1) return parts[1].substring(0, 5);
-            return dateStr;
+            return trimmed;
         }
     }));
 });

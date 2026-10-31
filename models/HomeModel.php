@@ -121,7 +121,7 @@ class HomeModel {
             $t['testimonial'] = str_replace('SpidersTech', 'SpiderTech', $t['testimonial']);
             $t['testimonial'] = trim(stripslashes($t['testimonial']), " \"'\t\n\r\0\x0B");
 
-            $name = trim($t['name']);
+            $name = md5(trim($t['name']) . '|' . trim($t['testimonial']));
             if (!isset($unique[$name])) {
                 $unique[$name] = true;
                 $filtered[] = $t;
@@ -129,6 +129,17 @@ class HomeModel {
             if (count($filtered) >= 10) break; // Fetch up to 10 unique ones
         }
         return $filtered;
+    }
+
+    public function getPartners() {
+        try {
+            $query = "SELECT * FROM partners_tb WHERE is_active = 1 ORDER BY sort_order ASC, id DESC";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return [];
+        }
     }
 
     public function getStats() {

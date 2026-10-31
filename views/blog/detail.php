@@ -1,341 +1,28 @@
-<!-- Reading Progress Bar -->
-<div id="progress-bar" class="reading-progress"></div>
+<!-- Reading Progress Bar (Fixed Above Header) -->
+<div id="progress-bar" class="reading-progress" role="progressbar" aria-label="Reading progress" aria-valuemin="0" aria-valuemax="100"></div>
 
-<!-- Material Symbols for Blog UI -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-
-<style>
-    :root {
-        --primary-orange: #f48221;
-        --primary-dark: #262626;
-        --text-body: #374151;
-        --text-muted: #797979;
-    }
-
-    .reading-progress {
-        height: 4px;
-        background: var(--primary-orange);
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 1000;
-        width: 0%;
-        transition: width 0.1s ease-out;
-    }
-
-    /* Page Header High-Fidelity */
-    .page-header {
-        background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
-        background-color: var(--dark-bg);
-        padding: 140px 0 80px;
-        position: relative;
-        overflow: hidden;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .page-header::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at 70% 30%, rgba(244, 130, 33, 0.05) 0%, transparent 60%);
-        pointer-events: none;
-    }
-
-    .page-title {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 800;
-        font-size: clamp(2.2rem, 5vw, 3.2rem);
-        color: #ffffff;
-        margin-bottom: 1rem;
-        letter-spacing: -1.2px;
-        line-height: 1.2;
-    }
-
-    .page-title span {
-        color: var(--primary-orange);
-    }
-
-    /* Professional Breadcrumbs */
-    .breadcrumb-custom {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-top: 15px;
-    }
-
-    .breadcrumb-item-custom {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        color: rgba(255, 255, 255, 0.5);
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-    }
-
-    .breadcrumb-item-custom a {
-        color: rgba(255, 255, 255, 0.5);
-        text-decoration: none;
-        transition: color 0.3s ease;
-    }
-
-    .breadcrumb-item-custom a:hover {
-        color: var(--primary-orange);
-    }
-
-    .breadcrumb-item-custom.active {
-        color: var(--primary-orange);
-    }
-
-    .breadcrumb-separator {
-        width: 4px;
-        height: 4px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 50%;
-    }
-
-    .article-main {
-        padding-top: 80px;
-        padding-bottom: 100px;
-    }
-
-    /* Article Featured Image */
-    .article-featured-image {
-        position: relative;
-        height: 500px;
-        border-radius: 30px;
-        overflow: hidden;
-        margin-bottom: 60px;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
-    }
-
-    .article-featured-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .category-badge {
-        position: absolute;
-        top: 30px;
-        left: 30px;
-        background: var(--primary-orange);
-        color: #fff;
-        padding: 6px 20px;
-        border-radius: 50px;
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        z-index: 2;
-        box-shadow: 0 4px 15px rgba(244, 130, 33, 0.3);
-    }
-
-    /* Centralized Reading Flow */
-    .reading-container {
-        max-width: 850px;
-        margin: 0 auto;
-        margin-block-start: 6rem !important;
-    }
-
-    /* Article Meta */
-    .article-meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 30px 0;
-        border-bottom: 1px solid #eee;
-        margin-bottom: 50px;
-    }
-
-    .author-box {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-
-    .author-icon {
-        width: 45px;
-        height: 45px;
-        background: #f3f4f6;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary-orange);
-    }
-
-    .author-info h6 {
-        margin: 0;
-        font-weight: 700;
-        font-size: 14px;
-    }
-
-    .author-info span {
-        font-size: 11px;
-        color: #999;
-        text-transform: uppercase;
-        font-weight: 600;
-    }
-
-    .meta-stats {
-        display: flex;
-        gap: 30px;
-        font-size: 11px;
-        font-weight: 700;
-        color: #999;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    /* Article Content */
-    .article-content {
-        font-size: 18px;
-        line-height: 1.8;
-        color: var(--text-body);
-    }
-
-    .article-content p {
-        margin-bottom: 25px;
-    }
-
-    .article-content h2 {
-        font-size: 32px;
-        font-weight: 700;
-        color: var(--primary-dark);
-        margin-top: 50px;
-        margin-bottom: 20px;
-    }
-
-    .abstract {
-        font-size: 20px;
-        color: #4b5563;
-        font-style: italic;
-        border-left: 4px solid #eee;
-        padding-left: 25px;
-        margin-bottom: 40px;
-        font-weight: 300;
-    }
-
-    .callout {
-        background: #fffcf9;
-        border-left: 4px solid var(--primary-orange);
-        padding: 35px;
-        border-radius: 0 15px 15px 0;
-        margin: 40px 0;
-    }
-
-    .callout h5 {
-        color: var(--primary-orange);
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 10px;
-    }
-
-    .article-img {
-        width: 100%;
-        border-radius: 20px;
-        margin: 40px 0;
-    }
-
-    /* Related Footer */
-    .related-section {
-        margin-top: 80px;
-        padding-top: 60px;
-        border-top: 1px solid #eee;
-    }
-
-    .related-section h4 {
-        margin-bottom: 30px;
-        font-weight: 700;
-    }
-
-    .related-card {
-        border: 1px solid #eee;
-        padding: 30px;
-        border-radius: 20px;
-        transition: all 0.3s;
-        height: 100%;
-        display: block;
-        text-decoration: none !important;
-    }
-
-    .related-card:hover {
-        border-color: rgba(244, 130, 33, 0.3);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-        transform: translateY(-5px);
-    }
-
-    .related-card .tag {
-        color: var(--primary-orange);
-        font-size: 10px;
-        font-weight: 700;
-        text-transform: uppercase;
-        margin-bottom: 12px;
-        display: block;
-    }
-
-    .related-card h5 {
-        font-size: 18px;
-        color: var(--primary-dark);
-        font-weight: 700;
-    }
-
-    /* Back Button Branding */
-    .btn-insights-back {
-        background-color: var(--primary-orange);
-        color: #fff;
-        border: none;
-        border-radius: 50px;
-        padding: 12px 35px;
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 14px rgba(244, 130, 33, 0.25);
-        text-decoration: none !important;
-    }
-
-    .btn-insights-back:hover {
-        background-color: #db7015;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(244, 130, 33, 0.35);
-        color: #fff;
-    }
-
-    .hero-wrap {
-        position: relative;
-        margin-block: 2rem;
-        max-width: 100%;
-        height: 65vh;
-
-        >img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 2rem;
-        }
-
-        >div:first-of-type>h1 {
-            margin-block-end: 1rem;
-        }
-    }
-</style>
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/blog-detail.css?v=<?= filemtime(ROOT_PATH . '/css/blog-detail.css') ?>" />
 
 <main class="article-main">
     <div class="container">
 
+        <!-- Back Button -->
+        <div class="mb-4">
+            <a href="<?= BASE_URL ?>/blog" class="back-nav-link">
+                <span class="material-symbols-outlined">keyboard_backspace</span>
+                <span>Back to Research &amp; Insights</span>
+            </a>
+        </div>
+
         <!-- Hero Section -->
         <div class="hero-wrap">
-            <img src="<?= $blog['image_path'] ?>" alt="<?= htmlspecialchars($blog['title']) ?>">
+            <img src="<?= $blog['image_path'] ?>" alt="<?= htmlspecialchars($blog['title']) ?>" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="blog-detail-img-fallback" style="display: none;" aria-hidden="true">
+                <svg class="fallback-svg-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="6" y="10" width="52" height="44" rx="6" stroke="currentColor" stroke-width="2.5" stroke-dasharray="4 3"/>
+                    <path d="M18 24H46M18 34H36" stroke="#f48221" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+            </div>
             <div class="hero-overlay">
                 <span class="badge"><?= htmlspecialchars($blog['category_name']) ?></span>
                 <h1><?= htmlspecialchars($blog['title']) ?></h1>
@@ -349,34 +36,55 @@
             <div class="article-meta">
                 <div class="author-box">
                     <div class="author-icon">
-                        <span class="material-symbols-outlined">person</span>
+                        <span class="material-symbols-outlined">engineering</span>
                     </div>
                     <div class="author-info">
-                        <h6>Global Research Unit</h6>
-                        <span>Lead Architect</span>
+                        <h6>Spider Tech Engineering</h6>
+                        <span>Technical Intelligence Group</span>
                     </div>
                 </div>
                 <div class="meta-stats">
-                    <span><?= date('M j, Y', strtotime($blog['created_at'])) ?></span>
-                    <span>8 min read</span>
+                    <span class="meta-stat-item">
+                        <span class="material-symbols-outlined">calendar_today</span>
+                        <span><?= date('M j, Y', strtotime($blog['created_at'])) ?></span>
+                    </span>
+                    <span class="meta-stat-item">
+                        <span class="material-symbols-outlined">schedule</span>
+                        <span>5 min read</span>
+                    </span>
                 </div>
             </div>
 
             <!-- Article Content -->
-            <div class="article-content">
+            <article class="article-content rich-text-content">
                 <?= $blog['content'] ?>
-            </div>
+            </article>
 
             <!-- Related Area -->
             <?php if (!empty($related_blogs)): ?>
                 <div class="related-section">
-                    <h4>Related Research</h4>
-                    <div class="row">
+                    <span class="section-eyebrow">
+                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                            <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                        </svg>
+                        <span class="eyebrow-label-text">Further Reading</span>
+                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                            <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                        </svg>
+                    </span>
+                    <h4 class="related-heading">Related <span>Research</span></h4>
+                    <div class="row g-3">
                         <?php foreach ($related_blogs as $related): ?>
-                            <div class="col-md-6 mb-4">
+                            <div class="col-md-6 mb-3">
                                 <a href="<?= BASE_URL ?>/blog/<?= $related['slug'] ?>" class="related-card">
                                     <span class="tag"><?= htmlspecialchars($related['category_name']) ?></span>
                                     <h5><?= htmlspecialchars($related['title']) ?></h5>
+                                    <span class="related-link-arrow">
+                                        <span>Read Analysis</span>
+                                        <span class="material-symbols-outlined">arrow_forward</span>
+                                    </span>
                                 </a>
                             </div>
                         <?php endforeach; ?>
@@ -387,7 +95,8 @@
             <!-- Back Link -->
             <div class="mt-5 text-center">
                 <a href="<?= BASE_URL ?>/blog" class="btn-insights-back">
-                    <span class="material-symbols-outlined">arrow_back</span> Back to Insights
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    <span>Back to Research &amp; Insights</span>
                 </a>
             </div>
 
@@ -395,22 +104,51 @@
     </div>
 </main>
 
+<!-- Include Modular Newsletter -->
+<?php include ROOT_PATH . '/views/layout/newsletter.php'; ?>
+
 <script>
-    // Reading Progress Tracking (Legacy support for direct visits)
     (function() {
         const progressBar = document.getElementById('progress-bar');
         if (!progressBar) return;
 
         const updateProgress = () => {
-            const h = document.documentElement,
-                b = document.body,
-                st = 'scrollTop',
-                sh = 'scrollHeight';
-            const percent = (h[st] || b[st]) / ((h[sh] || b[sh]) - h.clientHeight) * 100;
-            progressBar.style.width = percent + '%';
+            const readingArea = document.querySelector('.reading-container') || document.querySelector('.article-content');
+            if (readingArea) {
+                const rect = readingArea.getBoundingClientRect();
+                const scrollY = window.scrollY || window.pageYOffset;
+                const areaTop = rect.top + scrollY;
+                const areaHeight = readingArea.offsetHeight;
+                const viewportHeight = window.innerHeight;
+
+                const start = Math.max(0, areaTop - 180);
+                const end = areaTop + areaHeight - (viewportHeight * 0.7);
+
+                let percent = 0;
+                if (scrollY <= start) {
+                    percent = 0;
+                } else if (scrollY >= end) {
+                    percent = 100;
+                } else {
+                    percent = ((scrollY - start) / (end - start)) * 100;
+                }
+                percent = Math.min(100, Math.max(0, percent));
+                progressBar.style.width = percent + '%';
+                progressBar.setAttribute('aria-valuenow', Math.round(percent));
+            } else {
+                const h = document.documentElement,
+                    b = document.body;
+                const total = (h.scrollHeight || b.scrollHeight) - window.innerHeight;
+                const current = h.scrollTop || b.scrollTop;
+                const percent = total > 0 ? (current / total) * 100 : 0;
+                progressBar.style.width = Math.min(100, Math.max(0, percent)) + '%';
+            }
         };
 
         window.addEventListener('scroll', updateProgress, {
+            passive: true
+        });
+        window.addEventListener('resize', updateProgress, {
             passive: true
         });
         updateProgress();

@@ -2,144 +2,114 @@
 require('superadmin_functions.php');
 require('secured-login.php');
 
-
-// Query trainings
-$applicants_query = mysqli_query($spider_tech_db, "SELECT * FROM dse_application") or die(mysqli_error($spider_tech_db));
-$applicants_row = mysqli_fetch_assoc($applicants_query);
-
-
+// Query applicants
+$applicants_query = mysqli_query($spider_tech_db, "SELECT * FROM dse_application ORDER BY id DESC") or die(mysqli_error($spider_tech_db));
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<!-- BEGIN HEAD -->
 
 <head>
     <?php require('head-section.html'); ?>
 </head>
-<!-- END HEAD -->
 
 <body class="<?php require('body-tag-css.html'); ?>">
     <div class="page-wrapper">
-        <!-- start header -->
+        <!-- Header -->
         <?php require('header-section.php'); ?>
-        <!-- end header -->
-        <!-- start color quick setting -->
-        <?php require('setting-section.html'); ?>
-        <!-- end color quick setting -->
-        <!-- start page container -->
+
         <div class="page-container">
-            <!-- start sidebar menu -->
+            <!-- Sidebar -->
             <?php require('side-menu-section.php'); ?>
-            <!-- end sidebar menu -->
-            <!-- start page content -->
+
+            <!-- Page Content -->
             <div class="page-content-wrapper">
                 <div class="page-content">
+                    
                     <div class="page-bar">
-                        <div class="page-title-breadcrumb">
-                            <div class=" pull-left">
-                                <div class="page-title">All Applicants</div>
-                            </div>
-                            <ol class="breadcrumb page-breadcrumb pull-right">
-                                <li><i class="fa fa-home"></i>&nbsp;<a class="parent-item" href="dashboard.php">Dashboard</a>&nbsp;<i class="fa fa-angle-right"></i></li>
-                                <li><a class="parent-item" href="">Training</a>&nbsp;<i class="fa fa-angle-right"></i></li>
-                                <li class="active">Applicants List</li>
-                            </ol>
-                        </div>
+                        <h1 class="page-title">Digital Skills &amp; Entrepreneurship Applicants</h1>
+                        <ol class="page-breadcrumb">
+                            <li><i class="fa fa-home"></i>&nbsp;<a href="dashboard.php">Dashboard</a>&nbsp;<i class="fa fa-angle-right"></i></li>
+                            <li><a href="all_trainings.php">Trainings</a>&nbsp;<i class="fa fa-angle-right"></i></li>
+                            <li class="active">DSE Applicants</li>
+                        </ol>
                     </div>
+
                     <div class="row">
-                        <div class="col-md-12 col-sm-12">
+                        <div class="col-md-12">
                             <div class="card card-box">
                                 <div class="card-head">
-                                    <header>Applicants Table</header>
+                                    <header>Registered Program Candidates</header>
                                 </div>
-                                <div class="card-body" id="bar-parent">
-                                    
-                                    <div class="row">
-                                        <div class="col-md-6 col-sm-6 col-6">
-                                            <div class="btn-group">
-                                                <a href="add_trainings.php" id="addRow" class="btn btn-info">
-                                                    Add New <i class="fa fa-plus"></i>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="table-scrollable">
-                                            <table id="exportTable" class="display nowrap table-hover" style="width:100%">
-                                                <thead>
-                                                    <tr>
-                                                        <th>#</th>
-                                                        <th>Last Name</th>
-                                                        <th>First Name</th>
-                                                        <th>Middle Name</th>
-                                                        <th>Email</th>
-                                                        <th>Phone No.</th>
-                                                        <th>Age</th>
-                                                        <th>Gender</th>
-                                                        <th>Business Name</th>
-                                                        <th>Business Sector</th>
-                                                        <th>CAC_no</th>
-                                                        <th>SMEDAN</th>
-                                                        <th>Years of Opr</th>
-                                                        <th>Business Location</th>
-                                                        <th>Apply Date</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php
-                                                    if (mysqli_num_rows($applicants_query) == 0) {
-                                                        echo '<tr><td colspan="4" class="text-center">No applications yet.</td></tr>';
-                                                    } else {
-                                                        $no = 1; 
-                                                    do {
-                                                        $applicants_id = $applicants_row['id'];
-                                                        echo
-                                                        '<tr>
-                                                            <td>'.$no.'</td>
-                                                            <td>'.$applicants_row['lastname'].'</td>
-                                                            <td>'.$applicants_row['firstname'].'</td>
-                                                            <td>'.$applicants_row['middlename'].'</td>
-                                                            <td><a href="mailto:'.$applicants_row['email'].'">'.$applicants_row['email'].'</a></td>
-															<td><a href="tel:'.$applicants_row['phone_no'].'">'.$applicants_row['phone_no'].'</a></td>
-                                                            <td>'.$applicants_row['age'].'</td>
-                                                            <td>'.$applicants_row['gender'].'</td>
-                                                            <td>'.$applicants_row['business_name'].'</td>
-                                                            <td>'.$applicants_row['business_sector'].'</td>
-                                                            <td>'.$applicants_row['cac_no'].'</td>
-                                                            <td>'.$applicants_row['smedan'].'</td>
-                                                            <td>'.$applicants_row['years'].'</td>
-                                                            <td>'.$applicants_row['business_location'].'</td>
-                                                            <td>'.$applicants_row['apply_date'].'</td>
-                                                            
-                                                        </tr>';
-                                                        $no++;
-                                                    } while($applicants_row = mysqli_fetch_assoc($applicants_query));
-                                                    }
-                                                    
+                                <div class="card-body">
+                                    <div class="table-scrollable">
+                                        <table id="exportTable" class="display nowrap table-hover" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 40px;">#</th>
+                                                    <th>Candidate Name</th>
+                                                    <th>Contact Information</th>
+                                                    <th>Demographics</th>
+                                                    <th>Business / Enterprise</th>
+                                                    <th>Sector</th>
+                                                    <th>Registration / CAC</th>
+                                                    <th>Applied On</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php if ($applicants_query && mysqli_num_rows($applicants_query) > 0): ?>
+                                                    <?php 
+                                                    $no = 1;
+                                                    while ($row = mysqli_fetch_assoc($applicants_query)): 
+                                                        $fullName = trim($row['firstname'] . ' ' . ($row['middlename'] ? $row['middlename'] . ' ' : '') . $row['lastname']);
                                                     ?>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                                        <tr>
+                                                            <td style="font-family: 'Chakra Petch', monospace; font-weight: 600; color: #64748b;"><?= $no++; ?></td>
+                                                            <td>
+                                                                <strong style="color: #0f172a; font-family: 'Poppins', sans-serif;"><?= htmlspecialchars($fullName); ?></strong>
+                                                            </td>
+                                                            <td>
+                                                                <div><a href="mailto:<?= htmlspecialchars($row['email']); ?>" style="color: var(--admin-primary);"><?= htmlspecialchars($row['email']); ?></a></div>
+                                                                <small class="text-muted"><i class="fa fa-phone"></i> <?= htmlspecialchars($row['phone_no']); ?></small>
+                                                            </td>
+                                                            <td>
+                                                                <span class="table-pill table-pill-slate"><?= htmlspecialchars($row['gender'] ?? 'N/A'); ?> (<?= htmlspecialchars($row['age'] ?? 'Age'); ?>)</span>
+                                                            </td>
+                                                            <td>
+                                                                <strong style="color: #334155;"><?= htmlspecialchars($row['business_name'] ?? 'Individual'); ?></strong>
+                                                                <?php if (!empty($row['business_location'])): ?>
+                                                                    <div class="text-muted" style="font-size: 0.78rem;"><i class="fa fa-map-marker"></i> <?= htmlspecialchars($row['business_location']); ?></div>
+                                                                <?php endif; ?>
+                                                            </td>
+                                                            <td>
+                                                                <span class="table-pill table-pill-orange"><?= htmlspecialchars($row['business_sector'] ?? 'General'); ?></span>
+                                                            </td>
+                                                            <td>
+                                                                <span style="font-family: 'Chakra Petch', monospace; font-size: 0.84rem;"><?= htmlspecialchars($row['cac_no'] ?: 'SMEDAN: ' . ($row['smedan'] ?: 'Pending')); ?></span>
+                                                            </td>
+                                                            <td>
+                                                                <span style="font-family: 'Chakra Petch', monospace; color: #64748b; font-size: 0.84rem;"><?= htmlspecialchars($row['apply_date']); ?></span>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endwhile; ?>
+                                                <?php endif; ?>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
-            <!-- end page content -->
-            <!-- start chat sidebar -->
-            <?php require('setting_and_chat_section.php'); ?>
-            <!-- end chat sidebar -->
+            <!-- End Page Content -->
         </div>
-        <!-- end page container -->
-        <!-- start footer -->
-        <?php require('footer-section.html'); ?>
-        <!-- end footer -->
-    </div>
-    <!-- start js include path -->
-    <?php require('js-section.html'); ?>
-    <!-- end js include path -->
-</body>
 
+        <!-- Footer -->
+        <?php require('footer-section.html'); ?>
+    </div>
+
+    <!-- JS includes -->
+    <?php require('js-section.html'); ?>
+</body>
 </html>

@@ -1,6 +1,6 @@
 <div class="content-header">
     <div class="d-flex align-items-center gap-3">
-        <a href="<?= BASE_URL ?>/admin/faq" class="btn-action"><span class="material-symbols-outlined">arrow_back</span></a>
+        <a href="<?= BASE_URL ?>/admin/faq" class="btn-action btn-back-header me-3 mr-3" title="Back"><span class="material-symbols-outlined">arrow_back</span></a>
         <div>
             <h1><?= ($mode == 'add') ? 'Add New' : 'Edit' ?> FAQ</h1>
             <p>Manage the support question and answer entries.</p>

@@ -1,21 +1,33 @@
 <?php 
 require('superadmin_functions.php');
 require('secured-login.php');
+
+if (!isset($_SESSION['training']) || empty($_SESSION['training'])) {
+    header('location: all_trainings.php');
+    exit();
+}
+
+$training_id_clean = mysqli_real_escape_string($spider_tech_db, $_SESSION['training']);
+$training_query = mysqli_query($spider_tech_db, "SELECT * FROM trainings_tb WHERE id = '$training_id_clean'") or die(mysqli_error($spider_tech_db));
+$training_row = mysqli_fetch_assoc($training_query);
+
+if (!$training_row) {
+    header('location: all_trainings.php');
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <!-- BEGIN HEAD -->
-
 <head>
 	<?php require('head-section.html'); ?>
 </head>
 <!-- END HEAD -->
 
-<body
-	class="<?php require('body-tag-css.html'); ?>">
+<body class="<?php require('body-tag-css.html'); ?>">
 	<div class="page-wrapper">
 		<!-- start header -->
-		<!-- <?php //require('header-section.php'); ?> -->
+		<?php require('header-section.php'); ?>
 		<!-- end header -->
 		<!-- start color quick setting -->
 		<?php require('setting-section.html'); ?>
@@ -30,146 +42,179 @@ require('secured-login.php');
 				<div class="page-content">
 					<div class="page-bar">
 						<div class="page-title-breadcrumb">
-							<div class=" pull-left">
-								<div class="page-title">Edit Training</div>
+							<div class="pull-left">
+								<div class="page-title">Edit Training: <?= htmlspecialchars(stripslashes($training_row['training_name'])); ?></div>
 							</div>
 							<ol class="breadcrumb page-breadcrumb pull-right">
-								<li><i class="fa fa-home"></i>&nbsp;<a class="parent-item"
-										href="dashboard.php">Dashboard</a>&nbsp;<i class="fa fa-angle-right"></i>
-								</li>
-								<li><a class="parent-item" href="all_trainings.php">Trainings</a>&nbsp;<i class="fa fa-angle-right"></i>
-								</li>
+								<li><i class="fa fa-home"></i>&nbsp;<a class="parent-item" href="dashboard.php">Dashboard</a>&nbsp;<i class="fa fa-angle-right"></i></li>
+								<li><a class="parent-item" href="all_trainings.php">Trainings</a>&nbsp;<i class="fa fa-angle-right"></i></li>
 								<li class="active">Edit Training</li>
 							</ol>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-md-12 col-sm-12">
-							<div class="card card-box">
-								<div class="card-head">
-									<header>Basic Information</header>
-									<!--
-                                    <button id="panel-button"
-										class="mdl-button mdl-js-button mdl-button--icon pull-right"
-										data-upgraded=",MaterialButton">
-										<i class="material-icons">more_vert</i>
-									</button>
-									<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
-										data-mdl-for="panel-button">
-										<li class="mdl-menu__item"><i class="material-icons">assistant_photo</i>Action
-										</li>
-										<li class="mdl-menu__item"><i class="material-icons">print</i>Another action
-										</li>
-										<li class="mdl-menu__item"><i class="material-icons">favorite</i>Something else
-											here</li>
-                                    </ul>
-                                    -->
-                                </div>
-                                <?php 
-                                if(isset($_SESSION['training']))
-                                {
-                                $training_query = mysqli_query($spider_tech_db, "SELECT * FROM trainings_tb 
-                                WHERE id = '".$_SESSION['training']."'") or die(mysqli_error($spider_tech_db));
-                                $training_row = mysqli_fetch_assoc($training_query);
-                                }
-                                ?>
-								<div class="card-body" id="bar-parent">
-									<form id="form_sample_1" class="form-horizontal" method="POST" enctype="multipart/form-data">
-										<div class="form-body">
-											<?php 
-											    if(!empty($training_success_msg))
-												{
-												  echo $training_success_msg;
-                                                  }      
-											?>
-											<div class="form-group row">
-												<label class="control-label col-md-3">Training Name
-													<span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-                                                    <input type="hidden" name="training_id" value="<?php echo stripslashes($training_row['id']); ?>">
-                                                    <input type="text" name="training_name" placeholder="Enter Training Name"
-														class="form-control input-height" value="<?php echo stripslashes($training_row['training_name']); ?>" required /> 
-                                                        <?php if(isset($_POST['edit_training'])) {echo $training_nameErr; }?>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-												<label class="control-label col-md-3">Training Icon
-													<span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-                                                    <input type="text" name="training_icon" placeholder="Enter Training Icon"
-														class="form-control input-height" value="<?php echo stripslashes($training_row['training_icon']); ?>" required /> 
-                                                        <?php if(isset($_POST['edit_training'])) {echo $training_iconErr; }?>
-                                                </div>
+
+					<!-- Alerts -->
+					<?php if (!empty($training_error_counter)): ?>
+						<div class="admin-alert-banner admin-alert-danger">
+							<i class="material-icons">error_outline</i>
+							<div><strong>Action Needed:</strong> <?= strip_tags($training_error_counter); ?></div>
+						</div>
+					<?php endif; ?>
+					<?php if (!empty($training_success_msg)): ?>
+						<div class="admin-alert-banner admin-alert-success">
+							<i class="material-icons">check_circle</i>
+							<div><strong>Success:</strong> <?= strip_tags($training_success_msg); ?></div>
+						</div>
+					<?php endif; ?>
+
+					<form id="edit_training_form" method="POST" enctype="multipart/form-data">
+						<input type="hidden" name="training_id" value="<?= htmlspecialchars(stripslashes($training_row['id'])); ?>">
+
+						<div class="admin-workspace-grid">
+							<!-- Main Content (68%) -->
+							<div class="admin-workspace-main">
+								<div class="form-card">
+									<div class="form-card-head">
+										<h2 class="form-card-title"><i class="material-icons">edit_note</i> Curriculum & Program Syllabus</h2>
+										<span class="form-label-tag">ID #<?= htmlspecialchars($training_row['id']); ?></span>
+									</div>
+									<div class="form-card-body">
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="training_name">
+												<span>Training Title <span class="required-star">*</span></span>
+											</label>
+											<input type="text" id="training_name" name="training_name" 
+												placeholder="Enter training name"
+												class="form-control-modern" 
+												value="<?= htmlspecialchars(stripslashes($training_row['training_name'])); ?>" 
+												required />
+											<?php if(!empty($training_nameErr)): ?>
+												<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($training_nameErr); ?></div>
+											<?php endif; ?>
+										</div>
+
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="training_description">
+												<span>Brief Executive Summary / Excerpt <span class="required-star">*</span></span>
+											</label>
+											<input type="text" id="training_description" name="training_description" 
+												placeholder="Short summary..."
+												class="form-control-modern" 
+												value="<?= htmlspecialchars(stripslashes($training_row['training_description'])); ?>" 
+												required />
+											<?php if(!empty($training_descriptionErr)): ?>
+												<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($training_descriptionErr); ?></div>
+											<?php endif; ?>
+										</div>
+
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="formsummernote">
+												<span>Full Program Syllabus, Schedule & Deliverables <span class="required-star">*</span></span>
+												<span class="form-help-modern">Full rich-text formatting supported</span>
+											</label>
+											<textarea id="formsummernote" name="training_details" required><?php 
+												echo stripslashes($training_row['training_details']);
+											?></textarea>
+											<?php if(!empty($training_detailsErr)): ?>
+												<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($training_detailsErr); ?></div>
+											<?php endif; ?>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Sidebar Controls (32%) -->
+							<div class="admin-workspace-sidebar">
+								<!-- Icon Identifier -->
+								<div class="form-card">
+									<div class="form-card-head">
+										<h3 class="form-card-title"><i class="material-icons">category</i> Program Identity</h3>
+									</div>
+									<div class="form-card-body">
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="training_icon">
+												<span>Program Icon Class <span class="required-star">*</span></span>
+											</label>
+											<input type="text" id="training_icon" name="training_icon" 
+												placeholder="E.g. fa fa-graduation-cap"
+												class="form-control-modern" 
+												value="<?= htmlspecialchars(stripslashes($training_row['training_icon'])); ?>" 
+												required />
+											<span class="form-help-modern">FontAwesome or Flaticon icon identifier</span>
+											<?php if(!empty($training_iconErr)): ?>
+												<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($training_iconErr); ?></div>
+											<?php endif; ?>
+										</div>
+									</div>
+								</div>
+
+								<!-- Training Cover Asset -->
+								<div class="form-card">
+									<div class="form-card-head">
+										<h3 class="form-card-title"><i class="material-icons">image</i> Cover Asset</h3>
+										<span class="admin-dim-badge">900 × 590</span>
+									</div>
+									<div class="form-card-body">
+										<!-- Current Image Display -->
+										<?php 
+										$picPath = $training_row['training_image'];
+										if (!empty($picPath)):
+											$displayPath = (file_exists($picPath) || file_exists('../' . $picPath)) ? $picPath : $picPath;
+										?>
+											<div class="admin-current-asset-card">
+												<span class="asset-badge"><i class="material-icons" style="font-size: 14px;">check_circle</i> Current Live Cover</span>
+												<img src="<?= htmlspecialchars($displayPath); ?>" alt="Current Training Cover" class="admin-current-asset-thumbnail" onerror="this.src='../images/logo/logo.png'">
 											</div>
-											<div class="form-group row">
-												<label class="control-label col-md-3">Breif Description <span class="required"> * </span> 
-												</label>
-												<div class="col-md-5">
-                                                    <input type="text" name="training_description" placeholder="Enter Description"
-														class="form-control input-height" value="<?php echo stripslashes($training_row['training_description']); ?>" required /> 
-                                                    <?php if(isset($_POST['edit_training'])) {echo '<div>'.$training_descriptionErr.'</div>'; }?>
+										<?php endif; ?>
+
+										<!-- Replace Image Dropzone (Optional) -->
+										<label class="form-label-modern" style="margin-top: 10px;">
+											<span>Replace Cover</span>
+											<span class="form-help-modern">Optional</span>
+										</label>
+										<div class="admin-dropzone-wrap">
+											<div class="admin-dropzone">
+												<div class="admin-dropzone-icon">
+													<i class="material-icons">cloud_upload</i>
 												</div>
+												<div class="admin-dropzone-title"><span>Click to choose new</span> or drag here</div>
+												<div class="admin-dropzone-desc">Leave empty to keep existing cover</div>
+												<input type="file" name="img" accept="image/*">
 											</div>
-                                            <div class="form-group row">
-												<label class="control-label col-md-3">Training Details
-													<span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-													<textarea id="formsummernote" placeholder="Enter Details"
-                                                        class="form-control-textarea" rows="3" name="training_details" required><?php 
-                                                        echo stripslashes($training_row['training_details']);?></textarea>
-                                                        <?php if(isset($_POST['edit_training'])) {echo $training_detailsErr; }?>
-												</div>
-                                            </div>
-											<div class="form-group row">
-												<label class="control-label col-md-3">Disable/Enable Picture
-													<span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-                                                    <select class="form-control input-height" id="mfi_4_a_i" onChange="changetextbox();">
-                                                    <option value="" selected>Select...</option>    
-                                                    <option value="Disable" >Disable Picture Update</option>
-                                                        <option value="Enable">Enable Picture Update</option>
-                                                    </select>
-												</div>
-											</div>  
-                                            <div class="form-group row">
-												<label class="control-label col-md-3">Training Picture <span class="required"> * </span> 
-												</label>
-												<div class="col-md-5">
-													<input type="file" class="default" name="img" id="sdd" required>
-													<div><span class="help-block text-green">900x590 dimention is be best picture</span></div>
-                                                    <?php if(isset($_POST['edit_training'])) {echo '<div>'.$training_imgErr.'</div>'; }?>
-												</div>
-											</div>
-											<!-- Display the current project image -->
-											<div class="form-group row">
-                                                <label class="control-label col-md-3">Current Project Picture:</label>
-                                                <div class="col-md-5">
-                                                    <?php if (!empty($training_row['training_image'])): ?>
-                                                        <img src="<?php echo  stripslashes($training_row['training_image']); ?>" alt="Current Training Picture" class="img-fluid" style="max-width: 100%; height: auto;"/>
-                                                    <?php else: ?>
-                                                        <p>No image available.</p>
-                                                    <?php endif; ?>
-                                                </div>
-                                            </div>
-											<div class="form-actions">
-												<div class="row">
-													<div class="offset-md-3 col-md-9">
-														<button type="submit"
-															class="btn btn-info m-r-20" name="edit_training">Submit</button>
-														<button type="button" class="btn btn-default">Cancel</button>
-													</div>
+
+											<div class="admin-preview-container" style="display: none;">
+												<img class="admin-preview-img" src="" alt="Selected Preview">
+												<div class="admin-preview-meta">
+													<span class="admin-preview-filename"></span>
+													<button type="button" class="admin-preview-remove">
+														<i class="material-icons">close</i> Cancel Replacement
+													</button>
 												</div>
 											</div>
 										</div>
-									</form>
+										<?php if(!empty($training_imgErr)): ?>
+											<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($training_imgErr); ?></div>
+										<?php endif; ?>
+									</div>
+								</div>
+
+								<!-- Action Card -->
+								<div class="form-card admin-actions-card">
+									<div class="form-card-head">
+										<h3 class="form-card-title"><i class="material-icons">save</i> Actions</h3>
+									</div>
+									<div class="form-card-body">
+										<button type="submit" name="edit_training" class="btn-admin-primary">
+											<i class="material-icons">check_circle</i> Save & Update Training
+										</button>
+										<a href="all_trainings.php" class="btn-admin-cancel">
+											<i class="material-icons">arrow_back</i> Return to Trainings
+										</a>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
+					</form>
 				</div>
 			</div>
 			<!-- end page content -->
@@ -186,5 +231,4 @@ require('secured-login.php');
 	<?php require('js-section.html'); ?>
 	<!-- end js include path -->
 </body>
-
 </html>

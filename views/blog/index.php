@@ -1,504 +1,6 @@
-<!-- Material Symbols for Blog UI -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/blog.css?v=<?= filemtime(ROOT_PATH . '/css/blog.css') ?>" />
 
-<style>
-    :root {
-        --primary-orange: #f48221;
-        --primary-dark: #262626;
-        --bg-light: #f9fafb;
-    }
-
-    /* Page Header High-Fidelity */
-    .page-header {
-        background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
-        background-color: var(--dark-bg);
-        padding: 140px 0 80px;
-        position: relative;
-        overflow: hidden;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .page-header::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at 70% 30%, rgba(244, 130, 33, 0.05) 0%, transparent 60%);
-        pointer-events: none;
-    }
-
-    .page-title {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 800;
-        font-size: clamp(2.5rem, 5vw, 3.8rem);
-        color: #ffffff;
-        margin-bottom: 1rem;
-        letter-spacing: -1.5px;
-        line-height: 1.1;
-    }
-
-    .page-title span {
-        color: var(--primary-orange);
-    }
-
-    /* Professional Breadcrumbs */
-    .breadcrumb-custom {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-top: 15px;
-    }
-
-    .breadcrumb-item-custom {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        color: rgba(255, 255, 255, 0.5);
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-    }
-
-    .breadcrumb-item-custom a {
-        color: rgba(255, 255, 255, 0.5);
-        text-decoration: none;
-        transition: color 0.3s ease;
-    }
-
-    .breadcrumb-item-custom a:hover {
-        color: var(--primary-orange);
-    }
-
-    .breadcrumb-item-custom.active {
-        color: var(--primary-orange);
-    }
-
-    .breadcrumb-separator {
-        width: 4px;
-        height: 4px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 50%;
-    }
-
-    /* Standard Project Wrapper */
-    .wraper {
-        position: relative;
-        background-color: var(--bg-light);
-        display: block;
-        width: 100%;
-    }
-
-    .blog-wrapper {
-        background-color: var(--bg-light);
-        padding: 0;
-        display: block;
-        width: 100%;
-        clear: both;
-    }
-
-    .blog-content {
-        padding: 80px 0 100px;
-    }
-
-    @media (max-width: 991px) {
-        .page-header {
-            padding: 120px 0 60px;
-        }
-
-        .blog-content {
-            padding: 60px 0 80px;
-        }
-    }
-
-    /* Filter Pills */
-    .filter-container {
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        margin-bottom: 60px;
-        flex-wrap: wrap;
-    }
-
-    .filter-pill {
-        padding: 10px 28px;
-        border-radius: 50px;
-        background: #fff;
-        border: 1px solid #eee;
-        font-weight: 600;
-        font-size: 13px;
-        color: #797979;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        text-decoration: none !important;
-    }
-
-    .filter-pill.active,
-    .filter-pill:hover {
-        background: var(--primary-orange);
-        color: #fff;
-        border-color: var(--primary-orange);
-        box-shadow: 0 4px 14px rgba(244, 130, 33, 0.2);
-    }
-
-    /* Research Card Grid Spacing */
-    .research-card-col {
-        margin-bottom: 30px !important;
-    }
-
-    /* Synchronized Research Card - Industrial Grade */
-    .research-card {
-        background: #fff;
-        border-radius: 24px;
-        overflow: hidden;
-        border: 1px solid rgba(0, 0, 0, 0.06);
-        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        padding: 8px;
-        box-shadow: none;
-        cursor: pointer;
-    }
-
-    .research-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
-        border-color: rgba(244, 130, 33, 0.2);
-    }
-
-    .card-img-wrap {
-        position: relative;
-        aspect-ratio: 16/10;
-        border-radius: 20px;
-        overflow: hidden;
-        background: var(--primary-dark);
-    }
-
-    .card-img-wrap img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.6s ease;
-    }
-
-    .research-card:hover .card-img-wrap img {
-        transform: scale(1.1);
-    }
-
-    .card-img-wrap::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(to top, rgba(17, 24, 39, 0.6), transparent);
-        z-index: 1;
-    }
-
-    .card-category {
-        position: absolute;
-        bottom: 20px;
-        left: 20px;
-        color: #fff;
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        z-index: 2;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        padding: 4px 12px;
-        border-radius: 50px;
-    }
-
-    .card-body-content {
-        padding: 30px 25px 35px;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .card-body-content h3 {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        font-size: 1.4rem;
-        line-height: 1.3;
-        color: var(--primary-dark);
-        margin-bottom: 1rem;
-        transition: color 0.3s ease;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .research-card:hover .card-body-content h3 {
-        color: var(--primary-orange);
-    }
-
-    .card-body-content p {
-        font-size: 0.95rem;
-        line-height: 1.7;
-        color: #555;
-        margin-bottom: 2rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .read-link {
-
-        .read-link i {
-            font-size: 18px;
-            transition: transform 0.3s;
-        }
-
-        .research-card:hover .read-link i {
-            transform: translateX(5px);
-        }
-
-        /* Back Button Branding */
-        .btn-insights-back {
-            background-color: var(--primary-orange);
-            color: #fff;
-            border: none;
-            border-radius: 50px;
-            padding: 12px 35px;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 14px rgba(244, 130, 33, 0.25);
-        }
-
-        .btn-insights-back:hover {
-            background-color: #db7015;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(244, 130, 33, 0.35);
-            color: #fff;
-        }
-
-        /* Detail View Styling */
-        .reading-progress {
-            height: 4px;
-            background: var(--primary-orange);
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-            width: 0%;
-            transition: width 0.1s ease-out;
-        }
-
-        .article-main {
-            padding-top: 120px;
-            padding-bottom: 100px;
-        }
-
-        .hero-wrap {
-            position: relative;
-            height: 450px;
-            border-radius: 30px;
-            overflow: hidden;
-            margin-bottom: 60px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .hero-wrap img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .hero-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(17, 24, 39, 0.9), transparent);
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-        }
-
-        .hero-overlay h1 {
-            color: #fff;
-            font-size: 48px;
-            font-weight: 700;
-            line-height: 1.2;
-            max-width: 900px;
-        }
-
-        .hero-overlay .badge {
-            background: var(--primary-orange);
-            color: #fff;
-            padding: 6px 20px;
-            border-radius: 50px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            width: fit-content;
-            margin-bottom: 20px;
-        }
-
-        .reading-container {
-            max-width: 850px;
-            margin: 0 auto;
-        }
-
-        .article-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 30px 0;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 50px;
-        }
-
-        .author-box {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .author-icon {
-            width: 45px;
-            height: 45px;
-            background: #f3f4f6;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-orange);
-        }
-
-        .author-info h6 {
-            margin: 0;
-            font-weight: 700;
-            font-size: 14px;
-        }
-
-        .author-info span {
-            font-size: 11px;
-            color: #999;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
-        .meta-stats {
-            display: flex;
-            gap: 30px;
-            font-size: 11px;
-            font-weight: 700;
-            color: #999;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .article-content {
-            font-size: 18px;
-            line-height: 1.8;
-            color: #374151;
-        }
-
-        .article-content p {
-            margin-bottom: 25px;
-        }
-
-        .article-content h2 {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--primary-dark);
-            margin-top: 50px;
-            margin-bottom: 20px;
-        }
-
-        .abstract {
-            font-size: 20px;
-            color: #4b5563;
-            font-style: italic;
-            border-left: 4px solid #eee;
-            padding-left: 25px;
-            margin-bottom: 40px;
-            font-weight: 300;
-        }
-
-        .callout {
-            background: #fffcf9;
-            border-left: 4px solid var(--primary-orange);
-            padding: 35px;
-            border-radius: 0 15px 15px 0;
-            margin: 40px 0;
-        }
-
-        .callout h5 {
-            color: var(--primary-orange);
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .article-img {
-            width: 100%;
-            border-radius: 20px;
-            margin: 40px 0;
-        }
-
-        .related-section {
-            margin-top: 80px;
-            padding-top: 60px;
-            border-top: 1px solid #eee;
-        }
-
-        .related-section h4 {
-            margin-bottom: 30px;
-            font-weight: 700;
-        }
-
-        .related-card {
-            border: 1px solid #eee;
-            padding: 30px;
-            border-radius: 20px;
-            transition: all 0.3s;
-            height: 100%;
-            display: block;
-            text-decoration: none !important;
-        }
-
-        .related-card:hover {
-            border-color: rgba(244, 130, 33, 0.3);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-            transform: translateY(-5px);
-        }
-
-        .related-card .tag {
-            color: var(--primary-orange);
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-            display: block;
-        }
-
-        .related-card h5 {
-            font-size: 18px;
-            color: var(--primary-dark);
-            font-weight: 700;
-        }
-
-        [x-cloak] {
-            display: none !important;
-        }
-</style>
-
-<div id="progress-bar" class="reading-progress"></div>
+<div id="progress-bar" class="reading-progress" x-show="view === 'detail'" x-cloak role="progressbar" aria-label="Reading progress" aria-valuemin="0" aria-valuemax="100"></div>
 <main class="blog-wrapper" x-data="blogManager()" @popstate.window="handlePopState($event)" @scroll.window.passive="updateProgress()">
     
     <!-- Professional Page Header -->
@@ -506,21 +8,17 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <span class="tag-eyebrow" style="background: rgba(244,130,33,0.15); color: #f48221; margin-bottom: 20px; display: inline-flex; align-items: center; border: 1px solid rgba(244,130,33,0.3); padding: 6px 16px; border-radius: 50px; font-size: 13px; font-weight: 700; text-transform: uppercase;">
-                        <span class="material-symbols-outlined" style="font-size: 16px; margin-right: 6px;">auto_awesome</span>
-                        Industrial Knowledge Base
-                    </span>
-                    <h1 class="page-title">Technical Intelligence & <br><span>Global Impact</span></h1>
-                    <p style="color: rgba(255,255,255,0.7); font-size: 1.05rem; max-width: 650px; line-height: 1.6; margin-bottom: 20px;">Exploring the industrial frontier through rigorous technical research, engineering analysis, and data-driven case studies.</p>
-                    <div class="breadcrumb-custom">
-                        <div class="breadcrumb-item-custom">
-                            <a href="<?= BASE_URL ?>/home"> Home</a>
-                        </div>
-                        <div class="breadcrumb-separator"></div>
-                        <div class="breadcrumb-item-custom active">
-                            Research & Insights
-                        </div>
-                    </div>
+                    <h1 class="page-title">Technical Intelligence & <span>Global Impact</span></h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb-custom">
+                            <li class="breadcrumb-item-custom">
+                                <a href="<?= BASE_URL ?>/">Home</a>
+                            </li>
+                            <li class="breadcrumb-item-custom active" aria-current="page">
+                                Research &amp; Insights
+                            </li>
+                        </ol>
+                    </nav>
                 </div>
             </div>
         </div>
@@ -529,49 +27,101 @@
     <!-- Main Content Area -->
     <div class="blog-content" x-show="view === 'index'" x-cloak>
         <div class="container">
-            <!-- Filter Navigation -->
-            <div class="filter-container">
-            <div class="filter-pill" :class="{ 'active': currentCategory === 'all' }" @click="setCategory('all')">All Research</div>
-            <?php foreach ($categories as $category): ?>
-                <div class="filter-pill" :class="{ 'active': currentCategory === '<?= $category['slug'] ?>' }" @click="setCategory('<?= $category['slug'] ?>')"><?= htmlspecialchars($category['name']) ?></div>
-            <?php endforeach; ?>
-        </div>
-
-        <!-- Research Grid -->
-        <div class="row" x-show="!loading">
-            <template x-for="blog in blogs" :key="blog.uuid">
-                <div class="col-lg-4 col-md-6 research-card-col">
-                    <div class="research-card" @click="loadArticle(blog.slug)">
-                        <div class="card-img-wrap">
-                            <img :src="blog.image_path" :alt="blog.title">
-                            <div class="card-category" x-text="`[ ${blog.category_name} ]` "></div>
-                        </div>
-                        <div class="card-body-content">
-                            <h3 x-text="blog.title"></h3>
-                            <p x-text="blog.summary"></p>
-                            <span class="read-link">
-                                Read Insight <i class="material-symbols-outlined">trending_flat</i>
-                            </span>
-                        </div>
-                    </div>
+            <!-- Section Header -->
+            <div class="row justify-content-center mb-4">
+                <div class="col-lg-8 text-center">
+                    <span class="section-eyebrow">
+                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                            <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                        </svg>
+                        <span class="eyebrow-label-text">Research &amp; Insights</span>
+                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                            <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                        </svg>
+                    </span>
+                    <br>
+                    <h2 class="section-title">Industrial <span>Knowledge Base</span></h2>
+                    <p class="section-subtitle">Exploring the engineering frontier through technical research, system architecture analysis, and data-driven case studies.</p>
                 </div>
-            </template>
-        </div>
+            </div>
 
-        <div x-show="loading" class="text-center py-5">
-            <div class="spinner-border text-primary" role="status"></div>
-            <p class="mt-2 text-muted">Loading insights...</p>
-        </div>
+            <!-- Filter Navigation (Synchronized Segmented Tab Design) -->
+            <div class="blog-tab-switcher-wrap">
+                <div class="blog-tab-switcher" role="tablist" aria-label="Research Categories">
+                    <button
+                        type="button"
+                        role="tab"
+                        class="blog-tab-btn"
+                        :class="{ 'active': currentCategory === 'all' }"
+                        @click="setCategory('all')"
+                        :aria-selected="(currentCategory === 'all').toString()">
+                        <span>All Research</span>
+                    </button>
+                    <?php foreach ($categories as $category): ?>
+                        <button
+                            type="button"
+                            role="tab"
+                            class="blog-tab-btn"
+                            :class="{ 'active': currentCategory === '<?= $category['slug'] ?>' }"
+                            @click="setCategory('<?= $category['slug'] ?>')"
+                            :aria-selected="(currentCategory === '<?= $category['slug'] ?>').toString()">
+                            <span><?= htmlspecialchars($category['name']) ?></span>
+                        </button>
+                    <?php endforeach; ?>
+                </div>
+            </div>
 
-        <div x-show="!loading && blogs.length === 0" class="text-center py-5">
-            <p class="text-muted">No research articles found in this category.</p>
-        </div>
-        
-        </div> <!-- End container -->
-    </div> <!-- End blog-content -->
+            <!-- Research Grid -->
+            <div class="row g-4" x-show="!loading">
+                <template x-for="blog in blogs" :key="blog.uuid">
+                    <div class="col-lg-4 col-md-6 mb-4 d-flex">
+                        <article class="research-card" @click="loadArticle(blog.slug)">
+                            <div class="card-img-wrap">
+                                <span class="card-category" x-text="blog.category_name"></span>
+                                <img :src="blog.image_path" :alt="blog.title" loading="lazy" decoding="async" @error="$event.target.style.display='none'; $event.target.nextElementSibling.style.display='flex';">
+                                <div class="blog-img-fallback" style="display: none;" aria-hidden="true">
+                                    <svg class="fallback-svg-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="6" y="10" width="52" height="44" rx="6" stroke="currentColor" stroke-width="2.5" stroke-dasharray="4 3"/>
+                                        <path d="M18 24H46M18 34H36" stroke="#f48221" stroke-width="2.5" stroke-linecap="round"/>
+                                    </svg>
+                                    <span class="fallback-label">Spider Tech Insight</span>
+                                </div>
+                            </div>
+                            <div class="card-body-content">
+                                <h3 x-text="blog.title" :title="blog.title"></h3>
+                                <p x-text="blog.summary"></p>
+                                <span class="read-link">
+                                    <span>Read Insight</span>
+                                    <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
+                                </span>
+                            </div>
+                        </article>
+                    </div>
+                </template>
+            </div>
 
-    <!-- Detail View Container -->
-    <div id="article-detail-container" x-show="view === 'detail'" x-cloak>
+            <!-- Loading State -->
+            <div x-show="loading" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-2 text-muted">Loading research insights...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div x-show="!loading && blogs.length === 0" class="text-center py-5">
+                <div class="empty-state">
+                    <span class="material-symbols-outlined">menu_book</span>
+                    <h4>No Articles Found</h4>
+                    <p>No research insights found in this category. Select another topic above.</p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Detail View Container (AJAX SPA) -->
+    <div id="article-detail-container" class="article-main" x-show="view === 'detail'" x-cloak>
         <div x-html="detailContent"></div>
     </div>
 </main>
@@ -587,8 +137,7 @@
 
             init() {
                 if (this.view === 'detail') {
-                    // If we started on a detail page (SSR), we'll need to handle it
-                    // but for now, we assume it's already rendered by PHP in the detail view.
+                    // Handled if direct SSR
                 }
             },
 
@@ -652,13 +201,39 @@
 
             updateProgress() {
                 if (this.view !== 'detail') return;
-                const h = document.documentElement,
-                    b = document.body,
-                    st = 'scrollTop',
-                    sh = 'scrollHeight';
-                const percent = (h[st] || b[st]) / ((h[sh] || b[sh]) - h.clientHeight) * 100;
                 const progressBar = document.getElementById('progress-bar');
-                if (progressBar) progressBar.style.width = percent + '%';
+                if (!progressBar) return;
+
+                const readingArea = document.querySelector('.reading-container') || document.querySelector('.article-content');
+                if (readingArea) {
+                    const rect = readingArea.getBoundingClientRect();
+                    const scrollY = window.scrollY || window.pageYOffset;
+                    const areaTop = rect.top + scrollY;
+                    const areaHeight = readingArea.offsetHeight;
+                    const viewportHeight = window.innerHeight;
+
+                    const start = Math.max(0, areaTop - 180);
+                    const end = areaTop + areaHeight - (viewportHeight * 0.7);
+
+                    let percent = 0;
+                    if (scrollY <= start) {
+                        percent = 0;
+                    } else if (scrollY >= end) {
+                        percent = 100;
+                    } else {
+                        percent = ((scrollY - start) / (end - start)) * 100;
+                    }
+                    percent = Math.min(100, Math.max(0, percent));
+                    progressBar.style.width = percent + '%';
+                    progressBar.setAttribute('aria-valuenow', Math.round(percent));
+                } else {
+                    const h = document.documentElement,
+                        b = document.body;
+                    const total = (h.scrollHeight || b.scrollHeight) - window.innerHeight;
+                    const current = h.scrollTop || b.scrollTop;
+                    const percent = total > 0 ? (current / total) * 100 : 0;
+                    progressBar.style.width = Math.min(100, Math.max(0, percent)) + '%';
+                }
             },
 
         }));

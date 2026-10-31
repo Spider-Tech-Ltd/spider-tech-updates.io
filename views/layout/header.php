@@ -3,8 +3,10 @@
   $currentUrl = rtrim($_GET['url'] ?? 'home', '/');
   // Normalize: "events/detail" → "events", "" → "home"
   $navSegment = explode('/', $currentUrl ?: 'home')[0];
-  function navActive(string $segment, string $current): string {
-      return ($segment === $current) ? ' active' : '';
+  if (!function_exists('navActive')) {
+      function navActive(string $segment, string $current): string {
+          return ($segment === $current) ? ' active' : '';
+      }
   }
 ?>
 <!doctype html>
@@ -41,8 +43,9 @@
   <link rel="stylesheet" href="<?= BASE_URL ?>/css/header.css" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/css/style.css" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/css/responsive.css" />
+  <link rel="stylesheet" href="<?= BASE_URL ?>/css/rich-text.css?v=<?= filemtime(ROOT_PATH . '/css/rich-text.css') ?>" />
   <!-- Global Header Section — Phase 6 Redesign -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,600;0,700;1,600;1,700&family=Poppins:wght@500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1" />
   <script src="<?= BASE_URL ?>/js/jquery.min.js"></script>
   <!-- Alpine.js for Forum Interactivity (Including Collapse Plugin) -->
@@ -59,309 +62,159 @@
     </div>
   </div>
 
-  <style>
-    /* ====================================================
-       HEADER — Industrial-Grade Design System
-       Phase 6: Mobile Accessibility & Active State
-    ==================================================== */
-
-    /* ====== Modern Header Reset & Base ====== */
-    .site-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1200;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      padding: 28px 0;
-    }
-
-    /* Scrolled State: Glassmorphism */
-    .site-header.is-scrolled {
-      padding: 14px 0;
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-      border-bottom: 1px solid rgba(244, 130, 31, 0.1);
-    }
-
-    .header-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    /* ====== Logo ====== */
-    .header-logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none !important;
-    }
-
-    .logo-img {
-      height: 45px;
-      width: auto;
-    }
-
-    /* ====== Desktop Navigation Links ====== */
-    .header-nav {
-      display: flex;
-      align-items: center;
-      gap: 32px;
-    }
-
-    .nav-link-item {
-      font-family: 'Poppins', sans-serif;
-      font-weight: 500;
-      font-size: 0.9rem;
-      color: #111111;
-      text-decoration: none !important;
-      position: relative;
-      transition: color 0.3s;
-    }
-
-    .nav-link-item:hover {
-      color: #f48221;
-    }
-
-    /* Sliding Underline Effect */
-    .nav-link-item::after {
-      content: '';
-      position: absolute;
-      width: 0;
-      height: 2px;
-      bottom: -4px;
-      left: 0;
-      background-color: #f48221;
-      transition: width 0.3s ease;
-    }
-
-    .nav-link-item:hover::after,
-    .nav-link-item.active::after {
-      width: 100%;
-    }
-
-    /* Active link colour */
-    .nav-link-item.active {
-      color: #f48221;
-      font-weight: 700;
-    }
-
-    /* ====== Header Actions ====== */
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-    }
-
-    .btn-header-cta {
-      background-color: #f48221;
-      color: #ffffff;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 700;
-      font-size: 0.85rem;
-      padding: 10px 24px;
-      border-radius: 50px;
-      border: none;
-      box-shadow: 0 4px 14px rgba(244, 130, 33, 0.25);
-      transition: all 0.3s ease;
-      text-decoration: none !important;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 130px;
-    }
-
-    .btn-header-cta:hover {
-      background-color: #e6751c;
-      color: #ffffff;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(244, 130, 33, 0.35);
-    }
-
-    /* ====== Hamburger Button ====== */
-    .mobile-toggle {
-      display: none;
-      background: none;
-      border: 1.5px solid rgba(17, 17, 17, 0.12);
-      color: #111111;
-      padding: 7px 9px;
-      cursor: pointer;
-      border-radius: 12px;
-      transition: all 0.25s ease;
-      line-height: 0;
-    }
-
-    .mobile-toggle:hover {
-      background: rgba(244, 130, 33, 0.07);
-      border-color: rgba(244, 130, 33, 0.3);
-      color: #f48221;
-    }
-
-    .mobile-toggle:focus-visible {
-      outline: 2px solid #f48221;
-      outline-offset: 2px;
-    }
-
-    /* ====== Mobile Breakpoint ====== */
-    @media (max-width: 1024px) {
-      .header-nav {
-        display: none; /* Desktop nav hidden; replaced by drawer */
-      }
-
-      .mobile-toggle {
-        display: flex;
-        align-items: center;
-      }
-
-      /* Hide the desktop CTA button — it lives in the drawer on mobile */
-      .btn-cta-desktop {
-        display: none !important;
-      }
-
-      .site-header {
-        padding: 20px 0;
-      }
-    }
-
-    /* ====================================================
-       MOBILE DRAWER SYSTEM
-    ==================================================== */
-
-    /* --- Backdrop Overlay --- */
-    .mobile-backdrop {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.45);
-      backdrop-filter: blur(3px);
-      -webkit-backdrop-filter: blur(3px);
-      z-index: 1100;
-      opacity: 0;
-      transition: opacity 0.35s ease;
-    }
-
-    .mobile-backdrop.is-visible {
-      display: block;
-      opacity: 1;
-    }
-
-    /* --- Dropdown Panel (Stretch Header Style) --- */
-    .mobile-dropdown-panel {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.15);
-      border-top: 1px solid rgba(244, 130, 31, 0.08);
-      display: grid;
-      grid-template-rows: 0fr;
-      transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, visibility 0.4s;
-      opacity: 0;
-      visibility: hidden;
-      z-index: -1;
-    }
-
-    .mobile-dropdown-panel.is-open {
-      grid-template-rows: 1fr;
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .mobile-dropdown-inner {
-      overflow: hidden;
-    }
-
-    .mobile-dropdown-scrollable {
-      max-height: calc(100vh - 80px); /* fit viewport below header */
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* Dropdown Nav Links */
-    .drawer-links {
-      display: flex;
-      flex-direction: column;
-      padding: 20px 16px 0;
-      flex: 1;
-      overflow-y: auto;
-      gap: 2px;
-    }
-
-    .drawer-link {
-      font-family: 'Poppins', sans-serif;
-      font-weight: 600;
-      font-size: 0.97rem;
-      color: #374151;
-      text-decoration: none !important;
-      padding: 13px 16px;
-      border-radius: 14px;
-      transition: all 0.25s ease;
-      display: flex;
-      align-items: center;
-      position: relative;
-      letter-spacing: 0.1px;
-    }
-
-    .drawer-link:hover {
-      background: rgba(244, 130, 33, 0.06);
-      color: #f48221;
-    }
-
-    /* Active drawer link */
-    .drawer-link.active {
-      background: rgba(244, 130, 33, 0.09);
-      color: #f48221;
-      font-weight: 700;
-    }
-
-    .drawer-link.active::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 22%;
-      height: 56%;
-      width: 3px;
-      background: #f48221;
-      border-radius: 0 4px 4px 0;
-    }
-
-    /* Drawer Footer — Contact CTA */
-    .drawer-footer {
-      padding: 20px 16px 28px;
-      border-top: 1px solid #f0f0f0;
-      flex-shrink: 0;
-    }
-
-    .drawer-cta {
-      width: 100%;
-      justify-content: center;
-      min-width: unset;
-      border-radius: 16px;
-      font-size: 0.9rem;
-      padding: 14px 20px;
-    }
-  </style>
+  <link rel="stylesheet" href="<?= BASE_URL ?>/css/site-header.css?v=<?= filemtime(ROOT_PATH . '/css/site-header.css') ?>" />
 
   <div class="wraper">
+    <?php
+      if (empty($contact) || !isset($socialLinks)) {
+          $headerGm = new GeneralModel($this->db);
+          if (empty($contact)) {
+              $contact = $headerGm->getContactDetails();
+          }
+          if (!isset($socialLinks)) {
+              $socialLinks = $headerGm->getSocialLinks();
+          }
+      }
+      $topEmail = $contact['contact_email'] ?? '';
+      $topPhone = $contact['contact_pno'] ?? '';
+      $topPhoneHref = preg_replace('/[^0-9+]/', '', $topPhone);
+    ?>
+    <!-- ====== Top Utility Bar (Scrolls away, not fixed) ====== -->
+    <div class="site-topbar" id="siteTopbar" role="region" aria-label="Company contact, quick links, and social media">
+      <div class="topbar-container">
+        <!-- Left: Contact Details -->
+        <div class="topbar-contact">
+          <?php if (!empty($topEmail)): ?>
+            <a href="mailto:<?= htmlspecialchars($topEmail) ?>" class="topbar-link" aria-label="Email us at <?= htmlspecialchars($topEmail) ?>">
+              <span class="material-symbols-outlined topbar-icon" aria-hidden="true">mail</span>
+              <span><?= htmlspecialchars($topEmail) ?></span>
+            </a>
+          <?php endif; ?>
+          <?php if (!empty($topEmail) && !empty($topPhone)): ?>
+            <span class="topbar-divider" aria-hidden="true"></span>
+          <?php endif; ?>
+          <?php if (!empty($topPhone)): ?>
+            <a href="tel:<?= htmlspecialchars($topPhoneHref) ?>" class="topbar-link" aria-label="Call us at <?= htmlspecialchars($topPhone) ?>">
+              <span class="material-symbols-outlined topbar-icon" aria-hidden="true">call</span>
+              <span><?= htmlspecialchars($topPhone) ?></span>
+            </a>
+          <?php endif; ?>
+        </div>
+
+        <!-- Center: Active Cohort Registration Announcement Banner -->
+        <?php
+          if (!isset($topbarAnnouncements)) {
+              $topbarGm = isset($headerGm) ? $headerGm : new GeneralModel($this->db);
+              $topbarAnnouncements = $topbarGm->getActiveCohortAnnouncements();
+          }
+        ?>
+        <?php if (!empty($topbarAnnouncements)): ?>
+          <div class="topbar-announcement-wrap" role="status" aria-live="polite">
+            <span class="topbar-announce-tag">
+              <span class="topbar-tag-bullet" aria-hidden="true"></span>
+              <span>New Cohort</span>
+            </span>
+            <div class="topbar-announce-ticker">
+              <div class="topbar-announce-track">
+                <?php for ($g = 0; $g < 2; $g++): ?>
+                  <div class="topbar-announce-group" <?= $g === 1 ? 'aria-hidden="true"' : '' ?>>
+                    <?php foreach ($topbarAnnouncements as $annCohort): ?>
+                      <?php
+                        if (!empty($annCohort['custom_announcement'])) {
+                            $annSentence = trim($annCohort['custom_announcement']);
+                        } else {
+                            $rawName = trim($annCohort['training_name'] ?? '');
+                            $tFormatted = ucwords(strtolower($rawName));
+                            $tFormatted = preg_replace_callback('/\b(For|And|Of|In|To|The|With)\b/', function($m) {
+                                return strtolower($m[0]);
+                            }, $tFormatted);
+                            $acronym = '';
+                            if (stripos($rawName, 'Digital Skills') !== false && stripos($rawName, 'Entrepreneurs') !== false) {
+                                $acronym = ' (DSE)';
+                            } elseif (stripos($rawName, 'Jobberman') !== false) {
+                                $acronym = ' (JSS)';
+                            } elseif (stripos($rawName, 'We Code') !== false) {
+                                $acronym = ' (WC)';
+                            }
+                            $cNum = $annCohort['cohort_number'] ?? '';
+                            $cPart = $cNum ? " – Cohort {$cNum}" : '';
+                            $annSentence = "Registration for {$tFormatted}{$acronym}{$cPart} is now open";
+                        }
+                        $regLink = BASE_URL . '/trainings/register?cohort=' . urlencode($annCohort['slug']);
+                      ?>
+                      <a href="<?= $regLink ?>" class="topbar-announce-item" title="Click to apply for <?= htmlspecialchars($annCohort['cohort_name']) ?>">
+                        <span class="announce-text"><?= htmlspecialchars($annSentence) ?></span>
+                        <span class="topbar-announce-cta">
+                          <span>Apply</span>
+                          <svg class="cta-arrow" width="9" height="9" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M2 5H8M5.5 2.5L8 5L5.5 7.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </span>
+                      </a>
+                      <span class="topbar-announce-sep" aria-hidden="true">&bull;</span>
+                    <?php endforeach; ?>
+                  </div>
+                <?php endfor; ?>
+              </div>
+            </div>
+          </div>
+        <?php endif; ?>
+
+        <!-- Right Group: Forum & FAQ Quick Links + Social Media -->
+        <div class="topbar-right-group">
+          <!-- Topbar Quick Links (Forum & FAQ with Redirect Icon) -->
+          <nav class="topbar-nav" aria-label="Quick links">
+            <a href="<?= BASE_URL ?>/forum" class="topbar-nav-item<?= navActive('forum', $navSegment) ?>" aria-label="Community Forum">
+              <span class="material-symbols-outlined topbar-nav-icon" aria-hidden="true">forum</span>
+              <span>Forum</span>
+            </a>
+            <a href="<?= BASE_URL ?>/faq" class="topbar-nav-item<?= navActive('faq', $navSegment) ?>" aria-label="Frequently Asked Questions">
+              <span>FAQ</span>
+              <span class="material-symbols-outlined topbar-nav-icon redirect-icon" aria-hidden="true">arrow_outward</span>
+            </a>
+          </nav>
+
+          <span class="topbar-divider" aria-hidden="true"></span>
+
+          <!-- Social Links -->
+          <div class="topbar-social" aria-label="Social media links">
+            <?php
+              $hasSocial = false;
+              if (!empty($socialLinks)):
+                foreach ($socialLinks as $sl):
+                  if (!empty($sl['url']) && $sl['url'] !== '#'):
+                    $hasSocial = true;
+            ?>
+              <a target="_blank" rel="noopener noreferrer" href="<?= htmlspecialchars($sl['url']) ?>" class="topbar-social-link" title="<?= htmlspecialchars($sl['platform']) ?>" aria-label="<?= htmlspecialchars($sl['platform']) ?>">
+                <i class="<?= htmlspecialchars($sl['icon_class']) ?>" aria-hidden="true"></i>
+              </a>
+            <?php
+                  endif;
+                endforeach;
+              endif;
+              if (!$hasSocial):
+            ?>
+              <a target="_blank" rel="noopener noreferrer" href="https://web.facebook.com/people/Spider-Hub-Spider-Technologies-Limited/61561284852721/" class="topbar-social-link" title="Facebook" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+              <a target="_blank" rel="noopener noreferrer" href="https://x.com/spidertech_hub" class="topbar-social-link" title="X (Twitter)" aria-label="X (Twitter)"><i class="fab fa-x-twitter" aria-hidden="true"></i></a>
+              <a target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/channel/UCBg_EHRiMiwkJyCuva84zNw" class="topbar-social-link" title="YouTube" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+              <a target="_blank" rel="noopener noreferrer" href="https://linkedin.com/company/spider-technologies-limited" class="topbar-social-link" title="LinkedIn" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+              <a target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/spidertech.hub?igsh=bGhnbWU3OHE5cWtp" class="topbar-social-link" title="Instagram" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+            <?php endif; ?>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== Main Site Header (Fixed on Scroll, Centered Nav, Right CTA) ====== -->
     <header class="site-header" id="mainHeader">
       <div class="header-container">
 
-        <!-- Logo -->
-        <a href="<?= BASE_URL ?>/home" class="header-logo">
+        <!-- Logo (Left) -->
+        <a href="<?= BASE_URL ?>/home" class="header-logo" aria-label="Spider Tech Home">
           <img src="<?= BASE_URL ?>/images/spider-tech.png" class="logo-img" alt="Spider Tech">
         </a>
 
-        <!-- Desktop Navigation -->
+        <!-- Desktop Navigation (Centered) -->
         <nav class="header-nav" aria-label="Main navigation">
           <a href="<?= BASE_URL ?>/home"      class="nav-link-item<?= navActive('home',      $navSegment) ?>">Home</a>
           <a href="<?= BASE_URL ?>/about"     class="nav-link-item<?= navActive('about',     $navSegment) ?>">About Us</a>
@@ -369,14 +222,12 @@
           <a href="<?= BASE_URL ?>/projects"  class="nav-link-item<?= navActive('projects',  $navSegment) ?>">Projects</a>
           <a href="<?= BASE_URL ?>/events"    class="nav-link-item<?= navActive('events',    $navSegment) ?>">Events</a>
           <a href="<?= BASE_URL ?>/trainings" class="nav-link-item<?= navActive('trainings', $navSegment) ?>">Trainings</a>
-          <a href="<?= BASE_URL ?>/forum"     class="nav-link-item<?= navActive('forum',     $navSegment) ?>">Forum</a>
           <a href="<?= BASE_URL ?>/blog"      class="nav-link-item<?= navActive('blog',      $navSegment) ?>">Blog</a>
         </nav>
 
-        <!-- Actions -->
+        <!-- Actions (Right: Contact CTA + Mobile Hamburger) -->
         <div class="header-actions">
-          <!-- Contact Us: desktop only. Hidden on mobile via .btn-cta-desktop -->
-          <a href="<?= BASE_URL ?>/contact" class="btn-header-cta btn-cta-desktop">Contact Us</a>
+          <a href="<?= BASE_URL ?>/contact" class="btn-header-cta btn-cta-desktop<?= navActive('contact', $navSegment) ?>">Contact Us</a>
 
           <!-- Mobile Hamburger Toggle -->
           <button
@@ -402,14 +253,26 @@
           <div class="mobile-dropdown-scrollable">
             <!-- Dropdown Nav Links -->
             <div class="drawer-links">
+              <span class="drawer-group-label">Navigation</span>
               <a href="<?= BASE_URL ?>/home"      class="drawer-link<?= navActive('home',      $navSegment) ?>">Home</a>
               <a href="<?= BASE_URL ?>/about"     class="drawer-link<?= navActive('about',     $navSegment) ?>">About Us</a>
               <a href="<?= BASE_URL ?>/services"  class="drawer-link<?= navActive('services',  $navSegment) ?>">Services</a>
               <a href="<?= BASE_URL ?>/projects"  class="drawer-link<?= navActive('projects',  $navSegment) ?>">Projects</a>
               <a href="<?= BASE_URL ?>/events"    class="drawer-link<?= navActive('events',    $navSegment) ?>">Events</a>
               <a href="<?= BASE_URL ?>/trainings" class="drawer-link<?= navActive('trainings', $navSegment) ?>">Trainings</a>
-              <a href="<?= BASE_URL ?>/forum"     class="drawer-link<?= navActive('forum',     $navSegment) ?>">Forum</a>
               <a href="<?= BASE_URL ?>/blog"      class="drawer-link<?= navActive('blog',      $navSegment) ?>">Blog</a>
+
+              <div class="drawer-divider"></div>
+
+              <span class="drawer-group-label">Community & Support</span>
+              <a href="<?= BASE_URL ?>/forum"     class="drawer-link<?= navActive('forum',     $navSegment) ?>">
+                <span class="material-symbols-outlined drawer-link-icon" aria-hidden="true">forum</span>
+                <span>Forum</span>
+              </a>
+              <a href="<?= BASE_URL ?>/faq"       class="drawer-link<?= navActive('faq',       $navSegment) ?>">
+                <span class="material-symbols-outlined drawer-link-icon" aria-hidden="true">help</span>
+                <span>FAQ</span>
+              </a>
             </div>
 
             <!-- Dropdown Footer — Contact CTA (mobile-only) -->
@@ -427,6 +290,7 @@
 
     <script>
       document.addEventListener('DOMContentLoaded', function () {
+        const topbar       = document.getElementById('siteTopbar');
         const header       = document.getElementById('mainHeader');
         const openBtn      = document.getElementById('mobileMenuOpen');
         const drawer       = document.getElementById('mobileDrawer');
@@ -435,9 +299,13 @@
 
         // ---- Scroll glassmorphism ----
         function handleScroll() {
-          header.classList.toggle('is-scrolled', window.scrollY > 40);
+          const topbarHeight = topbar ? topbar.offsetHeight : 0;
+          const scrollY = window.scrollY || window.pageYOffset;
+          header.style.top = Math.max(0, topbarHeight - scrollY) + 'px';
+          header.classList.toggle('is-scrolled', scrollY > topbarHeight);
         }
         window.addEventListener('scroll', handleScroll, { passive: true });
+        window.addEventListener('resize', handleScroll, { passive: true });
         handleScroll();
 
         // ---- Focusable elements inside drawer ----
@@ -504,6 +372,32 @@
           if (e.key === 'Escape' && drawer.classList.contains('is-open')) {
             closeDrawer();
           }
+        });
+
+        // ---- Interactive Grayscale & Grid Cursor Spotlight for Page Headers ----
+        const pageHeaders = document.querySelectorAll('.page-header');
+        pageHeaders.forEach(header => {
+          let ticking = false;
+          header.addEventListener('mousemove', function (e) {
+            if (!ticking) {
+              window.requestAnimationFrame(() => {
+                const rect = header.getBoundingClientRect();
+                const x = Math.round(e.clientX - rect.left);
+                const y = Math.round(e.clientY - rect.top);
+                header.style.setProperty('--mouse-x', x + 'px');
+                header.style.setProperty('--mouse-y', y + 'px');
+                header.classList.add('is-hovered');
+                ticking = false;
+              });
+              ticking = true;
+            }
+          }, { passive: true });
+
+          header.addEventListener('mouseleave', function () {
+            header.classList.remove('is-hovered');
+            header.style.setProperty('--mouse-x', '-999px');
+            header.style.setProperty('--mouse-y', '-999px');
+          }, { passive: true });
         });
       });
     </script>

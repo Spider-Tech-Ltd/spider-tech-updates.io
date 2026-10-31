@@ -1,155 +1,191 @@
 <?php
 /**
- * Feed Filter Bar (Phase 2)
- * Horizontally scrollable category pill filter + Sort by dropdown.
- * Sticks below the main header on scroll.
+ * Feed Category Tab Switcher (Matching Events Page Design)
+ * Displays unified capsule tab switcher with category badges, interactive horizontal scroll nav, and custom sort dropdown
  */
+$currentCat = $_GET['category'] ?? 'all';
+$currentSort = $_GET['sort'] ?? 'latest';
+$requestUri = $_SERVER['REQUEST_URI'] ?? '';
+$isFeedPage = (strpos($requestUri, 'forum/feed') !== false);
+$baseFilterUrl = $isFeedPage ? (BASE_URL . '/forum/feed') : (BASE_URL . '/forum');
 ?>
 
-<style>
-  /* ============================
-     FILTER BAR
-     ============================ */
-  .filter-bar-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 12px 0;
-  }
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-feed-filter-bar.css?v=<?= filemtime(ROOT_PATH . '/css/forum-feed-filter-bar.css') ?>" />
 
-  /* Pills group */
-  .filter-pills-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 2px; /* space for scrollbar */
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
-    flex: 1;
-  }
-  .filter-pills-group::-webkit-scrollbar { display: none; }
+<div class="forum-tabs-section" id="feedSection">
+  <div class="container">
+    <div class="forum-tabs-bar-inner">
 
-  .filter-pill {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 0.78rem;
-    padding: 8px 22px;
-    border-radius: 50px;
-    border: 1.5px solid #e9ecef;
-    background-color: #ffffff;
-    color: #555555;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-decoration: none !important;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-  }
+      <!-- Category Tab Switcher with Interactive Accessible Horizontal Scroll -->
+      <div class="forum-tab-switcher-wrap" x-data="categoryScrollNav()" x-init="initScrollNav()">
+        
+        <!-- Left Blur Fade Gradient Overlay -->
+        <div class="tab-scroll-blur left" 
+             x-show="canScrollLeft" 
+             x-transition.opacity.duration.250ms
+             aria-hidden="true" 
+             style="display: none;"></div>
 
-  .filter-pill .material-symbols-outlined {
-    font-size: 1.05rem;
-    font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 20;
-  }
+        <!-- Left Inward Scroll Arrow Button -->
+        <button type="button" 
+                class="tab-scroll-arrow-btn prev" 
+                x-show="canScrollLeft" 
+                x-transition.opacity.duration.200ms
+                @click="scrollLeft()" 
+                aria-label="Scroll categories left"
+                style="display: none;">
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
 
-  .filter-pill:hover {
-    border-color: #f48221;
-    color: #f48221;
-    background-color: rgba(244, 130, 33, 0.05);
-  }
+        <!-- Scrollable Capsule Container -->
+        <div class="forum-tab-switcher" 
+             x-ref="switcher" 
+             @scroll.passive="updateScrollArrows()"
+             @wheel="handleWheel($event)"
+             role="tablist" 
+             aria-label="Discussion Categories">
 
-  .filter-pill.active {
-    background-color: #f48221;
-    border-color: #f48221;
-    color: #ffffff;
-    box-shadow: 0 2px 8px rgba(244, 130, 33, 0.2);
-  }
+          <a href="<?= $baseFilterUrl ?>?category=all&sort=<?= urlencode($currentSort) ?>#feedSection"
+             class="forum-tab-btn <?= ($currentCat === 'all' || empty($currentCat)) ? 'active' : '' ?>">
+            <span class="material-symbols-outlined tab-icon">grid_view</span>
+            <span>All Topics</span>
+            <span class="tab-badge"><?= $global_stats['total_discussions'] ?? count($feeds ?? []) ?></span>
+          </a>
 
-  /* Sort By dropdown */
-  .filter-sort-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-  }
+          <?php if (!empty($categories)): ?>
+            <?php foreach ($categories as $cat): ?>
+              <?php $catKey = $cat['slug'] ?? $cat['uuid']; ?>
+              <?php $isActive = ($currentCat === $catKey); ?>
+              <a href="<?= $baseFilterUrl ?>?category=<?= urlencode($catKey) ?>&sort=<?= urlencode($currentSort) ?>#feedSection"
+                 class="forum-tab-btn <?= $isActive ? 'active' : '' ?>">
+                <span class="material-symbols-outlined tab-icon"><?= htmlspecialchars($cat['icon'] ?? 'label') ?></span>
+                <span><?= htmlspecialchars($cat['name']) ?></span>
+                <span class="tab-badge"><?= $cat['topic_count'] ?? '0' ?></span>
+              </a>
+            <?php endforeach; ?>
+          <?php endif; ?>
 
-  .filter-sort-label {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 0.78rem;
-    color: #797979;
-    white-space: nowrap;
-  }
+          <!-- End Spacer to guarantee the rightmost tab ("Tech") is fully visible with buffer -->
+          <span class="tab-scroll-end-spacer" aria-hidden="true"></span>
+        </div>
 
-  .filter-sort-select {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    font-size: 0.8rem;
-    color: #111111;
-    background-color: #f8f9fa;
-    border: 1.5px solid #e9ecef;
-    border-radius: 50px;
-    padding: 7px 36px 7px 16px;
-    cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23555555' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    transition: border-color 0.2s;
-    outline: none;
-  }
+        <!-- Right Blur Fade Gradient Overlay -->
+        <div class="tab-scroll-blur right" 
+             x-show="canScrollRight" 
+             x-transition.opacity.duration.250ms
+             aria-hidden="true" 
+             style="display: none;"></div>
 
-  .filter-sort-select:focus {
-    border-color: #f48221;
-    box-shadow: 0 0 0 3px rgba(244, 130, 33, 0.1);
-  }
+        <!-- Right Inward Scroll Arrow Button -->
+        <button type="button" 
+                class="tab-scroll-arrow-btn next" 
+                x-show="canScrollRight" 
+                x-transition.opacity.duration.200ms
+                @click="scrollRight()" 
+                aria-label="Scroll categories right"
+                style="display: none;">
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
 
-  @media (max-width: 767px) {
-    .filter-sort-label { display: none; }
-    .filter-bar-inner { gap: 10px; }
-  }
-</style>
+      </div>
 
-<div class="container" x-data="{ currentCat: '<?= $_GET['category'] ?? 'all' ?>', currentSort: 'latest' }">
-  <div class="filter-bar-inner">
-
-    <!-- Category Pills -->
-    <div class="filter-pills-group" id="filterPills">
-      <button type="button" 
-              class="filter-pill" 
-              :class="{ 'active': currentCat === 'all' }"
-              @click="currentCat = 'all'; window.dispatchEvent(new CustomEvent('filter-changed', { detail: { category: 'all' } }))">
-        <span class="material-symbols-outlined">grid_view</span>
-        All Topics
-      </button>
-      <?php if (!empty($categories)): ?>
-        <?php foreach ($categories as $cat): ?>
+      <!-- Custom Sort Filter Dropdown (Replaces default OS browser select) -->
+      <div class="forum-sort-pill-wrap" x-data="{ sortOpen: false }" @click.outside="sortOpen = false">
+        <span class="forum-sort-label">Sort By:</span>
+        <div class="custom-sort-dropdown">
           <button type="button" 
-                  class="filter-pill" 
-                  :class="{ 'active': currentCat === '<?= $cat['slug'] ?>' }"
-                  @click="currentCat = '<?= $cat['slug'] ?>'; window.dispatchEvent(new CustomEvent('filter-changed', { detail: { category: '<?= $cat['slug'] ?>' } }))">
-            <span class="material-symbols-outlined"><?= htmlspecialchars($cat['icon'] ?? 'label') ?></span>
-            <?= htmlspecialchars($cat['name']) ?>
+                  class="custom-sort-btn" 
+                  @click="sortOpen = !sortOpen" 
+                  :aria-expanded="sortOpen.toString()" 
+                  aria-label="Sort discussions">
+            <span class="material-symbols-outlined sort-icon">sort</span>
+            <span><?= ($currentSort === 'hottest') ? 'Trending / Hot' : 'Latest First' ?></span>
+            <span class="material-symbols-outlined chevron-icon" :class="{ 'is-rotated': sortOpen }">expand_more</span>
           </button>
-        <?php endforeach; ?>
-      <?php endif; ?>
-    </div>
 
-    <!-- Sort By -->
-    <div class="filter-sort-group">
-      <label class="filter-sort-label" for="feedSortSelect">Sort by</label>
-      <select class="filter-sort-select" id="feedSortSelect" 
-              x-model="currentSort"
-              @change="window.dispatchEvent(new CustomEvent('filter-changed', { detail: { sort: currentSort } }))"
-              aria-label="Sort discussions">
-        <option value="latest">Latest</option>
-        <option value="hottest">Hottest</option>
-        <option value="my-topics">My Topics</option>
-      </select>
-    </div>
+          <div class="custom-sort-menu" x-show="sortOpen" x-transition.origin.top.right x-cloak style="display: none;">
+            <a href="<?= $baseFilterUrl ?>?category=<?= urlencode($currentCat) ?>&sort=latest#feedSection"
+               class="custom-sort-item <?= ($currentSort === 'latest') ? 'active' : '' ?>">
+              <div class="d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined item-icon">schedule</span>
+                <span>Latest First</span>
+              </div>
+              <?php if ($currentSort === 'latest'): ?>
+                <span class="material-symbols-outlined check-mark">check</span>
+              <?php endif; ?>
+            </a>
 
+            <a href="<?= $baseFilterUrl ?>?category=<?= urlencode($currentCat) ?>&sort=hottest#feedSection"
+               class="custom-sort-item <?= ($currentSort === 'hottest') ? 'active' : '' ?>">
+              <div class="d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined item-icon">local_fire_department</span>
+                <span>Trending / Hot</span>
+              </div>
+              <?php if ($currentSort === 'hottest'): ?>
+                <span class="material-symbols-outlined check-mark">check</span>
+              <?php endif; ?>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
+
+<script>
+  function categoryScrollNav() {
+    return {
+      canScrollLeft: false,
+      canScrollRight: false,
+
+      initScrollNav() {
+        this.$nextTick(() => {
+          this.updateScrollArrows();
+          // Automatically scroll active tab into view if it was clipped on load
+          const switcher = this.$refs.switcher;
+          if (switcher) {
+            const activeTab = switcher.querySelector('.forum-tab-btn.active');
+            if (activeTab) {
+              activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+          }
+        });
+        window.addEventListener('resize', () => this.updateScrollArrows(), { passive: true });
+      },
+
+      updateScrollArrows() {
+        const el = this.$refs.switcher;
+        if (!el) return;
+        this.canScrollLeft = el.scrollLeft > 6;
+        this.canScrollRight = (el.scrollLeft + el.clientWidth) < (el.scrollWidth - 8);
+      },
+
+      scrollLeft() {
+        const el = this.$refs.switcher;
+        if (el) {
+          el.scrollBy({ left: -220, behavior: 'smooth' });
+          setTimeout(() => this.updateScrollArrows(), 320);
+        }
+      },
+
+      scrollRight() {
+        const el = this.$refs.switcher;
+        if (el) {
+          el.scrollBy({ left: 220, behavior: 'smooth' });
+          setTimeout(() => this.updateScrollArrows(), 320);
+        }
+      },
+
+      handleWheel(e) {
+        const el = this.$refs.switcher;
+        if (!el) return;
+        if (el.scrollWidth > el.clientWidth && Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+          e.preventDefault();
+          el.scrollLeft += e.deltaY;
+          this.updateScrollArrows();
+        }
+      }
+    };
+  }
+</script>

@@ -1,168 +1,48 @@
-<style>
-  /* ====== Modern Footer Reset & Base ====== */
-  .site-footer {
-    background-color: #ffffff;
-    padding: 80px 0 40px 0;
-    font-family: 'Open Sans', sans-serif;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    color: #555555;
-  }
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/site-footer.css" />
 
-  .footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+<?php
+  $gm = new GeneralModel($this->db);
+  if (empty($contact)) {
+    $contact = $gm->getContactDetails();
   }
-
-  .footer-grid {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
-    gap: 40px;
-    margin-bottom: 60px;
-  }
-
-  /* Column Typography */
-  .footer-col h4 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    color: #111111;
-    margin-bottom: 24px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .footer-col p {
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin-bottom: 24px;
-  }
-
-  /* Footer Links */
-  .footer-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .footer-links li {
-    margin-bottom: 12px;
-  }
-  .footer-links a {
-    color: #555555;
-    text-decoration: none !important;
-    font-size: 0.9rem;
-    transition: color 0.3s;
-  }
-  .footer-links a:hover {
-    color: #f48221;
-  }
-
-  /* Branding & Social */
-  .footer-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-    text-decoration: none !important;
-  }
-
-  .footer-logo-img {
-    height: 35px;
-    width: auto;
-  }
-
-  .social-links {
-    display: flex;
-    gap: 12px;
-  }
-  .social-icon {
-    width: 36px;
-    height: 36px;
-    border: 1px solid #e9ecef;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #555555;
-    transition: all 0.3s;
-    text-decoration: none !important;
-  }
-  .social-icon:hover {
-    background-color: #f48221;
-    border-color: #f48221;
-    color: #ffffff;
-    transform: translateY(-3px);
-  }
-
-  /* Contact Specifics */
-  .contact-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-    font-size: 0.9rem;
-  }
-  .contact-item i {
-    color: #f48221;
-    font-size: 1.1rem;
-  }
-  .contact-item span {
-    font-weight: 600;
-    color: #111111;
-  }
-
-  /* Bottom Bar */
-  .footer-bottom {
-    border-top: 1px solid #edf2f7;
-    padding-top: 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.85rem;
-    color: #718096;
-  }
-  .heart-icon { color: #f48221; }
-
-  /* Responsive Adjustments */
-  @media (max-width: 992px) {
-    .footer-grid { grid-template-columns: 1fr 1fr; }
-  }
-  @media (max-width: 576px) {
-    .footer-grid { grid-template-columns: 1fr; gap: 40px; }
-    .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
-  }
-</style>
+  $socialLinks = $gm->getSocialLinks();
+  $footerEmail = trim($contact['contact_email'] ?? 'info@spidertech.com.ng');
+  $footerPhone = trim($contact['contact_pno'] ?? '+234 9116265708');
+  $footerAddress = trim($contact['contact_address'] ?? 'Flat 3, Left Wing, Abinsa House, Zaria Road, Kano');
+?>
 
 <footer class="site-footer">
   <div class="footer-container">
     <div class="footer-grid">
 
       <!-- Col 1: Branding -->
-      <div class="footer-col">
-        <a href="<?= BASE_URL ?>/home" class="footer-logo">
+      <div class="footer-col footer-col-brand">
+        <a href="<?= BASE_URL ?>/home" class="footer-logo" aria-label="Spider Technologies Limited Home">
           <img src="<?= BASE_URL ?>/images/spider-tech.png" class="footer-logo-img" alt="Spider Tech">
         </a>
-        <p>Empowering African Tech Innovators since 2020. We build, nurture, and scale the next generation of digital solutions.</p>
+        <p class="footer-brand-desc">Empowering African Tech Innovators since 2020. We build, nurture, and scale the next generation of digital solutions.</p>
         <div class="social-links">
           <?php
-            $gm = new GeneralModel($this->db);
-            $socialLinks = $gm->getSocialLinks();
-            foreach ($socialLinks as $sl):
-              if (!empty($sl['url']) && $sl['url'] !== '#'):
+            $renderedSocial = false;
+            if (!empty($socialLinks)):
+              foreach ($socialLinks as $sl):
+                if (!empty($sl['url']) && $sl['url'] !== '#'):
+                  $renderedSocial = true;
           ?>
-            <a target="_blank" href="<?= htmlspecialchars($sl['url']) ?>" class="social-icon" title="<?= $sl['platform'] ?>">
-              <i class="<?= $sl['icon_class'] ?>"></i>
+            <a target="_blank" rel="noopener noreferrer" href="<?= htmlspecialchars($sl['url']) ?>" class="social-icon" title="<?= htmlspecialchars($sl['platform']) ?>" aria-label="<?= htmlspecialchars($sl['platform']) ?>">
+              <i class="<?= htmlspecialchars($sl['icon_class']) ?>" aria-hidden="true"></i>
             </a>
           <?php
-              endif;
-            endforeach;
-            if (empty($socialLinks)):
+                endif;
+              endforeach;
+            endif;
+            if (!$renderedSocial):
           ?>
-            <a target="_blank" href="https://web.facebook.com/people/Spider-Hub-Spider-Technologies-Limited/61561284852721/" class="social-icon" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-            <a target="_blank" href="https://x.com/spidertech_hub" class="social-icon" title="Twitter"><i class="fab fa-x-twitter"></i></a>
-            <a target="_blank" href="https://www.youtube.com/channel/UCBg_EHRiMiwkJyCuva84zNw" class="social-icon" title="Youtube"><i class="fab fa-youtube"></i></a>
-            <a target="_blank" href="https://linkedin.com/company/spider-technologies-limited" class="social-icon" title="Linkedin"><i class="fab fa-linkedin-in"></i></a>
-            <a target="_blank" href="https://www.instagram.com/spidertech.hub?igsh=bGhnbWU3OHE5cWtp" class="social-icon" title="Instagram"><i class="fab fa-instagram"></i></a>
+            <a target="_blank" rel="noopener noreferrer" href="https://web.facebook.com/people/Spider-Hub-Spider-Technologies-Limited/61561284852721/" class="social-icon" title="Facebook" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+            <a target="_blank" rel="noopener noreferrer" href="https://x.com/spidertech_hub" class="social-icon" title="X (Twitter)" aria-label="X (Twitter)"><i class="fab fa-x-twitter" aria-hidden="true"></i></a>
+            <a target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/channel/UCBg_EHRiMiwkJyCuva84zNw" class="social-icon" title="YouTube" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+            <a target="_blank" rel="noopener noreferrer" href="https://linkedin.com/company/spider-technologies-limited" class="social-icon" title="LinkedIn" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+            <a target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/spidertech.hub?igsh=bGhnbWU3OHE5cWtp" class="social-icon" title="Instagram" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
           <?php endif; ?>
         </div>
       </div>
@@ -172,38 +52,53 @@
         <h4>Company</h4>
         <ul class="footer-links">
           <li><a href="<?= BASE_URL ?>/about">About Us</a></li>
-          <li><a href="<?= BASE_URL ?>/services">Services</a></li>
+          <li><a href="<?= BASE_URL ?>/services">Our Services</a></li>
           <li><a href="<?= BASE_URL ?>/projects">Projects</a></li>
+          <li><a href="<?= BASE_URL ?>/trainings">Trainings</a></li>
+          <li><a href="<?= BASE_URL ?>/contact">Contact Us</a></li>
         </ul>
       </div>
 
-      <!-- Col 3: Community -->
+      <!-- Col 3: Community & Resources -->
       <div class="footer-col">
         <h4>Community</h4>
         <ul class="footer-links">
-          <li><a href="<?= BASE_URL ?>/forum">Forum</a></li>
-          <li><a href="<?= BASE_URL ?>/blog">Blog</a></li>
+          <li><a href="<?= BASE_URL ?>/forum">Community Forum</a></li>
+          <li><a href="<?= BASE_URL ?>/blog">Tech Blog</a></li>
           <li><a href="<?= BASE_URL ?>/events">Events</a></li>
           <li><a href="<?= BASE_URL ?>/trainings">Developer Hub</a></li>
-          <li><a href="<?= BASE_URL ?>/blog">Resources</a></li>
+          <li><a href="<?= BASE_URL ?>/faq">FAQ's</a></li>
         </ul>
       </div>
 
-      <!-- Col 4: Support -->
+      <!-- Col 4: Contact & Support -->
       <div class="footer-col">
-        <h4>Support</h4>
-        <ul class="footer-links" style="margin-bottom: 24px;">
-          <li><a href="<?= BASE_URL ?>/forum/terms">Privacy Policy</a></li>
-          <li><a href="<?= BASE_URL ?>/forum/terms">Terms & Conditions</a></li>
-          <li><a href="<?= BASE_URL ?>/faq">FAQ's</a></li>
-        </ul>
-        <div class="contact-item">
-          <span class="material-symbols-outlined" style="font-size: 18px; color: #f48221;">mail</span>
-          <a href="mailto:<?= $contact['contact_email'] ?? ''; ?>" style="color: #111111; font-weight: 600; text-decoration: none;"><?= $contact['contact_email'] ?? ''; ?></a>
-        </div>
-        <div class="contact-item">
-          <span class="material-symbols-outlined" style="font-size: 18px; color: #f48221;">call</span>
-          <span style="font-weight: 600; color: #111111;"><?= $contact['contact_pno'] ?? ''; ?></span>
+        <h4>Get In Touch</h4>
+        <div class="footer-contact-list">
+          <?php if ($footerAddress !== ''): ?>
+          <div class="contact-item">
+            <span class="contact-icon-wrap" aria-hidden="true">
+              <span class="material-symbols-outlined">location_on</span>
+            </span>
+            <span class="contact-text"><?= htmlspecialchars($footerAddress); ?></span>
+          </div>
+          <?php endif; ?>
+          <?php if ($footerEmail !== ''): ?>
+          <div class="contact-item">
+            <span class="contact-icon-wrap" aria-hidden="true">
+              <span class="material-symbols-outlined">mail</span>
+            </span>
+            <a href="mailto:<?= htmlspecialchars($footerEmail); ?>" class="contact-link"><?= htmlspecialchars($footerEmail); ?></a>
+          </div>
+          <?php endif; ?>
+          <?php if ($footerPhone !== ''): ?>
+          <div class="contact-item">
+            <span class="contact-icon-wrap" aria-hidden="true">
+              <span class="material-symbols-outlined">call</span>
+            </span>
+            <a href="tel:<?= htmlspecialchars(preg_replace('/\s+/', '', $footerPhone)); ?>" class="contact-link"><?= htmlspecialchars($footerPhone); ?></a>
+          </div>
+          <?php endif; ?>
         </div>
       </div>
 
@@ -211,8 +106,14 @@
 
     <!-- Bottom Bar -->
     <div class="footer-bottom">
-      <div>© <?php echo date('Y'); ?> Spider Technologies Limited. All Rights Reserved.</div>
-      <div>Made with <span class="heart-icon">❤️</span> in Africa</div>
+      <div class="footer-copyright">© <?php echo date('Y'); ?> Spider Technologies Limited. All Rights Reserved.</div>
+      <div class="footer-bottom-right">
+        <a href="<?= BASE_URL ?>/forum/terms" class="footer-bottom-link">Privacy Policy</a>
+        <span class="footer-bottom-sep" aria-hidden="true">&bull;</span>
+        <a href="<?= BASE_URL ?>/forum/terms" class="footer-bottom-link">Terms &amp; Conditions</a>
+        <span class="footer-bottom-sep" aria-hidden="true">&bull;</span>
+        <span class="footer-made-in">Made with <span class="heart-icon">❤️</span> in Africa</span>
+      </div>
     </div>
   </div>
 </footer>

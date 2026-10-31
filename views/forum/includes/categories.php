@@ -1,109 +1,80 @@
 <?php
 /**
- * Forum Categories Grid
+ * Forum Categories Grid — Tailored Compact Hardware Hub
  */
 ?>
-<style>
-  /* Category Grid Additional Styles */
-  .forum-categories-section {
-    background-color: #ffffff;
-    padding: 80px 0;
-  }
-  .forum-category-card:hover {
-     border-color: #f48221;
-     box-shadow: 0 12px 28px rgba(244, 130, 33, 0.12);
-     transform: translateY(-5px);
-  }
-  .category-grid-header {
-    margin-bottom: 48px;
-    text-align: center;
-  }
-  .category-grid-title {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 800;
-    font-size: 2.25rem;
-    color: #111111;
-    margin-bottom: 12px;
-  }
-  .category-grid-subtitle {
-    font-family: 'Open Sans', sans-serif;
-    color: #555555;
-    font-size: 1.1rem;
-    max-width: 600px;
-    margin: 0 auto;
-  }
-</style>
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-categories.css?v=<?= filemtime(ROOT_PATH . '/css/forum-categories.css') ?>" />
 
 <section class="forum-categories-section">
   <div class="container">
-    <div class="category-grid-header">
-      <h2 class="category-grid-title">Explore Categories</h2>
-      <p class="category-grid-subtitle">Browse discussions by topic and find your community.</p>
+    <div class="category-grid-header text-center mb-3">
+      <span class="section-eyebrow">
+        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+          <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+        </svg>
+        <span class="eyebrow-label-text">Topic Hubs</span>
+        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+          <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+        </svg>
+      </span>
+      <h2 class="category-grid-title mt-2">Explore <span>Specialized Hubs</span></h2>
+      <p class="category-grid-subtitle">Browse discussions by technical specialization and connect with engineering peers.</p>
     </div>
 
-    <div class="row">
+    <div class="row g-3">
       <?php if (!empty($categories)): ?>
-        <?php foreach ($categories as $cat): ?>
-          <div class="col-lg-4 col-md-6 mb-4">
-            <a href="<?= BASE_URL ?>/forum/feed?category=<?= urlencode($cat['slug'] ?? $cat['uuid']); ?>" class="forum-category-card p-4">
-              <div class="d-flex justify-content-between align-items-start mb-3">
-                <div class="forum-icon-wrapper">
-                  <span class="material-symbols-outlined"><?= htmlspecialchars($cat['icon'] ?? 'forum') ?></span>
+        <?php foreach ($categories as $index => $cat): ?>
+          <div class="col-lg-4 col-md-6 mb-3 d-flex">
+            <a href="<?= BASE_URL ?>/forum/feed?category=<?= urlencode($cat['slug'] ?? $cat['uuid']); ?>" class="forum-category-card">
+              
+              <!-- Card Top Row: Icon + Title + Serial -->
+              <div class="category-card-top">
+                <div class="category-card-identity">
+                  <div class="forum-icon-wrapper">
+                    <span class="material-symbols-outlined"><?= htmlspecialchars($cat['icon'] ?? 'forum') ?></span>
+                  </div>
+                  <h3 class="category-card-title"><?= htmlspecialchars($cat['name']); ?></h3>
                 </div>
+                <span class="hub-serial">HUB-<?= sprintf('%02d', $index + 1) ?></span>
+              </div>
+
+              <!-- Compact Description -->
+              <p class="category-card-desc"><?= htmlspecialchars($cat['description'] ?? 'Join the conversation, explore case studies, and share technical insights.'); ?></p>
+
+              <!-- Footer: Pill Topics Badge + Explore Link -->
+              <div class="category-card-footer">
                 <span class="forum-topic-badge"><?= $cat['topic_count'] ?? '0'; ?> Topics</span>
+                <span class="forum-view-link">
+                  <span>Explore</span>
+                  <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
+                </span>
               </div>
-              <h3 class="h5 font-weight-bold text-dark mb-2"><?= htmlspecialchars($cat['name']); ?></h3>
-              <p class="text-muted small mb-4"><?= htmlspecialchars($cat['description'] ?? 'Join the conversation and share insights.'); ?></p>
-              <div class="forum-view-link">
-                View Topics <span class="material-symbols-outlined">arrow_forward</span>
-              </div>
+
             </a>
           </div>
         <?php endforeach; ?>
       <?php else: ?>
-        <!-- Default Fallback Categories if none provided -->
-        <div class="col-lg-4 col-md-6 mb-4">
-          <a href="#" class="forum-category-card p-4">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-              <div class="forum-icon-wrapper">
-                <span class="material-symbols-outlined">settings</span>
+        <!-- Fallback Category -->
+        <div class="col-lg-4 col-md-6 mb-3 d-flex">
+          <a href="<?= BASE_URL ?>/forum/feed" class="forum-category-card">
+            <div class="category-card-top">
+              <div class="category-card-identity">
+                <div class="forum-icon-wrapper">
+                  <span class="material-symbols-outlined">precision_manufacturing</span>
+                </div>
+                <h3 class="category-card-title">Industrial Systems</h3>
               </div>
+              <span class="hub-serial">HUB-01</span>
+            </div>
+            <p class="category-card-desc">Discuss industrial processes, production efficiency, control hardware, and factory automation.</p>
+            <div class="category-card-footer">
               <span class="forum-topic-badge">1.2k Topics</span>
-            </div>
-            <h3 class="h5 font-weight-bold text-dark mb-2">Manufacturing</h3>
-            <p class="text-muted small mb-4">Discuss industrial processes, production efficiency, and factory automation.</p>
-            <div class="forum-view-link">
-              View Topics <span class="material-symbols-outlined">arrow_forward</span>
-            </div>
-          </a>
-        </div>
-        <div class="col-lg-4 col-md-6 mb-4">
-          <a href="#" class="forum-category-card p-4">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-              <div class="forum-icon-wrapper">
-                <span class="material-symbols-outlined">bolt</span>
-              </div>
-              <span class="forum-topic-badge">850 Topics</span>
-            </div>
-            <h3 class="h5 font-weight-bold text-dark mb-2">Energy & Utilities</h3>
-            <p class="text-muted small mb-4">Power generation, distribution, and sustainable energy solutions.</p>
-            <div class="forum-view-link">
-              View Topics <span class="material-symbols-outlined">arrow_forward</span>
-            </div>
-          </a>
-        </div>
-        <div class="col-lg-4 col-md-6 mb-4">
-          <a href="#" class="forum-category-card p-4">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-              <div class="forum-icon-wrapper">
-                <span class="material-symbols-outlined">smart_toy</span>
-              </div>
-              <span class="forum-topic-badge">610 Topics</span>
-            </div>
-            <h3 class="h5 font-weight-bold text-dark mb-2">AI & Robotics</h3>
-            <p class="text-muted small mb-4">Machine learning, autonomous systems, and advanced robotics in industry.</p>
-            <div class="forum-view-link">
-              View Topics <span class="material-symbols-outlined">arrow_forward</span>
+              <span class="forum-view-link">
+                <span>Explore</span>
+                <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
+              </span>
             </div>
           </a>
         </div>

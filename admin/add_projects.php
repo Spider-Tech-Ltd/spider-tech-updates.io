@@ -5,14 +5,12 @@ require('secured-login.php');
 <!DOCTYPE html>
 <html lang="en">
 <!-- BEGIN HEAD -->
-
 <head>
 	<?php require('head-section.html'); ?>
 </head>
 <!-- END HEAD -->
 
-<body
-	class="<?php require('body-tag-css.html'); ?>">
+<body class="<?php require('body-tag-css.html'); ?>">
 	<div class="page-wrapper">
 		<!-- start header -->
 		<?php require('header-section.php'); ?>
@@ -30,148 +28,181 @@ require('secured-login.php');
 				<div class="page-content">
 					<div class="page-bar">
 						<div class="page-title-breadcrumb">
-							<div class=" pull-left">
-								<div class="page-title">Manage Projects</div>
+							<div class="pull-left">
+								<div class="page-title">Add New Project</div>
 							</div>
 							<ol class="breadcrumb page-breadcrumb pull-right">
-								<li><i class="fa fa-home"></i>&nbsp;<a class="parent-item"
-										href="dashboard">Dashboard</a>&nbsp;<i class="fa fa-angle-right"></i>
-								</li>
-								<li><a class="parent-item" href="all_projects.php">Projects</a>&nbsp;<i class="fa fa-angle-right"></i>
-								</li>
-								<li class="active">Add Projects</li>
+								<li><i class="fa fa-home"></i>&nbsp;<a class="parent-item" href="dashboard.php">Dashboard</a>&nbsp;<i class="fa fa-angle-right"></i></li>
+								<li><a class="parent-item" href="all_projects.php">Projects</a>&nbsp;<i class="fa fa-angle-right"></i></li>
+								<li class="active">Add Project</li>
 							</ol>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-md-12 col-sm-12">
-							<div class="card card-box">
-								<div class="card-head">
-									<header>Basic Information</header>
-									<!--
-                                    <button id="panel-button"
-										class="mdl-button mdl-js-button mdl-button--icon pull-right"
-										data-upgraded=",MaterialButton">
-										<i class="material-icons">more_vert</i>
-									</button>
-									<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
-										data-mdl-for="panel-button">
-										<li class="mdl-menu__item"><i class="material-icons">assistant_photo</i>Action
-										</li>
-										<li class="mdl-menu__item"><i class="material-icons">print</i>Another action
-										</li>
-										<li class="mdl-menu__item"><i class="material-icons">favorite</i>Something else
-											here</li>
-                                    </ul>
-                                    -->
+
+					<!-- Form Feedback Alerts -->
+					<?php if (!empty($project_error_counter)): ?>
+						<div class="admin-alert-banner admin-alert-danger">
+							<i class="material-icons">error_outline</i>
+							<div><strong>Action Needed:</strong> <?= strip_tags($project_error_counter); ?></div>
+						</div>
+					<?php endif; ?>
+					<?php if (!empty($project_success_msg)): ?>
+						<div class="admin-alert-banner admin-alert-success">
+							<i class="material-icons">check_circle</i>
+							<div><strong>Success:</strong> <?= strip_tags($project_success_msg); ?></div>
+						</div>
+					<?php endif; ?>
+
+					<form id="project_form" method="POST" enctype="multipart/form-data">
+						<div class="admin-workspace-grid">
+							<!-- Main Content Column (68%) -->
+							<div class="admin-workspace-main">
+								<div class="form-card">
+									<div class="form-card-head">
+										<h2 class="form-card-title"><i class="material-icons">article</i> Project Core Narrative</h2>
+										<span class="form-label-tag">Primary Information</span>
+									</div>
+									<div class="form-card-body">
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="project_name">
+												<span>Project Name / Title <span class="required-star">*</span></span>
+												<span class="form-help-modern">Client-facing headline</span>
+											</label>
+											<input type="text" id="project_name" name="project_name" 
+												placeholder="E.g. Enterprise Cloud ERP Transformation"
+												class="form-control-modern" 
+												value="<?php if(isset($_POST['add_project'])) { echo htmlspecialchars(stripslashes($project_name)); } ?>" 
+												required />
+											<?php if(!empty($project_nameErr)): ?>
+												<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($project_nameErr); ?></div>
+											<?php endif; ?>
+										</div>
+
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="formsummernote">
+												<span>Full Project Case Study & Specifications <span class="required-star">*</span></span>
+												<span class="form-help-modern">Full rich-text formatting supported</span>
+											</label>
+											<textarea id="formsummernote" name="project_description" required><?php 
+												if(isset($_POST['add_project'])) { echo htmlspecialchars(stripslashes($_POST['project_description'])); }
+											?></textarea>
+											<?php if(!empty($project_descriptionErr)): ?>
+												<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($project_descriptionErr); ?></div>
+											<?php endif; ?>
+										</div>
+									</div>
 								</div>
-								<div class="card-body" id="bar-parent">
-									<form id="form_sample_1" class="form-horizontal" method="POST" enctype="multipart/form-data">
-										<div class="form-body">
-											<?php 
-											    if(!empty($project_error_counter)) 
-												   {
-													 echo $project_error_counter; 
-													}
-												if(!empty($project_success_msg))
-												   {
-													  echo $project_success_msg;
-													}
-											?>
-											<div class="form-group row">
-												<label class="control-label col-md-3">Project Name
-													<span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-													<input type="text" name="project_name" placeholder="Enter project name"
-														class="form-control input-height" value="<?php if(isset($_POST['add_project'])) 
-														{echo stripslashes($project_name); }?>" required /> 
-                                                        <?php if(isset($_POST['add_project'])) {echo $project_nameErr; }?>
-                                                </div>
-                                            </div>
-											<div class="form-group row">
-												<label class="control-label col-md-3">Project Description
-													<span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-													<textarea id="formsummernote" placeholder="Enter Content"
-                                                        class="form-control-textarea" rows="3" name="project_description" required><?php if(isset($_POST['add_project'])) 
-                                                        {echo stripslashes($_POST['project_description']); }?></textarea>
-                                                        <?php if(isset($_POST['add_project'])) {echo $project_descriptionErr; }?>
+							</div>
+
+							<!-- Sidebar Controls Column (32%) -->
+							<div class="admin-workspace-sidebar">
+								<!-- Metadata & Classification -->
+								<div class="form-card">
+									<div class="form-card-head">
+										<h3 class="form-card-title"><i class="material-icons">category</i> Classification</h3>
+									</div>
+									<div class="form-card-body">
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="service_name">
+												<span>Associated Service <span class="required-star">*</span></span>
+											</label>
+											<select id="service_name" class="form-control-modern" name="service_name" required>
+												<option value="" selected disabled>Select Core Service...</option>
+												<?php
+												$service_query = mysqli_query($spider_tech_db, "SELECT * FROM services_tb ORDER BY service_name ASC") or die(mysqli_error($spider_tech_db));
+												while ($service_row = mysqli_fetch_assoc($service_query)):
+													$isSelected = (isset($_POST['service_name']) && $_POST['service_name'] == $service_row['id']) ? 'selected' : '';
+												?>
+													<option value="<?= $service_row['id']; ?>" <?= $isSelected; ?>>
+														<?= htmlspecialchars($service_row['service_name']); ?>
+													</option>
+												<?php endwhile; ?>
+											</select>
+											<?php if(!empty($service_nameErr)): ?>
+												<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($service_nameErr); ?></div>
+											<?php endif; ?>
+										</div>
+
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="project_year">
+												<span>Delivery Year <span class="required-star">*</span></span>
+											</label>
+											<input type="text" id="project_year" name="project_year" 
+												placeholder="E.g. <?= date('Y'); ?>"
+												class="form-control-modern" 
+												value="<?php if(isset($_POST['add_project'])) { echo htmlspecialchars(stripslashes($project_year)); } else { echo date('Y'); } ?>" 
+												required />
+											<?php if(!empty($project_yearErr)): ?>
+												<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($project_yearErr); ?></div>
+											<?php endif; ?>
+										</div>
+									</div>
+								</div>
+
+								<!-- Featured Picture Upload -->
+								<div class="form-card">
+									<div class="form-card-head">
+										<h3 class="form-card-title"><i class="material-icons">image</i> Showcase Asset</h3>
+										<span class="admin-dim-badge">790 × 436</span>
+									</div>
+									<div class="form-card-body">
+										<div class="admin-dropzone-wrap">
+											<div class="admin-dropzone">
+												<div class="admin-dropzone-icon">
+													<i class="material-icons">cloud_upload</i>
 												</div>
-                                            </div>
-											<div class="form-group row">
-												<label class="control-label col-md-3">Year Awarded
-													<span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-													<input type="text" name="project_year" placeholder="Enter project year"
-														class="form-control input-height" value="<?php if(isset($_POST['add_project'])) 
-														{echo stripslashes($project_year); }?>" required /> 
-                                                        <?php if(isset($_POST['add_project'])) {echo $project_yearErr; }?>
-                                                </div>
-                                            </div>
-											<div class="form-group row">
-												<label class="control-label col-md-3">Project Picture <span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-													<input type="file" class="default" name="img" required>
-													<div><span class="help-block">790x436 dimention is be best picture</span></div>
-                                                    <?php if(isset($_POST['add_project'])) {echo '<div>'.$project_imgErr.'</div>'; }?>
-												</div>
+												<div class="admin-dropzone-title"><span>Click to browse</span> or drag image</div>
+												<div class="admin-dropzone-desc">JPG, PNG, WebP up to 3MB</div>
+												<input type="file" name="img" accept="image/*" required>
 											</div>
-                                            <div class="form-group row">
-												<label class="control-label col-md-3">Service Name
-													<span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-													<select class="form-control input-height" name="service_name" required>
-                                                        <?php
-                                                        //query services
-														$service_query = mysqli_query($spider_tech_db, "SELECT * FROM services_tb") or die(mysqli_error($spider_tech_db));
-														$service_row = mysqli_fetch_assoc($service_query);
-                                                        
-                                                        echo
-                                                        '<option value="" selected>Select...</option>';
-														do{
-                                                        echo
-														'<option value="'.$service_row['id'].'">'.$service_row['service_name'].'</option>';
-														}while($service_row=mysqli_fetch_assoc($service_query));
-                                                        ?>
-                                                    </select>
-                                                    <?php if(isset($_POST['add_project'])) {echo $service_nameErr; }?>
-												</div>
-											</div>
-											<div class="form-actions">
-												<div class="row">
-													<div class="offset-md-3 col-md-9">
-														<button type="submit"
-															class="btn btn-info m-r-20" name="add_project">Submit</button>
-														<button type="button" class="btn btn-default">Cancel</button>
-													</div>
+
+											<div class="admin-preview-container" style="display: none;">
+												<img class="admin-preview-img" src="" alt="Selected Preview">
+												<div class="admin-preview-meta">
+													<span class="admin-preview-filename"></span>
+													<button type="button" class="admin-preview-remove">
+														<i class="material-icons">close</i> Remove
+													</button>
 												</div>
 											</div>
 										</div>
-									</form>
+										<?php if(!empty($project_imgErr)): ?>
+											<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($project_imgErr); ?></div>
+										<?php endif; ?>
+									</div>
+								</div>
+
+								<!-- Publishing Action Card -->
+								<div class="form-card admin-actions-card">
+									<div class="form-card-head">
+										<h3 class="form-card-title"><i class="material-icons">publish</i> Publication</h3>
+									</div>
+									<div class="form-card-body">
+										<button type="submit" name="add_project" class="btn-admin-primary">
+											<i class="material-icons">check_circle</i> Save & Publish Project
+										</button>
+										<a href="all_projects.php" class="btn-admin-cancel">
+											<i class="material-icons">arrow_back</i> Discard & Return
+										</a>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
+					</form>
 				</div>
 			</div>
 			<!-- end page content -->
 			<!-- start chat sidebar -->
-			<?php require'setting_and_chat_section.php';?>
+			<?php require('setting_and_chat_section.php');?>
 			<!-- end chat sidebar -->
 		</div>
 		<!-- end page container -->
 		<!-- start footer -->
-		<?php require'footer-section.html'; ?>
+		<?php require('footer-section.html'); ?>
 		<!-- end footer -->
 	</div>
 	<!-- start js include path -->
-	<?php require'js-section.html'; ?>
+	<?php require('js-section.html'); ?>
 	<!-- end js include path -->
 </body>
-
 </html>

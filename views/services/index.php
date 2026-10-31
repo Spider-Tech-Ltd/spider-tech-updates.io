@@ -1,216 +1,4 @@
-<style>
-    :root {
-        --primary-orange: #f48221;
-        --dark-bg: #111111;
-        --text-muted: #888888;
-        --card-bg: #ffffff;
-    }
-
-    /* Page Header High-Fidelity */
-    .page-header {
-        background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
-        background-color: var(--dark-bg);
-        padding: 140px 0 80px;
-        position: relative;
-        overflow: hidden;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .page-header::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at 70% 30%, rgba(244, 130, 33, 0.05) 0%, transparent 60%);
-        pointer-events: none;
-    }
-
-    .page-title {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 800;
-        font-size: clamp(2.5rem, 5vw, 3.8rem);
-        color: #ffffff;
-        margin-bottom: 1rem;
-        letter-spacing: -1.5px;
-        line-height: 1.1;
-    }
-
-    .page-title span {
-        color: var(--primary-orange);
-    }
-
-    /* Professional Breadcrumbs */
-    .breadcrumb-custom {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-top: 15px;
-    }
-
-    .breadcrumb-item-custom {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        color: rgba(255,255,255,0.5);
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-    }
-
-    .breadcrumb-item-custom a {
-        color: rgba(255,255,255,0.5);
-        text-decoration: none;
-        transition: color 0.3s ease;
-    }
-
-    .breadcrumb-item-custom a:hover {
-        color: var(--primary-orange);
-    }
-
-    .breadcrumb-item-custom.active {
-        color: var(--primary-orange);
-    }
-
-    .breadcrumb-separator {
-        width: 4px;
-        height: 4px;
-        background: rgba(255,255,255,0.2);
-        border-radius: 50%;
-    }
-
-    /* Section Styles */
-    .section-padding {
-        padding: 120px 0;
-    }
-
-    .tag-eyebrow {
-        background: rgba(244, 130, 33, 0.1);
-        color: var(--primary-orange);
-        padding: 8px 18px;
-        border-radius: 50px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        display: inline-block;
-        margin-bottom: 1.5rem;
-    }
-
-    /* Industrial Service Cards */
-    .service-card {
-        background: var(--card-bg);
-        padding: 50px 40px;
-        border-radius: 30px;
-        border: 1px solid #f0f0f0;
-        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        height: 100%;
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .service-card:hover {
-        transform: translateY(-12px);
-        box-shadow: 0 30px 60px rgba(0,0,0,0.06);
-        border-color: rgba(244, 130, 33, 0.2);
-    }
-
-    .service-card::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 80px;
-        height: 80px;
-        background: radial-gradient(circle at top right, rgba(244, 130, 33, 0.03), transparent);
-        pointer-events: none;
-    }
-
-    .icon-box {
-        width: 85px;
-        height: 85px;
-        background: #fff;
-        border: 1px solid #f0f0f0;
-        border-radius: 22px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 30px;
-        transition: all 0.4s ease;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.02);
-    }
-
-    .service-card:hover .icon-box {
-        background: var(--primary-orange);
-        border-color: var(--primary-orange);
-        transform: rotate(-5deg) scale(1.05);
-        color: #fff !important;
-    }
-
-    .icon-box i {
-        font-size: 2.2rem;
-        color: var(--primary-orange);
-        transition: color 0.4s;
-    }
-
-    .service-card:hover .icon-box i {
-        color: #fff;
-    }
-
-    .service-title {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        font-size: 1.5rem;
-        color: var(--dark-bg);
-        margin-bottom: 1.2rem;
-        line-height: 1.3;
-    }
-
-    .service-desc {
-        color: var(--text-muted);
-        line-height: 1.7;
-        font-size: 1rem;
-        margin-bottom: 2.5rem;
-    }
-
-    .learn-more-link {
-        color: var(--dark-bg);
-        font-weight: 700;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.9rem;
-        transition: all 0.3s;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-top: auto;
-    }
-
-    .learn-more-link .arrow-icon {
-        font-size: 1.2rem;
-        transition: transform 0.3s;
-    }
-
-    .service-card:hover .learn-more-link {
-        color: var(--primary-orange);
-    }
-
-    .service-card:hover .learn-more-link .arrow-icon {
-        transform: translateX(5px);
-    }
-
-    @media (max-width: 991px) {
-        .section-padding { padding: 80px 0; }
-        .page-header { padding: 120px 0 60px; }
-    }
-
-    @media (max-width: 768px) {
-        .section-padding { padding: 40px 0; }
-    }
-</style>
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/services.css?v=<?= filemtime(ROOT_PATH . '/css/services.css') ?>" />
 
 <!-- ====== Page Header ====== -->
 <section class="page-header">
@@ -218,54 +6,152 @@
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="page-title">Expert <span>Services</span></h1>
-                <div class="breadcrumb-custom">
-                    <div class="breadcrumb-item-custom">
-                        <a href="<?= BASE_URL ?>/">Home</a>
-                    </div>
-                    <div class="breadcrumb-separator"></div>
-                    <div class="breadcrumb-item-custom active">
-                        Services
-                    </div>
-                </div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb-custom">
+                        <li class="breadcrumb-item-custom">
+                            <a href="<?= BASE_URL ?>/">Home</a>
+                        </li>
+                        <li class="breadcrumb-item-custom active" aria-current="page">
+                            Services
+                        </li>
+                    </ol>
+                </nav>
             </div>
         </div>
     </div>
 </section>
 
 <!-- ====== Services Section ====== -->
-<section class="section-padding bg-light">
+<?php
+if (!function_exists('truncateServiceDescWordAware')) {
+    function truncateServiceDescWordAware($text, $limit = 118) {
+        $text = trim(preg_replace('/\s+/', ' ', strip_tags(stripslashes($text))));
+        if ($text === '' || mb_strlen($text) <= $limit) {
+            return $text;
+        }
+        $truncated = mb_substr($text, 0, $limit);
+        $lastSpace = mb_strrpos($truncated, ' ');
+        if ($lastSpace !== false) {
+            $truncated = mb_substr($truncated, 0, $lastSpace);
+        }
+        return rtrim($truncated, ".,;:- ") . '...';
+    }
+}
+
+$allServices = is_array($services) ? array_values($services) : [];
+$initialServices = array_slice($allServices, 0, 6);
+$extraServices = array_slice($allServices, 6);
+?>
+<section class="section-padding services-page-section" x-data="{ showAllServices: false }">
     <div class="container">
-        <div class="row justify-content-center mb-5">
+        <div class="row justify-content-center mb-4">
             <div class="col-lg-8 text-center">
-                <span class="tag-eyebrow">Professional Solutions</span>
-                <h2 class="section-title" style="font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 2.8rem; color: var(--dark-bg);">What We <span>Do Best</span></h2>
-                <p class="section-subtitle">We provide cutting-edge IT solutions and consulting to help businesses navigate and thrive in the digital transformation era.</p>
+                <span class="section-eyebrow">
+                    <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                        <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                    </svg>
+                    <span class="eyebrow-label-text">Professional Solutions</span>
+                    <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                        <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                    </svg>
+                </span>
+                <br>
+                <h2 class="section-title">What We <span>Do Best</span></h2>
+                <p class="section-subtitle">We provide high-impact IT engineering, software architecture, and technical consulting to help organizations scale with confidence.</p>
             </div>
         </div>
-        
-        <div class="row g-4">
-            <?php foreach($services as $service): ?>
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="service-card">
-                    <div>
-                        <div class="icon-box">
-                            <i class="<?= $service['service_icon']; ?>"></i>
+
+        <!-- Default 6 Services Grid -->
+        <div class="row services-grid-row">
+            <?php foreach ($initialServices as $idx => $service):
+                $sName = trim(stripslashes($service['service_name'] ?? 'Service'));
+                $sDesc = truncateServiceDescWordAware($service['service_description'] ?? '', 118);
+                $serial = sprintf("SRV-%02d", $idx + 1);
+            ?>
+            <div class="col-lg-4 col-md-6 services-grid-col d-flex">
+                <a href="<?= BASE_URL ?>/services/detail?id=<?= (int) $service['id']; ?>" class="service-card w-100">
+                    <div class="service-card-top">
+                        <div class="service-card-identity">
+                            <div class="icon-box">
+                                <i class="<?= htmlspecialchars($service['service_icon'] ?? ''); ?>"></i>
+                            </div>
+                            <h3 class="service-title"><?= htmlspecialchars($sName); ?></h3>
                         </div>
-                        <h3 class="service-title"><?= htmlspecialchars($service['service_name']); ?></h3>
-                        <p class="service-desc">
-                            <?= strlen($service['service_description']) > 140 ? substr(htmlspecialchars($service['service_description']), 0, 140) . '...' : htmlspecialchars($service['service_description']); ?>
-                        </p>
+                        <span class="service-serial-tag"><?= $serial; ?></span>
                     </div>
-                    <a href="<?= BASE_URL ?>/services/detail?id=<?= $service['id']; ?>" class="learn-more-link">
-                        Explore Service 
-                        <span class="material-symbols-outlined arrow-icon">trending_flat</span>
-                    </a>
-                </div>
+                    <p class="service-desc"><?= htmlspecialchars($sDesc); ?></p>
+                    <div class="service-card-footer">
+                        <span class="service-pill-badge">
+                            <span class="service-status-dot"></span>
+                            <span>Enterprise Ready</span>
+                        </span>
+                        <span class="learn-more-link">
+                            <span>Explore</span>
+                            <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
+                        </span>
+                    </div>
+                </a>
             </div>
             <?php endforeach; ?>
         </div>
+
+        <?php if (!empty($extraServices)): ?>
+        <!-- Animated Reveal Container for Remaining Services -->
+        <div class="services-extra-collapse" x-show="showAllServices" x-collapse.duration.500ms x-cloak>
+            <div class="row services-grid-row services-extra-row" :class="{ 'is-revealed': showAllServices }">
+                <?php foreach ($extraServices as $extraIdx => $service):
+                    $sName = trim(stripslashes($service['service_name'] ?? 'Service'));
+                    $sDesc = truncateServiceDescWordAware($service['service_description'] ?? '', 118);
+                    $delayMs = ($extraIdx + 1) * 70;
+                    $serial = sprintf("SRV-%02d", count($initialServices) + $extraIdx + 1);
+                ?>
+                <div class="col-lg-4 col-md-6 services-grid-col service-extra-col d-flex" style="--stagger-delay: <?= (int) $delayMs ?>ms;">
+                    <a href="<?= BASE_URL ?>/services/detail?id=<?= (int) $service['id']; ?>" class="service-card w-100">
+                        <div class="service-card-top">
+                            <div class="service-card-identity">
+                                <div class="icon-box">
+                                    <i class="<?= htmlspecialchars($service['service_icon'] ?? ''); ?>"></i>
+                                </div>
+                                <h3 class="service-title"><?= htmlspecialchars($sName); ?></h3>
+                            </div>
+                            <span class="service-serial-tag"><?= $serial; ?></span>
+                        </div>
+                        <p class="service-desc"><?= htmlspecialchars($sDesc); ?></p>
+                        <div class="service-card-footer">
+                            <span class="service-pill-badge">
+                                <span class="service-status-dot"></span>
+                                <span>Enterprise Ready</span>
+                            </span>
+                            <span class="learn-more-link">
+                                <span>Explore</span>
+                                <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
+                            </span>
+                        </div>
+                    </a>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <!-- Show More / Show Less Action -->
+        <div class="services-more-actions">
+            <button
+                type="button"
+                class="services-show-more-btn services-view-more-btn"
+                @click="showAllServices = !showAllServices"
+                :aria-expanded="showAllServices.toString()">
+                <span x-text="showAllServices ? 'Show Less' : 'Show More'">Show More</span>
+                <span class="material-symbols-outlined toggle-chevron" :class="{ 'is-rotated': showAllServices }">expand_more</span>
+            </button>
+        </div>
+        <?php endif; ?>
     </div>
 </section>
+
+<!-- ====== Testimonials Section ====== -->
+<?php include ROOT_PATH . '/views/layout/testimonials.php'; ?>
 
 <!-- Include Modular Newsletter -->
 <?php include ROOT_PATH . '/views/layout/newsletter.php'; ?>

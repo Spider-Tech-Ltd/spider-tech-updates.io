@@ -1,7 +1,6 @@
 <?php
-
 /**
- * Forum Sign-Up View
+ * Forum Sign-Up View — Engineered Precision Auth
  */
 ?>
 <!doctype html>
@@ -10,303 +9,89 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Join Community - Spider Tech Forum</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
+    <title>Join Community — Spider Tech Forum</title>
+    <link rel="shortcut icon" type="image/x-icon" href="<?= BASE_URL ?>/images/favicon.ico" />
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,600;0,700;1,600;1,700&family=Poppins:wght@500;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="<?= BASE_URL ?>/css/bootstrap.min.css" />
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Open Sans', sans-serif;
-        }
-
-        .auth-card {
-            background-color: #ffffff;
-            border: 1px solid #e9ecef;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            max-width: 480px;
-            margin: 40px auto;
-        }
-
-        .auth-heading {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            font-size: 1.8rem;
-            color: #111111;
-            margin-bottom: 8px;
-            text-align: center;
-        }
-
-        .auth-subtext {
-            font-family: 'Open Sans', sans-serif;
-            font-size: 1rem;
-            color: #555555;
-            margin-bottom: 32px;
-            text-align: center;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .form-group label {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #111111;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .auth-input {
-            height: 56px;
-            border-radius: 50px;
-            padding: 0 24px;
-            border: 1px solid #e9ecef;
-            font-size: 1rem;
-            width: 100%;
-        }
-
-        .auth-input:focus {
-            border-color: #f48221;
-            outline: none;
-            box-shadow: 0 0 0 4px rgba(244, 130, 33, 0.1);
-        }
-
-        .password-toggle {
-            position: absolute;
-            right: 20px;
-            top: 45px;
-            cursor: pointer;
-            color: #797979;
-            user-select: none;
-            z-index: 5;
-        }
-
-        /* Password Guide */
-        .pw-guide {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #e9ecef;
-        }
-
-        .pw-guide-title {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            font-size: 0.8rem;
-            color: #111;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .pw-guide-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-
-        .pw-guide-item {
-            font-size: 0.75rem;
-            color: #797979;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .pw-guide-item.valid {
-            color: #2f855a;
-        }
-
-        .pw-guide-item.valid .material-symbols-outlined {
-            color: #2f855a;
-            font-variation-settings: 'FILL' 1;
-        }
-
-        .pw-guide-item.invalid {
-            color: #ef4444;
-        }
-
-        .pw-guide-item.invalid .material-symbols-outlined {
-            color: #ef4444;
-        }
-
-        .pw-guide-item .material-symbols-outlined {
-            font-size: 14px;
-            transition: all 0.2s ease;
-        }
-
-        .auth-btn {
-            background-color: #f48221;
-            color: #ffffff;
-            height: 56px;
-            border-radius: 50px;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 700;
-            font-size: 1rem;
-            width: 100%;
-            border: none;
-            transition: background-color 0.3s;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .auth-btn:hover {
-            background-color: #e6751c;
-        }
-
-        .auth-footer {
-            text-align: center;
-            margin-top: 24px;
-            font-size: 0.9rem;
-        }
-
-        .auth-footer a {
-            color: #f48221;
-            font-weight: 600;
-            text-decoration: none;
-        }
-
-        .back-to-forum {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .back-to-forum a {
-            color: #797979;
-            font-size: 0.85rem;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .back-to-forum a:hover {
-            color: #f48221;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-        }
-
-        .alert-danger {
-            background-color: #fff5f5;
-            color: #e53e3e;
-            border: 1px solid #feb2b2;
-        }
-
-        .alert-success {
-            background-color: #f0fff4;
-            color: #2f855a;
-            border: 1px solid #9ae6b4;
-        }
-
-        /* Toast Notification - pill shape */
-        .pd-toast {
-            position: fixed;
-            bottom: 28px;
-            right: 28px;
-            padding: 11px 22px;
-            border-radius: 50px;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            font-size: 0.84rem;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 9999;
-        }
-
-        .pd-toast.success {
-            background: #10b981;
-            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
-        }
-
-        .pd-toast.error {
-            background: #ef4444;
-            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
-        }
-
-        .pd-toast .material-symbols-outlined {
-            font-size: 17px;
-        }
-
-        /* Strength Meter */
-        .strength-meter {
-            height: 4px;
-            background: #e9ecef;
-            border-radius: 2px;
-            margin-top: 8px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .strength-bar {
-            height: 100%;
-            transition: width 0.3s ease, background-color 0.3s ease;
-        }
-
-        .strength-text {
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-top: 4px;
-            display: block;
-            text-align: right;
-        }
-    </style>
+    <link rel="stylesheet" href="<?= BASE_URL ?>/css/forum-sign-up.css?v=<?= filemtime(ROOT_PATH . '/css/forum-sign-up.css') ?>" />
 </head>
 
 <body x-data="signUpForm()">
-    <div class="container">
+    <div class="auth-container">
+
+        <!-- Official Brand Link -->
+        <div class="auth-brand">
+            <a href="<?= BASE_URL ?>/home" title="Spider Tech Home">
+                <img src="<?= BASE_URL ?>/images/spider-tech.png" alt="Spider Tech" class="auth-brand-logo">
+            </a>
+        </div>
+
+        <!-- Main Auth Card -->
         <div class="auth-card">
-            <h1 class="auth-heading">Join Community</h1>
-            <p class="auth-subtext">Create an account to start discussing</p>
+
+            <!-- Engineering Eyebrow -->
+            <div class="auth-eyebrow">
+                <span class="auth-eyebrow-accent">|–</span>
+                <span>MEMBER ONBOARDING</span>
+                <span class="auth-eyebrow-accent">–|</span>
+            </div>
+
+            <h1 class="auth-heading">Create Your Account</h1>
+            <p class="auth-subtext">Join thousands of industrial automation and systems engineers</p>
 
             <?php if ($error): ?>
-                <div class="alert alert-danger text-center"><?= htmlspecialchars($error); ?></div>
+                <div class="alert alert-danger text-center">
+                    <span class="material-symbols-outlined align-middle me-1" style="font-size: 18px;">error</span>
+                    <?= htmlspecialchars($error); ?>
+                </div>
             <?php endif; ?>
 
             <?php if ($success): ?>
-                <div class="alert alert-success text-center"><?= htmlspecialchars($success); ?></div>
+                <div class="alert alert-success text-center">
+                    <span class="material-symbols-outlined align-middle me-1" style="font-size: 18px;">check_circle</span>
+                    <?= htmlspecialchars($success); ?>
+                </div>
             <?php endif; ?>
 
             <form @submit.prevent="submitRegistration()">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
 
+                <!-- Full Name Field -->
                 <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" name="name" class="auth-input" placeholder="Enter your full name" x-model="name">
+                    <label for="nameInput">Full Name</label>
+                    <div class="input-field-wrapper">
+                        <span class="material-symbols-outlined input-field-icon">person</span>
+                        <input type="text" id="nameInput" name="name" class="auth-input" placeholder="e.g. Alex Henderson" x-model="name" required autocomplete="name">
+                    </div>
                 </div>
 
+                <!-- Email Address Field -->
                 <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" name="email" class="auth-input" placeholder="Enter your email" required x-model="email">
+                    <label for="emailInput">Work / Technical Email</label>
+                    <div class="input-field-wrapper">
+                        <span class="material-symbols-outlined input-field-icon">mail</span>
+                        <input type="email" id="emailInput" name="email" class="auth-input" placeholder="name@company.com" required x-model="email" autocomplete="email">
+                    </div>
                 </div>
 
+                <!-- Password Field -->
                 <div class="form-group">
-                    <label>Password</label>
-                    <input :type="showPw1 ? 'text' : 'password'" name="password" class="auth-input"
-                        placeholder="Choose a password" required x-model="password" style="padding-right: 56px;">
-                    <span class="material-symbols-outlined password-toggle" @click="showPw1 = !showPw1"
-                        x-text="showPw1 ? 'visibility_off' : 'visibility'"></span>
+                    <label for="passwordInput">Choose Password</label>
+                    <div class="input-field-wrapper">
+                        <span class="material-symbols-outlined input-field-icon">lock</span>
+                        <input :type="showPw1 ? 'text' : 'password'" id="passwordInput" name="password" class="auth-input"
+                            placeholder="Create a strong password" required x-model="password" style="padding-right: 48px;" autocomplete="new-password">
+                        <button type="button" class="password-toggle-btn" @click="showPw1 = !showPw1" aria-label="Toggle password visibility">
+                            <span class="material-symbols-outlined" x-text="showPw1 ? 'visibility_off' : 'visibility'"></span>
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Password Guide -->
+                <!-- Password Security Checklist -->
                 <div class="pw-guide" x-show="password.length > 0" x-transition>
-                    <span class="pw-guide-title">Password Security Checklist:</span>
+                    <span class="pw-guide-title">Password Security Checklist</span>
                     <ul class="pw-guide-list">
                         <li class="pw-guide-item" :class="rules.min8 ? 'valid' : 'invalid'">
                             <span class="material-symbols-outlined" x-text="rules.min8 ? 'check_circle' : 'cancel'"></span>
@@ -324,9 +109,9 @@
                             <span class="material-symbols-outlined" x-text="rules.number ? 'check_circle' : 'cancel'"></span>
                             Number
                         </li>
-                        <li class="pw-guide-item" :class="rules.special ? 'valid' : 'invalid'">
+                        <li class="pw-guide-item" :class="rules.special ? 'valid' : 'invalid'" style="grid-column: span 2;">
                             <span class="material-symbols-outlined" x-text="rules.special ? 'check_circle' : 'cancel'"></span>
-                            Special Char
+                            Special Symbol (!@#$%^&*)
                         </li>
                     </ul>
 
@@ -337,8 +122,18 @@
                     <span class="strength-text" :style="`color: ${strengthColor};`" x-text="strengthLabel"></span>
                 </div>
 
+                <div class="mb-3 text-start">
+                    <p class="text-muted" style="font-size: 0.76rem; line-height: 1.5; margin: 0;">
+                        By registering, you agree to our <a href="<?= BASE_URL ?>/forum/terms" target="_blank" style="color: #f48221; font-weight: 600;">Community Terms & Guidelines</a>.
+                    </p>
+                </div>
+
+                <!-- Fully Rounded Submit Pill -->
                 <button type="submit" class="auth-btn" :disabled="!isFormValid || loading">
-                    <span x-show="!loading">Sign Up</span>
+                    <span x-show="!loading" class="d-inline-flex align-items-center gap-2">
+                        <span>Complete Registration</span>
+                        <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+                    </span>
                     <span x-show="loading" class="spinner-border spinner-border-sm" role="status"></span>
                 </button>
             </form>
@@ -349,14 +144,19 @@
 
             <div class="back-to-forum">
                 <a href="<?= BASE_URL ?>/forum">
-                    <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span>
-                    Back to Forum
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    <span>Return to Community Forum</span>
                 </a>
+            </div>
+
+            <div class="auth-trust-note">
+                <span class="material-symbols-outlined">verified_user</span>
+                <span>Spider Tech Verified Community • 256-Bit SSL Encrypted</span>
             </div>
         </div>
     </div>
 
-    <!-- Toast -->
+    <!-- Toast Notification -->
     <div class="pd-toast" :class="toastSuccess ? 'success' : 'error'"
         x-show="toastShow" x-transition.duration.300ms style="display:none;">
         <span class="material-symbols-outlined" x-text="toastSuccess ? 'check_circle' : 'error'"></span>
@@ -377,8 +177,8 @@
                 toastMessage: '',
 
                 init() {
-                    const err = '<?= addslashes($error) ?>';
-                    const scs = '<?= addslashes($success) ?>';
+                    const err = '<?= addslashes($error ?? '') ?>';
+                    const scs = '<?= addslashes($success ?? '') ?>';
                     if (err) this.showToast(err, false);
                     if (scs) this.showToast(scs, true);
                 },
@@ -429,21 +229,21 @@
 
                 get isFormValid() {
                     const r = this.rules;
-                    return this.name.length > 0 &&
-                        this.email.length > 0 &&
-                        r.upper && r.lower && r.number && r.special && r.min8;
+                    return this.name.trim().length > 0 &&
+                        this.email.trim().length > 0 &&
+                        r.min8 && r.upper && r.lower && r.number && r.special;
                 },
 
                 async submitRegistration() {
-                    if (!this.isFormValid || this.loading) return;
-
+                    if (!this.isFormValid) return;
                     this.loading = true;
+
                     try {
                         const formData = new FormData();
+                        formData.append('csrf_token', '<?= htmlspecialchars($csrf_token ?? '') ?>');
                         formData.append('name', this.name);
                         formData.append('email', this.email);
                         formData.append('password', this.password);
-                        formData.append('csrf_token', '<?= $csrf_token ?>');
 
                         const response = await fetch('<?= BASE_URL ?>/forum/sign-up', {
                             method: 'POST',
@@ -454,23 +254,23 @@
                         });
 
                         const data = await response.json();
-                        if (data.success) {
-                            this.showToast(data.message || 'Account created!', true);
-                            if (data.redirect) {
-                                setTimeout(() => window.location.href = data.redirect, 2500);
-                            }
+
+                        if (data.status === 'success') {
+                            this.showToast(data.message, true);
+                            setTimeout(() => {
+                                window.location.href = data.redirect || '<?= BASE_URL ?>/forum/sign-in';
+                            }, 1500);
                         } else {
-                            this.showToast(data.message || 'Registration failed.', false);
+                            this.showToast(data.message || 'Registration failed', false);
                         }
-                    } catch (error) {
-                        this.showToast('Network error. Please try again.', false);
+                    } catch (e) {
+                        this.showToast('Network error, please try again.', false);
                     } finally {
                         this.loading = false;
                     }
                 }
-            }
+            };
         }
     </script>
 </body>
-
 </html>

@@ -11,7 +11,7 @@ class BaseController {
         if ($this->db === null) {
             http_response_code(503);
             header('Retry-After: 30');
-            echo '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Service Temporarily Unavailable — Spider Tech</title><style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;text-align:center;padding:100px 20px;color:#222;background:#fafafa}h1{color:#f48221;font-size:2rem;margin-bottom:12px}p{color:#666;font-size:1.1rem;max-width:500px;margin:0 auto 24px}</style></head><body><h1>Service Temporarily Unavailable</h1><p>Our database service is temporarily synchronizing. Please refresh in a few moments.</p></body></html>';
+            echo '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Service Temporarily Unavailable — Spider Tech</title><link rel="stylesheet" href="' . BASE_URL . '/css/error-503.css"></head><body><h1>Service Temporarily Unavailable</h1><p>Our database service is temporarily synchronizing. Please refresh in a few moments.</p></body></html>';
             exit;
         }
         
@@ -82,6 +82,18 @@ class BaseController {
     }
 
     protected function render($view, $data = [], $layout = true) {
+        if ($layout && $this->db) {
+            $gm = new GeneralModel($this->db);
+            if (empty($data['contact'])) {
+                $data['contact'] = $gm->getContactDetails();
+            }
+            if (empty($data['socialLinks'])) {
+                $data['socialLinks'] = $gm->getSocialLinks();
+            }
+            if (!isset($data['topbarAnnouncements'])) {
+                $data['topbarAnnouncements'] = $gm->getActiveCohortAnnouncements();
+            }
+        }
         extract($data);
         $header = ROOT_PATH . "/views/layout/header.php";
         $viewFile = ROOT_PATH . "/views/$view.php";

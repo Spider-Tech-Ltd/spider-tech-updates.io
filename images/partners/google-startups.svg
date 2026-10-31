@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 170 48" fill="none">
+  <!-- Google 4-color G -->
+  <g transform="translate(6, 9)">
+    <path d="M29.5 15.3c0-1.1-.1-2.1-.3-3H15v5.8h8.2c-.4 2-1.5 3.6-3.1 4.7v3.9h5c2.9-2.7 4.6-6.7 4.6-11.4z" fill="#4285F4"/>
+    <path d="M15 30c4.1 0 7.5-1.3 10-3.6l-5-3.9c-1.4.9-3.1 1.5-5 1.5-3.9 0-7.2-2.6-8.3-6.2H1.5v4C4 26.6 9.1 30 15 30z" fill="#34A853"/>
+    <path d="M6.7 17.8c-.3-.9-.5-1.9-.5-2.8s.2-1.9.5-2.8V8.2H1.5C.5 10.2 0 12.5 0 15s.5 4.8 1.5 6.8l5.2-4z" fill="#FBBC05"/>
+    <path d="M15 6c2.2 0 4.2.8 5.8 2.3l4.3-4.3C22.5 1.6 19.1 0 15 0 9.1 0 4 3.4 1.5 8.2l5.2 4C7.8 8.6 11.1 6 15 6z" fill="#EA4335"/>
+  </g>
+  <!-- Text -->
+  <text x="44" y="23" fill="#0f172a" font-family="'Poppins', 'Segoe UI', sans-serif" font-weight="700" font-size="12.5" letter-spacing="-0.2">Google</text>
+  <text x="44" y="34" fill="#64748b" font-family="'Segoe UI', sans-serif" font-weight="600" font-size="8.5" letter-spacing="0.3">for Startups</text>
+</svg>

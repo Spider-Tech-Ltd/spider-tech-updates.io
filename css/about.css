@@ -1,0 +1,679 @@
+    :root {
+        --primary-orange: #f48221;
+        --dark-bg: #110f0d;
+        --text-muted: #5a6474;
+    }
+
+    /* ====== Unified Inner-Page Header (Photographic Backdrop + Dark Accessible Overlay) ====== */
+    .page-header {
+        --mouse-x: -999px;
+        --mouse-y: -999px;
+        --spotlight-radius: 350px;
+        background:
+            radial-gradient(circle at 85% 30%, rgba(244, 130, 33, 0.16) 0%, transparent 50%),
+            radial-gradient(circle at 15% 85%, rgba(244, 130, 33, 0.06) 0%, transparent 45%),
+            linear-gradient(to right, rgba(244, 130, 33, 0.09) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(244, 130, 33, 0.09) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(10, 9, 8, 0.90) 0%, rgba(14, 12, 10, 0.82) 55%, rgba(15, 13, 11, 0.74) 100%);
+        background-size:
+            auto,
+            auto,
+            32px 32px,
+            32px 32px,
+            auto;
+        background-color: var(--dark-bg);
+        padding: 132px 0 58px;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* ====== Grayscale Hover Effect with Interactive Grid Cursor Spotlight ====== */
+    .page-header::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 1;
+        background-image:
+            radial-gradient(circle var(--spotlight-radius) at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.06) 0%, transparent 70%),
+            linear-gradient(to right, rgba(255, 255, 255, 0.22) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.22) 1px, transparent 1px);
+        background-size:
+            auto,
+            32px 32px,
+            32px 32px;
+        -webkit-backdrop-filter: grayscale(100%) contrast(1.15) brightness(1.08);
+        backdrop-filter: grayscale(100%) contrast(1.15) brightness(1.08);
+        -webkit-mask-image: radial-gradient(circle var(--spotlight-radius) at var(--mouse-x) var(--mouse-y), black 0%, rgba(0, 0, 0, 0.6) 45%, transparent 75%);
+        mask-image: radial-gradient(circle var(--spotlight-radius) at var(--mouse-x) var(--mouse-y), black 0%, rgba(0, 0, 0, 0.6) 45%, transparent 75%);
+        opacity: 0;
+        transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .page-header.is-hovered::after,
+    .page-header:hover::after {
+        opacity: 1;
+    }
+
+    .page-header > .container {
+        position: relative;
+        z-index: 2;
+    }
+
+    .eyebrow-line-svg {
+        display: block;
+        flex-shrink: 0;
+        transform: skewX(-8deg);
+    }
+
+    .page-title {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 800;
+        font-size: clamp(2.1rem, 3.6vw, 2.85rem);
+        color: #ffffff;
+        margin-bottom: 0.65rem;
+        letter-spacing: -0.6px;
+        line-height: 1.15;
+        text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
+    }
+
+    .page-title span {
+        color: var(--primary-orange);
+    }
+
+    .breadcrumb-custom {
+        background: transparent;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .breadcrumb-item-custom {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 0.86rem;
+        font-weight: 500;
+        letter-spacing: 0.25px;
+        text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
+    }
+
+    .breadcrumb-item-custom a {
+        color: rgba(255, 255, 255, 0.88) !important;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .breadcrumb-item-custom a:hover {
+        color: var(--primary-orange) !important;
+    }
+
+    .breadcrumb-item-custom.active {
+        color: var(--primary-orange) !important;
+        font-weight: 600;
+    }
+
+    .breadcrumb-item-custom + .breadcrumb-item-custom::before {
+        content: '/';
+        color: rgba(255, 255, 255, 0.45);
+    }
+
+    /* ====== Common Section Typography & Spacing ====== */
+    .section-padding {
+        padding: 60px 0 48px;
+    }
+
+    .section-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        font-family: 'Chakra Petch', 'Poppins', sans-serif;
+        font-style: italic;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2.2px;
+        color: var(--primary-orange) !important;
+        margin-bottom: 0.65rem;
+    }
+
+    .section-eyebrow .eyebrow-label-text {
+        color: var(--primary-orange) !important;
+        display: inline-block;
+        transform: skewX(-5deg);
+    }
+
+    .section-title {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: clamp(1.65rem, 2.3vw, 2.05rem);
+        color: #111827;
+        margin-bottom: 0.9rem;
+        letter-spacing: -0.4px;
+        line-height: 1.24;
+    }
+
+    .section-title span {
+        color: var(--primary-orange);
+    }
+
+    .about-story-copy,
+    .about-lead-copy,
+    .about-lead-copy p,
+    .about-lead-copy span,
+    .about-body-copy,
+    .about-body-copy span {
+        color: var(--text-muted) !important;
+        font-family: 'Open Sans', sans-serif !important;
+        font-size: 0.93rem !important;
+        line-height: 1.72 !important;
+    }
+
+    .about-lead-copy {
+        margin-bottom: 0.85rem;
+    }
+
+    .about-lead-copy p {
+        padding-bottom: 0 !important;
+        margin-bottom: 0.85rem !important;
+    }
+
+    .about-body-copy {
+        padding-bottom: 0 !important;
+        margin-bottom: 0.85rem;
+    }
+
+    /* ====== About Image & Compact Experience Badge (Synced with Homepage) ====== */
+    .about-img-group {
+        position: relative;
+        display: block;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.1);
+    }
+
+    .about-img-main {
+        width: 100%;
+        display: block;
+        border-radius: 20px;
+        object-fit: cover;
+    }
+
+    .about-experience-card {
+        position: absolute !important;
+        bottom: 16px !important;
+        right: 16px !important;
+        top: auto !important;
+        left: auto !important;
+        background: rgba(244, 130, 33, 0.96) !important;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        color: #ffffff !important;
+        padding: 6px 16px 6px 8px !important;
+        border-radius: 50px !important;
+        border: 2px solid rgba(255, 255, 255, 0.92) !important;
+        display: inline-flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 10px !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22) !important;
+        z-index: 2;
+        width: auto !important;
+        height: auto !important;
+    }
+
+    .exp-years {
+        font-size: 1.02rem !important;
+        font-weight: 800 !important;
+        line-height: 1 !important;
+        font-family: 'Poppins', sans-serif !important;
+        background: #ffffff !important;
+        color: var(--primary-orange) !important;
+        padding: 6px 10px !important;
+        border-radius: 50px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 !important;
+    }
+
+    .exp-text {
+        font-size: 0.72rem !important;
+        text-transform: uppercase !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.6px !important;
+        line-height: 1.2 !important;
+        text-align: left !important;
+        color: #ffffff !important;
+        margin: 0 !important;
+    }
+
+    /* ====== Core Engineering Pillars (4 Cards) ====== */
+    .about-feature-section {
+        padding: 8px 0 60px;
+        background: #ffffff;
+    }
+
+    .about-feature-card {
+        background: #ffffff;
+        border: 1px solid #e8ecf1;
+        border-radius: 16px;
+        padding: 26px 24px;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .about-feature-card::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: var(--primary-orange);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.28s ease;
+    }
+
+    .about-feature-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.06);
+        border-color: rgba(244, 130, 33, 0.28);
+    }
+
+    .about-feature-card:hover::after {
+        transform: scaleX(1);
+    }
+
+    .about-feature-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.15rem;
+    }
+
+    .about-feature-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        background: rgba(244, 130, 33, 0.09);
+        border: 1px solid rgba(244, 130, 33, 0.18);
+        color: var(--primary-orange);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    .about-feature-card:hover .about-feature-icon {
+        background: var(--primary-orange);
+        color: #ffffff;
+    }
+
+    .about-feature-icon .material-symbols-outlined {
+        font-size: 1.35rem;
+    }
+
+    .about-feature-num {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.76rem;
+        font-weight: 700;
+        color: #cbd5e1;
+        letter-spacing: 1px;
+    }
+
+    .about-feature-title {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 1.02rem;
+        color: #111827;
+        margin-bottom: 0.5rem;
+        line-height: 1.35;
+    }
+
+    .about-feature-desc {
+        color: var(--text-muted);
+        font-size: 0.87rem;
+        line-height: 1.65;
+        margin-bottom: 0;
+        padding-bottom: 0;
+        flex: 1;
+    }
+
+    /* ====== Mission, Vision & Approach Section — Tailored Hardware Hub Style ====== */
+    .about-mv-section {
+        background-color: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 56px 0 60px;
+    }
+
+    .mission-vision-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 20px 22px 18px;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.025);
+        transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+                    border-color 0.24s ease,
+                    box-shadow 0.24s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Top Accent Line (Matches Forum Hub Card) */
+    .mission-vision-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: transparent;
+        transition: background-color 0.2s ease;
+    }
+
+    .mission-vision-card:hover {
+        border-color: rgba(244, 130, 33, 0.4);
+        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06), 0 2px 8px rgba(244, 130, 33, 0.08);
+        transform: translateY(-3px);
+    }
+
+    .mission-vision-card:hover::before {
+        background: var(--primary-orange, #f48221);
+    }
+
+    /* Top Row: Icon + Title on left, Tag on right */
+    .mv-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .mv-card-identity {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .card-icon-box {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: rgba(244, 130, 33, 0.08);
+        border: 1px solid rgba(244, 130, 33, 0.18);
+        color: var(--primary-orange, #f48221);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: transform 0.22s ease, background-color 0.22s ease, color 0.22s ease;
+    }
+
+    .mission-vision-card:hover .card-icon-box {
+        background: var(--primary-orange, #f48221);
+        color: #ffffff;
+        transform: scale(1.06);
+    }
+
+    .card-icon-box .material-symbols-outlined,
+    .card-icon-box .icon-render,
+    .card-icon-box i::before {
+        font-size: 20px !important;
+        line-height: 1 !important;
+        margin: 0 !important;
+        display: block;
+    }
+
+    .mv-title {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 1.05rem;
+        color: #0f172a !important;
+        margin-bottom: 0;
+        letter-spacing: -0.2px;
+        transition: color 0.2s ease;
+        line-height: 1.3;
+    }
+
+    .mission-vision-card:hover .mv-title {
+        color: var(--primary-orange, #f48221) !important;
+    }
+
+    /* Card Badge Tag (Chakra Petch Technical Serial Badge) */
+    .mv-card-tag {
+        font-family: 'Chakra Petch', monospace, sans-serif;
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #64748b;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 3px 8px;
+        border-radius: 6px;
+        white-space: nowrap;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+    }
+
+    .mission-vision-card:hover .mv-card-tag {
+        border-color: rgba(244, 130, 33, 0.25);
+        color: var(--primary-orange, #f48221);
+        background: rgba(244, 130, 33, 0.05);
+    }
+
+    /* Body Text */
+    .mv-text {
+        color: #64748b;
+        font-size: 0.87rem;
+        line-height: 1.6;
+        margin-bottom: 16px;
+        flex: 1;
+    }
+
+    /* Footer Meta Row (Matching Forum Hub Footer) */
+    .mv-card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 12px;
+        border-top: 1px solid #f1f5f9;
+        margin-top: auto;
+    }
+
+    .mv-footer-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.74rem;
+        font-weight: 500;
+        color: #64748b;
+    }
+
+    .mv-status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: var(--primary-orange, #f48221);
+        display: inline-block;
+        box-shadow: 0 0 6px rgba(244, 130, 33, 0.5);
+    }
+
+    .mv-serial {
+        font-family: 'Chakra Petch', monospace, sans-serif;
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #94a3b8;
+        letter-spacing: 0.5px;
+    }
+
+    /* ====== Partnership Logos Tier Section (Animated Marquee) ====== */
+    .partners-logo-section {
+        background-color: #ffffff;
+        padding: 36px 0 32px;
+        border-bottom: 1px solid #eef2f6;
+        overflow: hidden;
+    }
+
+    .partners-tier-header {
+        text-align: center;
+        margin-bottom: 24px;
+    }
+
+    .partners-tier-label {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        font-family: 'Chakra Petch', 'Poppins', sans-serif;
+        font-style: italic;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2.2px;
+        color: var(--primary-orange) !important;
+    }
+
+    .partners-tier-label-text {
+        color: var(--primary-orange) !important;
+        display: inline-block;
+        transform: skewX(-5deg);
+    }
+
+    .partners-headline-sep {
+        display: block;
+        flex-shrink: 0;
+        transform: skewX(-8deg);
+    }
+
+    .partners-marquee-viewport {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        padding: 6px 0;
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
+        mask-image: linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%);
+    }
+
+    .partners-marquee-track {
+        display: flex;
+        width: max-content;
+        will-change: transform;
+        animation: partnersLogoMarquee 32s linear infinite;
+    }
+
+    .partners-marquee-viewport:hover .partners-marquee-track {
+        animation-play-state: paused;
+    }
+
+    @keyframes partnersLogoMarquee {
+        0% {
+            transform: translate3d(0%, 0, 0);
+        }
+        100% {
+            transform: translate3d(-50%, 0, 0);
+        }
+    }
+
+    .partners-marquee-group {
+        display: flex;
+        align-items: center;
+        gap: 64px;
+        padding-right: 64px;
+    }
+
+    .partner-ticker-item {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        color: #94a3b8;
+        opacity: 0.8;
+        transition: color 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .partner-ticker-item:hover {
+        color: #1e293b;
+        opacity: 1;
+        transform: translateY(-1px);
+    }
+
+    .partner-svg-logo {
+        height: 32px;
+        width: auto;
+        display: block;
+    }
+
+    .partner-logo-img {
+        max-height: 36px;
+        max-width: 140px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        filter: grayscale(100%) opacity(0.68);
+        transition: filter 0.3s ease;
+    }
+
+    .partner-ticker-item:hover .partner-logo-img {
+        filter: grayscale(0%) opacity(1);
+    }
+
+    .partner-fallback-wordmark {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.96rem;
+        font-weight: 700;
+        letter-spacing: -0.2px;
+        color: currentColor;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+        .page-header {
+            padding: 112px 0 46px;
+        }
+
+        .section-padding,
+        .about-mv-section {
+            padding: 44px 0;
+        }
+
+        .about-feature-section {
+            padding: 0 0 44px;
+        }
+
+        .partners-marquee-group {
+            gap: 44px;
+            padding-right: 44px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .partners-tier-label {
+            gap: 10px;
+            font-size: 0.7rem;
+            letter-spacing: 1.2px;
+        }
+
+        .partners-headline-sep {
+            width: 28px;
+        }
+    }

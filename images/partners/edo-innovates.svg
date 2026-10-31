@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 165 48" fill="none">
+  <!-- Edo Innovates Icon -->
+  <rect x="6" y="9" width="30" height="30" rx="8" fill="#f48221"/>
+  <path d="M15 17H27M15 24H24M15 31H27" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="27" cy="24" r="2" fill="#ffffff"/>
+  <!-- Typography -->
+  <text x="44" y="24" fill="#0f172a" font-family="'Poppins', sans-serif" font-weight="700" font-size="12.5" letter-spacing="-0.2">EdoInnovates</text>
+  <text x="44" y="34" fill="#64748b" font-family="'Segoe UI', sans-serif" font-weight="500" font-size="8.5">Tech Hub Network</text>
+</svg>

@@ -5,14 +5,12 @@ require('secured-login.php');
 <!DOCTYPE html>
 <html lang="en">
 <!-- BEGIN HEAD -->
-
 <head>
 	<?php require('head-section.html'); ?>
 </head>
 <!-- END HEAD -->
 
-<body
-	class="<?php require('body-tag-css.html'); ?>">
+<body class="<?php require('body-tag-css.html'); ?>">
 	<div class="page-wrapper">
 		<!-- start header -->
 		<?php require('header-section.php'); ?>
@@ -30,121 +28,161 @@ require('secured-login.php');
 				<div class="page-content">
 					<div class="page-bar">
 						<div class="page-title-breadcrumb">
-							<div class=" pull-left">
-								<div class="page-title">Add Testimonials</div>
+							<div class="pull-left">
+								<div class="page-title">Add Client Testimonial</div>
 							</div>
 							<ol class="breadcrumb page-breadcrumb pull-right">
-								<li><i class="fa fa-home"></i>&nbsp;<a class="parent-item"
-										href="dashboard.php">Dashboard</a>&nbsp;<i class="fa fa-angle-right"></i>
-								</li>
-								<li><a class="parent-item" href="all_testimonials.php">Testimonials</a>&nbsp;<i class="fa fa-angle-right"></i>
-								</li>
-								<li class="active">Add Testimonials</li>
+								<li><i class="fa fa-home"></i>&nbsp;<a class="parent-item" href="dashboard.php">Dashboard</a>&nbsp;<i class="fa fa-angle-right"></i></li>
+								<li><a class="parent-item" href="all_testimonials.php">Testimonials</a>&nbsp;<i class="fa fa-angle-right"></i></li>
+								<li class="active">Add Testimonial</li>
 							</ol>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-md-12 col-sm-12">
-							<div class="card card-box">
-								<div class="card-head">
-									<header>Basic Information</header>
-									<!--
-                                    <button id="panel-button"
-										class="mdl-button mdl-js-button mdl-button--icon pull-right"
-										data-upgraded=",MaterialButton">
-										<i class="material-icons">more_vert</i>
-									</button>
-									<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
-										data-mdl-for="panel-button">
-										<li class="mdl-menu__item"><i class="material-icons">assistant_photo</i>Action
-										</li>
-										<li class="mdl-menu__item"><i class="material-icons">print</i>Another action
-										</li>
-										<li class="mdl-menu__item"><i class="material-icons">favorite</i>Something else
-											here</li>
-                                    </ul>
-                                    -->
+
+					<!-- Alerts -->
+					<?php if (!empty($testimonial_error_counter)): ?>
+						<div class="admin-alert-banner admin-alert-danger">
+							<i class="material-icons">error_outline</i>
+							<div><strong>Action Needed:</strong> <?= strip_tags($testimonial_error_counter); ?></div>
+						</div>
+					<?php endif; ?>
+					<?php if (!empty($testimonial_success_msg)): ?>
+						<div class="admin-alert-banner admin-alert-success">
+							<i class="material-icons">check_circle</i>
+							<div><strong>Success:</strong> <?= strip_tags($testimonial_success_msg); ?></div>
+						</div>
+					<?php endif; ?>
+
+					<form id="testimonial_form" method="POST" enctype="multipart/form-data">
+						<div class="admin-workspace-grid">
+							<!-- Main Content (68%) -->
+							<div class="admin-workspace-main">
+								<div class="form-card">
+									<div class="form-card-head">
+										<h2 class="form-card-title"><i class="material-icons">format_quote</i> Testimonial Statement</h2>
+										<span class="form-label-tag">Client Feedback</span>
+									</div>
+									<div class="form-card-body">
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="testimonial">
+												<span>Client Review / Endorsement Statement <span class="required-star">*</span></span>
+												<span class="form-help-modern">The direct quote or testimonial text</span>
+											</label>
+											<textarea id="testimonial" name="testimonial" 
+												rows="6"
+												class="form-control-modern" 
+												placeholder="Enter detailed feedback from the client..." 
+												required><?php if(isset($_POST['add_testimonial'])) { echo htmlspecialchars(stripslashes($_POST['testimonial'])); } ?></textarea>
+											<?php if(!empty($testimonialErr)): ?>
+												<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($testimonialErr); ?></div>
+											<?php endif; ?>
+										</div>
+									</div>
 								</div>
-								<div class="card-body" id="bar-parent">
-									<form id="form_sample_1" class="form-horizontal" method="POST" enctype="multipart/form-data">
-										<div class="form-body">
-											<?php 
-											    if(!empty($testimonial_error_counter)) 
-												   {
-													 echo $testimonial_error_counter; 
-												   }
-												if(!empty($testimonial_success_msg))
-												   {
-													  echo $testimonial_success_msg;
-												   }
-											?>
-											<div class="form-group row">
-												<label class="control-label col-md-3">Profile Picture <span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-													<input type="file" class="default" name="img" required>
-                                                    <div><span class="help-block text-green">900x590 dimention is be best picture</span></div>
-                                                    <?php if(isset($_POST['add_testimonial'])) {echo '<div>'.$testimonial_imgErr.'</div>'; }?>
+							</div>
+
+							<!-- Sidebar Controls (32%) -->
+							<div class="admin-workspace-sidebar">
+								<!-- Attestant Information -->
+								<div class="form-card">
+									<div class="form-card-head">
+										<h3 class="form-card-title"><i class="material-icons">person</i> Attestant Identity</h3>
+									</div>
+									<div class="form-card-body">
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="attestant_name">
+												<span>Full Name <span class="required-star">*</span></span>
+											</label>
+											<input type="text" id="attestant_name" name="attestant_name" 
+												placeholder="E.g. Michael O. Adeyemi"
+												class="form-control-modern" 
+												value="<?php if(isset($_POST['add_testimonial'])) { echo htmlspecialchars(stripslashes($attestant_name)); } ?>" 
+												required />
+											<?php if(!empty($attestant_nameErr)): ?>
+												<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($attestant_nameErr); ?></div>
+											<?php endif; ?>
+										</div>
+
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="organisation_name">
+												<span>Company / Organization <span class="required-star">*</span></span>
+											</label>
+											<input type="text" id="organisation_name" name="organisation_name" 
+												placeholder="E.g. Zenith Global Logistics"
+												class="form-control-modern" 
+												value="<?php if(isset($_POST['add_testimonial'])) { echo htmlspecialchars(stripslashes($organisation_name)); } ?>" 
+												required />
+											<?php if(!empty($organisation_nameErr)): ?>
+												<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($organisation_nameErr); ?></div>
+											<?php endif; ?>
+										</div>
+
+										<div class="form-group-modern">
+											<label class="form-label-modern" for="title">
+												<span>Title / Position <span class="required-star">*</span></span>
+											</label>
+											<input type="text" id="title" name="title" 
+												placeholder="E.g. Chief Technology Officer"
+												class="form-control-modern" 
+												value="<?php if(isset($_POST['add_testimonial'])) { echo htmlspecialchars(stripslashes($title)); } ?>" 
+												required />
+											<?php if(!empty($titleErr)): ?>
+												<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($titleErr); ?></div>
+											<?php endif; ?>
+										</div>
+									</div>
+								</div>
+
+								<!-- Attestant Photo / Logo -->
+								<div class="form-card">
+									<div class="form-card-head">
+										<h3 class="form-card-title"><i class="material-icons">portrait</i> Client Photo</h3>
+										<span class="admin-dim-badge">Square / 500px</span>
+									</div>
+									<div class="form-card-body">
+										<div class="admin-dropzone-wrap">
+											<div class="admin-dropzone">
+												<div class="admin-dropzone-icon">
+													<i class="material-icons">cloud_upload</i>
 												</div>
+												<div class="admin-dropzone-title"><span>Click to browse</span> or drag photo</div>
+												<div class="admin-dropzone-desc">JPG, PNG up to 2MB</div>
+												<input type="file" name="img" accept="image/*" required>
 											</div>
-											<div class="form-group row">
-												<label class="control-label col-md-3">Attestant's Name
-													<span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-													<input type="text" name="attestant_name" placeholder="Enter attentant's name"
-                                                        class="form-control input-height" value="<?php if(isset($_POST['add_testimonial'])) 
-                                                        {echo stripslashes($attestant_name); }?>" required /> 
-                                                        <?php if(isset($_POST['add_testimonial'])) {echo $attestant_nameErr; }?>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-												<label class="control-label col-md-3">Company/Organisation
-													<span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-                                                    <input type="text" name="organisation_name" placeholder="Enter Company/Organisation"
-                                                        class="form-control input-height" value="<?php if(isset($_POST['add_testimonial'])) 
-                                                        {echo stripslashes($organisation_name); }?>" required />
-                                                    <?php if(isset($_POST['add_testimonial'])) {echo $organisation_nameErr; }?>
-												</div>
-											</div>
-											<div class="form-group row">
-												<label class="control-label col-md-3">Title/Position <span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-                                                    <input type="text" name="title" placeholder="E.g. CEO"
-                                                        class="form-control input-height" value="<?php if(isset($_POST['add_testimonial'])) 
-                                                        {echo stripslashes($title); }?>" required />
-                                                    <?php if(isset($_POST['add_testimonial'])) {echo '<div>'.$titleErr.'</div>'; }?>
-												</div>
-											</div>
-                                            <div class="form-group row">
-												<label class="control-label col-md-3">Testimonial 
-													<span class="required"> * </span>
-												</label>
-												<div class="col-md-5">
-													<textarea placeholder="Enter Testimonial"
-                                                        class="form-control-textarea" rows="5" name="testimonial" required><?php if(isset($_POST['add_testimonial'])) 
-                                                        {echo stripslashes($_POST['testimonial']); }?></textarea>
-                                                        <?php if(isset($_POST['add_testimonial'])) {echo $testimonialErr; }?>
-												</div>
-                                            </div>
-											<div class="form-actions">
-												<div class="row">
-													<div class="offset-md-3 col-md-9">
-														<button type="submit"
-															class="btn btn-info m-r-20" name="add_testimonial">Submit</button>
-														<button type="button" class="btn btn-default">Cancel</button>
-													</div>
+
+											<div class="admin-preview-container" style="display: none;">
+												<img class="admin-preview-img" src="" alt="Selected Preview">
+												<div class="admin-preview-meta">
+													<span class="admin-preview-filename"></span>
+													<button type="button" class="admin-preview-remove">
+														<i class="material-icons">close</i> Remove
+													</button>
 												</div>
 											</div>
 										</div>
-									</form>
+										<?php if(!empty($testimonial_imgErr)): ?>
+											<div class="form-error-modern"><i class="material-icons">warning</i> <?= strip_tags($testimonial_imgErr); ?></div>
+										<?php endif; ?>
+									</div>
+								</div>
+
+								<!-- Action Card -->
+								<div class="form-card admin-actions-card">
+									<div class="form-card-head">
+										<h3 class="form-card-title"><i class="material-icons">publish</i> Publication</h3>
+									</div>
+									<div class="form-card-body">
+										<button type="submit" name="add_testimonial" class="btn-admin-primary">
+											<i class="material-icons">check_circle</i> Save & Publish Testimonial
+										</button>
+										<a href="all_testimonials.php" class="btn-admin-cancel">
+											<i class="material-icons">arrow_back</i> Discard & Return
+										</a>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
+					</form>
 				</div>
 			</div>
 			<!-- end page content -->
@@ -161,5 +199,4 @@ require('secured-login.php');
 	<?php require('js-section.html'); ?>
 	<!-- end js include path -->
 </body>
-
 </html>

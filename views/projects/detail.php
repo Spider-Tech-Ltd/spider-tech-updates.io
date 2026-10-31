@@ -1,422 +1,148 @@
-<style>
-    :root {
-        --primary-orange: #f48221;
-        --dark-bg: #111111;
-        --text-muted: #888888;
-        --card-bg: #ffffff;
-    }
-
-    /* Page Header High-Fidelity */
-    .page-header {
-        background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
-        background-color: var(--dark-bg);
-        padding: 140px 0 80px;
-        position: relative;
-        overflow: hidden;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .page-header::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at 70% 30%, rgba(244, 130, 33, 0.05) 0%, transparent 60%);
-        pointer-events: none;
-    }
-
-    .page-title {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 800;
-        font-size: clamp(2.2rem, 5vw, 3.2rem);
-        color: #ffffff;
-        margin-bottom: 1rem;
-        letter-spacing: -1.2px;
-        line-height: 1.2;
-    }
-
-    .page-title span {
-        color: var(--primary-orange);
-    }
-
-    /* Professional Breadcrumbs */
-    .breadcrumb-custom {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-top: 15px;
-    }
-
-    .breadcrumb-item-custom {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        color: rgba(255, 255, 255, 0.5);
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-    }
-
-    .breadcrumb-item-custom a {
-        color: rgba(255, 255, 255, 0.5);
-        text-decoration: none;
-        transition: color 0.3s ease;
-    }
-
-    .breadcrumb-item-custom a:hover {
-        color: var(--primary-orange);
-    }
-
-    .breadcrumb-item-custom.active {
-        color: var(--primary-orange);
-    }
-
-    .breadcrumb-separator {
-        width: 4px;
-        height: 4px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 50%;
-    }
-
-    /* Showcase Content */
-    .section-padding {
-        padding: 100px 0;
-    }
-
-    .project-hero-wrap {
-        position: relative;
-        height: 550px;
-        border-radius: 40px;
-        overflow: hidden;
-        margin-bottom: 60px;
-        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.15);
-    }
-
-    .project-hero-wrap img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .project-hero-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 60%);
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        padding: 60px;
-    }
-
-    .project-main-title {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 800;
-        font-size: clamp(2rem, 5vw, 3.8rem);
-        color: #fff;
-        line-height: 1.1;
-        margin-bottom: 0;
-    }
-
-    /* Info Meta Grid */
-    .meta-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 30px;
-        margin-bottom: 60px;
-        padding: 40px;
-        background: #fff;
-        border: 1px solid #f0f0f0;
-        border-radius: 30px;
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.03);
-    }
-
-    .meta-item {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .meta-label {
-        font-size: 0.75rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        color: var(--text-muted);
-    }
-
-    .meta-value {
-        font-size: 1.05rem;
-        font-weight: 700;
-        color: var(--dark-bg);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .meta-value i,
-    .meta-value .material-symbols-outlined {
-        color: var(--primary-orange);
-        font-size: 1.2rem;
-    }
-
-    /* Reading Content */
-    .reading-flow {
-        max-width: 900px;
-        margin: 0 auto;
-    }
-
-    .project-narrative {
-        font-size: 1.15rem;
-        line-height: 1.8;
-        color: #444;
-        margin-bottom: 80px;
-    }
-
-    .project-narrative h2,
-    .project-narrative h3 {
-        font-weight: 800;
-        margin-top: 50px;
-        margin-bottom: 25px;
-        color: var(--dark-bg);
-    }
-
-    /* Bottom CTA Box */
-    .showcase-cta {
-        background: var(--dark-bg);
-        padding: 80px;
-        border-radius: 40px;
-        text-align: center;
-        color: #fff;
-        position: relative;
-        overflow: hidden;
-
-        >h2 {
-            color: #f0f0f0;
-        }
-    }
-
-    .showcase-cta::after {
-        content: '';
-        position: absolute;
-        top: -50px;
-        right: -50px;
-        width: 250px;
-        height: 250px;
-        background: radial-gradient(circle, rgba(244, 130, 33, 0.1) 0%, transparent 70%);
-        border-radius: 50%;
-    }
-
-    .btn-pill {
-        padding: 16px 45px;
-        border-radius: 50px;
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: 0.95rem;
-        letter-spacing: 1px;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        text-decoration: none !important;
-        display: inline-flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .btn-orange {
-        background: var(--primary-orange);
-        color: #fff;
-        border: 2px solid var(--primary-orange);
-        box-shadow: 0 10px 25px rgba(244, 130, 33, 0.3);
-    }
-
-    .btn-orange:hover {
-        background: #e6751c;
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(244, 130, 33, 0.4);
-        color: #fff;
-    }
-
-    @media (max-width: 991px) {
-        .project-hero-wrap {
-            height: 400px;
-        }
-
-        .project-hero-overlay {
-            padding: 30px;
-        }
-
-        .showcase-cta {
-            padding: 60px 30px;
-        }
-
-        .meta-grid {
-            padding: 30px;
-            grid-template-columns: 1fr 1fr;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .section-padding { padding: 40px 0; }
-    }
-
-    /* Media Gallery Industrial Grid */
-    .media-gallery-section {
-        margin-top: 80px;
-        padding-top: 60px;
-        border-top: 1px solid rgba(0,0,0,0.06);
-        margin-bottom: 80px;
-    }
-
-    .gallery-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 20px;
-    }
-
-    .gallery-item {
-        position: relative;
-        aspect-ratio: 4/3;
-        border-radius: 20px;
-        overflow: hidden;
-        border: 1px solid rgba(0,0,0,0.05);
-        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-    }
-
-    .gallery-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
-    }
-
-    .gallery-item:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    }
-
-    .gallery-item:hover img {
-        transform: scale(1.1);
-    }
-
-    .gallery-overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(0,0,0,0.2);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-    }
-
-    .gallery-item:hover .gallery-overlay { opacity: 1; }
-
-    .tag-eyebrow {
-        background: rgba(244, 130, 33, 0.1);
-        color: var(--primary-orange);
-        padding: 8px 18px;
-        border-radius: 50px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        display: inline-block;
-        margin-bottom: 1.5rem;
-    }
-</style>
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/project-detail.css?v=<?= filemtime(ROOT_PATH . '/css/project-detail.css') ?>" />
 
 <!-- ====== Page Header ====== -->
 <section class="page-header">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-title"><?= htmlspecialchars($project['service_name']); ?> <span>Detail</span></h1>
-                <div class="breadcrumb-custom">
-                    <div class="breadcrumb-item-custom">
-                        <a href="<?= BASE_URL ?>/">Home</a>
-                    </div>
-                    <div class="breadcrumb-separator"></div>
-                    <div class="breadcrumb-item-custom">
-                        <a href="<?= BASE_URL ?>/projects">Projects</a>
-                    </div>
-                    <div class="breadcrumb-separator"></div>
-                    <div class="breadcrumb-item-custom active">
-                        Case Study
-                    </div>
-                </div>
+                <h1 class="page-title"><?= htmlspecialchars(stripslashes($project['project_name'] ?? 'Project')); ?> <span>Case Study</span></h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb-custom">
+                        <li class="breadcrumb-item-custom">
+                            <a href="<?= BASE_URL ?>/">Home</a>
+                        </li>
+                        <li class="breadcrumb-item-custom">
+                            <a href="<?= BASE_URL ?>/projects">Projects</a>
+                        </li>
+                        <li class="breadcrumb-item-custom active" aria-current="page">
+                            Case Study
+                        </li>
+                    </ol>
+                </nav>
             </div>
         </div>
     </div>
 </section>
 
 <!-- ====== Project Detail Showcase ====== -->
-<section class="section-padding">
+<section class="section-padding project-detail-section">
     <div class="container">
         <?php if ($project): ?>
-
-            <!-- Hero Visual -->
-            <div class="project-hero-wrap">
-                <?php
-                    $pic = $project['project_pic'];
-                    $finalPic = (empty($pic)) ? BASE_URL . '/images/placeholder-banner.jpg' : ( (preg_match('#^https?://#i', $pic)) ? $pic : BASE_URL . '/' . ltrim($pic, './') );
-                ?>
-                <img src="<?= $finalPic ?>" alt="<?= htmlspecialchars($project['project_name']); ?>">
-                <div class="project-hero-overlay">
-                    <h2 class="project-main-title"><?= stripslashes($project['project_name']); ?></h2>
-                </div>
-            </div>
+            <?php
+            $rawPic = trim($project['project_pic'] ?? '');
+            $hasPic = false;
+            $finalPic = '';
+            if ($rawPic !== '') {
+                if (preg_match('#^https?://#i', $rawPic)) {
+                    $finalPic = $rawPic;
+                    $hasPic = true;
+                } else {
+                    $relPath = ltrim($rawPic, './');
+                    if (file_exists(ROOT_PATH . '/' . $relPath)) {
+                        $finalPic = BASE_URL . '/' . $relPath;
+                        $hasPic = true;
+                    }
+                }
+            }
+            $pTitle = trim(stripslashes($project['project_name'] ?? 'Project'));
+            $pService = trim(stripslashes($project['service_name'] ?? 'Technology Solution'));
+            ?>
 
             <div class="reading-flow">
-                <!-- Metadata Grid -->
+                <!-- Hero Visual -->
+                <div class="project-hero-wrap">
+                    <?php if ($hasPic): ?>
+                        <img src="<?= htmlspecialchars($finalPic) ?>"
+                             alt="<?= htmlspecialchars($pTitle); ?>"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <?php endif; ?>
+                    <div class="project-hero-fallback" style="display: <?= $hasPic ? 'none' : 'flex' ?>;" aria-hidden="true">
+                        <svg class="fallback-svg-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="6" y="10" width="52" height="44" rx="6" stroke="currentColor" stroke-width="2.5" stroke-dasharray="4 3"/>
+                            <circle cx="22" cy="24" r="4.5" stroke="#f48221" stroke-width="2.5"/>
+                            <path d="M10 46L23 33C24.5 31.5 26.8 31.5 28.3 33L38 42.5L44.5 36C46 34.5 48.3 34.5 49.8 36L56 42.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="project-hero-overlay">
+                        <span class="project-hero-badge"><?= htmlspecialchars($pService); ?></span>
+                        <h2 class="project-main-title"><?= htmlspecialchars($pTitle); ?></h2>
+                    </div>
+                </div>
+
+                <!-- Metadata Strip -->
                 <div class="meta-grid">
                     <div class="meta-item">
                         <span class="meta-label">Client</span>
                         <span class="meta-value">
                             <span class="material-symbols-outlined">workspace_premium</span>
-                            Spider Tech Partners
+                            <span>Spider Tech Partners</span>
                         </span>
                     </div>
                     <div class="meta-item">
                         <span class="meta-label">Category</span>
                         <span class="meta-value">
                             <span class="material-symbols-outlined">category</span>
-                            <?= htmlspecialchars($project['service_name']); ?>
+                            <span><?= htmlspecialchars($pService); ?></span>
                         </span>
                     </div>
                     <div class="meta-item">
-                        <span class="meta-label">Launch Date</span>
+                        <span class="meta-label">Delivery</span>
                         <span class="meta-value">
-                            <span class="material-symbols-outlined">event_available</span>
-                            2024
+                            <span class="material-symbols-outlined">verified</span>
+                            <span>Production Ready</span>
                         </span>
                     </div>
                     <div class="meta-item">
-                        <span class="meta-label">Industry</span>
+                        <span class="meta-label">Sector</span>
                         <span class="meta-value">
                             <span class="material-symbols-outlined">public</span>
-                            Tech Innovation
+                            <span>Digital Engineering</span>
                         </span>
                     </div>
                 </div>
 
                 <!-- Project Content -->
-                <div class="project-narrative">
-                    <?= stripslashes($project['project_description']); ?>
+                <div class="project-narrative-card">
+                    <span class="section-eyebrow">
+                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                            <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                        </svg>
+                        <span class="eyebrow-label-text">Project Overview</span>
+                        <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                            <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                        </svg>
+                    </span>
+                    <div class="project-narrative rich-text-content">
+                        <?= stripslashes($project['project_description']); ?>
+                    </div>
                 </div>
 
                 <?php if (!empty($project_media)): ?>
                 <div class="media-gallery-section">
-                    <div class="mb-5">
-                        <span class="tag-eyebrow">Visual Highlights</span>
+                    <div class="mb-4">
+                        <span class="section-eyebrow">
+                            <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                                <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                            </svg>
+                            <span class="eyebrow-label-text">Visual Highlights</span>
+                            <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                                <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                            </svg>
+                        </span>
+                        <br>
                         <h3 class="section-title">Project <span>Gallery</span></h3>
                     </div>
                     <div class="gallery-grid">
                         <?php foreach ($project_media as $media): ?>
                         <?php $mediaImg = resolvePath($media['project_pics_name']); ?>
-                        <a href="<?= $mediaImg; ?>" class="gallery-item popup-box" data-lightbox="project-gallery" rel="lightbox[project-gallery]" title="<?= htmlspecialchars($project['project_name']) ?>">
+                        <a href="<?= $mediaImg; ?>" class="gallery-item popup-box" data-lightbox="project-gallery" rel="lightbox[project-gallery]" title="<?= htmlspecialchars($pTitle) ?>">
                             <img src="<?= $mediaImg; ?>" alt="Project gallery photo" loading="lazy" onerror="this.closest('a').style.display='none';">
                             <div class="gallery-overlay">
-                                <span class="material-symbols-outlined" style="font-size: 32px;">zoom_in</span>
+                                <span class="material-symbols-outlined">zoom_in</span>
                             </div>
                         </a>
                         <?php endforeach; ?>
@@ -426,18 +152,18 @@
 
                 <!-- Bottom CTA -->
                 <div class="showcase-cta">
-                    <h2 style="font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 2.5rem; margin-bottom: 1.5rem;">Have a Similar <span>Challenge?</span></h2>
-                    <p style="color: rgba(255,255,255,0.6); line-height: 1.8; font-size: 1.1rem; margin-bottom: 2.5rem;">
-                        We specialize in solving complex industrial problems through advanced digital engineering. Let's discuss your next breakthrough.
+                    <h2 class="showcase-cta-title">Have a Similar <span>Challenge?</span></h2>
+                    <p class="showcase-cta-desc">
+                        We specialize in solving complex operational problems through reliable software engineering. Let's discuss your next breakthrough.
                     </p>
-                    <div class="d-flex flex-wrap justify-content-center gap-4">
+                    <div class="showcase-cta-actions">
                         <a href="<?= BASE_URL ?>/contact" class="btn-pill btn-orange">
-                            Start a Project
-                            <span class="material-symbols-outlined">rocket_launch</span>
+                            <span>Start a Project</span>
+                            <span class="material-symbols-outlined">arrow_forward</span>
                         </a>
-                        <a href="<?= BASE_URL ?>/projects" class="btn-pill" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1);">
-                            <span class="material-symbols-outlined" style="margin-right: 8px;">grid_view</span>
-                            Back to Showcase
+                        <a href="<?= BASE_URL ?>/projects" class="btn-pill btn-outline-light-subtle">
+                            <span class="material-symbols-outlined">grid_view</span>
+                            <span>Back to Showcase</span>
                         </a>
                     </div>
                 </div>
@@ -446,7 +172,7 @@
         <?php else: ?>
             <div class="text-center py-5">
                 <h2 class="text-muted">Project not found.</h2>
-                <a href="<?= BASE_URL ?>/projects" class="btn-pill btn-orange mt-4">Back to Showcase</a>
+                <a href="<?= BASE_URL ?>/projects" class="btn-pill btn-orange mt-3">Back to Showcase</a>
             </div>
         <?php endif; ?>
     </div>

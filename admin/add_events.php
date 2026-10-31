@@ -1,4 +1,7 @@
 <?php
+header("location: add_event.php");
+exit();
+
     require('../includes/connect.php');
     
     session_start();

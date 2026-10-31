@@ -1,478 +1,182 @@
-  <style>
-    :root {
-      --primary-orange: #f48221;
-      --dark-bg: #111111;
-      --text-body: #374151;
-      --text-muted: #888888;
-      --card-bg: #ffffff;
-    }
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/trainings.css?v=<?= filemtime(ROOT_PATH . '/css/trainings.css') ?>" />
 
-    .fill-1 {
-      font-variation-settings: 'FILL' 1;
-    }
-
-    .text-orange {
-      color: var(--primary-orange) !important;
-    }
-
-    .gap-1 {
-      gap: 0.25rem;
-    }
-
-    .gap-2 {
-      gap: 0.5rem;
-    }
-
-    .gap-3 {
-      gap: 1rem;
-    }
-
-    .gap-4 {
-      gap: 1.5rem;
-    }
-
-    .-space-x-2>*+* {
-      margin-left: -0.5rem;
-    }
-
-    /* Page Header High-Fidelity */
-    .page-header {
-      background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('<?= BASE_URL ?>/images/bg/inner-banner.jpg') center/cover;
-      background-color: var(--dark-bg);
-      padding: 140px 0 80px;
-      position: relative;
-      overflow: hidden;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .page-header::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 70% 30%, rgba(244, 130, 33, 0.05) 0%, transparent 60%);
-      pointer-events: none;
-    }
-
-    .page-title {
-      font-family: 'Poppins', sans-serif;
-      font-weight: 800;
-      font-size: clamp(2.5rem, 5vw, 3.8rem);
-      color: #ffffff;
-      margin-bottom: 1rem;
-      letter-spacing: -1.5px;
-      line-height: 1.1;
-    }
-
-    .page-title span {
-      color: var(--primary-orange);
-    }
-
-    /* Professional Breadcrumbs */
-    .breadcrumb-custom {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-top: 15px;
-    }
-
-    .breadcrumb-item-custom {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: rgba(255, 255, 255, 0.5);
-      font-size: 0.85rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-    }
-
-    .breadcrumb-item-custom a {
-      color: rgba(255, 255, 255, 0.75);
-      text-decoration: none;
-      transition: color 0.3s ease, transform 0.2s ease;
-    }
-
-    .breadcrumb-item-custom a:hover {
-      color: #f48221;
-      transform: translateX(2px);
-    }
-
-    .breadcrumb-item-custom.active {
-      color: #f48221;
-      font-weight: 700;
-    }
-
-    .breadcrumb-item-custom.active span {
-      color: #f48221;
-    }
-
-    .breadcrumb-separator {
-      width: 4px;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-    }
-
-    @media (max-width: 991px) {
-      .page-header {
-        padding: 120px 0 60px;
-      }
-    }
-
-    .training-hero {
-      background: #ffffff;
-      padding: 60px 0 40px;
-    }
-
-    .hero-eyebrow-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: rgba(244, 130, 33, 0.1);
-      color: #f48221;
-      padding: 0.75rem 1rem;
-      border-radius: 9999px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 1rem;
-    }
-
-    .hero-title {
-      font-family: 'Poppins', sans-serif;
-      font-size: clamp(2.7rem, 4vw, 4rem);
-      font-weight: 800;
-      line-height: 1.05;
-      margin-bottom: 1rem;
-      color: #111111;
-    }
-
-    .hero-title span {
-      color: var(--primary-orange);
-    }
-
-    .hero-subtitle {
-      font-family: 'Open Sans', sans-serif;
-      color: #555555;
-      font-size: 1.15rem;
-      line-height: 1.75;
-      max-width: 760px;
-      margin: 0 auto;
-    }
-
-    .hero-btn-primary {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.95rem 2.25rem;
-      border-radius: 9999px;
-      background: #f48221;
-      color: #ffffff;
-      font-weight: 700;
-      text-decoration: none !important;
-      transition: transform 0.2s ease, background 0.2s ease;
-      box-shadow: 0 14px 30px rgba(244, 130, 33, 0.18);
-    }
-
-    .hero-btn-primary:hover {
-      background: #e6751c;
-      transform: translateY(-2px);
-    }
-
-    /* Synchronized Training Card - Industrial Grade */
-    .research-card {
-        background: #fff;
-        border-radius: 24px;
-        overflow: hidden;
-        border: 1px solid rgba(0, 0, 0, 0.06);
-        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        padding: 8px;
-        cursor: pointer;
-        text-decoration: none !important;
-    }
-
-    .research-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
-        border-color: rgba(244, 130, 33, 0.2);
-    }
-
-    .card-img-wrap {
-        position: relative;
-        aspect-ratio: 16/10;
-        border-radius: 20px;
-        overflow: hidden;
-        background: var(--dark-bg);
-    }
-
-    .card-img-wrap img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.6s ease;
-    }
-
-    .research-card:hover .card-img-wrap img {
-        transform: scale(1.1);
-    }
-
-    .card-img-wrap::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(to top, rgba(17, 24, 39, 0.6), transparent);
-        z-index: 1;
-    }
-
-    .card-category {
-        position: absolute;
-        bottom: 20px;
-        left: 20px;
-        color: #fff;
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        z-index: 2;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        padding: 4px 12px;
-        border-radius: 50px;
-    }
-
-    .card-body-content {
-        padding: 30px 25px 35px;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .card-body-content h3 {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        font-size: 1.4rem;
-        line-height: 1.3;
-        color: var(--dark-bg);
-        margin-bottom: 1rem;
-        transition: color 0.3s ease;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .research-card:hover .card-body-content h3 {
-        color: var(--primary-orange);
-    }
-
-    .card-body-content p {
-        font-size: 0.95rem;
-        line-height: 1.7;
-        color: #555;
-        margin-bottom: 1.5rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        min-height: 5.1rem; /* Enforce uniform height so shorter description cards (like We Code) align perfectly */
-    }
-
-    /* Training stats layout & alignment */
-    .training-stats-row {
-        display: flex;
-        flex-wrap: wrap;
-        column-gap: 12px;
-        row-gap: 6px;
-        margin-bottom: 20px;
-        font-size: 11px;
-        font-weight: 700;
-        color: #888;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    .training-stats-item {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        white-space: nowrap;
-    }
-
-    .training-stats-item .material-symbols-outlined {
-        font-size: 15px;
-        color: var(--primary-orange);
-        flex-shrink: 0;
-    }
-
-    .read-link {
-        margin-top: auto;
-        font-weight: 700;
-        font-size: 13px;
-        color: var(--primary-orange);
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .read-link i {
-        font-size: 18px;
-        transition: transform 0.3s;
-    }
-
-    .research-card:hover .read-link i {
-        transform: translateX(5px);
-    }
-
-    .industry-standard-badge {
-      background-color: #ffffff;
-      padding: 2rem;
-      border-radius: 1rem;
-      border-left: 4px solid #f48221;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    }
-
-    .badge-label {
-      color: #f48221;
-      font-weight: 700;
-      font-size: 0.875rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.5rem;
-    }
-
-    @media (max-width: 992px) {
-      .hero-title {
-        font-size: 2.7rem;
-      }
-
-      .training-hero {
-        padding: 60px 0 50px;
-      }
-    }
-  </style>
-
-
-
-  <!-- ====== Page Header ====== -->
-  <section class="page-header">
+<!-- ====== Page Header ====== -->
+<section class="page-header">
     <div class="container">
-      <div class="row">
-        <div class="col-lg-12">
-          <h1 class="page-title">Training <span>Programs</span></h1>
-          <div class="breadcrumb-custom">
-            <div class="breadcrumb-item-custom">
-              <a href="<?= BASE_URL ?>/">Home</a>
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-title">Training <span>Programs</span></h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb-custom">
+                        <li class="breadcrumb-item-custom">
+                            <a href="<?= BASE_URL ?>/">Home</a>
+                        </li>
+                        <li class="breadcrumb-item-custom active" aria-current="page">
+                            Trainings
+                        </li>
+                    </ol>
+                </nav>
             </div>
-            <div class="breadcrumb-separator"></div>
-            <div class="breadcrumb-item-custom active">
-              Training
-            </div>
-          </div>
         </div>
-      </div>
     </div>
-  </section>
+</section>
 
-
-  <!-- ====== Hero Section Start ====== -->
-  <section class="training-hero">
+<!-- ====== Trainings Section ====== -->
+<?php
+if (!function_exists('truncateTrainingDescWordAware')) {
+    function truncateTrainingDescWordAware($text, $limit = 118) {
+        $text = trim(preg_replace('/\s+/', ' ', strip_tags(stripslashes($text))));
+        if ($text === '' || mb_strlen($text) <= $limit) {
+            return $text;
+        }
+        $truncated = mb_substr($text, 0, $limit);
+        $lastSpace = mb_strrpos($truncated, ' ');
+        if ($lastSpace !== false) {
+            $truncated = mb_substr($truncated, 0, $lastSpace);
+        }
+        return rtrim($truncated, ".,;:- ") . '...';
+    }
+}
+?>
+<section id="services" class="section-padding trainings-page-section">
     <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-10 text-center">
-          <span class="hero-eyebrow-pill">
-            <span class="material-symbols-outlined" style="font-size: 16px;">auto_awesome</span>
-            Professional Growth
-          </span>
-          <h1 class="hero-title">Our Training <span>Programs</span></h1>
-          <p class="hero-subtitle">Elevate your technical and interpersonal skills through curated, high-impact paths from Spider Technologies.</p>
-          <div class="mt-5">
-            <a href="#services" class="hero-btn-primary">Browse Programs</a>
-          </div>
-          <div class="row justify-content-center mt-5">
-            <div class="col-lg-6">
-              <div class="industry-standard-badge text-left">
-                <div class="badge-label">
-                  <span class="material-symbols-outlined fill-1">verified</span>
-                  Industry Standard
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-8 text-center">
+                <span class="section-eyebrow">
+                    <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                        <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                    </svg>
+                    <span class="eyebrow-label-text">Upskill With Confidence</span>
+                    <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                        <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                    </svg>
+                </span>
+                <br>
+                <h2 class="section-title">Practical Tech <span>Training Programs</span></h2>
+                <p class="section-subtitle">Fast-track your engineering and digital career with hands-on curriculum vetted by Spider Technologies and enterprise partners.</p>
+                <div class="training-trust-pill">
+                    <span class="material-symbols-outlined trust-icon">verified</span>
+                    <span>Industry Standard Curriculum &bull; Recognized by Enterprise Partners</span>
                 </div>
-                <p class="mb-0 text-muted small">All programs are verified and recognized by our global network of enterprise partners.</p>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </section>
-  <!-- ====== Hero Section End ====== -->
 
-  <!-- ====== Trainings Start ====== -->
-  <section id="services" class="section-padding bg-light">
-    <div class="container">
-      <div class="row justify-content-center mb-5">
-        <div class="col-lg-8 text-center">
-          <span class="tag-eyebrow">Upskill with confidence</span>
-          <h2 class="section-title">Fast-track your career with practical tech training</h2>
-          <p class="section-subtitle">Build role-ready skills with curriculum vetted by Spider Technologies and partners.</p>
-        </div>
-      </div>
+        <div class="row g-4">
+            <?php if (!empty($trainings)): ?>
+                <?php foreach ($trainings as $index => $training):
+                    $isFeatured = ($index === 0);
+                    $rawImg = trim($training['image_url'] ?? $training['training_image'] ?? '');
+                    $imageSrc = $rawImg !== '' ? resolvePath($rawImg) : '';
+                    $hasImg = ($rawImg !== '');
+                    $tName = trim(strip_tags(stripslashes($training['training_name'] ?? 'Training Program')));
+                    $tDesc = truncateTrainingDescWordAware($training['training_description'] ?? '', 118);
+                    $certifiedCount = (int) ($training['certified_count'] ?? 0);
+                ?>
+                <div class="col-lg-4 col-md-6 mb-4 d-flex">
+                    <div class="research-card">
+                        <div class="card-img-wrap">
+                            <span class="card-category"><?= $isFeatured ? 'Featured Program' : 'Certification Track' ?></span>
+                            <?php if ($hasImg): ?>
+                                <img src="<?= htmlspecialchars($imageSrc) ?>"
+                                     alt="<?= htmlspecialchars($tName) ?>"
+                                     loading="lazy"
+                                     decoding="async"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <?php endif; ?>
+                            <div class="training-img-fallback" style="display: <?= $hasImg ? 'none' : 'flex' ?>;" aria-hidden="true">
+                                <svg class="fallback-svg-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="6" y="10" width="52" height="44" rx="6" stroke="currentColor" stroke-width="2.5" stroke-dasharray="4 3"/>
+                                    <path d="M32 20L16 28L32 36L48 28L32 20Z" stroke="#f48221" stroke-width="2.5" stroke-linejoin="round"/>
+                                    <path d="M22 31V40C22 42.5 26.5 45 32 45C37.5 45 42 42.5 42 40V31" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                                </svg>
+                                <span class="fallback-label">Training Track</span>
+                            </div>
+                        </div>
+                        <div class="card-body-content">
+                            <?php if (!empty($training['active_cohort'])): ?>
+                                <?php
+                                $cCode = 'DSE';
+                                if (!empty($training['training_name']) && stripos($training['training_name'], 'Digital Skills') === false) {
+                                    $words = preg_split('/\s+/', trim(strip_tags($training['training_name'])));
+                                    $cCode = '';
+                                    foreach ($words as $w) {
+                                        if (strlen($w) > 2) $cCode .= strtoupper($w[0]);
+                                    }
+                                    if (!$cCode) $cCode = 'Cohort';
+                                }
+                                $cNum = $training['active_cohort']['cohort_number'] ?? 4;
+                                $badgeLabel = $cCode . ' Cohort ' . $cNum . ' Registration Open';
+                                ?>
+                                <div class="card-cohort-wrap mb-2">
+                                    <span class="card-cohort-badge open">
+                                        <span class="cohort-pulse-dot"></span>
+                                        <span><?= htmlspecialchars($badgeLabel) ?></span>
+                                    </span>
+                                </div>
+                            <?php elseif (!empty($training['upcoming_cohort'])): ?>
+                                <div class="card-cohort-wrap mb-2">
+                                    <span class="card-cohort-badge upcoming">
+                                        <span class="cohort-dot-upcoming"></span>
+                                        <span>Upcoming: Starts <?= date('M d', strtotime($training['upcoming_cohort']['start_date'])) ?></span>
+                                    </span>
+                                </div>
+                            <?php endif; ?>
+                            <a href="<?= BASE_URL ?>/trainings/detail?id=<?= (int) $training['id']; ?>" class="card-title-link">
+                                <h3><?= htmlspecialchars($tName) ?></h3>
+                            </a>
+                            <p class="training-card-desc"><?= htmlspecialchars($tDesc) ?></p>
 
-      <div class="row g-4">
-        <?php if (!empty($trainings)): ?>
-          <?php foreach ($trainings as $index => $training): ?>
-            <?php
-            $is_featured = $index === 0;
-            $iconName = 'school';
-            if (!empty($training['training_icon']) && preg_match('/^[a-z0-9_]+$/i', $training['training_icon'])) {
-              $iconName = $training['training_icon'];
-            }
-            $imageSrc = resolvePath($training['image_url'] ?? $training['training_image'] ?? '');
-            ?>
-            <div class="col-lg-4 col-md-6 mb-4 d-flex">
-              <div class="research-card">
-                <div class="card-img-wrap">
-                  <img src="<?= $imageSrc ?>" alt="<?= htmlspecialchars(strip_tags($training['training_name'])) ?>">
-                  <div class="card-category">[ <?= $is_featured ? 'Featured' : 'Program' ?> ]</div>
+                            <div class="training-stats-row">
+                                <span class="training-stats-item">
+                                    <span class="material-symbols-outlined">verified</span>
+                                    <span><?= number_format($certifiedCount) ?> Certified</span>
+                                </span>
+                                <span class="training-stats-item">
+                                    <span class="material-symbols-outlined">language</span>
+                                    <span>English</span>
+                                </span>
+                            </div>
+
+                            <a href="<?= BASE_URL ?>/trainings/detail?id=<?= (int) $training['id']; ?>" class="read-link">
+                                <span>Explore Program</span>
+                                <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body-content">
-                  <a href="<?= BASE_URL ?>/trainings/detail?id=<?= stripslashes($training['id']); ?>" class="text-decoration-none">
-                    <h3><?= htmlspecialchars(strip_tags($training['training_name'])) ?></h3>
-                  </a>
-                  <p><?= strip_tags($training['training_description']) ?></p>
-                  
-                  <div class="training-stats-row">
-                      <span class="training-stats-item"><span class="material-symbols-outlined">verified</span> <?= number_format($training['certified_count'] ?? 0) ?> Certified</span>
-                      <span class="training-stats-item"><span class="material-symbols-outlined">language</span> ENG</span>
-                  </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="col-12">
+                    <div class="empty-state">
+                        <span class="material-symbols-outlined">school</span>
+                        <h4>No Training Programs Available Yet</h4>
+                        <p>New cohorts and technical bootcamps are being scheduled. Check back soon!</p>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
 
-                  <div class="d-flex align-items-center justify-content-between mt-auto">
-                    <a href="<?= BASE_URL ?>/trainings/detail?id=<?= stripslashes($training['id']); ?>" class="read-link">
-                      View Details <i class="material-symbols-outlined">trending_flat</i>
+        <!-- Corporate Training CTA Banner -->
+        <div class="premium-cta">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-lg-8 mb-3 mb-lg-0 text-lg-left text-center">
+                    <h2 class="premium-cta-title">Need Custom <span>Corporate Training?</span></h2>
+                    <p class="premium-cta-desc">
+                        We design tailored engineering bootcamps, cybersecurity workshops, and digital transformation programs for teams and organizations.
+                    </p>
+                </div>
+                <div class="col-lg-4 text-lg-right text-center">
+                    <a href="<?= BASE_URL ?>/contact" class="cta-button">
+                        <span>Request Team Training</span>
+                        <span class="material-symbols-outlined">arrow_forward</span>
                     </a>
-                  </div>
                 </div>
-              </div>
             </div>
-          <?php endforeach; ?>
-        <?php else: ?>
-          <div class="col-12">
-            <div class="empty-state">
-              <span class="material-symbols-outlined">folder_open</span>
-              <p>No trainings found!</p>
-            </div>
-          </div>
-        <?php endif; ?>
-      </div>
+        </div>
     </div>
-  </section>
-  <!-- ====== Trainings End ====== -->
+</section>
 
-
-  <!-- Include Modular Newsletter -->
-  <?php include ROOT_PATH . '/views/layout/newsletter.php'; ?>
+<!-- Include Modular Newsletter -->
+<?php include ROOT_PATH . '/views/layout/newsletter.php'; ?>

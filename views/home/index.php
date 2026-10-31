@@ -27,607 +27,7 @@ foreach ($banners as &$banner) {
 ?>
 
 <!-- Custom Home Styles -->
-<style>
-    :root {
-        --primary-orange: #f48221;
-        --dark-bg: #111111;
-        --text-muted: #666666;
-    }
-
-    /* Hero Slider */
-    .home-hero {
-        position: relative;
-        height: 100vh;
-        min-height: 800px;
-        background: var(--dark-bg);
-        overflow: hidden;
-    }
-
-    .hero-slide {
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-        opacity: 0;
-        transform: scale(1.05);
-        transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out;
-    }
-
-    .hero-slide.active {
-        opacity: 1;
-        transform: scale(1);
-    }
-
-    .hero-slide img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        filter: brightness(0.65);
-    }
-
-    .hero-overlay {
-        position: absolute;
-        inset: 0;
-        z-index: 10;
-        display: flex;
-        align-items: center;
-        background: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.2) 60%, transparent 100%);
-        padding-top: 80px;
-        /* Reduced to bring stats more into view */
-    }
-
-    .hero-content {
-        max-width: 850px;
-        color: #fff;
-        padding: 0 15px;
-    }
-
-    .hero-eyebrow {
-        color: var(--primary-orange);
-        text-transform: uppercase;
-        letter-spacing: 3px;
-        font-weight: 700;
-        font-size: 0.85rem;
-        margin-bottom: 1.25rem;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .hero-eyebrow::after {
-        content: '';
-        height: 2px;
-        width: 40px;
-        background: var(--primary-orange);
-    }
-
-    .hero-title {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 800;
-        font-size: clamp(2.5rem, 5vw, 4.5rem);
-        line-height: 1.1;
-        margin-bottom: 1.5rem;
-        color: rgba(255, 255, 255, 0.85);
-        /* Match description color for readability */
-    }
-
-    .hero-title span {
-        color: var(--primary-orange);
-    }
-
-    .hero-desc {
-        font-family: 'Open Sans', sans-serif;
-        font-size: 1.2rem;
-        color: rgba(255, 255, 255, 0.85);
-        margin-bottom: 1.5rem;
-        /* Reduced for tighter layout */
-        max-width: 650px;
-        line-height: 1.7;
-    }
-
-    .hero-btns {
-        display: flex;
-        gap: 1.25rem;
-        margin-bottom: 3rem;
-        /* Reduced to pull stats up */
-    }
-
-    .btn-pill {
-        padding: 16px 38px;
-        border-radius: 50px;
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        text-decoration: none !important;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-
-    .btn-orange {
-        background: var(--primary-orange);
-        color: #fff;
-        box-shadow: 0 10px 25px rgba(244, 130, 33, 0.35);
-        border: 2px solid var(--primary-orange);
-    }
-
-    .btn-orange:hover {
-        background: #e6751c;
-        border-color: #e6751c;
-        transform: translateY(-5px);
-        color: #fff;
-    }
-
-    .btn-outline-white {
-        border: 2px solid #fff;
-        color: #fff;
-        background: transparent;
-    }
-
-    .btn-outline-white:hover {
-        background: #fff;
-        color: var(--dark-bg);
-        transform: translateY(-5px);
-    }
-
-    /* Hero Stats */
-    .hero-stats {
-        display: flex;
-        gap: 4.5rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.2);
-        padding-top: 1.5rem;
-    }
-
-    .hero-stat-item {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .hero-stat-value {
-        font-size: 2.5rem;
-        font-weight: 800;
-        font-family: 'Poppins', sans-serif;
-        color: #fff;
-        line-height: 1;
-    }
-
-    .hero-stat-label {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        color: rgba(255, 255, 255, 0.6);
-        letter-spacing: 1.5px;
-        margin-top: 8px;
-    }
-
-    .section-padding {
-        padding: 120px 0;
-    }
-
-    @media (max-width: 768px) {
-        .section-padding {
-            padding: 40px 0;
-        }
-    }
-
-    .section-header {
-        text-align: center;
-        margin-bottom: 70px;
-    }
-
-    .section-footer {
-        margin-top: 60px;
-        text-align: center;
-    }
-
-    .section-title {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 800;
-        font-size: 2.8rem;
-        color: var(--dark-bg);
-        margin-bottom: 1.25rem;
-        position: relative;
-        display: inline-block;
-        line-height: 1.2;
-    }
-
-    .section-title span {
-        color: var(--primary-orange);
-    }
-
-    .section-subtitle {
-        color: var(--text-muted);
-        max-width: 700px;
-        margin: 0 auto;
-        font-size: 1.1rem;
-        line-height: 1.7;
-    }
-
-    /* About Us */
-    .about-img-group {
-        position: relative;
-        padding-right: 40px;
-        padding-bottom: 40px;
-    }
-
-    .about-img-main {
-        width: 100%;
-        border-radius: 30px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
-    }
-
-    .about-experience-card {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        background: var(--primary-orange);
-        color: #fff;
-        padding: 20px;
-        border-radius: 25px;
-        text-align: center;
-        min-width: 160px;
-        box-shadow: 0 15px 30px rgba(244, 130, 33, 0.3);
-    }
-
-    .exp-years {
-        font-size: 3rem;
-        font-weight: 800;
-        display: block;
-        line-height: 1;
-        font-family: 'Poppins', sans-serif;
-    }
-
-    .exp-text {
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        font-weight: 700;
-        letter-spacing: 1px;
-    }
-
-    /* Services Grid */
-    .service-card-new {
-        background: #fff;
-        border: 1px solid #f0f0f0;
-        padding: 50px 40px;
-        border-radius: 24px;
-        transition: all 0.4s ease;
-        height: 100%;
-        text-decoration: none !important;
-        display: block;
-    }
-
-    .service-card-new:hover {
-        transform: translateY(-12px);
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
-        border-color: rgba(244, 130, 33, 0.2);
-    }
-
-    .service-icon-box {
-        width: 70px;
-        height: 70px;
-        background: rgba(244, 130, 33, 0.1);
-        color: var(--primary-orange);
-        border-radius: 18px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.8rem;
-        margin-bottom: 2rem;
-        transition: all 0.4s ease;
-    }
-
-    .service-card-new:hover .service-icon-box {
-        background: var(--primary-orange);
-        color: #fff;
-        transform: rotateY(180deg);
-    }
-
-    .service-title {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        font-size: 1.4rem;
-        color: var(--dark-bg);
-        margin-bottom: 1rem;
-    }
-
-    .service-text {
-        color: var(--text-muted);
-        line-height: 1.6;
-        margin-bottom: 0;
-    }
-
-    /* Events Horizontal Card */
-    .event-card-horizontal {
-        background: #fff;
-        border-radius: 24px;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-        border: 1px solid #f0f0f0;
-        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        height: 100%;
-    }
-
-    .event-card-horizontal:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
-        border-color: rgba(244, 130, 33, 0.2);
-    }
-
-    .event-img-h {
-        height: 100%;
-        min-height: 350px;
-        object-fit: cover;
-    }
-
-    .event-content-h {
-        padding: 50px;
-    }
-
-    .event-tag {
-        background: rgba(244, 130, 33, 0.1);
-        color: var(--primary-orange);
-        padding: 6px 16px;
-        border-radius: 50px;
-        font-weight: 700;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 1.5rem;
-    }
-
-    .event-meta-h {
-        display: flex;
-        gap: 25px;
-        margin-bottom: 2rem;
-    }
-
-    .meta-item-h {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--text-muted);
-        font-size: 0.9rem;
-    }
-
-    .meta-item-h i {
-        color: var(--primary-orange);
-    }
-
-    /* Projects Grid - Ported from Projects Page */
-    .project-card-new {
-        background-color: #ffffff;
-        border-radius: 1.5rem;
-        padding: 0.25rem;
-        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        height: 100%;
-        border: 1px solid #e9ecef;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        text-decoration: none !important;
-    }
-
-    .project-card-new:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-        border-color: rgba(244, 130, 33, 0.2);
-    }
-
-    .card-img-wrap {
-        aspect-ratio: 16/9;
-        border-radius: 1.25rem;
-        overflow: hidden;
-        margin-bottom: 1.5rem;
-        position: relative;
-    }
-
-    .card-img-wrap img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.6s ease;
-    }
-
-    .project-card-new:hover .card-img-wrap img {
-        transform: scale(1.08);
-    }
-
-    .card-content-p {
-        padding: 0 1.5rem 1.5rem;
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-    }
-
-    .card-category-p {
-        font-size: 0.65rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: var(--primary-orange);
-        margin-bottom: 8px;
-    }
-
-    .card-title-p {
-        font-size: 1.25rem;
-        font-weight: 700;
-        margin-bottom: 0.8rem;
-        color: var(--dark-bg);
-        line-height: 1.3;
-        transition: color 0.3s;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .project-card-new:hover .card-title-p {
-        color: var(--primary-orange);
-    }
-
-    .view-btn-p {
-        margin-top: auto;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--primary-orange);
-        font-weight: 700;
-        font-size: 0.85rem;
-        transition: gap 0.3s;
-    }
-
-    .view-btn-p:hover {
-        gap: 12px;
-    }
-
-    /* Testimonials Slider - Balanced Height & Word-Aware Truncation */
-    #testimonial-carousel .owl-stage {
-        display: flex;
-        align-items: stretch;
-    }
-    #testimonial-carousel .owl-item {
-        display: flex;
-        height: auto;
-    }
-    .testimonial-slide-new {
-        background: #fff;
-        padding: 28px 25px 22px 25px;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-        margin: 10px;
-        border: 1px solid #f2f2f2;
-        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        width: 100%;
-    }
-
-    .testimonial-slide-new:hover {
-        border-color: rgba(244, 130, 33, 0.3);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.06);
-        transform: translateY(-5px);
-    }
-
-    .quote-icon {
-        position: absolute;
-        top: 18px;
-        right: 20px;
-        font-size: 1.8rem;
-        color: rgba(244, 130, 33, 0.1);
-    }
-
-    .testimonial-text {
-        font-family: 'Open Sans', sans-serif;
-        font-size: 0.92rem;
-        line-height: 1.6;
-        color: #555;
-        margin-bottom: 1.5rem;
-        font-style: italic;
-        position: relative;
-        z-index: 1;
-        flex: 1;
-    }
-
-    .client-info-v2 {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        border-top: 1px solid #f8f8f8;
-        padding-top: 15px;
-        margin-top: auto;
-    }
-
-    .client-avatar-v2 {
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        background: rgba(244, 130, 33, 0.1);
-        color: var(--primary-orange);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .client-avatar-v2 .material-symbols-outlined {
-        font-size: 1.5rem;
-    }
-
-    .client-name-v2 {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 800;
-        font-size: 1.05rem;
-        color: var(--dark-bg);
-        margin: 0;
-        line-height: 1.2;
-    }
-
-    .client-job-v2 {
-        font-size: 0.75rem;
-        color: var(--primary-orange);
-        margin: 0;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-
-
-    @media (max-width: 991px) {
-        .hero-stats {
-            gap: 2.5rem;
-        }
-
-        .hero-title {
-            font-size: 3.2rem;
-        }
-
-        .event-img-h {
-            height: 250px;
-            min-height: auto;
-        }
-
-        .newsletter-section {
-            padding: 60px 30px;
-        }
-
-        .hero-btns {
-            flex-direction: column;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .hero-stats {
-            display: none;
-        }
-
-        .hero-btns .btn-pill {
-            width: 100%;
-        }
-
-        .hero-content {
-            text-align: center;
-        }
-
-        .hero-eyebrow {
-            justify-content: center;
-        }
-
-        .hero-eyebrow::after {
-            display: none;
-        }
-
-        .hero-desc {
-            margin-left: auto;
-            margin-right: auto;
-        }
-    }
-</style>
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/home.css?v=<?= filemtime(ROOT_PATH . '/css/home.css') ?>" />
 
 <!-- ====== Hero Slider Section ====== -->
 <section class="home-hero" x-data="{
@@ -658,7 +58,17 @@ foreach ($banners as &$banner) {
     <div class="hero-overlay">
         <div class="container">
             <div class="hero-content" x-show="true" x-transition:enter="animate__animated animate__fadeInUp">
-                <span class="hero-eyebrow">Precision and Speed</span>
+                <span class="hero-eyebrow">
+                    <svg class="hero-eyebrow-sep" width="40" height="12" viewBox="0 0 40 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                        <rect x="4" y="5.25" width="36" height="1.5" rx="0.5" fill="rgba(244, 130, 33, 0.58)"/>
+                    </svg>
+                    <span class="hero-eyebrow-text">Precision and Speed</span>
+                    <svg class="hero-eyebrow-sep" width="40" height="12" viewBox="0 0 40 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="0" y="5.25" width="36" height="1.5" rx="0.5" fill="rgba(244, 130, 33, 0.58)"/>
+                        <rect x="37" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                    </svg>
+                </span>
 
                 <h1 class="hero-title" x-html="slides[activeSlide].banner_title"></h1>
 
@@ -699,6 +109,13 @@ foreach ($banners as &$banner) {
             </div>
         </div>
     </div>
+
+    <!-- Hero Slide Indicators -->
+    <div class="hero-slide-dots" aria-label="Slide indicators">
+        <template x-for="(slide, index) in slides" :key="index">
+            <button @click="activeSlide = index" class="hero-dot" :class="{ 'active': activeSlide === index }" :aria-label="'Go to slide ' + (index + 1)"></button>
+        </template>
+    </div>
 </section>
 
 <!-- ====== About Us Section ====== -->
@@ -720,44 +137,74 @@ foreach ($banners as &$banner) {
                     Our Story
                 </span>
                 <h2 class="section-title">Driving <span>Innovation</span> with Purpose</h2>
-                <div class="section-subtitle text-left mb-4" style="margin: 0;">
+                <div class="about-desc text-left">
                     <?= stripslashes($about[0]['details'] ?? ''); ?>
                 </div>
-                <p class="mb-5 text-muted">
-                    <?= stripslashes($about[0]['short_details'] ?? ''); ?>
-                </p>
-                <a href="<?= BASE_URL ?>/about" class="btn-pill btn-orange">Learn More About Us</a>
+                <?php if (!empty(trim($about[0]['short_details'] ?? ''))): ?>
+                    <p class="about-desc text-muted">
+                        <?= stripslashes($about[0]['short_details']); ?>
+                    </p>
+                <?php endif; ?>
+                <a href="<?= BASE_URL ?>/about" class="btn-pill btn-orange about-cta-btn">Learn More About Us</a>
             </div>
         </div>
     </div>
 </section>
 
 <!-- ====== Services Section ====== -->
-<section class="section-padding bg-light">
+<section class="section-padding bg-light services-section">
     <div class="container">
         <div class="section-header">
+                        <span class="section-eyebrow">
+                <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                    <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                </svg>
+                <span class="eyebrow-label-text">What We Do</span>
+                <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                    <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                </svg>
+            </span>
+            <br>
             <h2 class="section-title">Our Core <span>Services</span></h2>
             <p class="section-subtitle">We provide high-impact technical solutions designed to scale your business and empower your workforce.</p>
         </div>
-        <div class="row">
-            <?php foreach ($services as $service): ?>
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <a href="<?= BASE_URL ?>/services/detail?id=<?= $service['id']; ?>" class="service-card-new">
-                        <div class="service-icon-box">
-                            <i class="<?= $service['service_icon']; ?>"></i>
+        <div class="row services-grid-row">
+            <?php foreach ($services as $sIdx => $service):
+                $serial = sprintf("SRV-%02d", $sIdx + 1);
+            ?>
+                <div class="col-lg-4 col-md-6 services-grid-col d-flex">
+                    <a href="<?= BASE_URL ?>/services/detail?id=<?= $service['id']; ?>" class="service-card-new w-100">
+                        <div class="service-card-top">
+                            <div class="service-card-identity">
+                                <div class="service-icon-box">
+                                    <i class="<?= $service['service_icon']; ?>"></i>
+                                </div>
+                                <h3 class="service-title"><?= htmlspecialchars($service['service_name']); ?></h3>
+                            </div>
+                            <span class="service-serial-tag"><?= $serial; ?></span>
                         </div>
-                        <h3 class="service-title"><?= htmlspecialchars($service['service_name']); ?></h3>
                         <p class="service-text"><?= htmlspecialchars($service['service_description']); ?></p>
+                        <div class="service-card-footer">
+                            <span class="service-pill-badge">
+                                <span class="service-status-dot"></span>
+                                <span>Enterprise Ready</span>
+                            </span>
+                            <span class="service-card-link">
+                                <span>Explore</span>
+                                <span class="material-symbols-outlined">arrow_forward</span>
+                            </span>
+                        </div>
                     </a>
                 </div>
             <?php endforeach; ?>
         </div>
         <div class="section-footer">
-            <a href="<?= BASE_URL ?>/services" class="btn-pill btn-orange">Explore All Services</a>
+            <a href="<?= BASE_URL ?>/services" class="btn-pill btn-orange services-cta-btn">Explore All Services</a>
         </div>
     </div>
 </section>
-
 <!-- ====== Upcoming Events Section ====== -->
 <?php if (!empty($upcoming_events)): ?>
     <section class="section-padding">
@@ -819,26 +266,97 @@ foreach ($banners as &$banner) {
 <?php endif; ?>
 
 <!-- ====== Projects Showcase ====== -->
-<section class="section-padding bg-light">
+<section class="section-padding bg-light projects-showcase-section">
     <div class="container">
         <div class="section-header">
+                        <span class="section-eyebrow">
+                <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect x="0" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                    <rect x="4" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                </svg>
+                <span class="eyebrow-label-text">Our Portfolio</span>
+                <svg class="eyebrow-line-svg" width="38" height="12" viewBox="0 0 38 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect x="0" y="5.25" width="34" height="1.5" rx="0.5" fill="#cbd5e1"/>
+                    <rect x="35" y="1.5" width="3" height="9" rx="0.5" fill="#f48221"/>
+                </svg>
+            </span>
+            <br>
             <h2 class="section-title">Featured <span>Projects</span></h2>
             <p class="section-subtitle">We design innovative digital solutions leveraging cutting-edge technology.</p>
         </div>
         <div class="row">
-            <?php foreach ($projects as $project): ?>
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <a href="<?= BASE_URL ?>/projects/detail?id=<?= $project['project_id']; ?>" class="project-card-new">
+            <?php foreach ($projects as $pIdx => $project):
+                $rawPic = trim($project['project_pic'] ?? '');
+                $hasPic = false;
+                $pPic = '';
+                if ($rawPic !== '') {
+                    if (preg_match('#^https?://#i', $rawPic)) {
+                        $pPic = $rawPic;
+                        $hasPic = true;
+                    } else {
+                        $relPath = ltrim($rawPic, './');
+                        if (file_exists(ROOT_PATH . '/' . $relPath)) {
+                            $pPic = BASE_URL . '/' . $relPath;
+                            $hasPic = true;
+                        }
+                    }
+                }
+                $pTitle = trim(stripslashes($project['project_name'] ?? 'Untitled Project'));
+                $pCategory = trim(stripslashes($project['service_name'] ?? 'Technology Solution'));
+                if (!function_exists('truncateProjectDescWordAware')) {
+                    function truncateProjectDescWordAware($text, $limit = 112) {
+                        $text = trim(preg_replace('/\s+/', ' ', strip_tags(stripslashes($text))));
+                        if ($text === '' || mb_strlen($text) <= $limit) {
+                            return $text;
+                        }
+                        $truncated = mb_substr($text, 0, $limit);
+                        $lastSpace = mb_strrpos($truncated, ' ');
+                        if ($lastSpace !== false) {
+                            $truncated = mb_substr($truncated, 0, $lastSpace);
+                        }
+                        return rtrim($truncated, ".,;:- ") . '...';
+                    }
+                }
+                $pDesc = truncateProjectDescWordAware($project['project_description'] ?? '', 112);
+                $serial = sprintf("PRJ-%02d", $pIdx + 1);
+            ?>
+                <div class="col-lg-4 col-md-6 mb-4 d-flex">
+                    <a href="<?= BASE_URL ?>/projects/detail?id=<?= (int)$project['project_id']; ?>"
+                       class="project-card-new w-100"
+                       aria-label="View project details for <?= htmlspecialchars($pTitle); ?>">
                         <div class="card-img-wrap">
-                            <?php $pPic = (empty($project['project_pic'])) ? BASE_URL . '/images/placeholder-banner.jpg' : ( (preg_match('#^https?://#i', $project['project_pic'])) ? $project['project_pic'] : BASE_URL . '/' . ltrim($project['project_pic'], './') ); ?>
-                            <img src="<?= $pPic ?>" alt="<?= stripslashes($project['project_name']); ?>" loading="lazy" decoding="async">
+                            <span class="project-serial-tag"><?= $serial; ?></span>
+                            <span class="project-category-tag"><?= htmlspecialchars($pCategory); ?></span>
+                            <?php if ($hasPic): ?>
+                                <img src="<?= htmlspecialchars($pPic) ?>"
+                                     alt="<?= htmlspecialchars($pTitle); ?>"
+                                     loading="lazy"
+                                     decoding="async"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <?php endif; ?>
+                            <div class="project-img-fallback" style="display: <?= $hasPic ? 'none' : 'flex' ?>;" aria-hidden="true">
+                                <svg class="fallback-svg-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="6" y="10" width="52" height="44" rx="6" stroke="currentColor" stroke-width="2.5" stroke-dasharray="4 3"/>
+                                    <circle cx="22" cy="24" r="4.5" stroke="#f48221" stroke-width="2.5"/>
+                                    <path d="M10 46L23 33C24.5 31.5 26.8 31.5 28.3 33L38 42.5L44.5 36C46 34.5 48.3 34.5 49.8 36L56 42.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span class="fallback-label">Thumbnail Unavailable</span>
+                            </div>
                         </div>
                         <div class="card-content-p">
-                            <span class="card-category-p"><?= $project['service_name']; ?></span>
-                            <h4 class="card-title-p"><?= stripslashes($project['project_name']); ?></h4>
-                            <div class="view-btn-p">
-                                View Project Details
-                                <span class="material-symbols-outlined" style="font-size: 1.1rem;">arrow_forward</span>
+                            <h3 class="card-title-p" title="<?= htmlspecialchars($pTitle); ?>"><?= htmlspecialchars($pTitle); ?></h3>
+                            <?php if ($pDesc !== ''): ?>
+                                <p class="card-desc-p"><?= htmlspecialchars($pDesc); ?></p>
+                            <?php endif; ?>
+                            <div class="project-footer">
+                                <span class="project-pill-badge">
+                                    <span class="project-status-dot"></span>
+                                    <span>Production Ready</span>
+                                </span>
+                                <div class="view-btn-p">
+                                    <span>Case Study</span>
+                                    <span class="material-symbols-outlined">arrow_forward</span>
+                                </div>
                             </div>
                         </div>
                     </a>
@@ -846,64 +364,12 @@ foreach ($banners as &$banner) {
             <?php endforeach; ?>
         </div>
         <div class="section-footer">
-            <a href="<?= BASE_URL ?>/projects" class="btn-pill btn-orange">View All Projects</a>
+            <a href="<?= BASE_URL ?>/projects" class="btn-pill btn-orange services-cta-btn">View All Projects</a>
         </div>
     </div>
 </section>
-
-<!-- ====== Testimonials Section ====== -->
-<section class="section-padding">
-    <div class="container">
-        <div class="section-header">
-            <h2 class="section-title">What <span>Clients Say</span></h2>
-            <p class="section-subtitle">Trusted by industry leaders to deliver excellence and technical innovation.</p>
-        </div>
-        <div class="owl-carousel owl-theme" id="testimonial-carousel">
-            <?php 
-            // Smart word-boundary truncation helper to avoid mid-word cuts or CSS line-clamp issues
-            if (!function_exists('truncateTestimonialWordAware')) {
-                function truncateTestimonialWordAware($text, $limit = 140) {
-                    $text = trim(stripslashes($text), " \"'\t\n\r\0\x0B");
-                    if (mb_strlen($text) <= $limit) {
-                        return $text;
-                    }
-                    $truncated = mb_substr($text, 0, $limit);
-                    $lastSpace = mb_strrpos($truncated, ' ');
-                    if ($lastSpace !== false) {
-                        $truncated = mb_substr($truncated, 0, $lastSpace);
-                    }
-                    $truncated = rtrim($truncated, ".,;:-");
-                    return $truncated . '...';
-                }
-            }
-
-            foreach ($testimonials as $testimonial): 
-                $cleanQuote = truncateTestimonialWordAware($testimonial['testimonial'], 140);
-            ?>
-                <div class="item">
-                    <div class="testimonial-slide-new">
-                        <div class="quote-icon">
-                            <i class="fa-solid fa-quote-left"></i>
-                        </div>
-                        <p class="testimonial-text">
-                            "<?= htmlspecialchars($cleanQuote); ?>"
-                        </p>
-                        <div class="client-info-v2">
-                            <div class="client-avatar-v2">
-                                <span class="material-symbols-outlined">account_circle</span>
-                            </div>
-                            <div>
-                                <h5 class="client-name-v2"><?= stripslashes($testimonial['name']); ?></h5>
-                                <p class="client-job-v2"><?= stripslashes($testimonial['title']); ?>, <?= stripslashes($testimonial['organization']); ?></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
-
+<?php include ROOT_PATH . '/views/layout/testimonials.php'; ?>
+<?php include ROOT_PATH . '/views/layout/partners.php'; ?>
 <?php include ROOT_PATH . '/views/layout/newsletter.php'; ?>
 
 <script>
@@ -918,30 +384,6 @@ foreach ($banners as &$banner) {
             nav: false,
             margin: 30
         });
-
-        // Initialize Testimonial Carousel - Smooth Glide
-        $("#testimonial-carousel").owlCarousel({
-            loop: true,
-            margin: 20,
-            nav: false,
-            dots: true,
-            autoplay: true,
-            autoplayTimeout: 6000,
-            smartSpeed: 1000,
-            autoplayHoverPause: true,
-            responsive: {
-                0: {
-                    items: 1
-                },
-                768: {
-                    items: 2
-                },
-                1200: {
-                    items: 3
-                }
-            }
-        });
-
 
     });
 </script>

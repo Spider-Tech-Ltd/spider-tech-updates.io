@@ -1,12 +1,38 @@
 <?php
 
 /**
- * Dynamic Form Builder Utility for Bootstrap 4
- * Enhanced for rounded inputs, improved dropdown visibility, and multi-column layouts
+ * Modern Dynamic Form Builder Utility for Spider Tech
+ * High-craft, human-designed form generation from database specifications
  */
 
 class FormBuilder
 {
+    /**
+     * Maps field names/semantics to clean Material Symbols icons
+     */
+    private static function get_field_icon($name, $type)
+    {
+        $name = strtolower($name);
+
+        if (str_contains($name, 'email')) return 'mail';
+        if (str_contains($name, 'phone') || str_contains($name, 'tel') || str_contains($name, 'mobile')) return 'call';
+        if (str_contains($name, 'name')) return 'person';
+        if (str_contains($name, 'birth') || str_contains($name, 'date') || str_contains($name, 'age')) return 'calendar_today';
+        if (str_contains($name, 'gender') || str_contains($name, 'sex')) return 'wc';
+        if (str_contains($name, 'school') || str_contains($name, 'class') || str_contains($name, 'grade') || str_contains($name, 'qualif') || str_contains($name, 'degree')) return 'school';
+        if (str_contains($name, 'state') || str_contains($name, 'government') || str_contains($name, 'city') || str_contains($name, 'address') || str_contains($name, 'location')) return 'location_on';
+        if (str_contains($name, 'business') || str_contains($name, 'company') || str_contains($name, 'org') || str_contains($name, 'sector')) return 'domain';
+        if (str_contains($name, 'experience') || str_contains($name, 'year')) return 'history_edu';
+        if (str_contains($name, 'laptop') || str_contains($name, 'computer')) return 'laptop_mac';
+        if (str_contains($name, 'code') || str_contains($name, 'programming')) return 'terminal';
+        if (str_contains($name, 'parent') || str_contains($name, 'guardian') || str_contains($name, 'relat')) return 'supervisor_account';
+        if (str_contains($name, 'file') || str_contains($name, 'upload') || str_contains($name, 'proof') || str_contains($name, 'cert') || str_contains($name, 'id')) return 'attach_file';
+        if ($type === 'select') return 'list';
+        if ($type === 'number') return 'tag';
+
+        return 'edit_note';
+    }
+
     /**
      * Renders an individual form field based on its configuration
      */
@@ -15,7 +41,8 @@ class FormBuilder
         $name = $field['field_name'];
         $label = $field['field_label'];
         $type = $field['field_type'];
-        $required = $field['is_required'] ? 'required' : '';
+        $required = !empty($field['is_required']) ? 'required' : '';
+        $icon = self::get_field_icon($name, $type);
 
         $options = [];
         if (!empty($field['options'])) {
@@ -26,49 +53,62 @@ class FormBuilder
             }
         }
 
-        // Clean column control based on field semantic set; phone always full width
-        $half_width_fields = ['first_name', 'last_name', 'lastname', 'middle_name', 'email'];
-        if (in_array(strtolower($name), $half_width_fields, true)) {
-            $width_class = 'col-md-6';
+        // Intelligently calculate column width: database field_width takes precedence, followed by semantic pairing
+        $width_class = 'col-12';
+        if (!empty($field['field_width'])) {
+            $width_class = ($field['field_width'] === 'half') ? 'col-md-6' : 'col-12';
         } else {
-            $width_class = 'col-12';
+            $half_fields = [
+                'first_name', 'last_name', 'middle_name', 'firstname', 'lastname', 'full_name',
+                'email', 'email_alt', 'phone', 'phone_alt', 'phone_no',
+                'age', 'gender', 'date_of_birth',
+                'state_of_origin', 'local_government',
+                'current_class', 'school_name',
+                'parent_relationship', 'parent_phone', 'parent_email',
+                'years_of_experience', 'business_type', 'business_section', 'business_stage',
+                'has_laptop', 'prior_experience', 'emergency_contact_phone'
+            ];
+            if (in_array(strtolower($name), $half_fields, true)) {
+                $width_class = 'col-md-6';
+            }
         }
 
-        $html = '<div class="' . $width_class . ' mb-3">';
-        $html .= '<div class="form-group">';
-        $html .= '<label for="' . $name . '" class="form-label font-weight-bold" style="color: #444; margin-bottom: 8px; display: block;">' . htmlspecialchars($label);
+        $has_error = isset($errors[$name]);
+        $value = $old_input[$name] ?? '';
+
+        $html = '<div class="' . $width_class . ' mb-3 mb-md-4">';
+        $html .= '<div class="form-group-modern">';
+        $html .= '<label for="' . $name . '" class="form-label-modern">' . htmlspecialchars($label);
         if ($required) {
-            $html .= ' <span class="text-danger">*</span>';
+            $html .= ' <span class="req-star" title="Required">*</span>';
         }
         $html .= '</label>';
-
-        // Base style for all text-based inputs and selects
-        $has_error = isset($errors[$name]);
-        $border_color = $has_error ? '#dc3545' : '#ddd';
-        $input_style = "border-radius: 50px; padding: 15px 20px; border: 1px solid $border_color; min-height: 52px; transition: all 0.3s ease;";
-        $select_style = "border-radius: 50px; padding: 15px 20px; border: 1px solid $border_color; min-height: 52px; transition: all 0.3s ease;";
-        $textarea_style = "border-radius: 20px; padding: 15px 20px; border: 1px solid $border_color; min-height: 140px; transition: all 0.3s ease;";
-
-        $value = $old_input[$name] ?? '';
 
         switch ($type) {
             case 'text':
             case 'email':
             case 'number':
-                $html .= '<input type="' . $type . '" id="' . $name . '" name="' . $name . '" class="form-control ' . ($has_error ? 'is-invalid' : '') . '" style="' . $input_style . '" placeholder="Enter ' . strtolower(htmlspecialchars($label)) . '" value="' . htmlspecialchars($value) . '" ' . $required . '>';
+                $input_type = $type;
+                $html .= '<div class="input-wrapper-modern ' . ($has_error ? 'has-error' : '') . '">';
+                $html .= '<span class="material-symbols-outlined input-leading-icon">' . $icon . '</span>';
+                $html .= '<input type="' . $input_type . '" id="' . $name . '" name="' . $name . '" class="form-control-modern ' . ($has_error ? 'is-invalid' : '') . '" placeholder="Enter ' . strtolower(htmlspecialchars($label)) . '" value="' . htmlspecialchars($value) . '" ' . $required . '>';
+                $html .= '</div>';
                 break;
 
             case 'textarea':
-                $html .= '<textarea id="' . $name . '" name="' . $name . '" class="form-control ' . ($has_error ? 'is-invalid' : '') . '" rows="4" style="' . $textarea_style . '" placeholder="Enter ' . strtolower(htmlspecialchars($label)) . '" ' . $required . '>' . htmlspecialchars($value) . '</textarea>';
+                $html .= '<div class="input-wrapper-modern textarea-wrapper-modern ' . ($has_error ? 'has-error' : '') . '">';
+                $html .= '<textarea id="' . $name . '" name="' . $name . '" class="form-control-modern form-textarea-modern ' . ($has_error ? 'is-invalid' : '') . '" rows="3" placeholder="Enter ' . strtolower(htmlspecialchars($label)) . '" ' . $required . '>' . htmlspecialchars($value) . '</textarea>';
+                $html .= '</div>';
                 break;
 
             case 'select':
-                // Special handling for local_government examples if options are null
                 if ($name === 'local_government' && empty($options)) {
-                    $options = ['Kano Municipal', 'Tarauni', 'Nassarawa', 'Gwale', 'Fagge'];
+                    $options = ['Kano Municipal', 'Tarauni', 'Nassarawa', 'Gwale', 'Fagge', 'Dala', 'Ungogo', 'Kumbotso', 'Bichi', 'Gaya', 'Rano', 'Other'];
                 }
-                $html .= '<select id="' . $name . '" name="' . $name . '" class="form-control custom-select ' . ($has_error ? 'is-invalid' : '') . '" style="' . $select_style . ' height: auto; -webkit-appearance: none;" ' . $required . '>';
-                $html .= '<option value="">-- Select ' . htmlspecialchars($label) . ' --</option>';
+                $html .= '<div class="input-wrapper-modern select-wrapper-modern ' . ($has_error ? 'has-error' : '') . '">';
+                $html .= '<span class="material-symbols-outlined input-leading-icon">' . $icon . '</span>';
+                $html .= '<select id="' . $name . '" name="' . $name . '" class="form-control-modern form-select-modern ' . ($has_error ? 'is-invalid' : '') . '" ' . $required . '>';
+                $html .= '<option value="">Select ' . htmlspecialchars($label) . '</option>';
                 if (!empty($options)) {
                     foreach ($options as $option) {
                         $selected = ($value == $option) ? 'selected' : '';
@@ -76,44 +116,69 @@ class FormBuilder
                     }
                 }
                 $html .= '</select>';
+                $html .= '<span class="material-symbols-outlined select-chevron-icon">expand_more</span>';
+                $html .= '</div>';
                 break;
 
             case 'file':
-                $html .= '<div style="position: relative; border-radius: 50px; overflow: hidden; border: 1px solid #ddd; background: #fff;">';
-                $html .= '<input type="file" id="' . $name . '" name="' . $name . '" class="custom-file-input" style="position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer;" ' . $required . '>';
-                $html .= '<label for="' . $name . '" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; min-height: 52px; cursor: pointer; background: #fff; margin: 0;">';
-                $html .= '<span class="file-name-text" style="color: #999; font-weight: normal;">Choose file</span>';
-                $html .= '<span style="background: #f48221; color: #fff; padding: 8px 18px; border-radius: 20px; font-weight: 600; font-size: 0.9rem; white-space: nowrap; margin-left: 10px;">Select</span>';
-                $html .= '</label>';
+                // Clean, space-efficient horizontal file attachment component
+                $html .= '<div class="compact-file-upload ' . ($has_error ? 'has-error' : '') . '" data-name="' . $name . '">';
+                $html .= '<input type="file" id="' . $name . '" name="' . $name . '" class="compact-file-input" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" ' . $required . '>';
+                $html .= '<div class="compact-file-idle">';
+                $html .= '<div class="d-flex align-items-center gap-2 min-w-0 flex-grow-1">';
+                $html .= '<span class="material-symbols-outlined file-icon">attach_file</span>';
+                $html .= '<span class="file-prompt-text text-truncate">Attach ' . htmlspecialchars($label) . ' <small class="text-muted">(PDF, JPG, PNG &le; 5MB)</small></span>';
                 $html .= '</div>';
-                $html .= '<small class="form-text text-muted" style="display: block; margin-top: 8px;">Max file size: 5MB. Allowed: JPG, PNG, PDF.</small>';
+                $html .= '<span class="btn-compact-browse">Browse</span>';
+                $html .= '</div>';
+                $html .= '<div class="compact-file-active" style="display: none;">';
+                $html .= '<div class="d-flex align-items-center gap-2 min-w-0 flex-grow-1 text-truncate">';
+                $html .= '<span class="material-symbols-outlined file-success-icon">check_circle</span>';
+                $html .= '<span class="compact-file-name text-truncate">filename.pdf</span>';
+                $html .= '</div>';
+                $html .= '<button type="button" class="btn-compact-clear" title="Remove attachment"><span class="material-symbols-outlined">close</span></button>';
+                $html .= '</div>';
+                $html .= '</div>';
                 break;
 
             case 'radio':
-                $html .= '<div class="d-flex flex-wrap mt-1">';
+                $html .= '<div class="choice-group-modern">';
                 foreach ($options as $idx => $option) {
-                    $html .= '<div class="custom-control custom-radio mr-3">';
-                    $html .= '<input class="custom-control-input" type="radio" name="' . $name . '" id="' . $name . '_' . $idx . '" value="' . htmlspecialchars($option) . '" ' . ($idx === 0 && $required ? 'required' : '') . '>';
-                    $html .= '<label class="custom-control-label" for="' . $name . '_' . $idx . '">' . htmlspecialchars($option) . '</label>';
-                    $html .= '</div>';
+                    $optId = $name . '_' . $idx;
+                    $checked = ($value == $option) ? 'checked' : '';
+                    $html .= '<label class="choice-pill-modern" for="' . $optId . '">';
+                    $html .= '<input type="radio" name="' . $name . '" id="' . $optId . '" value="' . htmlspecialchars($option) . '" ' . $checked . ' ' . ($idx === 0 && $required ? 'required' : '') . '>';
+                    $html .= '<span class="choice-content-box">';
+                    $html .= '<span class="choice-radio-bullet"></span>';
+                    $html .= '<span class="choice-label-text">' . htmlspecialchars($option) . '</span>';
+                    $html .= '</span>';
+                    $html .= '</label>';
                 }
                 $html .= '</div>';
                 break;
 
             case 'checkbox':
-                $html .= '<div class="d-flex flex-wrap mt-1">';
+                $html .= '<div class="choice-group-modern">';
                 foreach ($options as $idx => $option) {
-                    $html .= '<div class="custom-control custom-checkbox mr-3">';
-                    $html .= '<input class="custom-control-input" type="checkbox" name="' . $name . '[]" id="' . $name . '_' . $idx . '" value="' . htmlspecialchars($option) . '">';
-                    $html .= '<label class="custom-control-label" for="' . $name . '_' . $idx . '">' . htmlspecialchars($option) . '</label>';
-                    $html .= '</div>';
+                    $optId = $name . '_' . $idx;
+                    $checked = (is_array($value) && in_array($option, $value)) ? 'checked' : '';
+                    $html .= '<label class="choice-pill-modern" for="' . $optId . '">';
+                    $html .= '<input type="checkbox" name="' . $name . '[]" id="' . $optId . '" value="' . htmlspecialchars($option) . '" ' . $checked . '>';
+                    $html .= '<span class="choice-content-box">';
+                    $html .= '<span class="choice-check-bullet"></span>';
+                    $html .= '<span class="choice-label-text">' . htmlspecialchars($option) . '</span>';
+                    $html .= '</span>';
+                    $html .= '</label>';
                 }
                 $html .= '</div>';
                 break;
         }
 
         if ($has_error) {
-            $html .= '<div class="invalid-feedback d-block ml-3 mt-1" style="font-size: 0.85rem; font-weight: 500;">' . $errors[$name] . '</div>';
+            $html .= '<div class="invalid-feedback-modern">';
+            $html .= '<span class="material-symbols-outlined" style="font-size: 14px;">error</span>';
+            $html .= '<span>' . htmlspecialchars($errors[$name]) . '</span>';
+            $html .= '</div>';
         }
 
         $html .= '</div>';
@@ -133,7 +198,7 @@ class FormBuilder
             $name = $field['field_name'];
             $label = $field['field_label'];
             $type = $field['field_type'];
-            $required = $field['is_required'];
+            $required = !empty($field['is_required']);
 
             if ($type === 'file') {
                 if (isset($files_data[$name]) && $files_data[$name]['error'] === UPLOAD_ERR_OK) {
@@ -163,4 +228,3 @@ class FormBuilder
         return ['errors' => $errors, 'data' => $valid_data];
     }
 }
-?>

@@ -42,36 +42,221 @@ class AdminController extends AdminBaseController {
 
     public function services() {
         $adminModel = new AdminModel();
-        $result = $adminModel->getPaginated('services_tb', $this->getPage());
-        $this->renderAdmin('services', ['services' => $result['data'], 'pagination' => $result]);
+        
+        $page = $this->getPage();
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 6;
+        if ($limit < 1 || $limit > 100) $limit = 6;
+        
+        $sort = $_GET['sort'] ?? 'id_desc';
+        $orderBy = match ($sort) {
+            'id_asc' => 'id ASC',
+            'name_asc' => 'service_name ASC',
+            'name_desc' => 'service_name DESC',
+            'order_asc' => 'sort_order ASC, id ASC',
+            'order_desc' => 'sort_order DESC, id DESC',
+            default => 'id DESC'
+        };
+        
+        $filters = [];
+        if (isset($_GET['status']) && $_GET['status'] !== 'all' && $_GET['status'] !== '') {
+            $filters['show_on_home'] = (int)$_GET['status'];
+        }
+
+        $search = trim($_GET['q'] ?? '');
+        $searchColumns = ['service_name', 'service_description', 'service_detail'];
+
+        $result = $adminModel->getPaginated('services_tb', $page, $limit, $orderBy, $filters, $search, $searchColumns);
+        $allServices = $adminModel->getAll('services_tb');
+
+        $this->renderAdmin('services', [
+            'services' => $result['data'],
+            'pagination' => $result,
+            'all_services' => $allServices,
+            'current_limit' => $limit,
+            'current_sort' => $sort,
+            'current_status' => $_GET['status'] ?? 'all',
+            'search_query' => $search
+        ]);
     }
 
     public function projects() {
         $adminModel = new AdminModel();
-        $result = $adminModel->getPaginatedProjects($this->getPage());
-        $this->renderAdmin('projects', ['projects' => $result['data'], 'pagination' => $result]);
+        
+        $page = $this->getPage();
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 6;
+        if ($limit < 1 || $limit > 100) $limit = 6;
+        
+        $sort = $_GET['sort'] ?? 'id_desc';
+        $orderBy = match ($sort) {
+            'id_asc' => 'p.project_id ASC',
+            'name_asc' => 'p.project_name ASC',
+            'name_desc' => 'p.project_name DESC',
+            'year_desc' => 'p.project_year DESC, p.project_id DESC',
+            'year_asc' => 'p.project_year ASC, p.project_id ASC',
+            default => 'p.project_id DESC'
+        };
+        
+        $serviceFilter = $_GET['service'] ?? 'all';
+        $search = trim($_GET['q'] ?? '');
+        
+        $result = $adminModel->getPaginatedProjects($page, $limit, $orderBy, $serviceFilter, $search);
+        $allProjects = $adminModel->getAll('projects_tb');
+        $services = $adminModel->getAll('services_tb', 'service_name ASC');
+        
+        $this->renderAdmin('projects', [
+            'projects' => $result['data'],
+            'pagination' => $result,
+            'all_projects' => $allProjects,
+            'services' => $services,
+            'current_limit' => $limit,
+            'current_sort' => $sort,
+            'current_service' => $serviceFilter,
+            'search_query' => $search
+        ]);
     }
 
     public function events() {
         $adminModel = new AdminModel();
-        $result = $adminModel->getPaginated('events', $this->getPage(), 6, 'event_date DESC');
-        $this->renderAdmin('events', ['events' => $result['data'], 'pagination' => $result]);
+
+        $page = $this->getPage();
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 6;
+        if ($limit < 1 || $limit > 100) $limit = 6;
+
+        $sort = $_GET['sort'] ?? 'date_desc';
+        $orderBy = match ($sort) {
+            'date_asc' => 'event_date ASC',
+            'title_asc' => 'event_title ASC',
+            'title_desc' => 'event_title DESC',
+            'id_desc' => 'event_id DESC',
+            default => 'event_date DESC'
+        };
+
+        $statusFilter = $_GET['status'] ?? 'all';
+        $search = trim($_GET['q'] ?? '');
+
+        $result = $adminModel->getPaginatedEvents($page, $limit, $orderBy, $statusFilter, $search);
+        $stats = $adminModel->getEventStats();
+
+        $this->renderAdmin('events', [
+            'events' => $result['data'],
+            'pagination' => $result,
+            'stats' => $stats,
+            'current_limit' => $limit,
+            'current_sort' => $sort,
+            'current_status' => $statusFilter,
+            'search_query' => $search
+        ]);
     }
 
     public function trainings() {
         $adminModel = new AdminModel();
-        $result = $adminModel->getPaginated('trainings_tb', $this->getPage());
-        $this->renderAdmin('trainings', ['trainings' => $result['data'], 'pagination' => $result]);
+
+        $page = $this->getPage();
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 6;
+        if ($limit < 1 || $limit > 100) $limit = 6;
+
+        $sort = $_GET['sort'] ?? 'order_asc';
+        $orderBy = match ($sort) {
+            'order_asc' => 't.sort_order ASC, t.id DESC',
+            'name_asc' => 't.training_name ASC',
+            'name_desc' => 't.training_name DESC',
+            'apps_desc' => 'total_applications DESC',
+            'id_desc' => 't.id DESC',
+            default => 't.sort_order ASC, t.id DESC'
+        };
+
+        $statusFilter = $_GET['status'] ?? 'all';
+        $search = trim($_GET['q'] ?? '');
+
+        $result = $adminModel->getPaginatedTrainings($page, $limit, $orderBy, $statusFilter, $search);
+        $stats = $adminModel->getTrainingStats();
+
+        $this->renderAdmin('trainings', [
+            'trainings' => $result['data'],
+            'pagination' => $result,
+            'stats' => $stats,
+            'current_limit' => $limit,
+            'current_sort' => $sort,
+            'current_status' => $statusFilter,
+            'search_query' => $search
+        ]);
+    }
+
+    public function toggleTraining() {
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403);
+            exit;
+        }
+
+        $id = (int)($_POST['id'] ?? 0);
+        if (!$id) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid training program ID.']);
+            exit;
+        }
+
+        $adminModel = new AdminModel();
+        $res = $adminModel->toggleTrainingRegistration($id);
+
+        echo json_encode([
+            'status' => $res ? 'success' : 'error',
+            'message' => $res ? 'Training program registration status updated.' : 'Failed to toggle status.'
+        ]);
+        exit;
     }
 
     public function blog() {
         $adminModel = new AdminModel();
-        $result = $adminModel->getPaginated('blogs', $this->getPage(), 6, 'created_at DESC');
-        $this->renderAdmin('blog', ['blogs' => $result['data'], 'pagination' => $result]);
+        
+        $page = $this->getPage();
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 6;
+        if ($limit < 1 || $limit > 100) $limit = 6;
+        
+        $sort = $_GET['sort'] ?? 'date_desc';
+        $orderBy = match ($sort) {
+            'date_asc' => 'b.created_at ASC',
+            'title_asc' => 'b.title ASC',
+            'title_desc' => 'b.title DESC',
+            'status_pub' => 'b.status ASC, b.created_at DESC',
+            'status_draft' => 'b.status DESC, b.created_at DESC',
+            default => 'b.created_at DESC'
+        };
+        
+        $categoryFilter = $_GET['category'] ?? 'all';
+        $statusFilter = $_GET['status'] ?? 'all';
+        $search = trim($_GET['q'] ?? '');
+        
+        $result = $adminModel->getPaginatedBlogs($page, $limit, $orderBy, $categoryFilter, $statusFilter, $search);
+        $totalBlogsCount = $adminModel->getTotalBlogsCount();
+        $categories = $adminModel->getAll('blog_categories', 'name ASC');
+        
+        $this->renderAdmin('blog', [
+            'blogs' => $result['data'],
+            'pagination' => $result,
+            'total_blogs_count' => $totalBlogsCount,
+            'categories' => $categories,
+            'current_limit' => $limit,
+            'current_sort' => $sort,
+            'current_category' => $categoryFilter,
+            'current_status' => $statusFilter,
+            'search_query' => $search
+        ]);
     }
 
     public function members() {
         $adminModel = new AdminModel();
+        
+        $page = $this->getPage();
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+        if ($limit < 1 || $limit > 100) $limit = 10;
+
+        $sort = $_GET['sort'] ?? 'id_desc';
+        $orderBy = match ($sort) {
+            'date_asc' => 'created_at ASC',
+            'name_asc' => 'name ASC',
+            'name_desc' => 'name DESC',
+            default => 'created_at DESC'
+        };
+
         $statusFilter = $_GET['status'] ?? 'all';
         $filters = [];
 
@@ -83,13 +268,22 @@ class AdminController extends AdminBaseController {
             $filters['status'] = 'Suspended';
         }
 
-        $result = $adminModel->getPaginated('members', $this->getPage(), 10, 'created_at DESC', $filters);
+        $search = trim($_GET['q'] ?? '');
+        $searchColumns = ['name', 'username', 'email'];
+
+        $result = $adminModel->getPaginated('members', $page, $limit, $orderBy, $filters, $search, $searchColumns);
         $reviews = $adminModel->getSuspensionReviews();
+        $stats = $adminModel->getMemberStats();
+
         $this->renderAdmin('members', [
             'members' => $result['data'],
             'pagination' => $result,
             'reviews' => $reviews,
-            'current_status' => $statusFilter
+            'stats' => $stats,
+            'current_limit' => $limit,
+            'current_sort' => $sort,
+            'current_status' => $statusFilter,
+            'search_query' => $search
         ]);
     }
 
@@ -101,14 +295,148 @@ class AdminController extends AdminBaseController {
 
     public function faq() {
         $adminModel = new AdminModel();
-        $result = $adminModel->getPaginated('faq_tb', $this->getPage(), 6, 'faq_id DESC');
-        $this->renderAdmin('faq', ['faqs' => $result['data'], 'pagination' => $result]);
+        
+        $page = $this->getPage();
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+        if ($limit < 1 || $limit > 100) $limit = 10;
+
+        $sort = $_GET['sort'] ?? 'id_desc';
+        $orderBy = match ($sort) {
+            'id_asc' => 'faq_id ASC',
+            'question_asc' => 'faq_question ASC',
+            'question_desc' => 'faq_question DESC',
+            default => 'faq_id DESC'
+        };
+
+        $search = trim($_GET['q'] ?? '');
+        $searchColumns = ['faq_question', 'faq_answer'];
+
+        $result = $adminModel->getPaginated('faq_tb', $page, $limit, $orderBy, [], $search, $searchColumns);
+        $stats = $adminModel->getFaqStats();
+
+        $this->renderAdmin('faq', [
+            'faqs' => $result['data'],
+            'pagination' => $result,
+            'stats' => $stats,
+            'current_limit' => $limit,
+            'current_sort' => $sort,
+            'search_query' => $search
+        ]);
+    }
+
+    public function partners() {
+        $adminModel = new AdminModel();
+
+        $status = $_GET['status'] ?? 'all';
+        $search = trim($_GET['q'] ?? '');
+        $sort = $_GET['sort'] ?? 'order_asc';
+
+        $partners = $adminModel->getAllPartners($status, $search, $sort);
+        $stats = $adminModel->getPartnerStats();
+
+        $this->renderAdmin('partners', [
+            'partners' => $partners,
+            'stats' => $stats,
+            'current_status' => $status,
+            'search_query' => $search,
+            'current_sort' => $sort
+        ]);
+    }
+
+    public function savePartner() {
+        header('Content-Type: application/json');
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403);
+            echo json_encode(['status' => 'error', 'message' => 'Forbidden access.']);
+            exit;
+        }
+
+        $id = !empty($_POST['id']) ? (int)$_POST['id'] : null;
+        $_POST['action_mode'] = $id ? 'update' : 'store';
+        $_POST['type'] = 'partner';
+
+        if (empty(trim($_POST['name'] ?? ''))) {
+            echo json_encode(['status' => 'error', 'message' => 'Partner name is required.']);
+            exit;
+        }
+
+        if (!$id && (!isset($_FILES['logo']) || $_FILES['logo']['error'] !== UPLOAD_ERR_OK)) {
+            echo json_encode(['status' => 'error', 'message' => 'Partner logo is required for new entries.']);
+            exit;
+        }
+
+        try {
+            $adminModel = new AdminModel();
+            $success = $adminModel->storeRecord('partner', $_POST);
+
+            if ($success) {
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => $id ? 'Partner updated successfully.' : 'Partner added successfully.'
+                ]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to save partner record.']);
+            }
+        } catch (Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()]);
+        }
+        exit;
+    }
+
+    public function togglePartner() {
+        header('Content-Type: application/json');
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403);
+            echo json_encode(['status' => 'error', 'message' => 'Forbidden access.']);
+            exit;
+        }
+
+        $id = (int)($_POST['id'] ?? 0);
+        if (!$id) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid partner ID.']);
+            exit;
+        }
+
+        $adminModel = new AdminModel();
+        $res = $adminModel->togglePartnerStatus($id);
+
+        echo json_encode([
+            'status' => $res ? 'success' : 'error',
+            'message' => $res ? 'Partner visibility toggled successfully.' : 'Failed to toggle status.'
+        ]);
+        exit;
     }
 
     public function testimonials() {
         $adminModel = new AdminModel();
-        $result = $adminModel->getPaginated('testimonials_tb', $this->getPage());
-        $this->renderAdmin('testimonials', ['testimonials' => $result['data'], 'pagination' => $result]);
+
+        $page = $this->getPage();
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+        if ($limit < 1 || $limit > 100) $limit = 10;
+
+        $sort = $_GET['sort'] ?? 'id_desc';
+        $orderBy = match ($sort) {
+            'id_asc' => 'id ASC',
+            'name_asc' => 'name ASC',
+            'name_desc' => 'name DESC',
+            'org_asc' => 'organization ASC',
+            default => 'id DESC'
+        };
+
+        $search = trim($_GET['q'] ?? '');
+        $searchColumns = ['name', 'organization', 'title', 'testimonial'];
+
+        $result = $adminModel->getPaginated('testimonials_tb', $page, $limit, $orderBy, [], $search, $searchColumns);
+        $stats = $adminModel->getTestimonialStats();
+
+        $this->renderAdmin('testimonials', [
+            'testimonials' => $result['data'],
+            'pagination' => $result,
+            'stats' => $stats,
+            'current_limit' => $limit,
+            'current_sort' => $sort,
+            'search_query' => $search
+        ]);
     }
 
     public function memberDetails($id) {
@@ -138,17 +466,250 @@ class AdminController extends AdminBaseController {
 
     public function applications() {
         $adminModel = new AdminModel();
+        require_once ROOT_PATH . '/models/CohortModel.php';
+        $cohortModel = new CohortModel();
+
         $programId = $_GET['program'] ?? 'all';
+        $cohortId = $_GET['cohort'] ?? 'all';
+        $search = trim($_GET['search'] ?? '');
+        $export = $_GET['export'] ?? '';
+
+        // Handle CSV Export
+        if ($export === 'csv') {
+            $this->exportApplicationsCsv($programId, $cohortId, $search);
+            return;
+        }
+
         $page = $this->getPage();
-        $result = $adminModel->getUnifiedApplications($programId, $page, 10);
+        $result = $adminModel->getUnifiedApplications($programId, $page, 10, $cohortId, $search);
         $programs = $adminModel->getAllPrograms();
+        $cohorts = $cohortModel->getAllCohortsForAdmin();
+        $stats = $adminModel->getApplicationStats();
 
         $this->renderAdmin('applications', [
             'applications' => $result['data'],
             'pagination' => $result,
             'current_program' => $programId,
-            'programs' => $programs
+            'current_cohort' => $cohortId,
+            'current_search' => $search,
+            'programs' => $programs,
+            'cohorts' => $cohorts,
+            'stats' => $stats
         ]);
+    }
+
+    private function exportApplicationsCsv($programId, $cohortId, $search) {
+        $adminModel = new AdminModel();
+        $result = $adminModel->getUnifiedApplications($programId, 1, 0, $cohortId, $search);
+        $rows = $result['data'] ?? [];
+
+        $filename = 'program_applications_' . date('Y-m-d_His') . '.csv';
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+
+        $output = fopen('php://output', 'w');
+        // UTF-8 BOM for Microsoft Excel compatibility
+        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+
+        fputcsv($output, [
+            'App ID',
+            'Full Name',
+            'Email',
+            'Phone',
+            'Program',
+            'Cohort',
+            'Gender',
+            'Age',
+            'State',
+            'LGA',
+            'Business Name',
+            'Business Sector',
+            'Business Stage',
+            'Applied Date'
+        ]);
+
+        foreach ($rows as $r) {
+            $u = json_decode($r['user_data'], true) ?: [];
+            $first = $u['first_name'] ?? $u['firstname'] ?? '';
+            $middle = $u['middle_name'] ?? '';
+            $last = $u['last_name'] ?? $u['lastname'] ?? '';
+            $full = $u['full_name'] ?? $u['name'] ?? trim($first . ' ' . $middle . ' ' . $last);
+            if (!$full) $full = trim($first . ' ' . $last);
+
+            fputcsv($output, [
+                $r['id'],
+                $full,
+                $u['email'] ?? $u['email_address'] ?? '',
+                $u['phone'] ?? $u['phone_no'] ?? '',
+                $r['program_name'] ?? '',
+                $r['cohort_name'] ?? ($r['cohort_id'] ? 'Cohort ' . $r['cohort_id'] : 'General Intake'),
+                $u['gender'] ?? '',
+                $u['age'] ?? '',
+                $u['state_of_origin'] ?? $u['state'] ?? '',
+                $u['local_government'] ?? $u['lga'] ?? '',
+                $u['business_name'] ?? '',
+                $u['business_section'] ?? $u['business_type'] ?? '',
+                $u['business_stage'] ?? '',
+                $r['created_at']
+            ]);
+        }
+
+        fclose($output);
+        exit;
+    }
+
+    public function cohorts() {
+        require_once ROOT_PATH . '/models/CohortModel.php';
+        $adminModel = new AdminModel();
+        $trainingId = $_GET['training_id'] ?? 'all';
+        $status = $_GET['status'] ?? 'all';
+        $search = trim($_GET['search'] ?? '');
+
+        $cohorts = $adminModel->getAllCohorts($trainingId, $status, $search);
+        $programs = $adminModel->getAllPrograms();
+        $stats = $adminModel->getCohortStats();
+
+        $this->renderAdmin('cohorts', [
+            'cohorts' => $cohorts,
+            'programs' => $programs,
+            'stats' => $stats,
+            'current_training' => $trainingId,
+            'current_status' => $status,
+            'current_search' => $search
+        ]);
+    }
+
+    public function saveCohort() {
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403);
+            exit;
+        }
+
+        require_once ROOT_PATH . '/models/CohortModel.php';
+        $cohortModel = new CohortModel();
+
+        $id = !empty($_POST['id']) ? (int)$_POST['id'] : null;
+        $trainingId = (int)($_POST['training_id'] ?? 0);
+        $cohortNumber = (int)($_POST['cohort_number'] ?? 1);
+        $cohortName = trim($_POST['cohort_name'] ?? '');
+        $startDate = trim($_POST['start_date'] ?? '');
+        $endDate = trim($_POST['end_date'] ?? '');
+        $deadline = !empty($_POST['registration_deadline']) ? trim($_POST['registration_deadline']) : null;
+        $capacity = (int)($_POST['capacity'] ?? 0);
+        $status = $_POST['status'] ?? 'upcoming';
+        $registrationOpen = !empty($_POST['registration_open']) ? 1 : 0;
+        $showTopbarBanner = !empty($_POST['show_topbar_banner']) ? 1 : 0;
+        $customAnnouncement = !empty($_POST['custom_announcement']) ? trim($_POST['custom_announcement']) : null;
+
+        if (!$trainingId || empty($cohortName) || empty($startDate) || empty($endDate)) {
+            echo json_encode(['status' => 'error', 'message' => 'Please fill in all required fields.']);
+            exit;
+        }
+
+        $slug = !empty($_POST['slug']) ? trim($_POST['slug']) : strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $cohortName)));
+
+        $data = [
+            'training_id'           => $trainingId,
+            'cohort_number'         => $cohortNumber,
+            'cohort_name'           => $cohortName,
+            'slug'                  => $slug,
+            'start_date'            => $startDate,
+            'end_date'              => $endDate,
+            'registration_deadline' => $deadline,
+            'capacity'              => $capacity,
+            'status'                => $status,
+            'registration_open'     => $registrationOpen,
+            'show_topbar_banner'    => $showTopbarBanner,
+            'custom_announcement'   => $customAnnouncement
+        ];
+
+        if ($id) {
+            $success = $cohortModel->updateCohort($id, $data);
+            $msg = $success ? 'Cohort updated successfully.' : 'Failed to update cohort.';
+        } else {
+            $newId = $cohortModel->createCohort($data);
+            $success = (bool)$newId;
+            $msg = $success ? 'Cohort created successfully.' : 'Failed to create cohort. Slug may already exist.';
+        }
+
+        echo json_encode([
+            'status' => $success ? 'success' : 'error',
+            'message' => $msg
+        ]);
+        exit;
+    }
+
+    public function toggleCohortBanner() {
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403);
+            exit;
+        }
+
+        $id = (int)($_POST['id'] ?? 0);
+        if (!$id) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid cohort ID.']);
+            exit;
+        }
+
+        require_once ROOT_PATH . '/models/CohortModel.php';
+        $cohortModel = new CohortModel();
+        $res = $cohortModel->toggleTopbarBanner($id);
+
+        echo json_encode([
+            'status' => $res ? 'success' : 'error',
+            'message' => $res ? 'Topbar announcement visibility updated.' : 'Failed to toggle banner status.'
+        ]);
+        exit;
+    }
+
+    public function toggleCohort() {
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403);
+            exit;
+        }
+
+        $id = (int)($_POST['id'] ?? 0);
+        if (!$id) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid cohort ID.']);
+            exit;
+        }
+
+        require_once ROOT_PATH . '/models/CohortModel.php';
+        $cohortModel = new CohortModel();
+        $res = $cohortModel->toggleRegistration($id);
+
+        echo json_encode([
+            'status' => $res ? 'success' : 'error',
+            'message' => $res ? 'Cohort registration status updated.' : 'Failed to toggle status.'
+        ]);
+        exit;
+    }
+
+    public function deleteCohort() {
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403);
+            exit;
+        }
+
+        $id = (int)($_POST['id'] ?? 0);
+        if (!$id) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid cohort ID.']);
+            exit;
+        }
+
+        require_once ROOT_PATH . '/models/CohortModel.php';
+        $cohortModel = new CohortModel();
+        $res = $cohortModel->deleteCohort($id);
+
+        if ($res) {
+            echo json_encode(['status' => 'success', 'message' => 'Cohort deleted successfully.']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Cannot delete cohort with existing applicant registrations.']);
+        }
+        exit;
     }
 
     public function settings() {
@@ -196,6 +757,43 @@ class AdminController extends AdminBaseController {
             }
         } catch (Exception $e) {
             echo json_encode(['status' => 'error', 'message' => 'Server Error: ' . $e->getMessage()]);
+        }
+        exit;
+    }
+
+    public function createAdminAccount() {
+        header('Content-Type: application/json');
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403); exit;
+        }
+
+        try {
+            $name = trim($_POST['admin_name'] ?? '');
+            $password = $_POST['admin_password'] ?? '';
+            $privilege = trim($_POST['privilege'] ?? 'Admin');
+
+            if (empty($name)) {
+                echo json_encode(['status' => 'error', 'message' => 'Administrator username/name is required.']);
+                exit;
+            }
+
+            if (empty($password) || strlen($password) < 6) {
+                echo json_encode(['status' => 'error', 'message' => 'Password must be at least 6 characters long.']);
+                exit;
+            }
+
+            if (!in_array($privilege, ['Super Admin', 'Admin', 'Editor', 'Moderator'])) {
+                $privilege = 'Admin';
+            }
+
+            $adminModel = new AdminModel();
+            if ($adminModel->createAdmin($name, $password, $privilege)) {
+                echo json_encode(['status' => 'success', 'message' => 'New administrator created successfully.']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to create administrator.']);
+            }
+        } catch (Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
         }
         exit;
     }

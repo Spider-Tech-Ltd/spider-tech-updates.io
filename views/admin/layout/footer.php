@@ -2,29 +2,77 @@
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
     </div> <!-- End of .admin-wrapper -->
 
-    <!-- Global Action Confirmation Modal (Alpine.js) -->
+    <!-- Global Action Confirmation Modal (Spider Tech Brand Console) -->
     <div x-data x-show="$store.actionModal.open" class="modal-custom" :class="{ 'show': $store.actionModal.open }" x-cloak>
-        <div class="modal-content-custom" style="max-width: 400px;" @click.away="$store.actionModal.open = false">
-            <div class="modal-body-custom text-center py-5">
-                <div class="mb-4">
-                    <span class="material-symbols-outlined"
-                          :class="$store.actionModal.variant === 'danger' ? 'text-danger' : 'text-warning'"
-                          style="font-size: 64px;"
-                          x-text="$store.actionModal.icon">warning</span>
+        <div class="modal-content-custom" style="max-width: 470px; border-radius: 14px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25); border: 1px solid #e2e8f0;" @click.away="$store.actionModal.open = false">
+            
+            <!-- Modal Header -->
+            <div class="d-flex justify-content-between align-items-center py-3 px-4 border-bottom" style="background: #ffffff; border-color: #f1f5f9 !important;">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="d-flex align-items-center justify-content-center rounded-3"
+                         :style="$store.actionModal.variant === 'danger'
+                            ? 'width: 42px; height: 42px; background: rgba(220, 38, 38, 0.08); color: #dc2626; border: 1px solid rgba(220, 38, 38, 0.2);'
+                            : 'width: 42px; height: 42px; background: rgba(244, 130, 33, 0.08); color: #f48221; border: 1px solid rgba(244, 130, 33, 0.2);'"
+                         style="flex-shrink: 0;">
+                        <span class="material-symbols-outlined fs-22" x-text="$store.actionModal.icon">delete_forever</span>
+                    </div>
+                    <div>
+                        <h5 class="m-0 fw-700 text-dark" style="font-family: 'Poppins', sans-serif; font-size: 1.04rem;" x-text="$store.actionModal.title">Confirm Action</h5>
+                        <div class="d-flex align-items-center gap-1 mt-1">
+                            <span class="badge"
+                                  :style="$store.actionModal.variant === 'danger'
+                                    ? 'background: rgba(220, 38, 38, 0.08); color: #dc2626; font-size: 0.68rem; font-weight: 600; padding: 2px 7px; border-radius: 4px;'
+                                    : 'background: rgba(244, 130, 33, 0.1); color: #f48221; font-size: 0.68rem; font-weight: 600; padding: 2px 7px; border-radius: 4px;'"
+                                  x-text="$store.actionModal.variant === 'danger' ? 'Permanent Action' : 'Status Action'"></span>
+                        </div>
+                    </div>
                 </div>
-                <h3 class="fw-700 mb-3" x-text="$store.actionModal.title">Are you sure?</h3>
-                <p class="text-muted mb-4" x-text="$store.actionModal.message"></p>
+                <button type="button" class="btn-action border-0 bg-transparent text-muted p-1" @click="$store.actionModal.open = false" style="cursor: pointer;" title="Close modal">
+                    <span class="material-symbols-outlined fs-20">close</span>
+                </button>
+            </div>
 
-                <div class="d-flex justify-content-center gap-3">
-                    <button @click="$store.actionModal.open = false" class="btn btn-light px-4">Cancel</button>
-                    <button @click="$store.actionModal.confirm()"
-                            class="btn px-4"
-                            :class="$store.actionModal.variant === 'danger' ? 'btn-danger' : 'btn-primary-custom'"
-                            :disabled="$store.actionModal.loading">
-                        <span x-show="!$store.actionModal.loading" x-text="$store.actionModal.confirmText">Confirm</span>
-                        <span x-show="$store.actionModal.loading">Processing...</span>
-                    </button>
+            <!-- Modal Body -->
+            <div class="modal-body-custom px-4 py-3" style="background: #ffffff;">
+                <div class="p-3 rounded-3 d-flex align-items-start gap-3 mb-2"
+                     :style="$store.actionModal.variant === 'danger'
+                        ? 'background: #fef2f2; border: 1px solid #fee2e2;'
+                        : 'background: #fff7ed; border: 1px solid #ffedd5;'">
+                    <span class="material-symbols-outlined flex-shrink-0 mt-0-5"
+                          :class="$store.actionModal.variant === 'danger' ? 'text-danger' : 'text-orange'"
+                          style="font-size: 20px;"
+                          x-text="$store.actionModal.variant === 'danger' ? 'warning' : 'info'"></span>
+                    <div>
+                        <div class="fw-700 mb-1" style="font-size: 0.84rem;"
+                             :class="$store.actionModal.variant === 'danger' ? 'text-danger' : 'text-dark'">
+                            <span x-text="$store.actionModal.variant === 'danger' ? 'This action cannot be undone.' : 'Please confirm to continue.'"></span>
+                        </div>
+                        <p class="m-0 text-secondary" style="font-size: 0.81rem; line-height: 1.45;" x-text="$store.actionModal.message"></p>
+                    </div>
                 </div>
+
+                <div class="d-flex align-items-center gap-1-5 px-1 mt-2 text-muted" style="font-size: 0.72rem;">
+                    <span class="material-symbols-outlined fs-14">lock</span>
+                    <span>Authenticated Administrator Request &bull; Immediate Execution</span>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer-custom d-flex justify-content-between align-items-center px-4 py-3 border-top" style="background: #f8fafc; border-color: #f1f5f9 !important;">
+                <button type="button" class="btn-pill-cancel px-3 py-1-5" @click="$store.actionModal.open = false" style="font-size: 0.82rem; font-weight: 600; border-radius: 8px;">
+                    Cancel
+                </button>
+                <button type="button"
+                        class="btn px-4 py-2 d-inline-flex align-items-center gap-2"
+                        :class="$store.actionModal.variant === 'danger' ? 'btn-danger-brand' : 'btn-primary-custom'"
+                        :disabled="$store.actionModal.loading"
+                        @click="$store.actionModal.confirm()"
+                        style="border-radius: 8px; font-weight: 600; font-size: 0.84rem;">
+                    <span class="material-symbols-outlined fs-16" x-show="!$store.actionModal.loading" x-text="$store.actionModal.variant === 'danger' ? 'delete' : 'check'"></span>
+                    <span class="spinner-border spinner-border-sm" x-show="$store.actionModal.loading"></span>
+                    <span x-show="!$store.actionModal.loading" x-text="$store.actionModal.confirmText">Confirm</span>
+                    <span x-show="$store.actionModal.loading">Processing...</span>
+                </button>
             </div>
         </div>
     </div>
@@ -113,7 +161,7 @@
                     this.message = options.message || '';
                     this.confirmText = options.confirmText || 'Confirm';
                     this.variant = options.variant || 'danger';
-                    this.icon = options.icon || 'warning';
+                    this.icon = options.icon || (options.variant === 'danger' ? 'delete_forever' : 'info');
                     this.actionUrl = options.actionUrl || '<?= BASE_URL ?>/admin/delete';
                     this.callback = options.callback || null;
                     this.loading = false;
@@ -173,31 +221,8 @@
                     actionUrl: '<?= BASE_URL ?>/admin/delete'
                 });
             } else {
-                // Fallback to traditional confirm if Alpine is not ready
-                if (confirm(`Are you sure you want to delete this ${type}?`)) {
-                    // This is a simplified fallback that mimics the old behavior
-                    const formData = new URLSearchParams();
-                    formData.append('id', id);
-                    formData.append('type', type);
-
-                    fetch('<?= BASE_URL ?>/admin/delete', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: formData
-                    })
-                    .then(r => r.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            showToast(data.message);
-                            setTimeout(() => window.location.reload(), 1000);
-                        } else {
-                            showToast(data.message, 'error');
-                        }
-                    });
-                }
+                // Wait for Alpine to initialize rather than popping native confirm
+                setTimeout(() => deleteItem(id, type), 100);
             }
         }
 

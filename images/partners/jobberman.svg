@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 48" fill="none">
+  <!-- Jobberman Crown/J Icon -->
+  <rect x="6" y="9" width="30" height="30" rx="8" fill="#ffb800"/>
+  <path d="M14 26C14 28 16 30 19 30C22 30 24 28 24 24V16H28" stroke="#1e293b" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Typography -->
+  <text x="44" y="24" fill="#0f172a" font-family="'Poppins', sans-serif" font-weight="700" font-size="13" letter-spacing="-0.3">Jobberman</text>
+  <text x="44" y="34" fill="#64748b" font-family="'Segoe UI', sans-serif" font-weight="500" font-size="8.5">Skills Initiative</text>
+</svg>

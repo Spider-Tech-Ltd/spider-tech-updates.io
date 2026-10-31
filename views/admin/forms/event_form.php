@@ -1,6 +1,6 @@
 <div class="content-header">
     <div class="d-flex align-items-center gap-3">
-        <a href="<?= BASE_URL ?>/admin/events" class="btn-action"><span class="material-symbols-outlined">arrow_back</span></a>
+        <a href="<?= BASE_URL ?>/admin/events" class="btn-action btn-back-header me-3 mr-3" title="Back"><span class="material-symbols-outlined">arrow_back</span></a>
         <div>
             <h1><?= ($mode == 'add') ? 'Add New' : 'Edit' ?> Event</h1>
             <p>Organize and manage upcoming, ongoing, and past events.</p>
@@ -371,8 +371,9 @@ function deleteGalleryImage(mediaId) {
             }
         });
     } else {
-        // Fallback
-        if (confirm('Are you sure you want to delete this image?')) {
+        setTimeout(() => deleteGalleryImage(mediaId), 100);
+        return;
+        if (false) {
             (async () => {
                 const formData = new FormData();
                 formData.append('id', mediaId);

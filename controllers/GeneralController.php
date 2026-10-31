@@ -7,6 +7,7 @@ class GeneralController extends BaseController {
             'mission' => $model->getMission(),
             'vision' => $model->getVision(),
             'values' => $model->getValues(),
+            'partners' => $model->getPartners(),
             'contact' => $model->getContactDetails()
         ];
         $this->render("general/about", $data);

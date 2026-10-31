@@ -1,0 +1,338 @@
+/* ==========================================================================
+   Spider Tech — Forum Category Tab Switcher (Matching Events Page Tabs)
+   With Accessible Horizontal Scrolling & Interactive Nav Chevrons
+   ========================================================================== */
+
+:root {
+  --primary-orange: #f48221;
+  --primary-orange-dark: #ea580c;
+  --sp-dark: #0f172a;
+  --sp-slate: #334155;
+  --sp-muted: #64748b;
+  --sp-border: #e2e8f0;
+}
+
+/* Reduced vertical padding as requested */
+.forum-tabs-section {
+  padding: 14px 0 6px;
+  background-color: transparent;
+}
+
+.forum-tabs-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Category Tab Switcher Wrap with Navigation Arrows */
+.forum-tab-switcher-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Blur Fade Overlays (Softly masks overflowing tabs at capsule curve) */
+.tab-scroll-blur {
+  position: absolute;
+  top: 1px;
+  bottom: 1px;
+  width: 58px;
+  pointer-events: none;
+  z-index: 8;
+  transition: opacity 0.25s ease;
+}
+
+.tab-scroll-blur.left {
+  left: 1px;
+  border-top-left-radius: 50px;
+  border-bottom-left-radius: 50px;
+  background: linear-gradient(90deg, #ffffff 20%, rgba(255, 255, 255, 0.88) 55%, rgba(255, 255, 255, 0) 100%);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+
+.tab-scroll-blur.right {
+  right: 1px;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
+  background: linear-gradient(270deg, #ffffff 20%, rgba(255, 255, 255, 0.88) 55%, rgba(255, 255, 255, 0) 100%);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+
+/* Floating Navigation Arrows - Inward Positioned inside the Capsule */
+.tab-scroll-arrow-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 12;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid var(--sp-border);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+  color: var(--sp-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0;
+}
+
+.tab-scroll-arrow-btn:hover {
+  background: var(--primary-orange);
+  border-color: var(--primary-orange);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(244, 130, 33, 0.35);
+  transform: translateY(-50%) scale(1.08);
+}
+
+/* Inward placement inside the capsule curves */
+.tab-scroll-arrow-btn.prev {
+  left: 6px;
+}
+
+.tab-scroll-arrow-btn.next {
+  right: 6px;
+}
+
+.tab-scroll-arrow-btn .material-symbols-outlined {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* Smooth Horizontal Scrollable Switcher Capsule (Scrollbar Completely Hidden) */
+.forum-tab-switcher {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  padding: 4px 14px 4px 6px;
+  border-radius: 50px;
+  border: 1px solid var(--sp-border);
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+  max-width: 100%;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar completely for Chrome, Safari, Opera */
+.forum-tab-switcher::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.tab-scroll-end-spacer {
+  display: inline-block;
+  width: 28px;
+  flex-shrink: 0;
+}
+
+/* Slightly reduced vertical padding, maintaining balanced width */
+.forum-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 18px;
+  border-radius: 50px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #475569;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  text-decoration: none !important;
+  flex-shrink: 0;
+}
+
+.forum-tab-btn .tab-icon {
+  font-size: 17px;
+  color: #94a3b8;
+  transition: color 0.2s ease;
+}
+
+.forum-tab-btn .tab-badge {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 50px;
+  background: #f1f5f9;
+  color: #475569;
+  transition: all 0.2s ease;
+}
+
+.forum-tab-btn:hover {
+  color: #1e293b;
+  background: #f8fafc;
+}
+
+.forum-tab-btn:hover .tab-icon {
+  color: var(--primary-orange);
+}
+
+.forum-tab-btn.active {
+  background: var(--primary-orange);
+  color: #ffffff !important;
+  border-color: var(--primary-orange);
+  box-shadow: 0 4px 14px rgba(244, 130, 33, 0.28);
+}
+
+.forum-tab-btn.active .tab-icon {
+  color: #ffffff !important;
+}
+
+.forum-tab-btn.active .tab-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   Custom Dropdown Menu (Replaces default browser select popup)
+   ========================================================================== */
+.forum-sort-pill-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.forum-sort-label {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: var(--sp-muted);
+  margin-bottom: 0;
+}
+
+.custom-sort-dropdown {
+  position: relative;
+}
+
+.custom-sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #ffffff;
+  border: 1px solid var(--sp-border);
+  border-radius: 50px;
+  padding: 6px 16px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--sp-dark);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.custom-sort-btn:hover,
+.custom-sort-btn:focus-visible {
+  border-color: var(--primary-orange);
+  box-shadow: 0 0 0 3px rgba(244, 130, 33, 0.12);
+}
+
+.custom-sort-btn .sort-icon {
+  font-size: 17px;
+  color: #94a3b8;
+}
+
+.custom-sort-btn .chevron-icon {
+  font-size: 18px;
+  color: #64748b;
+  transition: transform 0.2s ease;
+}
+
+.custom-sort-btn .chevron-icon.is-rotated {
+  transform: rotate(180deg);
+}
+
+/* Floating Custom Menu */
+.custom-sort-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  background: #ffffff;
+  border: 1px solid var(--sp-border);
+  border-radius: 12px;
+  box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.12), 0 4px 10px rgba(15, 23, 42, 0.05);
+  padding: 6px;
+  min-width: 175px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.custom-sort-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #334155;
+  text-decoration: none !important;
+  transition: all 0.18s ease;
+}
+
+.custom-sort-item:hover {
+  background: rgba(244, 130, 33, 0.08);
+  color: var(--primary-orange);
+}
+
+.custom-sort-item.active {
+  background: rgba(244, 130, 33, 0.1);
+  color: var(--primary-orange);
+  font-weight: 700;
+}
+
+.custom-sort-item .item-icon {
+  font-size: 16px;
+  color: #94a3b8;
+}
+
+.custom-sort-item:hover .item-icon,
+.custom-sort-item.active .item-icon {
+  color: var(--primary-orange);
+}
+
+.custom-sort-item .check-mark {
+  font-size: 16px;
+  color: var(--primary-orange);
+  font-weight: 700;
+}
+
+@media (max-width: 991px) {
+  .forum-tabs-bar-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .forum-tab-switcher-wrap {
+    width: 100%;
+  }
+  .tab-scroll-arrow-btn.prev {
+    left: 4px;
+  }
+  .tab-scroll-arrow-btn.next {
+    right: 4px;
+  }
+}

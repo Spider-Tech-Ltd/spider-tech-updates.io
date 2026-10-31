@@ -1,4 +1,5 @@
 <?php
+
 class TrainingModel {
     private $conn;
 
@@ -33,32 +34,53 @@ class TrainingModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function submitRegistration($program_id, $user_data_json, $type = 'training') {
+    public function submitRegistration($program_id, $user_data_json, $type = 'training', $cohort_id = null) {
+        if ($cohort_id) {
+            $query = "INSERT INTO `training_registrations` (program_id, cohort_id, user_data, registration_type) VALUES (?, ?, ?, ?)";
+            $stmt = $this->conn->prepare($query);
+            return $stmt->execute([$program_id, $cohort_id, $user_data_json, $type]);
+        }
         $query = "INSERT INTO `training_registrations` (program_id, user_data, registration_type) VALUES (?, ?, ?)";
         $stmt = $this->conn->prepare($query);
         return $stmt->execute([$program_id, $user_data_json, $type]);
     }
 
-    public function isEmailRegistered($email, $program_id) {
-        // We use JSON_UNQUOTE(JSON_EXTRACT()) to ensure we compare raw strings, and handle both 'email' and 'email_address' common keys
-        $query = "SELECT id FROM `training_registrations` WHERE program_id = ? AND (
+    public function isEmailRegistered($email, $program_id, $cohort_id = null) {
+        // When cohort_id is specified, email uniqueness is checked within that cohort
+        $cohortClause = $cohort_id ? "AND cohort_id = ?" : "";
+        $query = "SELECT id FROM `training_registrations` WHERE program_id = ? $cohortClause AND (
                     JSON_UNQUOTE(JSON_EXTRACT(user_data, '$.email')) = ? OR
                     JSON_UNQUOTE(JSON_EXTRACT(user_data, '$.email_address')) = ?
                   ) LIMIT 1";
         $stmt = $this->conn->prepare($query);
-        $stmt->execute([$program_id, $email, $email]);
+        $params = $cohort_id ? [$program_id, $cohort_id, $email, $email] : [$program_id, $email, $email];
+        $stmt->execute($params);
         return $stmt->fetch() !== false;
     }
 
-    public function isPhoneRegistered($phone, $program_id) {
-        $query = "SELECT id FROM `training_registrations` WHERE program_id = ? AND (
+    public function isPhoneRegistered($phone, $program_id, $cohort_id = null) {
+        $cohortClause = $cohort_id ? "AND cohort_id = ?" : "";
+        $query = "SELECT id FROM `training_registrations` WHERE program_id = ? $cohortClause AND (
                     JSON_UNQUOTE(JSON_EXTRACT(user_data, '$.phone')) = ? OR
                     JSON_UNQUOTE(JSON_EXTRACT(user_data, '$.phone_no')) = ? OR
                     JSON_UNQUOTE(JSON_EXTRACT(user_data, '$.phone_number')) = ?
                   ) LIMIT 1";
         $stmt = $this->conn->prepare($query);
-        $stmt->execute([$program_id, $phone, $phone, $phone]);
+        $params = $cohort_id ? [$program_id, $cohort_id, $phone, $phone, $phone] : [$program_id, $phone, $phone, $phone];
+        $stmt->execute($params);
         return $stmt->fetch() !== false;
+    }
+
+    public function getActiveCohort($program_id) {
+        require_once __DIR__ . '/CohortModel.php';
+        $cohortModel = new CohortModel($this->conn);
+        return $cohortModel->getActiveCohort($program_id);
+    }
+
+    public function getUpcomingCohort($program_id) {
+        require_once __DIR__ . '/CohortModel.php';
+        $cohortModel = new CohortModel($this->conn);
+        return $cohortModel->getUpcomingCohort($program_id);
     }
 
     public function getContactDetails() {
@@ -68,4 +90,3 @@ class TrainingModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
-?>
