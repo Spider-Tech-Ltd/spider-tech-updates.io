@@ -1,6 +1,15 @@
 {
+  "name": "spider-tech-updates",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "node build-minify.js"
+  },
   "dependencies": {
     "@playwright/test": "^1.58.2",
     "playwright": "^1.58.2"
+  },
+  "devDependencies": {
+    "clean-css": "^5.3.3",
+    "terser": "^5.51.2"
   }
 }
