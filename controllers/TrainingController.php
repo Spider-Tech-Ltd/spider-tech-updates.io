@@ -550,7 +550,7 @@ class TrainingController extends BaseController {
                     'error'       => "Payment amount mismatch detected. Please contact admissions support with reference: {$reference}.",
                     'reference'   => $reference,
                     'application' => $application
-                ]);
+                ], false);
                 return;
             }
 
@@ -616,7 +616,7 @@ class TrainingController extends BaseController {
                 'reference'      => $reference,
                 'invoice_token'  => $token,
                 'amount_kobo'    => $verifyResult['amount']
-            ]);
+            ], false);
             return;
         } else {
             $payModel->markTransactionFailed($reference, $verifyResult['message'] ?? 'Transaction was not completed.');
@@ -624,7 +624,7 @@ class TrainingController extends BaseController {
                 'error'       => $verifyResult['message'] ?? 'Payment was cancelled or unsuccessful. You may try again.',
                 'reference'   => $reference,
                 'application' => $application
-            ]);
+            ], false);
             return;
         }
     }
@@ -759,6 +759,6 @@ class TrainingController extends BaseController {
         $this->render("trainings/invoice", [
             'application' => $application,
             'reference'   => $reference
-        ]);
+        ], false);
     }
 }

@@ -173,7 +173,7 @@ class PaymentModel
     public function getApplicationByReference(string $reference): ?array
     {
         $sql = "SELECT tr.*, 
-                       t.training_name, t.training_image, t.training_description,
+                       t.training_name, t.training_image, t.training_description, t.training_time,
                        tc.cohort_name, tc.cohort_number, tc.start_date, tc.end_date,
                        pt.channel, pt.gateway_response, pt.paystack_reference, pt.paid_at as tx_paid_at
                 FROM `training_registrations` tr
@@ -195,7 +195,7 @@ class PaymentModel
     public function getApplicationById(int $id): ?array
     {
         $sql = "SELECT tr.*, 
-                       t.training_name, t.training_image, t.training_description,
+                       t.training_name, t.training_image, t.training_description, t.training_time,
                        tc.cohort_name, tc.cohort_number, tc.start_date, tc.end_date,
                        pt.channel, pt.gateway_response, pt.paystack_reference, pt.paid_at as tx_paid_at
                 FROM `training_registrations` tr
