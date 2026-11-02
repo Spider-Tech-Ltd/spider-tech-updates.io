@@ -756,6 +756,22 @@ class TrainingController extends BaseController {
             exit();
         }
 
+        // Direct PDF Download request
+        if (isset($_GET['download']) && $_GET['download'] === 'pdf') {
+            $data = InvoiceRenderer::normalizeData($application, ['reference' => $reference]);
+            $pdfBytes = InvoiceRenderer::generatePdf($data);
+            $cleanInv = preg_replace('/[^A-Za-z0-9_-]/', '', $data['invoice_number'] ?: 'receipt');
+            $filename = "invoice_{$cleanInv}.pdf";
+
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: attachment; filename="' . $filename . '"');
+            header('Content-Length: ' . strlen($pdfBytes));
+            header('Cache-Control: private, max-age=0, must-revalidate');
+            header('Pragma: public');
+            echo $pdfBytes;
+            exit();
+        }
+
         $this->render("trainings/invoice", [
             'application' => $application,
             'reference'   => $reference

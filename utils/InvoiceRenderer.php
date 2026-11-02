@@ -3,9 +3,15 @@
 /**
  * InvoiceRenderer
  * 
- * Centralized SaaS-Style Receipt & Invoice Template Engine
- * Generates email-safe HTML, standalone printable web pages, and plain-text receipts.
+ * Centralized SaaS-Style Receipt & Invoice Engine — Spider Tech
+ * - Single shared template for on-site printable web page and Dompdf PDF generation.
+ * - Generates email-safe Typeform-style notification emails with PDF attachment.
+ * - Generates plain-text fallbacks.
  */
+
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
 class InvoiceRenderer
 {
     /**
@@ -51,113 +57,136 @@ class InvoiceRenderer
         }
 
         $payerEmail = $overrides['payer_email'] ?? ($overrides['email'] ?? ($userData['email'] ?? ($userData['email_address'] ?? ($application['customer_email'] ?? ''))));
-        $payerPhone = $overrides['payer_phone'] ?? ($overrides['phone'] ?? ($userData['phone'] ?? ($userData['phone_no'] ?? ($userData['phone_number'] ?? ''))));
+        $payerPhone = $overrides['payer_phone'] ?? ($overrides['phone'] ?? ($userData['phone'] ?? ($userData['phone_no'] ?? ($userData['phone_number'] ?? 'Not provided'))));
+        if (empty($payerPhone)) {
+            $payerPhone = 'Not provided';
+        }
 
         $amountKobo = (int)($overrides['amount_kobo'] ?? ($application['amount_paid'] ?? 0));
         $invoiceNumber = $overrides['invoice_number'] ?? ($application['invoice_number'] ?? 'STP-INV-0000');
         $reference = $overrides['reference'] ?? ($application['payment_reference'] ?? '');
 
+        // Standard date format: "2 Nov 2026"
         $rawPaidAt = $overrides['paid_at'] ?? ($application['paid_at'] ?? '');
         $paidTimestamp = !empty($rawPaidAt) ? strtotime($rawPaidAt) : time();
-        $datePaidShort = date('j M Y', $paidTimestamp);
-        $datePaidFull  = date('F j, Y \a\t g:i A', $paidTimestamp);
+        $datePaidStandard = date('j M Y', $paidTimestamp);
+        $datePaidAudit    = date('j M Y \a\t g:i A', $paidTimestamp);
 
-        $startDateFormatted = '';
+        $startDateFormatted = 'To Be Announced';
         $rawStartDate = $overrides['start_date'] ?? ($application['start_date'] ?? '');
         if (!empty($rawStartDate)) {
-            $startDateFormatted = date('M d, Y', strtotime($rawStartDate));
-        }
-
-        $receiptUrl = $overrides['receipt_url'] ?? '';
-        if (empty($receiptUrl) && !empty($reference)) {
-            $token = class_exists('PaystackService') ? PaystackService::generateInvoiceToken($reference) : '';
-            $baseUrl = defined('BASE_URL') ? BASE_URL : '';
-            $receiptUrl = $baseUrl . "/trainings/invoice?ref=" . urlencode($reference) . "&token=" . urlencode($token);
+            $startDateFormatted = date('j M Y', strtotime($rawStartDate));
         }
 
         $baseUrl = defined('BASE_URL') ? BASE_URL : '';
         $rootPath = defined('ROOT_PATH') ? ROOT_PATH : dirname(__DIR__);
-        $logoUrl = $baseUrl . "/images/spider-tech.png";
-        $logoWhitePath = $rootPath . "/images/spider-tech-white.png";
-        $hasWhiteLogo = file_exists($logoWhitePath);
-        if ($hasWhiteLogo) {
-            $logoUrl = $baseUrl . "/images/spider-tech-white.png";
+
+        $receiptUrl = $overrides['receipt_url'] ?? '';
+        $receiptDownloadUrl = '';
+        if (empty($receiptUrl) && !empty($reference)) {
+            $token = class_exists('PaystackService') ? PaystackService::generateInvoiceToken($reference) : '';
+            $receiptUrl = $baseUrl . "/trainings/invoice?ref=" . urlencode($reference) . "&token=" . urlencode($token);
+            $receiptDownloadUrl = $baseUrl . "/trainings/invoice?ref=" . urlencode($reference) . "&token=" . urlencode($token) . "&download=pdf";
+        } elseif (!empty($receiptUrl)) {
+            $receiptDownloadUrl = $receiptUrl . (str_contains($receiptUrl, '?') ? '&' : '?') . 'download=pdf';
+        }
+
+        // Logo files
+        $logoPath = $rootPath . "/images/spider-tech.png";
+        $logoUrl  = $baseUrl . "/images/spider-tech.png";
+        $logoBase64 = '';
+        if (file_exists($logoPath)) {
+            $logoData = file_get_contents($logoPath);
+            $logoBase64 = 'data:image/png;base64,' . base64_encode($logoData);
         }
 
         $programName = $overrides['program_name'] ?? ($application['training_name'] ?? 'Training Program');
-        $cohortName  = $overrides['cohort_name'] ?? ($application['cohort_name'] ?? 'Cohort');
+        $cohortName  = $overrides['cohort_name'] ?? ($application['cohort_name'] ?? 'Upcoming Cohort');
         $trainingTime = $overrides['training_time'] ?? ($application['training_time'] ?? '');
 
         $channelRaw = $overrides['channel'] ?? ($application['channel'] ?? 'Paystack Checkout');
-        $channel = !empty($channelRaw) ? ucfirst($channelRaw) : 'Paystack Checkout';
+        $channel = !empty($channelRaw) ? ucfirst($channelRaw) : 'Online Payment';
 
         $backUrl = $overrides['receipt_url_back'] ?? ($baseUrl . '/trainings');
+        $applicantId = (int)($application['id'] ?? ($overrides['applicant_id'] ?? 0));
 
         return [
-            'invoice_number'     => $invoiceNumber,
-            'reference'          => $reference,
-            'paystack_reference' => $application['paystack_reference'] ?? ($overrides['paystack_reference'] ?? ''),
-            'amount_kobo'        => $amountKobo,
-            'date_paid_short'    => $datePaidShort,
-            'date_paid_full'     => $datePaidFull,
-            'issuer'             => self::getIssuerDetails(),
-            'payer'              => [
-                'name'  => $payerName,
-                'email' => $payerEmail,
-                'phone' => $payerPhone,
-                'id'    => (int)($application['id'] ?? 0)
+            'invoice_number'       => $invoiceNumber,
+            'receipt_number'       => $invoiceNumber,
+            'reference'            => $reference,
+            'paystack_reference'   => $application['paystack_reference'] ?? ($overrides['paystack_reference'] ?? ''),
+            'amount_kobo'          => $amountKobo,
+            'date_paid_standard'   => $datePaidStandard,
+            'date_paid_audit'      => $datePaidAudit,
+            'issuer'               => self::getIssuerDetails(),
+            'payer'                => [
+                'name'         => $payerName,
+                'first_name'   => $firstName ?: $payerName,
+                'email'        => $payerEmail,
+                'phone'        => $payerPhone,
+                'applicant_id' => $applicantId
             ],
-            'program'            => [
+            'program'              => [
                 'name'       => $programName,
                 'cohort'     => $cohortName,
                 'start_date' => $startDateFormatted,
                 'time'       => $trainingTime
             ],
-            'channel'            => $channel,
-            'status'             => 'PAID',
-            'receipt_url'        => $receiptUrl,
-            'receipt_url_back'   => $backUrl,
-            'logo_url'           => $logoUrl,
-            'has_white_logo'     => $hasWhiteLogo
+            'channel'              => $channel,
+            'status'               => 'PAID',
+            'receipt_url'          => $receiptUrl,
+            'receipt_url_download' => $receiptDownloadUrl,
+            'receipt_url_back'     => $backUrl,
+            'logo_url'             => $logoUrl,
+            'logo_base64'          => $logoBase64,
+            'logo_path'            => $logoPath
         ];
     }
 
     /**
-     * Render the core email-safe HTML receipt card
+     * Render the core shared receipt card template (HTML table-based)
+     * Used for both on-site printable page and Dompdf PDF generation.
      */
-    public static function renderReceiptHtml(array $d, bool $isEmail = false): string
+    public static function renderReceiptHtml(array $d, bool $isPdf = false): string
     {
-        $amountFormatted = self::formatNaira((int)$d['amount_kobo'], $isEmail);
+        $amountFormatted = self::formatNaira((int)$d['amount_kobo'], false);
         $issuer = $d['issuer'];
         $payer  = $d['payer'];
         $prog   = $d['program'];
 
-        // Secondary description line
-        $secondaryDesc = htmlspecialchars($prog['cohort']);
-        if (!empty($prog['start_date'])) {
-            $secondaryDesc .= ' &bull; Starts ' . htmlspecialchars($prog['start_date']);
-        }
+        // In PDF context, use DejaVu Sans so the Naira glyph (₦) renders cleanly
+        $fontStack = $isPdf
+            ? "'DejaVu Sans', sans-serif"
+            : "'Poppins', 'DejaVu Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
 
-        // Logo style: if no white logo asset exists, apply CSS filter for dark header
-        $logoFilter = $d['has_white_logo'] ? '' : 'filter: brightness(0) invert(1); -webkit-filter: brightness(0) invert(1);';
+        $monoFontStack = $isPdf
+            ? "'DejaVu Sans', monospace"
+            : "'Space Grotesk', 'DejaVu Sans', monospace";
+
+        // Logo src: base64 Data URI for PDF to guarantee instant offline loading without cURL
+        $logoSrc = ($isPdf && !empty($d['logo_base64'])) ? $d['logo_base64'] : $d['logo_url'];
+
+        // Option A Header: Clean white background, unaltered full-color logo (width 220px, height auto, no filter)
+        // Spacing: 34px above, 24px below logo to label, 30px bottom
+        $applicantIdDisplay = !empty($payer['applicant_id']) ? "Applicant ID: #{$payer['applicant_id']}" : "Applicant ID: Pending";
 
         $html = <<<HTML
-<!-- RECEIPT CONTAINER (Max width 680px) -->
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 680px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 4px; border-collapse: separate; font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #374151; font-size: 13px; line-height: 1.5;">
+<!-- RECEIPT CONTAINER (Width 680px) -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 680px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 4px; border-collapse: separate; font-family: {$fontStack}; color: #374151; font-size: 13px; line-height: 1.5;">
 
-    <!-- 1. TOP ACCENT BAR -->
+    <!-- 1. TOP ACCENT BAR (4px brand orange) -->
     <tr>
-        <td style="height: 4px; background-color: #f48221; font-size: 0; line-height: 0; padding: 0;">&nbsp;</td>
+        <td style="height: 4px; background-color: #f48221; font-size: 0; line-height: 0; padding: 0; border: 0;">&nbsp;</td>
     </tr>
 
-    <!-- 2. DARK HEADER BAND WITH CENTERED LOGO -->
+    <!-- 2. OPTION A: CLEAN LIGHT HEADER BAND (Original Full-Color Logo, Larger, Centered, No Border) -->
     <tr>
-        <td align="center" style="background-color: #110f0d; padding: 34px 20px 28px 20px; text-align: center;">
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
+        <td align="center" style="background-color: #ffffff; padding: 36px 20px 26px 20px; text-align: center; border-bottom: 1px solid #e5e7eb;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto; text-align: center;">
                 <tr>
                     <td align="center" style="text-align: center;">
-                        <img src="{$d['logo_url']}" alt="{$issuer['name']}" height="42" style="height: 42px; max-height: 48px; width: auto; display: block; border: 0; outline: none; margin: 0 auto; {$logoFilter}" />
-                        <div style="font-family: 'Poppins', Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: #cbd5e1; margin-top: 12px;">
+                        <img src="{$logoSrc}" alt="{$issuer['name']}" width="220" style="width: 220px; max-width: 70%; height: auto; display: block; margin: 0 auto; border: 0; outline: none;" />
+                        <div style="font-family: {$fontStack}; font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: #6b7280; margin-top: 22px;">
                             PAYMENT RECEIPT
                         </div>
                     </td>
@@ -168,176 +197,170 @@ class InvoiceRenderer
 
     <!-- RECEIPT BODY CONTENT -->
     <tr>
-        <td style="padding: 28px 30px;">
+        <td style="padding: 26px 28px;">
 
-            <!-- 3. SUMMARY STRIP (4-COLUMN TABULAR GRID) -->
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border: 1px solid #e5e7eb; border-radius: 4px; background-color: #fcfdfd; border-collapse: collapse; margin-bottom: 24px;">
+            <!-- 3. SUMMARY STRIP (4 Equal Bordered Columns + Large Amount Paid Banner) -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border: 1px solid #e5e7eb; border-radius: 4px; background-color: #ffffff; border-collapse: collapse; margin-bottom: 22px;">
                 <tr>
-                    <td width="25%" class="stack-col" style="padding: 12px 14px; border-right: 1px solid #e5e7eb; vertical-align: top;">
-                        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; margin-bottom: 4px;">INVOICE NO.</div>
-                        <div style="font-size: 13px; font-weight: 700; color: #111827; font-family: 'Space Grotesk', monospace;">{$d['invoice_number']}</div>
+                    <td width="25%" class="stack-col" style="padding: 12px 14px; border-right: 1px solid #e5e7eb; vertical-align: top; width: 25%;">
+                        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; margin-bottom: 4px;">RECEIPT NO.</div>
+                        <div style="font-size: 13px; font-weight: 700; color: #111827; font-family: {$monoFontStack};">{$d['invoice_number']}</div>
                     </td>
-                    <td width="25%" class="stack-col" style="padding: 12px 14px; border-right: 1px solid #e5e7eb; vertical-align: top;">
+                    <td width="25%" class="stack-col" style="padding: 12px 14px; border-right: 1px solid #e5e7eb; vertical-align: top; width: 25%;">
                         <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; margin-bottom: 4px;">DATE PAID</div>
-                        <div style="font-size: 13px; font-weight: 600; color: #111827;">{$d['date_paid_short']}</div>
+                        <div style="font-size: 13px; font-weight: 600; color: #111827;">{$d['date_paid_standard']}</div>
                     </td>
-                    <td width="30%" class="stack-col" style="padding: 12px 14px; border-right: 1px solid #e5e7eb; vertical-align: top;">
+                    <td width="25%" class="stack-col" style="padding: 12px 14px; border-right: 1px solid #e5e7eb; vertical-align: top; width: 25%;">
                         <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; margin-bottom: 4px;">PAYMENT REF</div>
-                        <div style="font-size: 12px; font-weight: 500; color: #374151; font-family: 'Space Grotesk', monospace; word-break: break-all;">{$d['reference']}</div>
+                        <div style="font-size: 11px; font-weight: 600; color: #111827; font-family: {$monoFontStack}; word-break: break-all;">{$d['reference']}</div>
                     </td>
-                    <td width="20%" class="stack-col" style="padding: 12px 14px; vertical-align: top; text-align: right;">
-                        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; margin-bottom: 4px;">STATUS</div>
-                        <span style="display: inline-block; background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; border-radius: 3px; padding: 2px 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;">PAID</span>
+                    <td width="25%" class="stack-col" style="padding: 12px 14px; vertical-align: top; width: 25%;">
+                        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; margin-bottom: 5px;">STATUS</div>
+                        <div>
+                            <span style="display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 700; color: #047857; background-color: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 3px; letter-spacing: 0.5px;">PAID</span>
+                        </div>
                     </td>
                 </tr>
+                <!-- Amount Paid Large Banner -->
                 <tr>
-                    <td colspan="4" style="padding: 14px 16px; border-top: 1px solid #e5e7eb; background-color: #ffffff;">
-                        <div style="font-size: 22px; font-weight: 700; color: #111827; letter-spacing: -0.3px;">
-                            {$amountFormatted} <span style="font-size: 13px; font-weight: 400; color: #6b7280;">paid on {$d['date_paid_short']}</span>
+                    <td colspan="4" style="border-top: 1px solid #e5e7eb; background-color: #f9fafb; padding: 13px 16px;">
+                        <span style="font-size: 19px; font-weight: 700; color: #111827; font-family: {$monoFontStack};">
+                            {$amountFormatted}
+                        </span>
+                        <span style="font-size: 13px; font-weight: 500; color: #4b5563; margin-left: 6px;">
+                            paid on {$d['date_paid_standard']}
+                        </span>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- 4. PARTIES ROW (2 Equal Bordered Columns: FROM vs BILLED TO) -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border: 1px solid #e5e7eb; border-radius: 4px; border-collapse: collapse; margin-bottom: 22px;">
+                <tr>
+                    <!-- FROM (Issuer) -->
+                    <td width="50%" class="stack-col" style="padding: 14px 16px; border-right: 1px solid #e5e7eb; vertical-align: top; width: 50%;">
+                        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; margin-bottom: 6px;">FROM</div>
+                        <div style="font-size: 13px; font-weight: 700; color: #111827; margin-bottom: 3px;">{$issuer['name']}</div>
+                        <div style="color: #4b5563; font-size: 12px; line-height: 1.45; margin-bottom: 4px;">
+                            {$issuer['address']}
+                        </div>
+                        <div style="color: #4b5563; font-size: 12px; line-height: 1.45;">
+                            Email: {$issuer['email']}<br>
+                            Phone: {$issuer['phone']}
+                        </div>
+                    </td>
+                    <!-- BILLED TO (Payer) -->
+                    <td width="50%" class="stack-col" style="padding: 14px 16px; vertical-align: top; width: 50%;">
+                        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; margin-bottom: 6px;">BILLED TO</div>
+                        <div style="font-size: 13px; font-weight: 700; color: #111827; margin-bottom: 3px;">{$payer['name']}</div>
+                        <div style="color: #4b5563; font-size: 12px; line-height: 1.45; margin-bottom: 2px;">
+                            Email: {$payer['email']}
+                        </div>
+                        <div style="color: #4b5563; font-size: 12px; line-height: 1.45; margin-bottom: 4px;">
+                            Phone: {$payer['phone']}
+                        </div>
+                        <div style="font-size: 11px; font-weight: 600; color: #6b7280; font-family: {$monoFontStack};">
+                            {$applicantIdDisplay}
                         </div>
                     </td>
                 </tr>
             </table>
 
-            <!-- 4. PARTIES ROW (TWO EQUAL COLUMNS: FROM / BILLED TO) -->
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border: 1px solid #e5e7eb; border-radius: 4px; border-collapse: collapse; margin-bottom: 24px;">
-                <tr>
-                    <td width="50%" class="stack-col" style="padding: 16px 18px; border-right: 1px solid #e5e7eb; vertical-align: top; background-color: #ffffff;">
-                        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #9ca3af; margin-bottom: 6px;">FROM</div>
-                        <div style="font-size: 14px; font-weight: 700; color: #111827; margin-bottom: 4px;">{$issuer['name']}</div>
-                        <div style="font-size: 12px; color: #4b5563; line-height: 1.5;">
-                            {$issuer['address']}<br>
-                            {$issuer['email']}<br>
-                            {$issuer['phone']}
-                        </div>
-                    </td>
-                    <td width="50%" class="stack-col" style="padding: 16px 18px; vertical-align: top; background-color: #ffffff;">
-                        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #9ca3af; margin-bottom: 6px;">BILLED TO</div>
-                        <div style="font-size: 14px; font-weight: 700; color: #111827; margin-bottom: 4px;">{$payer['name']}</div>
-                        <div style="font-size: 12px; color: #4b5563; line-height: 1.5;">
-                            {$payer['email']}
-HTML;
-
-        if (!empty($payer['phone'])) {
-            $html .= '<br>' . htmlspecialchars($payer['phone']);
-        }
-        if (!empty($payer['id'])) {
-            $html .= '<br><span style="color: #9ca3af;">Candidate ID: #' . (int)$payer['id'] . '</span>';
-        }
-
-        $html .= <<<HTML
-                        </div>
-                    </td>
-                </tr>
-            </table>
-
-            <!-- 5. ITEMS TABLE (TABULAR BREAKDOWN) -->
+            <!-- 5. ITEMS TABLE (Training | Cohort | Start Date | Seats | Amount) -->
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border: 1px solid #e5e7eb; border-radius: 4px; border-collapse: collapse; margin-bottom: 20px;">
                 <thead>
-                    <tr style="background-color: #f9fafb;">
-                        <th align="left" style="padding: 10px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #4b5563; border-bottom: 1px solid #e5e7eb;">Description</th>
-                        <th align="right" width="60" style="padding: 10px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #4b5563; border-bottom: 1px solid #e5e7eb; text-align: right;">Qty</th>
-                        <th align="right" width="120" style="padding: 10px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #4b5563; border-bottom: 1px solid #e5e7eb; text-align: right;">Unit Price</th>
-                        <th align="right" width="120" style="padding: 10px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #4b5563; border-bottom: 1px solid #e5e7eb; text-align: right;">Amount</th>
+                    <tr style="background-color: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                        <th align="left" style="padding: 10px 14px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; width: 34%;">TRAINING</th>
+                        <th align="left" style="padding: 10px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; width: 22%;">COHORT</th>
+                        <th align="left" style="padding: 10px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; width: 18%;">START DATE</th>
+                        <th align="center" style="padding: 10px 10px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; width: 8%; text-align: center;">SEATS</th>
+                        <th align="right" style="padding: 10px 14px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; width: 18%; text-align: right;">AMOUNT</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="padding: 14px; border-bottom: 1px solid #e5e7eb; vertical-align: top;">
-                            <div style="font-weight: 600; font-size: 13px; color: #111827; margin-bottom: 3px;">{$prog['name']}</div>
-                            <div style="font-size: 12px; color: #6b7280;">{$secondaryDesc}</div>
+                        <td style="padding: 12px 14px; font-size: 13px; font-weight: 600; color: #111827; vertical-align: top; border-bottom: 1px solid #e5e7eb;">
+                            {$prog['name']}
                         </td>
-                        <td align="right" style="padding: 14px; border-bottom: 1px solid #e5e7eb; vertical-align: top; text-align: right; font-weight: 500; color: #111827;">1</td>
-                        <td align="right" style="padding: 14px; border-bottom: 1px solid #e5e7eb; vertical-align: top; text-align: right; font-weight: 500; color: #111827;">{$amountFormatted}</td>
-                        <td align="right" style="padding: 14px; border-bottom: 1px solid #e5e7eb; vertical-align: top; text-align: right; font-weight: 600; color: #111827;">{$amountFormatted}</td>
+                        <td style="padding: 12px 12px; font-size: 12px; color: #374151; vertical-align: top; border-bottom: 1px solid #e5e7eb;">
+                            {$prog['cohort']}
+                        </td>
+                        <td style="padding: 12px 12px; font-size: 12px; color: #374151; vertical-align: top; border-bottom: 1px solid #e5e7eb;">
+                            {$prog['start_date']}
+                        </td>
+                        <td align="center" style="padding: 12px 10px; font-size: 12px; color: #111827; font-weight: 600; vertical-align: top; text-align: center; border-bottom: 1px solid #e5e7eb;">
+                            1
+                        </td>
+                        <td align="right" style="padding: 12px 14px; font-size: 13px; font-weight: 700; color: #111827; vertical-align: top; text-align: right; font-family: {$monoFontStack}; border-bottom: 1px solid #e5e7eb;">
+                            {$amountFormatted}
+                        </td>
                     </tr>
                 </tbody>
             </table>
 
-            <!-- 6. TOTALS TABLE (RIGHT-ALIGNED BLOCK) -->
+            <!-- 6. TOTALS BLOCK (Right-Aligned Bordered Table, No Empty Left Cell) -->
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 24px;">
                 <tr>
-                    <td class="stack-hide" width="40%">&nbsp;</td>
-                    <td width="60%" class="stack-full" style="vertical-align: top;">
-                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border: 1px solid #e5e7eb; border-radius: 4px; border-collapse: collapse; background-color: #fcfdfd;">
+                    <td class="stack-hide" width="50%">&nbsp;</td>
+                    <td width="50%" align="right" class="stack-full">
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 300px; border: 1px solid #e5e7eb; border-radius: 4px; border-collapse: collapse; margin-left: auto;">
                             <tr>
-                                <td style="padding: 9px 14px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-size: 12px;">Subtotal</td>
-                                <td align="right" style="padding: 9px 14px; border-bottom: 1px solid #e5e7eb; text-align: right; font-weight: 600; color: #111827; font-size: 13px;">{$amountFormatted}</td>
+                                <td style="padding: 9px 12px; font-size: 12px; color: #4b5563; font-weight: 500; border-bottom: 1px solid #e5e7eb;">Subtotal</td>
+                                <td align="right" style="padding: 9px 12px; font-size: 12px; font-weight: 600; color: #111827; text-align: right; font-family: {$monoFontStack}; border-bottom: 1px solid #e5e7eb;">{$amountFormatted}</td>
+                            </tr>
+                            <tr style="background-color: #fafbfc;">
+                                <td style="padding: 9px 12px; font-size: 13px; color: #111827; font-weight: 700; border-bottom: 1px solid #e5e7eb;">Total</td>
+                                <td align="right" style="padding: 9px 12px; font-size: 13px; font-weight: 700; color: #111827; text-align: right; font-family: {$monoFontStack}; border-bottom: 1px solid #e5e7eb;">{$amountFormatted}</td>
                             </tr>
                             <tr>
-                                <td style="padding: 10px 14px; border-bottom: 1px solid #e5e7eb; color: #111827; font-size: 13px; font-weight: 700;">Total</td>
-                                <td align="right" style="padding: 10px 14px; border-bottom: 1px solid #e5e7eb; text-align: right; font-weight: 700; color: #111827; font-size: 14px;">{$amountFormatted}</td>
+                                <td style="padding: 9px 12px; font-size: 12px; color: #047857; font-weight: 600; border-bottom: 1px solid #e5e7eb;">Amount Paid</td>
+                                <td align="right" style="padding: 9px 12px; font-size: 12px; font-weight: 700; color: #047857; text-align: right; font-family: {$monoFontStack}; border-bottom: 1px solid #e5e7eb;">{$amountFormatted}</td>
                             </tr>
                             <tr>
-                                <td style="padding: 9px 14px; border-bottom: 1px solid #e5e7eb; color: #4b5563; font-size: 12px;">Amount Paid</td>
-                                <td align="right" style="padding: 9px 14px; border-bottom: 1px solid #e5e7eb; text-align: right; font-weight: 600; color: #111827; font-size: 13px;">({$amountFormatted})</td>
-                            </tr>
-                            <tr style="background-color: #f3f4f6;">
-                                <td style="padding: 10px 14px; color: #111827; font-size: 13px; font-weight: 700;">Balance Due</td>
-                                <td align="right" style="padding: 10px 14px; text-align: right; font-weight: 700; color: #111827; font-size: 14px;">&#8358;0.00</td>
+                                <td style="padding: 9px 12px; font-size: 12px; color: #6b7280; font-weight: 600;">Balance Due</td>
+                                <td align="right" style="padding: 9px 12px; font-size: 12px; font-weight: 700; color: #111827; text-align: right; font-family: {$monoFontStack};">₦0.00</td>
                             </tr>
                         </table>
                     </td>
                 </tr>
             </table>
 
-            <!-- 7. PAYMENT DETAILS TABLE -->
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border: 1px solid #e5e7eb; border-radius: 4px; border-collapse: collapse; margin-bottom: 24px;">
+            <!-- 7. PAYMENT DETAILS TABLE (Bordered Label/Value Audit Rows) -->
+            <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; margin-bottom: 6px;">
+                PAYMENT AUDIT TRAIL
+            </div>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border: 1px solid #e5e7eb; border-radius: 4px; border-collapse: collapse; margin-bottom: 10px;">
                 <tr>
-                    <td colspan="2" style="padding: 10px 14px; background-color: #f9fafb; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #4b5563; border-bottom: 1px solid #e5e7eb;">
-                        Payment Details
-                    </td>
+                    <td width="35%" style="padding: 8px 14px; background-color: #f9fafb; font-size: 12px; font-weight: 600; color: #4b5563; border-bottom: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb;">Payment Method</td>
+                    <td style="padding: 8px 14px; font-size: 12px; color: #111827; border-bottom: 1px solid #e5e7eb;">Paystack ({$d['channel']})</td>
                 </tr>
                 <tr>
-                    <td width="35%" style="padding: 9px 14px; border-bottom: 1px solid #f3f4f6; color: #6b7280; font-size: 12px;">Payment Method</td>
-                    <td style="padding: 9px 14px; border-bottom: 1px solid #f3f4f6; font-weight: 600; color: #111827; font-size: 12px;">Paystack ({$d['channel']})</td>
+                    <td width="35%" style="padding: 8px 14px; background-color: #f9fafb; font-size: 12px; font-weight: 600; color: #4b5563; border-bottom: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb;">Transaction Reference</td>
+                    <td style="padding: 8px 14px; font-size: 12px; font-family: {$monoFontStack}; color: #111827; border-bottom: 1px solid #e5e7eb;">{$d['reference']}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 9px 14px; border-bottom: 1px solid #f3f4f6; color: #6b7280; font-size: 12px;">Transaction Reference</td>
-                    <td style="padding: 9px 14px; border-bottom: 1px solid #f3f4f6; font-family: 'Space Grotesk', monospace; color: #111827; font-size: 12px;">{$d['reference']}</td>
+                    <td width="35%" style="padding: 8px 14px; background-color: #f9fafb; font-size: 12px; font-weight: 600; color: #4b5563; border-bottom: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb;">Date & Time Paid</td>
+                    <td style="padding: 8px 14px; font-size: 12px; color: #111827; border-bottom: 1px solid #e5e7eb;">{$d['date_paid_audit']}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 9px 14px; border-bottom: 1px solid #f3f4f6; color: #6b7280; font-size: 12px;">Date &amp; Time Paid</td>
-                    <td style="padding: 9px 14px; border-bottom: 1px solid #f3f4f6; color: #111827; font-size: 12px;">{$d['date_paid_full']}</td>
-                </tr>
-                <tr>
-                    <td style="padding: 9px 14px; color: #6b7280; font-size: 12px;">Payment Status</td>
-                    <td style="padding: 9px 14px; color: #047857; font-weight: 600; font-size: 12px;">Successful (Cleared)</td>
+                    <td width="35%" style="padding: 8px 14px; background-color: #f9fafb; font-size: 12px; font-weight: 600; color: #4b5563; border-right: 1px solid #e5e7eb;">Gateway Status</td>
+                    <td style="padding: 8px 14px; font-size: 12px; color: #047857; font-weight: 600;">Success (Verified)</td>
                 </tr>
             </table>
 
-HTML;
-
-        // If email, show online view button
-        if ($isEmail && !empty($d['receipt_url'])) {
-            $html .= <<<HTML
-            <!-- ONLINE RECEIPT BUTTON FOR EMAIL -->
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 24px;">
-                <tr>
-                    <td align="center" style="text-align: center; padding: 6px 0;">
-                        <a href="{$d['receipt_url']}" target="_blank" style="display: inline-block; background-color: #110f0d; color: #ffffff; text-decoration: none; padding: 11px 24px; border-radius: 4px; font-weight: 600; font-size: 13px; letter-spacing: 0.2px;">
-                            View Official Online Receipt
-                        </a>
-                    </td>
-                </tr>
-            </table>
-HTML;
-        }
-
-        $html .= <<<HTML
         </td>
     </tr>
 
     <!-- 8. FOOTER BLOCK -->
     <tr>
-        <td style="background-color: #f9fafb; border-top: 1px solid #e5e7eb; padding: 22px 30px; text-align: center; font-size: 11px; color: #6b7280; line-height: 1.6;">
+        <td style="background-color: #fafbfc; border-top: 1px solid #e5e7eb; padding: 22px 28px; text-align: center; font-size: 11px; color: #6b7280; line-height: 1.6;">
             <div style="font-weight: 600; color: #374151; margin-bottom: 3px;">
                 Thank you for your payment to {$issuer['name']}.
             </div>
             <div>
                 Questions? Contact <a href="mailto:{$issuer['email']}" style="color: #f48221; text-decoration: none;">{$issuer['email']}</a> or {$issuer['phone']}
             </div>
-            <div style="margin-top: 4px;">
+            <div style="margin-top: 3px;">
                 {$issuer['address']}
             </div>
             <div style="font-size: 10px; color: #9ca3af; margin-top: 8px; font-style: italic;">
@@ -353,16 +376,25 @@ HTML;
     }
 
     /**
-     * Render a complete, standalone web page for printable invoice and callback view
+     * Render a complete standalone web page for printable invoice and success callback view
      */
     public static function renderStandalonePage(array $d, array $options = []): string
     {
         $receiptHtml = self::renderReceiptHtml($d, false);
         $showActions = $options['show_actions'] ?? true;
-        $pageTitle = "Official Payment Receipt - " . htmlspecialchars($d['invoice_number']) . " — " . htmlspecialchars($d['issuer']['name']);
+        $pageTitle = "Payment Receipt - " . htmlspecialchars($d['invoice_number']) . " — " . htmlspecialchars($d['issuer']['name']);
 
         $actionsHtml = '';
         if ($showActions) {
+            $downloadBtn = '';
+            if (!empty($d['receipt_url_download'])) {
+                $downloadBtn = <<<HTML
+            <a href="{$d['receipt_url_download']}" class="btn-invoice-download" style="display: inline-flex; align-items: center; gap: 6px; background-color: #f48221; color: #ffffff; border: 1px solid #f48221; border-radius: 4px; padding: 8px 18px; font-size: 13px; font-weight: 600; text-decoration: none; cursor: pointer; transition: all 0.15s ease;">
+                <span>Download PDF</span>
+            </a>
+HTML;
+            }
+
             $actionsHtml = <<<HTML
     <!-- ACTION TOOLBAR (Hidden in Print) -->
     <div class="no-print" style="max-width: 680px; margin: 0 auto 18px auto; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
@@ -370,9 +402,12 @@ HTML;
             &larr; Back to Programs
         </a>
 
-        <button onclick="window.print()" class="btn-invoice-print" style="display: inline-flex; align-items: center; gap: 6px; background-color: #110f0d; color: #ffffff; border: 1px solid #110f0d; border-radius: 4px; padding: 8px 18px; font-size: 13px; font-weight: 600; text-decoration: none; cursor: pointer; transition: all 0.15s ease;">
-            <span>Print / Save as PDF</span>
-        </button>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            {$downloadBtn}
+            <button onclick="window.print()" class="btn-invoice-print" style="display: inline-flex; align-items: center; gap: 6px; background-color: #110f0d; color: #ffffff; border: 1px solid #110f0d; border-radius: 4px; padding: 8px 18px; font-size: 13px; font-weight: 600; text-decoration: none; cursor: pointer; transition: all 0.15s ease;">
+                <span>Print Receipt</span>
+            </button>
+        </div>
     </div>
 HTML;
         }
@@ -412,13 +447,17 @@ HTML;
             border-color: #9ca3af !important;
             color: #f48221 !important;
         }
+        .btn-invoice-download:hover {
+            background-color: #e6751c !important;
+            border-color: #e6751c !important;
+        }
         .btn-invoice-print:hover {
             background-color: #27272a !important;
             border-color: #27272a !important;
         }
 
         /* Responsive rules */
-        @media only screen and (max-width: 520px) {
+        @media only screen and (max-width: 540px) {
             body {
                 padding: 16px 8px 36px 8px;
             }
@@ -481,7 +520,242 @@ HTML;
     }
 
     /**
-     * Render ASCII plain-text receipt for email fallback
+     * Generate Receipt PDF binary using Dompdf (A4 portrait, full-bleed header)
+     */
+    public static function generatePdf(array $d): string
+    {
+        $options = new Options();
+        $options->set('isRemoteEnabled', true);
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('defaultFont', 'DejaVu Sans');
+
+        $dompdf = new Dompdf($options);
+
+        // Core receipt markup generated with $isPdf = true
+        $receiptCardHtml = self::renderReceiptHtml($d, true);
+
+        // Zero page margin with inner padding for full-bleed orange bar and header
+        $pdfHtml = <<<HTML
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Receipt {$d['invoice_number']}</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 0mm;
+        }
+        body {
+            margin: 0mm;
+            padding: 15mm;
+            background-color: #ffffff;
+            font-family: 'DejaVu Sans', sans-serif;
+            color: #374151;
+            font-size: 12px;
+            line-height: 1.45;
+        }
+        table {
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+<body>
+    {$receiptCardHtml}
+</body>
+</html>
+HTML;
+
+        $dompdf->loadHtml($pdfHtml);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        return $dompdf->output();
+    }
+
+    /**
+     * Save Receipt PDF to secure storage directory and return path
+     */
+    public static function savePdf(array $d, ?string $destinationPath = null): string
+    {
+        $rootPath = defined('ROOT_PATH') ? ROOT_PATH : dirname(__DIR__);
+        $storageDir = $rootPath . '/storage/receipts';
+        if (!is_dir($storageDir)) {
+            mkdir($storageDir, 0755, true);
+        }
+
+        if (empty($destinationPath)) {
+            $cleanInv = preg_replace('/[^A-Za-z0-9_-]/', '', $d['invoice_number']);
+            $destinationPath = $storageDir . "/invoice_{$cleanInv}.pdf";
+        }
+
+        $pdfBytes = self::generatePdf($d);
+        file_put_contents($destinationPath, $pdfBytes);
+
+        return $destinationPath;
+    }
+
+    /**
+     * Render Typeform-style short HTML email body with key facts and PDF notice
+     */
+    public static function renderEmailHtml(array $d): string
+    {
+        $amountFormatted = self::formatNaira((int)$d['amount_kobo'], true);
+        $issuer = $d['issuer'];
+        $payer  = $d['payer'];
+        $prog   = $d['program'];
+
+        $firstName = htmlspecialchars($payer['first_name'] ?: 'Applicant');
+        $greeting = !empty($firstName) && $firstName !== 'Candidate' ? "Hi {$firstName}," : "Hello,";
+
+        $html = <<<HTML
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your payment receipt</title>
+</head>
+<body style="font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f3f4f6; margin: 0; padding: 24px 12px; color: #374151; font-size: 14px; line-height: 1.6;">
+
+    <!-- EMAIL CONTAINER (Max width 600px) -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 4px; overflow: hidden;">
+
+        <!-- 1. TOP ACCENT BAR -->
+        <tr>
+            <td style="height: 4px; background-color: #f48221; font-size: 0; line-height: 0; padding: 0;">&nbsp;</td>
+        </tr>
+
+        <!-- 2. OPTION A LIGHT HEADER WITH CENTERED ORIGINAL LOGO -->
+        <tr>
+            <td align="center" style="background-color: #ffffff; padding: 32px 20px 22px 20px; text-align: center; border-bottom: 1px solid #e5e7eb;">
+                <img src="{$d['logo_url']}" alt="{$issuer['name']}" width="200" style="width: 200px; max-width: 75%; height: auto; display: block; margin: 0 auto; border: 0;" />
+                <div style="font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: #6b7280; margin-top: 18px;">
+                    PAYMENT RECEIPT
+                </div>
+            </td>
+        </tr>
+
+        <!-- 3. EMAIL BODY -->
+        <tr>
+            <td style="padding: 30px 28px;">
+
+                <h2 style="font-size: 20px; font-weight: 700; color: #111827; margin: 0 0 16px 0;">
+                    Here's your payment receipt
+                </h2>
+
+                <p style="margin: 0 0 14px 0; color: #374151; font-size: 14px;">
+                    {$greeting}
+                </p>
+
+                <p style="margin: 0 0 22px 0; color: #4b5563; font-size: 14px; line-height: 1.6;">
+                    Thank you for your payment. Your official receipt for <strong>{$prog['name']} ({$prog['cohort']})</strong> is attached to this email as a PDF for your records.
+                </p>
+
+                <!-- STACKED KEY FACTS BOX (Typeform Style) -->
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border: 1px solid #e5e7eb; border-radius: 4px; background-color: #fafbfc; border-collapse: collapse; margin-bottom: 24px;">
+                    <tr>
+                        <td style="padding: 10px 14px; font-size: 12px; color: #6b7280; border-bottom: 1px solid #e5e7eb; width: 40%;">Receipt number</td>
+                        <td style="padding: 10px 14px; font-size: 13px; font-weight: 700; color: #111827; font-family: monospace; border-bottom: 1px solid #e5e7eb;">{$d['invoice_number']}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px 14px; font-size: 12px; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Amount paid</td>
+                        <td style="padding: 10px 14px; font-size: 14px; font-weight: 700; color: #111827; border-bottom: 1px solid #e5e7eb;">{$amountFormatted}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px 14px; font-size: 12px; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Status</td>
+                        <td style="padding: 10px 14px; font-size: 13px; font-weight: 700; color: #047857; border-bottom: 1px solid #e5e7eb;">Paid</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px 14px; font-size: 12px; color: #6b7280;">Date paid</td>
+                        <td style="padding: 10px 14px; font-size: 13px; font-weight: 600; color: #111827;">{$d['date_paid_standard']}</td>
+                    </tr>
+                </table>
+
+                <div style="text-align: center; margin-bottom: 26px;">
+                    <a href="{$d['receipt_url']}" target="_blank" style="display: inline-block; background-color: #f48221; color: #ffffff; text-decoration: none; padding: 11px 26px; border-radius: 4px; font-weight: 600; font-size: 13px;">
+                        View receipt online
+                    </a>
+                </div>
+
+                <p style="margin: 0 0 18px 0; color: #4b5563; font-size: 13px;">
+                    Thanks for being part of our community.
+                </p>
+
+                <!-- HELP BLOCK -->
+                <div style="border-top: 1px solid #f0f2f5; padding-top: 16px; margin-bottom: 18px;">
+                    <div style="font-weight: 700; font-size: 13px; color: #111827; margin-bottom: 4px;">
+                        Need help with your registration?
+                    </div>
+                    <div style="font-size: 13px; color: #4b5563;">
+                        Contact us at <a href="mailto:{$issuer['email']}" style="color: #f48221; text-decoration: none;">{$issuer['email']}</a> or {$issuer['phone']}.
+                    </div>
+                </div>
+
+            </td>
+        </tr>
+
+        <!-- 4. LIGHT GREY FOOTER BOX -->
+        <tr>
+            <td style="background-color: #f9fafb; border-top: 1px solid #e5e7eb; padding: 18px 24px; text-align: center; font-size: 11px; color: #6b7280; line-height: 1.5;">
+                <div style="font-weight: 600; color: #374151; margin-bottom: 2px;">
+                    {$issuer['name']}
+                </div>
+                <div>
+                    {$issuer['address']}
+                </div>
+                <div style="margin-top: 6px; font-style: italic; color: #9ca3af;">
+                    This is an automated message.
+                </div>
+            </td>
+        </tr>
+
+    </table>
+
+</body>
+</html>
+HTML;
+
+        return $html;
+    }
+
+    /**
+     * Render Typeform-style plain text alternative for applicant email
+     */
+    public static function renderEmailPlainText(array $d): string
+    {
+        $amount = self::formatNaira((int)$d['amount_kobo'], false);
+        $issuer = $d['issuer'];
+        $payer  = $d['payer'];
+        $prog   = $d['program'];
+
+        $firstName = $payer['first_name'] ?: 'Applicant';
+        $greeting = !empty($firstName) && $firstName !== 'Candidate' ? "Hi {$firstName}," : "Hello,";
+
+        $out  = "HERE'S YOUR PAYMENT RECEIPT\n\n";
+        $out .= "{$greeting}\n\n";
+        $out .= "Thank you for your payment. Your receipt for {$prog['name']} ({$prog['cohort']}) is attached to this email as a PDF for your records.\n\n";
+        $out .= "KEY FACTS:\n";
+        $out .= "- Receipt number: {$d['invoice_number']}\n";
+        $out .= "- Amount paid:    {$amount}\n";
+        $out .= "- Status:         Paid\n";
+        $out .= "- Date paid:      {$d['date_paid_standard']}\n\n";
+        if (!empty($d['receipt_url'])) {
+            $out .= "View receipt online: {$d['receipt_url']}\n\n";
+        }
+        $out .= "Thanks for being part of our community.\n\n";
+        $out .= "Need help with your registration?\n";
+        $out .= "Contact us at {$issuer['email']} or {$issuer['phone']}.\n\n";
+        $out .= "--------------------------------------------------------\n";
+        $out .= "{$issuer['name']}\n";
+        $out .= "{$issuer['address']}\n";
+        $out .= "This is an automated message.\n";
+
+        return $out;
+    }
+
+    /**
+     * Render ASCII plain-text receipt for complete fallback
      */
     public static function renderPlainText(array $d): string
     {
@@ -495,8 +769,8 @@ HTML;
         $out .= "                  PAYMENT RECEIPT\n";
         $out .= "========================================================\n\n";
 
-        $out .= "INVOICE NO:        {$d['invoice_number']}\n";
-        $out .= "DATE PAID:         {$d['date_paid_short']}\n";
+        $out .= "RECEIPT NO:        {$d['invoice_number']}\n";
+        $out .= "DATE PAID:         {$d['date_paid_standard']}\n";
         $out .= "STATUS:            PAID (Verified)\n";
         $out .= "TOTAL PAID:        {$amount}\n\n";
 
@@ -512,26 +786,26 @@ HTML;
         if (!empty($payer['phone'])) {
             $out .= "Phone: {$payer['phone']}\n";
         }
+        $out .= "Applicant ID: #{$payer['applicant_id']}\n";
         $out .= "--------------------------------------------------------\n\n";
 
         $out .= "ITEM DETAILS:\n";
-        $out .= "Program:           {$prog['name']}\n";
+        $out .= "Training:          {$prog['name']}\n";
         $out .= "Cohort:            {$prog['cohort']}\n";
-        if (!empty($prog['start_date'])) {
-            $out .= "Start Date:        {$prog['start_date']}\n";
-        }
-        $out .= "Quantity:          1\n";
-        $out .= "Price / Amount:    {$amount}\n\n";
+        $out .= "Start Date:        {$prog['start_date']}\n";
+        $out .= "Seats:             1\n";
+        $out .= "Amount:            {$amount}\n\n";
 
         $out .= "TOTALS:\n";
         $out .= "Subtotal:          {$amount}\n";
-        $out .= "Total Paid:        {$amount}\n";
+        $out .= "Total:             {$amount}\n";
+        $out .= "Amount Paid:       {$amount}\n";
         $out .= "Balance Due:       NGN 0.00\n\n";
 
         $out .= "PAYMENT AUDIT:\n";
         $out .= "Gateway:           Paystack ({$d['channel']})\n";
         $out .= "Reference:         {$d['reference']}\n";
-        $out .= "Paid At:           {$d['date_paid_full']}\n\n";
+        $out .= "Paid At:           {$d['date_paid_audit']}\n\n";
 
         if (!empty($d['receipt_url'])) {
             $out .= "View Online Receipt: {$d['receipt_url']}\n\n";

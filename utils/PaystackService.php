@@ -290,7 +290,7 @@ class PaystackService
      */
     public static function generateInvoiceToken(string $reference): string
     {
-        $salt = (string)Env::get('INVOICE_HASH_SALT', 'spider_tech_default_invoice_salt');
+        $salt = (string)Env::get('RECEIPT_LINK_SECRET', Env::get('INVOICE_HASH_SALT', 'spider_tech_default_invoice_salt'));
         return hash_hmac('sha256', $reference, $salt);
     }
 

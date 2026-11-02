@@ -135,7 +135,7 @@ HTML;
     }
 
     /**
-     * Send official payment receipt & enrollment confirmation email
+     * Send official payment receipt & enrollment confirmation email with PDF attachment
      */
     public static function sendPaymentReceipt(string $email, string $name, array $paymentDetails): bool
     {
@@ -161,11 +161,14 @@ HTML;
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             }
 
-            // Sender & Recipient (Centralized Issuer Details)
+            // Centralized Issuer Details
             $issuer = InvoiceRenderer::getIssuerDetails();
+
+            // Sender, Reply-To & Recipient
             $fromAddress = defined('MAIL_FROM_ADDRESS') ? MAIL_FROM_ADDRESS : $issuer['email'];
             $fromName    = defined('MAIL_FROM_NAME') ? MAIL_FROM_NAME : $issuer['name'];
             $mail->setFrom($fromAddress, $fromName);
+            $mail->addReplyTo($issuer['email'], $issuer['name']);
             $mail->addAddress($email, $name ?: 'Applicant');
 
             // Build normalized invoice payload
@@ -174,13 +177,25 @@ HTML;
                 'payer_email' => $email
             ]));
 
-            $mail->isHTML(true);
             $programName   = $invoiceData['program']['name'];
             $invoiceNumber = $invoiceData['invoice_number'];
-            $mail->Subject = "Payment Receipt: {$programName} ({$invoiceNumber})";
+            $cleanInvoice  = preg_replace('/[^A-Za-z0-9_-]/', '', $invoiceNumber);
 
-            $mail->Body    = InvoiceRenderer::renderReceiptHtml($invoiceData, true);
-            $mail->AltBody = InvoiceRenderer::renderPlainText($invoiceData);
+            // Subject: Your payment receipt – {Training Name} ({RECEIPT_NO})
+            $mail->isHTML(true);
+            $mail->Subject = "Your payment receipt – {$programName} ({$invoiceNumber})";
+
+            // Short Typeform-style HTML & Plain-text notification body
+            $mail->Body    = InvoiceRenderer::renderEmailHtml($invoiceData);
+            $mail->AltBody = InvoiceRenderer::renderEmailPlainText($invoiceData);
+
+            // Generate and attach PDF receipt
+            try {
+                $pdfBytes = InvoiceRenderer::generatePdf($invoiceData);
+                $mail->addStringAttachment($pdfBytes, "invoice_{$cleanInvoice}.pdf", 'base64', 'application/pdf');
+            } catch (\Throwable $pdfEx) {
+                error_log("MailHelper Warning: Could not generate PDF attachment: " . $pdfEx->getMessage());
+            }
 
             return $mail->send();
         } catch (Exception $e) {

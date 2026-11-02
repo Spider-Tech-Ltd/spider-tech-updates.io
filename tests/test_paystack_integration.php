@@ -243,25 +243,63 @@ $normalized = InvoiceRenderer::normalizeData($mockAppData);
 assertTest("InvoiceRenderer::normalizeData extracts payer full name", $normalized['payer']['name'] === 'Amina Bello');
 assertTest("InvoiceRenderer::normalizeData extracts payer email", $normalized['payer']['email'] === 'amina@example.com');
 assertTest("InvoiceRenderer::normalizeData extracts amount_kobo as 4500000", $normalized['amount_kobo'] === 4500000);
-assertTest("InvoiceRenderer::normalizeData formats start_date to readable format", $normalized['program']['start_date'] === 'Apr 15, 2026');
+assertTest("InvoiceRenderer::normalizeData formats start_date to standard 'j M Y' format", $normalized['program']['start_date'] === '15 Apr 2026');
 
 $receiptHtml = InvoiceRenderer::renderReceiptHtml($normalized);
 assertTest("InvoiceRenderer HTML contains brand orange top accent (#f48221)", strpos($receiptHtml, '#f48221') !== false);
-assertTest("InvoiceRenderer HTML contains dark header band (#110f0d)", strpos($receiptHtml, '#110f0d') !== false);
+assertTest("InvoiceRenderer HTML contains Option A clean white header band (#ffffff)", strpos($receiptHtml, 'background-color: #ffffff') !== false);
 assertTest("InvoiceRenderer HTML contains centered PAYMENT RECEIPT uppercase label", strpos($receiptHtml, 'PAYMENT RECEIPT') !== false);
-assertTest("InvoiceRenderer HTML contains summary strip with INVOICE NO.", strpos($receiptHtml, 'INVOICE NO.') !== false);
+assertTest("InvoiceRenderer HTML contains larger logo (width 220)", strpos($receiptHtml, 'width="220"') !== false || strpos($receiptHtml, 'width: 220px') !== false);
+assertTest("InvoiceRenderer HTML contains summary strip with RECEIPT NO.", strpos($receiptHtml, 'RECEIPT NO.') !== false);
 assertTest("InvoiceRenderer HTML contains restrained PAID badge", strpos($receiptHtml, 'PAID') !== false);
+assertTest("InvoiceRenderer HTML contains Amount Paid banner with standard date", strpos($receiptHtml, 'paid on 1 Apr 2026') !== false);
 assertTest("InvoiceRenderer HTML contains FROM issuer name", strpos($receiptHtml, 'Spider Technologies Limited') !== false);
-assertTest("InvoiceRenderer HTML contains BILLED TO payer name", strpos($receiptHtml, 'Amina Bello') !== false);
-assertTest("InvoiceRenderer HTML contains program title and cohort line", strpos($receiptHtml, 'Full-Stack Web Engineering') !== false && strpos($receiptHtml, 'Cohort 2026-Alpha') !== false);
+assertTest("InvoiceRenderer HTML contains BILLED TO payer name and applicant ID", strpos($receiptHtml, 'Amina Bello') !== false && strpos($receiptHtml, 'Applicant ID: #99') !== false);
+assertTest("InvoiceRenderer HTML contains 5-column Items table (TRAINING, COHORT, START DATE, SEATS, AMOUNT)", 
+    strpos($receiptHtml, 'TRAINING') !== false && 
+    strpos($receiptHtml, 'COHORT') !== false && 
+    strpos($receiptHtml, 'START DATE') !== false && 
+    strpos($receiptHtml, 'SEATS') !== false && 
+    strpos($receiptHtml, 'AMOUNT') !== false
+);
+assertTest("InvoiceRenderer HTML has NO Qty or Unit Price columns", strpos($receiptHtml, 'Qty') === false && strpos($receiptHtml, 'Unit Price') === false);
 assertTest("InvoiceRenderer HTML contains Totals table with Balance Due ₦0.00", strpos($receiptHtml, 'Balance Due') !== false && strpos($receiptHtml, '0.00') !== false);
 assertTest("InvoiceRenderer HTML contains Payment Details audit table with transaction reference", strpos($receiptHtml, 'STP_TEST_REF_99') !== false);
 assertTest("InvoiceRenderer HTML contains computer-generated receipt disclaimer", strpos($receiptHtml, 'This is a computer-generated receipt') !== false);
 
 $standaloneHtml = InvoiceRenderer::renderStandalonePage($normalized);
-assertTest("InvoiceRenderer standalone page contains print button", strpos($standaloneHtml, 'Print / Save as PDF') !== false);
+assertTest("InvoiceRenderer standalone page contains print button", strpos($standaloneHtml, 'Print Receipt') !== false);
+assertTest("InvoiceRenderer standalone page contains download PDF button", strpos($standaloneHtml, 'Download PDF') !== false);
 assertTest("InvoiceRenderer standalone page contains back to programs link", strpos($standaloneHtml, 'Back to Programs') !== false);
 assertTest("InvoiceRenderer standalone page contains A4 portrait @page print style", strpos($standaloneHtml, '@page') !== false && strpos($standaloneHtml, 'size: A4 portrait') !== false);
+
+// --- 7. Test PDF Generation via Dompdf ---
+echo "\n--- 7. Testing PDF Generation via Dompdf ---\n";
+$pdfBytes = InvoiceRenderer::generatePdf($normalized);
+assertTest("InvoiceRenderer generates non-empty PDF binary", !empty($pdfBytes));
+assertTest("InvoiceRenderer generated PDF starts with %PDF- header", str_starts_with($pdfBytes, '%PDF-'));
+assertTest("InvoiceRenderer generated PDF is > 20KB (contains embedded assets)", strlen($pdfBytes) > 20000);
+
+$savedPdfPath = InvoiceRenderer::savePdf($normalized);
+assertTest("InvoiceRenderer::savePdf saves PDF file to storage/receipts/", file_exists($savedPdfPath) && strpos($savedPdfPath, 'storage') !== false);
+if (file_exists($savedPdfPath)) {
+    unlink($savedPdfPath);
+}
+
+// --- 8. Test Typeform-Style Applicant Notification Email ---
+echo "\n--- 8. Testing Applicant Notification Email Templates ---\n";
+$emailHtml = InvoiceRenderer::renderEmailHtml($normalized);
+assertTest("Email HTML contains heading 'Here\'s your payment receipt'", strpos($emailHtml, "Here's your payment receipt") !== false);
+assertTest("Email HTML mentions PDF attachment for records", strpos($emailHtml, "attached to this email as a PDF") !== false);
+assertTest("Email HTML contains stacked key facts box", strpos($emailHtml, "Receipt number") !== false && strpos($emailHtml, "Amount paid") !== false);
+assertTest("Email HTML contains Help line with email and phone", strpos($emailHtml, "Need help with your registration?") !== false && strpos($emailHtml, "+234 911 626 5708") !== false);
+assertTest("Email HTML contains light-grey automated footer box", strpos($emailHtml, "This is an automated message.") !== false);
+assertTest("Email HTML contains 'View receipt online' button", strpos($emailHtml, "View receipt online") !== false);
+
+$emailPlainText = InvoiceRenderer::renderEmailPlainText($normalized);
+assertTest("Email plain-text contains heading", strpos($emailPlainText, "HERE'S YOUR PAYMENT RECEIPT") !== false);
+assertTest("Email plain-text mentions attached PDF", strpos($emailPlainText, "attached to this email as a PDF") !== false);
+assertTest("Email plain-text contains key facts", strpos($emailPlainText, "Receipt number:") !== false && strpos($emailPlainText, "Amount paid:") !== false);
 
 $plainText = InvoiceRenderer::renderPlainText($normalized);
 assertTest("InvoiceRenderer plain text contains issuer name", strpos($plainText, 'Spider Technologies Limited') !== false);
