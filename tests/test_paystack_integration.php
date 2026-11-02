@@ -7,6 +7,7 @@ require_once dirname(__DIR__) . '/config/config.php';
 require_once dirname(__DIR__) . '/config/database.php';
 require_once dirname(__DIR__) . '/utils/Env.php';
 require_once dirname(__DIR__) . '/utils/PaystackService.php';
+require_once dirname(__DIR__) . '/utils/InvoiceRenderer.php';
 require_once dirname(__DIR__) . '/models/TrainingModel.php';
 require_once dirname(__DIR__) . '/models/CohortModel.php';
 require_once dirname(__DIR__) . '/models/PaymentModel.php';
@@ -212,6 +213,61 @@ try {
     echo "[ERROR] Database test exception: " . $e->getMessage() . "\n";
     $failed++;
 }
+
+// --- 6. Test InvoiceRenderer Engine ---
+echo "\n--- 6. Testing InvoiceRenderer Engine ---\n";
+$issuer = InvoiceRenderer::getIssuerDetails();
+assertTest("InvoiceRenderer returns configured issuer name", $issuer['name'] === 'Spider Technologies Limited');
+assertTest("InvoiceRenderer returns configured issuer address", strpos($issuer['address'], 'Abinsa House') !== false);
+assertTest("InvoiceRenderer returns configured issuer email", $issuer['email'] === 'info@spidertech.com.ng');
+assertTest("InvoiceRenderer returns configured issuer phone", $issuer['phone'] === '+234 911 626 5708');
+
+assertTest("InvoiceRenderer::formatNaira formats 5000000 kobo to '₦50,000.00'", InvoiceRenderer::formatNaira(5000000) === '₦50,000.00');
+assertTest("InvoiceRenderer::formatNaira HTML entity formats 5000000 kobo to '&#8358;50,000.00'", InvoiceRenderer::formatNaira(5000000, true) === '&#8358;50,000.00');
+
+$mockAppData = [
+    'id' => 99,
+    'user_data' => json_encode(['first_name' => 'Amina', 'last_name' => 'Bello', 'email' => 'amina@example.com', 'phone' => '08099887766']),
+    'training_name' => 'Full-Stack Web Engineering',
+    'cohort_name' => 'Cohort 2026-Alpha',
+    'start_date' => '2026-04-15',
+    'training_time' => '10:00 AM – 02:00 PM',
+    'amount_paid' => 4500000,
+    'invoice_number' => 'STP-INV-202604-0099',
+    'payment_reference' => 'STP_TEST_REF_99',
+    'channel' => 'card',
+    'paid_at' => '2026-04-01 11:30:00'
+];
+
+$normalized = InvoiceRenderer::normalizeData($mockAppData);
+assertTest("InvoiceRenderer::normalizeData extracts payer full name", $normalized['payer']['name'] === 'Amina Bello');
+assertTest("InvoiceRenderer::normalizeData extracts payer email", $normalized['payer']['email'] === 'amina@example.com');
+assertTest("InvoiceRenderer::normalizeData extracts amount_kobo as 4500000", $normalized['amount_kobo'] === 4500000);
+assertTest("InvoiceRenderer::normalizeData formats start_date to readable format", $normalized['program']['start_date'] === 'Apr 15, 2026');
+
+$receiptHtml = InvoiceRenderer::renderReceiptHtml($normalized);
+assertTest("InvoiceRenderer HTML contains brand orange top accent (#f48221)", strpos($receiptHtml, '#f48221') !== false);
+assertTest("InvoiceRenderer HTML contains dark header band (#110f0d)", strpos($receiptHtml, '#110f0d') !== false);
+assertTest("InvoiceRenderer HTML contains centered PAYMENT RECEIPT uppercase label", strpos($receiptHtml, 'PAYMENT RECEIPT') !== false);
+assertTest("InvoiceRenderer HTML contains summary strip with INVOICE NO.", strpos($receiptHtml, 'INVOICE NO.') !== false);
+assertTest("InvoiceRenderer HTML contains restrained PAID badge", strpos($receiptHtml, 'PAID') !== false);
+assertTest("InvoiceRenderer HTML contains FROM issuer name", strpos($receiptHtml, 'Spider Technologies Limited') !== false);
+assertTest("InvoiceRenderer HTML contains BILLED TO payer name", strpos($receiptHtml, 'Amina Bello') !== false);
+assertTest("InvoiceRenderer HTML contains program title and cohort line", strpos($receiptHtml, 'Full-Stack Web Engineering') !== false && strpos($receiptHtml, 'Cohort 2026-Alpha') !== false);
+assertTest("InvoiceRenderer HTML contains Totals table with Balance Due ₦0.00", strpos($receiptHtml, 'Balance Due') !== false && strpos($receiptHtml, '0.00') !== false);
+assertTest("InvoiceRenderer HTML contains Payment Details audit table with transaction reference", strpos($receiptHtml, 'STP_TEST_REF_99') !== false);
+assertTest("InvoiceRenderer HTML contains computer-generated receipt disclaimer", strpos($receiptHtml, 'This is a computer-generated receipt') !== false);
+
+$standaloneHtml = InvoiceRenderer::renderStandalonePage($normalized);
+assertTest("InvoiceRenderer standalone page contains print button", strpos($standaloneHtml, 'Print / Save as PDF') !== false);
+assertTest("InvoiceRenderer standalone page contains back to programs link", strpos($standaloneHtml, 'Back to Programs') !== false);
+assertTest("InvoiceRenderer standalone page contains A4 portrait @page print style", strpos($standaloneHtml, '@page') !== false && strpos($standaloneHtml, 'size: A4 portrait') !== false);
+
+$plainText = InvoiceRenderer::renderPlainText($normalized);
+assertTest("InvoiceRenderer plain text contains issuer name", strpos($plainText, 'Spider Technologies Limited') !== false);
+assertTest("InvoiceRenderer plain text contains invoice number", strpos($plainText, 'STP-INV-202604-0099') !== false);
+assertTest("InvoiceRenderer plain text contains total amount", strpos($plainText, '₦45,000.00') !== false);
+
 
 echo "\n========================================================\n";
 echo "TEST RESULTS: {$passed} PASSED, {$failed} FAILED\n";
