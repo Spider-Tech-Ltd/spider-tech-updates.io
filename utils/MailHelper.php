@@ -177,13 +177,20 @@ HTML;
                 'payer_email' => $email
             ]));
 
-            $programName   = $invoiceData['program']['name'];
+            // Embed brand logo via CID for 100% reliable rendering in all email clients & Mailtrap
+            $logoPath = defined('ROOT_PATH') ? ROOT_PATH . '/images/spider-tech.png' : dirname(__DIR__) . '/images/spider-tech.png';
+            if (file_exists($logoPath)) {
+                $mail->addEmbeddedImage($logoPath, 'spider_logo', 'spider-tech.png', 'base64', 'image/png');
+                $invoiceData['logo_cid'] = 'spider_logo';
+            }
+
             $invoiceNumber = $invoiceData['invoice_number'];
             $cleanInvoice  = preg_replace('/[^A-Za-z0-9_-]/', '', $invoiceNumber);
+            $trackTitle    = $invoiceData['program']['track_title'] ?? InvoiceRenderer::formatTrackTitle($invoiceData['program']['name'], $invoiceData['program']['cohort']);
 
             // Subject: Your payment receipt – {Training Name} ({RECEIPT_NO})
             $mail->isHTML(true);
-            $mail->Subject = "Your payment receipt – {$programName} ({$invoiceNumber})";
+            $mail->Subject = "Your payment receipt – {$trackTitle} ({$invoiceNumber})";
 
             // Short Typeform-style HTML & Plain-text notification body
             $mail->Body    = InvoiceRenderer::renderEmailHtml($invoiceData);

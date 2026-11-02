@@ -174,7 +174,9 @@ class PaymentModel
     {
         $sql = "SELECT tr.*, 
                        t.training_name, t.training_image, t.training_description, t.training_time,
-                       tc.cohort_name, tc.cohort_number, tc.start_date, tc.end_date,
+                       tc.cohort_name, tc.cohort_number, 
+                       COALESCE(tc.start_date, t.start_date) as start_date, 
+                       COALESCE(tc.end_date, t.end_date) as end_date,
                        pt.channel, pt.gateway_response, pt.paystack_reference, pt.paid_at as tx_paid_at
                 FROM `training_registrations` tr
                 JOIN `trainings_tb` t ON t.id = tr.program_id
@@ -196,7 +198,9 @@ class PaymentModel
     {
         $sql = "SELECT tr.*, 
                        t.training_name, t.training_image, t.training_description, t.training_time,
-                       tc.cohort_name, tc.cohort_number, tc.start_date, tc.end_date,
+                       tc.cohort_name, tc.cohort_number, 
+                       COALESCE(tc.start_date, t.start_date) as start_date, 
+                       COALESCE(tc.end_date, t.end_date) as end_date,
                        pt.channel, pt.gateway_response, pt.paystack_reference, pt.paid_at as tx_paid_at
                 FROM `training_registrations` tr
                 JOIN `trainings_tb` t ON t.id = tr.program_id

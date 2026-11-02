@@ -733,11 +733,14 @@ class AdminController extends AdminBaseController {
                     'invoice_number' => $invoiceNumber,
                     'program_name'   => $application['training_name'],
                     'cohort_name'    => $application['cohort_name'] ?? 'Upcoming Cohort',
+                    'start_date'     => $application['start_date'] ?? '',
+                    'training_time'  => $application['training_time'] ?? '',
                     'amount_kobo'    => $verifyResult['amount'],
                     'paid_at'        => $verifyResult['paid_at'] ?? date('Y-m-d H:i:s'),
                     'channel'        => $verifyResult['channel'],
                     'reference'      => $reference,
-                    'receipt_url'    => $receiptUrl
+                    'receipt_url'    => $receiptUrl,
+                    'applicant_id'   => $appId
                 ]);
 
                 $payModel->markInvoiceSent($appId);
@@ -789,11 +792,14 @@ class AdminController extends AdminBaseController {
             'invoice_number' => $application['invoice_number'] ?? 'INV-0000',
             'program_name'   => $application['training_name'],
             'cohort_name'    => $application['cohort_name'] ?? 'Upcoming Cohort',
+            'start_date'     => $application['start_date'] ?? '',
+            'training_time'  => $application['training_time'] ?? '',
             'amount_kobo'    => (int)$application['amount_paid'],
             'paid_at'        => $application['paid_at'] ?? date('Y-m-d H:i:s'),
             'channel'        => $application['channel'] ?? 'Online Payment',
             'reference'      => $reference,
-            'receipt_url'    => $receiptUrl
+            'receipt_url'    => $receiptUrl,
+            'applicant_id'   => (int)$application['id']
         ]);
 
         echo json_encode([

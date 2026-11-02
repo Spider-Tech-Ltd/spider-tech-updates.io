@@ -38,6 +38,25 @@ class InvoiceRenderer
     }
 
     /**
+     * Format clean track title combining program name and cohort without awkward repetition
+     */
+    public static function formatTrackTitle(string $programName, string $cohortName): string
+    {
+        $programName = trim($programName);
+        $cohortName  = trim($cohortName);
+
+        if (empty($cohortName) || $cohortName === 'Upcoming Cohort' || $cohortName === 'Current Cohort') {
+            return $programName;
+        }
+
+        if (stripos($cohortName, $programName) !== false) {
+            return $cohortName;
+        }
+
+        return "{$programName} – {$cohortName}";
+    }
+
+    /**
      * Normalize raw application and transaction records into a unified invoice payload
      */
     public static function normalizeData(array $application = [], array $overrides = []): array
@@ -127,10 +146,11 @@ class InvoiceRenderer
                 'applicant_id' => $applicantId
             ],
             'program'              => [
-                'name'       => $programName,
-                'cohort'     => $cohortName,
-                'start_date' => $startDateFormatted,
-                'time'       => $trainingTime
+                'name'        => $programName,
+                'cohort'      => $cohortName,
+                'track_title' => self::formatTrackTitle($programName, $cohortName),
+                'start_date'  => $startDateFormatted,
+                'time'        => $trainingTime
             ],
             'channel'              => $channel,
             'status'               => 'PAID',
@@ -139,7 +159,8 @@ class InvoiceRenderer
             'receipt_url_back'     => $backUrl,
             'logo_url'             => $logoUrl,
             'logo_base64'          => $logoBase64,
-            'logo_path'            => $logoPath
+            'logo_path'            => $logoPath,
+            'logo_cid'             => $overrides['logo_cid'] ?? ''
         ];
     }
 
@@ -608,6 +629,28 @@ HTML;
         $firstName = htmlspecialchars($payer['first_name'] ?: 'Applicant');
         $greeting = !empty($firstName) && $firstName !== 'Candidate' ? "Hi {$firstName}," : "Hello,";
 
+        // Clean track title (e.g. "we Digitize - Cohort 1")
+        $trackTitle = htmlspecialchars($prog['track_title'] ?? self::formatTrackTitle($prog['name'], $prog['cohort']));
+
+        // Start date clause
+        $hasStartDate = !empty($prog['start_date']) && $prog['start_date'] !== 'To Be Announced';
+        $startDateClause = $hasStartDate ? " starting on <strong>" . htmlspecialchars($prog['start_date']) . "</strong>" : "";
+
+        // Logo src: CID inline attachment for email clients, base64 or URL fallback for browser previews
+        $logoSrc = !empty($d['logo_cid'])
+            ? 'cid:' . $d['logo_cid']
+            : (!empty($d['logo_base64']) ? $d['logo_base64'] : $d['logo_url']);
+
+        $startDateRow = '';
+        if ($hasStartDate) {
+            $startDateRow = <<<HTML
+                    <tr>
+                        <td style="padding: 10px 14px; font-size: 12px; color: #6b7280; border-bottom: 1px solid #e5e7eb; width: 38%;">Start date</td>
+                        <td style="padding: 10px 14px; font-size: 13px; font-weight: 600; color: #111827; border-bottom: 1px solid #e5e7eb;">{$prog['start_date']}</td>
+                    </tr>
+HTML;
+        }
+
         $html = <<<HTML
 <!DOCTYPE html>
 <html>
@@ -629,7 +672,7 @@ HTML;
         <!-- 2. OPTION A LIGHT HEADER WITH CENTERED ORIGINAL LOGO -->
         <tr>
             <td align="center" style="background-color: #ffffff; padding: 32px 20px 22px 20px; text-align: center; border-bottom: 1px solid #e5e7eb;">
-                <img src="{$d['logo_url']}" alt="{$issuer['name']}" width="200" style="width: 200px; max-width: 75%; height: auto; display: block; margin: 0 auto; border: 0;" />
+                <img src="{$logoSrc}" alt="{$issuer['name']}" width="220" style="width: 220px; max-width: 75%; height: auto; display: block; margin: 0 auto; border: 0;" />
                 <div style="font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: #6b7280; margin-top: 18px;">
                     PAYMENT RECEIPT
                 </div>
@@ -649,15 +692,20 @@ HTML;
                 </p>
 
                 <p style="margin: 0 0 22px 0; color: #4b5563; font-size: 14px; line-height: 1.6;">
-                    Thank you for your payment. Your official receipt for <strong>{$prog['name']} ({$prog['cohort']})</strong> is attached to this email as a PDF for your records.
+                    Thank you for your payment. Your enrollment for <strong>{$trackTitle}</strong>{$startDateClause} has been confirmed, and your official payment receipt is attached to this email as a PDF for your records.
                 </p>
 
                 <!-- STACKED KEY FACTS BOX (Typeform Style) -->
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border: 1px solid #e5e7eb; border-radius: 4px; background-color: #fafbfc; border-collapse: collapse; margin-bottom: 24px;">
                     <tr>
-                        <td style="padding: 10px 14px; font-size: 12px; color: #6b7280; border-bottom: 1px solid #e5e7eb; width: 40%;">Receipt number</td>
+                        <td style="padding: 10px 14px; font-size: 12px; color: #6b7280; border-bottom: 1px solid #e5e7eb; width: 38%;">Receipt number</td>
                         <td style="padding: 10px 14px; font-size: 13px; font-weight: 700; color: #111827; font-family: monospace; border-bottom: 1px solid #e5e7eb;">{$d['invoice_number']}</td>
                     </tr>
+                    <tr>
+                        <td style="padding: 10px 14px; font-size: 12px; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Program & Cohort</td>
+                        <td style="padding: 10px 14px; font-size: 13px; font-weight: 600; color: #111827; border-bottom: 1px solid #e5e7eb;">{$trackTitle}</td>
+                    </tr>
+                    {$startDateRow}
                     <tr>
                         <td style="padding: 10px 14px; font-size: 12px; color: #6b7280; border-bottom: 1px solid #e5e7eb;">Amount paid</td>
                         <td style="padding: 10px 14px; font-size: 14px; font-weight: 700; color: #111827; border-bottom: 1px solid #e5e7eb;">{$amountFormatted}</td>
@@ -732,14 +780,22 @@ HTML;
         $firstName = $payer['first_name'] ?: 'Applicant';
         $greeting = !empty($firstName) && $firstName !== 'Candidate' ? "Hi {$firstName}," : "Hello,";
 
+        $trackTitle = $prog['track_title'] ?? self::formatTrackTitle($prog['name'], $prog['cohort']);
+        $hasStartDate = !empty($prog['start_date']) && $prog['start_date'] !== 'To Be Announced';
+        $startDateClause = $hasStartDate ? " starting on {$prog['start_date']}" : "";
+
         $out  = "HERE'S YOUR PAYMENT RECEIPT\n\n";
         $out .= "{$greeting}\n\n";
-        $out .= "Thank you for your payment. Your receipt for {$prog['name']} ({$prog['cohort']}) is attached to this email as a PDF for your records.\n\n";
+        $out .= "Thank you for your payment. Your enrollment for {$trackTitle}{$startDateClause} has been confirmed, and your official payment receipt is attached to this email as a PDF for your records.\n\n";
         $out .= "KEY FACTS:\n";
-        $out .= "- Receipt number: {$d['invoice_number']}\n";
-        $out .= "- Amount paid:    {$amount}\n";
-        $out .= "- Status:         Paid\n";
-        $out .= "- Date paid:      {$d['date_paid_standard']}\n\n";
+        $out .= "- Receipt number:    {$d['invoice_number']}\n";
+        $out .= "- Program & Cohort:  {$trackTitle}\n";
+        if ($hasStartDate) {
+            $out .= "- Start date:        {$prog['start_date']}\n";
+        }
+        $out .= "- Amount paid:       {$amount}\n";
+        $out .= "- Status:            Paid\n";
+        $out .= "- Date paid:         {$d['date_paid_standard']}\n\n";
         if (!empty($d['receipt_url'])) {
             $out .= "View receipt online: {$d['receipt_url']}\n\n";
         }
