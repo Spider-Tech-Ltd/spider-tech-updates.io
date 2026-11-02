@@ -227,7 +227,7 @@
                                     <span class="material-symbols-outlined"><?= !empty($payment_info['payments_enabled']) ? 'payments' : 'card_giftcard' ?></span>
                                 </span>
                                 <div class="info-meta">
-                                    <span class="info-label">Tuition Fee</span>
+                                    <span class="info-label">Training Fee</span>
                                     <span class="info-value" style="font-weight: 700; color: <?= !empty($payment_info['payments_enabled']) ? '#f48221' : '#047857' ?>;">
                                         <?= !empty($payment_info['payments_enabled']) ? format_naira($payment_info['amount_kobo'] ?? 0) : 'Free' ?>
                                     </span>

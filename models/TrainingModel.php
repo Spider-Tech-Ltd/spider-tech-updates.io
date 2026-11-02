@@ -61,7 +61,7 @@ class TrainingModel {
     }
 
     /**
-     * Update default enrollment fee for a training (stored in kobo)
+     * Update default training fee for a training (stored in kobo)
      */
     public function updatePaymentAmount($programId, $amountKobo) {
         $stmt = $this->conn->prepare("UPDATE `trainings_tb` SET payment_amount = ? WHERE id = ?");

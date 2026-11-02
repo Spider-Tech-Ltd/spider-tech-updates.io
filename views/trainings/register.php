@@ -366,7 +366,7 @@ if (!empty($rawThumb)) {
                                                     </div>
                                                     <div class="order-divider"></div>
                                                     <div class="order-item-row">
-                                                        <span class="order-item-label">Tuition Fee</span>
+                                                        <span class="order-item-label">Training Fee</span>
                                                         <span class="order-item-val"><?= $programFeeFormatted ?></span>
                                                     </div>
                                                     <div class="order-item-row">
@@ -528,7 +528,7 @@ if (!empty($rawThumb)) {
                                         <span class="material-symbols-outlined"><?= $isPaidProgram ? 'payments' : 'card_giftcard' ?></span>
                                     </div>
                                     <div class="sidebar-meta-info">
-                                        <span class="meta-label">Enrollment Fee</span>
+                                        <span class="meta-label">Training Fee</span>
                                         <span class="meta-value" style="font-size: 1rem; font-weight: 800; color: <?= $isPaidProgram ? '#f48221' : '#059669' ?>;">
                                             <?= $isPaidProgram ? $programFeeFormatted : 'Free Registration' ?>
                                         </span>

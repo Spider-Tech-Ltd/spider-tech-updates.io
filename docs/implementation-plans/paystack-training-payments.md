@@ -431,7 +431,7 @@ admin/applications/resend-invoice   -> AdminController::resendApplicationInvoice
 
 ### 6.1 Admin UI: Trainings Console (`views/admin/trainings.php`)
 1. **Payments Master Toggle & Fee Column:**
-   - In the training rows/cards, add an **"Enrollment Fee"** section.
+   - In the training rows/cards, add a **"Training Fee"** section.
    - Alpine.js component: `x-data="trainingPaymentManager({ id: <?= $t['id'] ?>, enabled: <?= $t['payments_enabled'] ?>, amount: <?= $t['payment_amount'] / 100 ?> })"`
    - Toggling the switch prompts or saves via AJAX to `admin/trainings/toggle-payments`.
    - If enabled, displays an inline editable fee badge (e.g. `₦35,000`) with a quick edit pencil modal to update `admin/trainings/set-payment-amount`.
@@ -460,7 +460,7 @@ admin/applications/resend-invoice   -> AdminController::resendApplicationInvoice
 1. **Dynamic Fee Summary in Sidebar / Step 4 Review:**
    - If payments are enabled, the final review step displays an itemized fee breakdown:
      - Training Name & Cohort Name
-     - **Enrollment Fee:** `₦XX,XXX.00`
+     - **Training Fee:** `₦XX,XXX.00`
      - Secure payment badge: *"Secured by Paystack (Card, Bank Transfer, USSD, QR)"*
    - Submit button text updates from *"Submit Application"* $\rightarrow$ *"Proceed to Payment (₦XX,XXX.00)"*.
 2. **Client-Side Alpine Handler Integration:**

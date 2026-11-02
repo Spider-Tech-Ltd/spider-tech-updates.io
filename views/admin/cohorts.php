@@ -744,7 +744,7 @@ function calculateCohortDuration($start, $end) {
                                 <span class="material-symbols-outlined input-leading-icon">payments</span>
                                 <input type="number" name="payment_amount" id="cohortPaymentAmount" class="form-control-custom" min="0" step="100" placeholder="Inherit program default">
                             </div>
-                            <span class="text-muted" style="font-size: 0.68rem;">Leave blank to inherit the program-level enrollment fee.</span>
+                            <span class="text-muted" style="font-size: 0.68rem;">Leave blank to inherit the program-level training fee.</span>
                         </div>
 
                         <!-- Right: Lifecycle Status & Public Switch -->

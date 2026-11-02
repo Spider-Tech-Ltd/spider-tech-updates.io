@@ -311,7 +311,7 @@ $hasActiveFilters = (($current_status ?? 'all') !== 'all' || !empty($search_quer
                                 </button>
                             </td>
 
-                            <!-- Payment Gating & Enrollment Fee -->
+                            <!-- Payment Gating & Training Fee -->
                             <td>
                                 <div class="d-flex align-items-center gap-2">
                                     <button type="button" 
@@ -333,7 +333,7 @@ $hasActiveFilters = (($current_status ?? 'all') !== 'all' || !empty($search_quer
                                         <button type="button" 
                                                 class="btn btn-sm text-muted p-0 border-0" 
                                                 onclick="openFeeModal(<?= $training['id'] ?>, <?= $feeKobo / 100 ?>, '<?= htmlspecialchars(addslashes($training['training_name'])) ?>')" 
-                                                title="Set or update enrollment fee">
+                                                title="Set or update training fee">
                                             <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">tune</span>
                                         </button>
                                     </div>
@@ -393,7 +393,7 @@ $hasActiveFilters = (($current_status ?? 'all') !== 'all' || !empty($search_quer
 </div>
 
 <!-- ====================================================
-     SET ENROLLMENT FEE MODAL
+     SET TRAINING FEE MODAL
      ==================================================== -->
 <div class="modal fade" id="feeConfigModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
@@ -401,7 +401,7 @@ $hasActiveFilters = (($current_status ?? 'all') !== 'all' || !empty($search_quer
             <div class="modal-header border-bottom p-3 px-4 bg-light">
                 <div class="d-flex align-items-center gap-2">
                     <span class="material-symbols-outlined text-warning fs-20">payments</span>
-                    <h5 class="modal-title fw-bold fs-6 mb-0">Set Enrollment Fee</h5>
+                    <h5 class="modal-title fw-bold fs-6 mb-0">Set Training Fee</h5>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>

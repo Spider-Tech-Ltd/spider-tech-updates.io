@@ -230,7 +230,7 @@ class AdminController extends AdminBaseController {
         if ($enabled && (int)($training['payment_amount'] ?? 0) <= 0) {
             echo json_encode([
                 'status' => 'error',
-                'message' => 'Please set an enrollment fee greater than ₦0 before enabling payments.'
+                'message' => 'Please set a training fee greater than ₦0 before enabling payments.'
             ]);
             exit;
         }
@@ -268,7 +268,7 @@ class AdminController extends AdminBaseController {
             'status' => $res ? 'success' : 'error',
             'amount_kobo' => $amountKobo,
             'formatted' => PaystackService::formatKobo($amountKobo),
-            'message' => $res ? 'Enrollment fee updated successfully.' : 'Failed to update fee.'
+            'message' => $res ? 'Training fee updated successfully.' : 'Failed to update fee.'
         ]);
         exit;
     }
