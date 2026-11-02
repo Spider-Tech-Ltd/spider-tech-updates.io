@@ -144,7 +144,7 @@
                                             </tr>
                                             <tr>
                                                 <td class="detail-key">Days:</td>
-                                                <td class="detail-val">Mondays – Thursdays</td>
+                                                <td class="detail-val">Mondays – Fridays</td>
                                                 <td class="detail-key">Time:</td>
                                                 <td class="detail-val">' . $sessionTime . ' daily</td>
                                             </tr>
