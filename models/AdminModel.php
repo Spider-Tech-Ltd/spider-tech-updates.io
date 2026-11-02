@@ -50,7 +50,7 @@ class AdminModel
         return $data;
     }
 
-    public function getUnifiedApplications($programId = 'all', $page = 1, $limit = 10, $cohortId = 'all', $search = '')
+    public function getUnifiedApplications($programId = 'all', $page = 1, $limit = 10, $cohortId = 'all', $search = '', $paymentStatus = 'all')
     {
         $offset = ($page - 1) * $limit;
 
@@ -65,8 +65,12 @@ class AdminModel
             $params[':cohort_id'] = $cohortId;
         }
         if (!empty($search)) {
-            $conditions[] = "(tr.user_data LIKE :search OR tc.cohort_name LIKE :search OR t.training_name LIKE :search)";
+            $conditions[] = "(tr.user_data LIKE :search OR tc.cohort_name LIKE :search OR t.training_name LIKE :search OR tr.payment_reference LIKE :search OR tr.invoice_number LIKE :search)";
             $params[':search'] = '%' . $search . '%';
+        }
+        if ($paymentStatus !== 'all' && $paymentStatus !== '') {
+            $conditions[] = "tr.payment_status = :payment_status";
+            $params[':payment_status'] = $paymentStatus;
         }
 
         $where = !empty($conditions) ? " WHERE " . implode(" AND ", $conditions) : "";
@@ -125,11 +129,18 @@ class AdminModel
         $today = (int)$this->db->query("SELECT COUNT(*) FROM training_registrations WHERE DATE(created_at) = CURRENT_DATE()")->fetchColumn();
         $programs = (int)$this->db->query("SELECT COUNT(DISTINCT program_id) FROM training_registrations")->fetchColumn();
 
+        $revenueKobo = (int)$this->db->query("SELECT SUM(amount_paid) FROM training_registrations WHERE payment_status = 'success'")->fetchColumn();
+        $paidCount = (int)$this->db->query("SELECT COUNT(*) FROM training_registrations WHERE payment_status = 'success'")->fetchColumn();
+        $pendingCount = (int)$this->db->query("SELECT COUNT(*) FROM training_registrations WHERE payment_status = 'pending'")->fetchColumn();
+
         return [
             'total' => $total,
             'cohort4' => $cohort4,
             'today' => $today,
-            'programs' => $programs
+            'programs' => $programs,
+            'revenue_kobo' => $revenueKobo,
+            'paid_count' => $paidCount,
+            'pending_count' => $pendingCount
         ];
     }
 

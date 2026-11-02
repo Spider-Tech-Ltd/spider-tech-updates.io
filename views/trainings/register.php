@@ -23,6 +23,10 @@ if (isset($_SESSION['registration_error'])) {
 unset($_SESSION['registration_errors']);
 unset($_SESSION['old_input']);
 
+$isPaidProgram = !empty($payment_info['payments_enabled']);
+$programFeeKobo = (int)($payment_info['amount_kobo'] ?? 0);
+$programFeeFormatted = PaystackService::formatKobo($programFeeKobo);
+
 // Thumbnail resolution
 $rawThumb = trim($training['image_url'] ?? $training['training_image'] ?? '');
 $hasThumb = false;
@@ -154,6 +158,7 @@ $totalStepsCount = count($sectionKeys);
                             <input type="hidden" name="program_id" value="<?= $program_id; ?>">
                             <input type="hidden" name="cohort_id" value="<?= !empty($cohort['id']) ? (int)$cohort['id'] : ''; ?>">
                             <input type="hidden" name="registration_type" value="<?= $registration_type ?? 'training'; ?>">
+                            <input type="hidden" name="csrf_token" value="<?= CSRF::generateToken() ?>">
 
                             <?php if (!empty($sections)) : ?>
                                 <?php
@@ -249,8 +254,8 @@ $totalStepsCount = count($sectionKeys);
                                                     <button type="submit" class="btn-submit-registration" :disabled="loading">
                                                         <template x-if="!loading">
                                                             <div class="d-flex align-items-center justify-content-center gap-2">
-                                                                <span class="material-symbols-outlined" style="font-size: 20px;">send</span>
-                                                                <span>Submit Application</span>
+                                                                <span class="material-symbols-outlined" style="font-size: 20px;"><?= $isPaidProgram ? 'credit_card' : 'send' ?></span>
+                                                                <span><?= $isPaidProgram ? 'Proceed to Payment (' . $programFeeFormatted . ')' : 'Submit Application' ?></span>
                                                             </div>
                                                         </template>
                                                         <template x-if="loading">
@@ -327,7 +332,7 @@ $totalStepsCount = count($sectionKeys);
                                                 <span>Cancel Application</span>
                                             </a>
                                             <button type="submit" class="btn-submit-registration" :disabled="loading">
-                                                <span>Submit Application</span>
+                                                <span><?= $isPaidProgram ? 'Proceed to Payment (' . $programFeeFormatted . ')' : 'Submit Application' ?></span>
                                             </button>
                                         </div>
                                     </div>
@@ -380,6 +385,20 @@ $totalStepsCount = count($sectionKeys);
 
                             <!-- Course Metrics -->
                             <ul class="sidebar-meta-list">
+                                <li class="sidebar-meta-item">
+                                    <div class="sidebar-meta-icon" style="<?= $isPaidProgram ? 'background: rgba(244, 130, 33, 0.12); color: #f48221;' : 'background: rgba(16, 185, 129, 0.12); color: #059669;' ?>">
+                                        <span class="material-symbols-outlined"><?= $isPaidProgram ? 'payments' : 'card_giftcard' ?></span>
+                                    </div>
+                                    <div class="sidebar-meta-info">
+                                        <span class="meta-label">Enrollment Fee</span>
+                                        <span class="meta-value" style="font-size: 1rem; font-weight: 800; color: <?= $isPaidProgram ? '#f48221' : '#059669' ?>;">
+                                            <?= $isPaidProgram ? $programFeeFormatted : 'Free Registration' ?>
+                                        </span>
+                                        <?php if ($isPaidProgram): ?>
+                                            <span style="font-size: 0.72rem; color: #64748b;">Secured via Paystack</span>
+                                        <?php endif; ?>
+                                    </div>
+                                </li>
                                 <li class="sidebar-meta-item">
                                     <div class="sidebar-meta-icon">
                                         <span class="material-symbols-outlined">calendar_today</span>
@@ -623,7 +642,11 @@ $totalStepsCount = count($sectionKeys);
 
                     if (result.success) {
                         this.showToast(result.message, 'success');
-                        if (result.redirect) {
+                        if (result.redirect_url) {
+                            setTimeout(() => {
+                                window.location.href = result.redirect_url;
+                            }, 800);
+                        } else if (result.redirect) {
                             setTimeout(() => {
                                 window.location.href = result.redirect;
                             }, 2000);

@@ -221,7 +221,8 @@ function calculateCohortDuration($start, $end) {
                         <th style="min-width: 170px;">Program</th>
                         <th style="min-width: 210px;">Schedule</th>
                         <th style="min-width: 100px;">Status</th>
-                        <th style="min-width: 150px;">Capacity</th>
+                        <th style="min-width: 140px;">Capacity</th>
+                        <th style="min-width: 130px;">Fee</th>
                         <th class="text-end" style="width: 100px;">Actions</th>
                     </tr>
                 </thead>
@@ -342,6 +343,18 @@ function calculateCohortDuration($start, $end) {
                                     <div class="text-muted mt-1" style="font-size: 0.7rem;">
                                         <?= max(0, $capacity - $applicants) ?> slots remaining
                                     </div>
+                                <?php endif; ?>
+                            </td>
+
+                            <!-- Cohort Fee -->
+                            <td>
+                                <?php if (!empty($c['payment_amount']) && (int)$c['payment_amount'] > 0): ?>
+                                    <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #059669; font-weight: 700; font-size: 0.8rem; padding: 4px 8px; border-radius: 6px;">
+                                        <?= PaystackService::formatKobo((int)$c['payment_amount']) ?>
+                                    </span>
+                                    <div class="text-muted mt-1" style="font-size: 0.68rem;">Override</div>
+                                <?php else: ?>
+                                    <span class="text-muted" style="font-size: 0.78rem;">Inherit Default</span>
                                 <?php endif; ?>
                             </td>
 
@@ -724,6 +737,16 @@ function calculateCohortDuration($start, $end) {
                             </div>
                         </div>
 
+                        <!-- Fee Override (Optional) -->
+                        <div class="col-sm-6">
+                            <label class="form-label-custom mb-1">Cohort Fee Override (₦)</label>
+                            <div class="cohort-field-wrapper mb-1">
+                                <span class="material-symbols-outlined input-leading-icon">payments</span>
+                                <input type="number" name="payment_amount" id="cohortPaymentAmount" class="form-control-custom" min="0" step="100" placeholder="Inherit program default">
+                            </div>
+                            <span class="text-muted" style="font-size: 0.68rem;">Leave blank to inherit the program-level enrollment fee.</span>
+                        </div>
+
                         <!-- Right: Lifecycle Status & Public Switch -->
                         <div class="col-sm-6">
                             <div class="mb-2">
@@ -876,6 +899,7 @@ function openCohortModal() {
     document.getElementById('cohortRegOpen').checked = true;
     document.getElementById('cohortNumber').value = '4';
     document.getElementById('cohortCapacity').value = '100';
+    document.getElementById('cohortPaymentAmount').value = '';
     document.getElementById('cohortStatus').value = 'open';
     document.getElementById('cohortShowTopbarBanner').checked = true;
     document.getElementById('cohortCustomAnnouncement').value = '';
@@ -970,6 +994,7 @@ function editCohort(data) {
         document.getElementById('cohortDeadline').value = '';
     }
     document.getElementById('cohortCapacity').value = data.capacity || 0;
+    document.getElementById('cohortPaymentAmount').value = (data.payment_amount && data.payment_amount > 0) ? (data.payment_amount / 100) : '';
     document.getElementById('cohortStatus').value = data.status || 'upcoming';
     document.getElementById('cohortRegOpen').checked = (data.registration_open == 1);
     document.getElementById('cohortShowTopbarBanner').checked = (data.show_topbar_banner == 1);

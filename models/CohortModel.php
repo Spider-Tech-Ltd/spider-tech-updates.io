@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CohortModel - Manages training cohorts, lifecycle states, and enrollment limits
+ * CohortModel - Manages training cohorts, lifecycle states, enrollment limits, and cohort fees
  */
 class CohortModel
 {
@@ -24,7 +24,7 @@ class CohortModel
     {
         $stmt = $this->db->prepare("
             SELECT tc.*, 
-                   COUNT(tr.id) AS total_registrations
+                   COUNT(CASE WHEN tr.payment_status != 'failed' AND tr.payment_status != 'abandoned' THEN tr.id END) AS total_registrations
             FROM training_cohorts tc
             LEFT JOIN training_registrations tr ON tr.cohort_id = tc.id
             WHERE tc.training_id = ?
@@ -43,7 +43,9 @@ class CohortModel
         $stmt = $this->db->prepare("
             SELECT tc.*, 
                    t.training_name,
-                   COUNT(tr.id) AS total_registrations
+                   t.payments_enabled as program_payments_enabled,
+                   t.payment_amount as program_default_fee,
+                   COUNT(CASE WHEN tr.payment_status != 'failed' AND tr.payment_status != 'abandoned' THEN tr.id END) AS total_registrations
             FROM training_cohorts tc
             JOIN trainings_tb t ON t.id = tc.training_id
             LEFT JOIN training_registrations tr ON tr.cohort_id = tc.id
@@ -76,7 +78,7 @@ class CohortModel
     {
         $stmt = $this->db->prepare("
             SELECT tc.*,
-                   COUNT(tr.id) AS total_registrations
+                   COUNT(CASE WHEN tr.payment_status != 'failed' AND tr.payment_status != 'abandoned' THEN tr.id END) AS total_registrations
             FROM training_cohorts tc
             LEFT JOIN training_registrations tr ON tr.cohort_id = tc.id
             WHERE tc.training_id = ?
@@ -130,14 +132,19 @@ class CohortModel
      */
     public function createCohort($data)
     {
+        $paymentAmount = null;
+        if (isset($data['payment_amount']) && $data['payment_amount'] !== '' && $data['payment_amount'] !== null) {
+            $paymentAmount = (int)$data['payment_amount'];
+        }
+
         $sql = "INSERT INTO training_cohorts (
             training_id, cohort_number, cohort_name, slug,
             start_date, end_date, registration_open, show_topbar_banner, custom_announcement,
-            registration_deadline, capacity, status
+            registration_deadline, capacity, payment_amount, status
         ) VALUES (
             :training_id, :cohort_number, :cohort_name, :slug,
             :start_date, :end_date, :registration_open, :show_topbar_banner, :custom_announcement,
-            :registration_deadline, :capacity, :status
+            :registration_deadline, :capacity, :payment_amount, :status
         )";
 
         $stmt = $this->db->prepare($sql);
@@ -153,6 +160,7 @@ class CohortModel
             ':custom_announcement'    => !empty($data['custom_announcement']) ? trim($data['custom_announcement']) : null,
             ':registration_deadline'  => !empty($data['registration_deadline']) ? $data['registration_deadline'] : null,
             ':capacity'               => !empty($data['capacity']) ? (int)$data['capacity'] : 0,
+            ':payment_amount'         => $paymentAmount,
             ':status'                 => $data['status'] ?? 'upcoming',
         ]);
 
@@ -164,6 +172,11 @@ class CohortModel
      */
     public function updateCohort($id, $data)
     {
+        $paymentAmount = null;
+        if (isset($data['payment_amount']) && $data['payment_amount'] !== '' && $data['payment_amount'] !== null) {
+            $paymentAmount = (int)$data['payment_amount'];
+        }
+
         $sql = "UPDATE training_cohorts SET
             cohort_number = :cohort_number,
             cohort_name = :cohort_name,
@@ -175,6 +188,7 @@ class CohortModel
             custom_announcement = :custom_announcement,
             registration_deadline = :registration_deadline,
             capacity = :capacity,
+            payment_amount = :payment_amount,
             status = :status
             WHERE id = :id";
 
@@ -190,9 +204,23 @@ class CohortModel
             ':custom_announcement'    => !empty($data['custom_announcement']) ? trim($data['custom_announcement']) : null,
             ':registration_deadline'  => !empty($data['registration_deadline']) ? $data['registration_deadline'] : null,
             ':capacity'               => !empty($data['capacity']) ? (int)$data['capacity'] : 0,
+            ':payment_amount'         => $paymentAmount,
             ':status'                 => $data['status'] ?? 'upcoming',
             ':id'                     => $id
         ]);
+    }
+
+    /**
+     * Update cohort payment override fee (in kobo)
+     */
+    public function updatePaymentAmount($id, $amountKoboOrNull)
+    {
+        $amount = ($amountKoboOrNull !== null && $amountKoboOrNull !== '' && (int)$amountKoboOrNull >= 0)
+            ? (int)$amountKoboOrNull
+            : null;
+
+        $stmt = $this->db->prepare("UPDATE training_cohorts SET payment_amount = ? WHERE id = ?");
+        return $stmt->execute([$amount, $id]);
     }
 
     /**
@@ -243,9 +271,9 @@ class CohortModel
     public function getAllCohortsForAdmin()
     {
         $stmt = $this->db->query("
-            SELECT tc.id, tc.cohort_number, tc.cohort_name, tc.status, tc.registration_open,
-                   t.id as training_id, t.training_name,
-                   COUNT(tr.id) as applicant_count
+            SELECT tc.id, tc.cohort_number, tc.cohort_name, tc.status, tc.registration_open, tc.payment_amount,
+                   t.id as training_id, t.training_name, t.payments_enabled as program_payments_enabled, t.payment_amount as program_default_fee,
+                   COUNT(CASE WHEN tr.payment_status != 'failed' AND tr.payment_status != 'abandoned' THEN tr.id END) as applicant_count
             FROM training_cohorts tc
             JOIN trainings_tb t ON t.id = tc.training_id
             LEFT JOIN training_registrations tr ON tr.cohort_id = tc.id

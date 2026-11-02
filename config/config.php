@@ -14,6 +14,10 @@ if ($is_production) {
 
 define('ROOT_PATH', dirname(__DIR__));
 
+// Load Environment Configuration
+require_once ROOT_PATH . '/utils/Env.php';
+Env::load(ROOT_PATH . '/.env');
+
 // Dynamic BASE_URL calculation
 $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';

@@ -204,6 +204,106 @@ class AdminController extends AdminBaseController {
         exit;
     }
 
+    public function toggleTrainingPayments() {
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403);
+            exit;
+        }
+
+        $id = (int)($_POST['id'] ?? 0);
+        $enabled = !empty($_POST['enabled']) ? 1 : 0;
+
+        if (!$id) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid training program ID.']);
+            exit;
+        }
+
+        require_once ROOT_PATH . '/models/TrainingModel.php';
+        $trainingModel = new TrainingModel($this->db);
+        $training = $trainingModel->getTrainingById($id);
+
+        if (!$training) {
+            echo json_encode(['status' => 'error', 'message' => 'Training program not found.']);
+            exit;
+        }
+
+        if ($enabled && (int)($training['payment_amount'] ?? 0) <= 0) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Please set an enrollment fee greater than ₦0 before enabling payments.'
+            ]);
+            exit;
+        }
+
+        $res = $trainingModel->togglePayments($id, $enabled);
+        echo json_encode([
+            'status' => $res ? 'success' : 'error',
+            'payments_enabled' => $enabled,
+            'message' => $res ? 'Payment status updated successfully.' : 'Failed to update payment status.'
+        ]);
+        exit;
+    }
+
+    public function setTrainingPaymentAmount() {
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403);
+            exit;
+        }
+
+        $id = (int)($_POST['id'] ?? 0);
+        $amountNaira = (float)($_POST['amount'] ?? 0);
+
+        if (!$id || $amountNaira < 0) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid amount or program ID.']);
+            exit;
+        }
+
+        $amountKobo = PaystackService::nairaToKobo($amountNaira);
+
+        require_once ROOT_PATH . '/models/TrainingModel.php';
+        $trainingModel = new TrainingModel($this->db);
+        $res = $trainingModel->updatePaymentAmount($id, $amountKobo);
+
+        echo json_encode([
+            'status' => $res ? 'success' : 'error',
+            'amount_kobo' => $amountKobo,
+            'formatted' => PaystackService::formatKobo($amountKobo),
+            'message' => $res ? 'Enrollment fee updated successfully.' : 'Failed to update fee.'
+        ]);
+        exit;
+    }
+
+    public function setCohortPaymentAmount() {
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403);
+            exit;
+        }
+
+        $cohortId = (int)($_POST['cohort_id'] ?? 0);
+        $rawAmount = $_POST['amount'] ?? null;
+
+        if (!$cohortId) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid cohort ID.']);
+            exit;
+        }
+
+        $amountKobo = ($rawAmount !== null && $rawAmount !== '' && is_numeric($rawAmount) && (float)$rawAmount > 0)
+            ? PaystackService::nairaToKobo((float)$rawAmount)
+            : null;
+
+        require_once ROOT_PATH . '/models/CohortModel.php';
+        $cohortModel = new CohortModel($this->db);
+        $res = $cohortModel->updatePaymentAmount($cohortId, $amountKobo);
+
+        echo json_encode([
+            'status' => $res ? 'success' : 'error',
+            'amount_kobo' => $amountKobo,
+            'formatted' => $amountKobo ? PaystackService::formatKobo($amountKobo) : 'Inherit Program Fee',
+            'message' => $res ? 'Cohort fee override updated successfully.' : 'Failed to update cohort fee.'
+        ]);
+        exit;
+    }
+
     public function blog() {
         $adminModel = new AdminModel();
         
@@ -471,17 +571,18 @@ class AdminController extends AdminBaseController {
 
         $programId = $_GET['program'] ?? 'all';
         $cohortId = $_GET['cohort'] ?? 'all';
+        $paymentStatus = $_GET['payment_status'] ?? 'all';
         $search = trim($_GET['search'] ?? '');
         $export = $_GET['export'] ?? '';
 
         // Handle CSV Export
         if ($export === 'csv') {
-            $this->exportApplicationsCsv($programId, $cohortId, $search);
+            $this->exportApplicationsCsv($programId, $cohortId, $search, $paymentStatus);
             return;
         }
 
         $page = $this->getPage();
-        $result = $adminModel->getUnifiedApplications($programId, $page, 10, $cohortId, $search);
+        $result = $adminModel->getUnifiedApplications($programId, $page, 10, $cohortId, $search, $paymentStatus);
         $programs = $adminModel->getAllPrograms();
         $cohorts = $cohortModel->getAllCohortsForAdmin();
         $stats = $adminModel->getApplicationStats();
@@ -491,6 +592,7 @@ class AdminController extends AdminBaseController {
             'pagination' => $result,
             'current_program' => $programId,
             'current_cohort' => $cohortId,
+            'current_payment_status' => $paymentStatus,
             'current_search' => $search,
             'programs' => $programs,
             'cohorts' => $cohorts,
@@ -498,9 +600,9 @@ class AdminController extends AdminBaseController {
         ]);
     }
 
-    private function exportApplicationsCsv($programId, $cohortId, $search) {
+    private function exportApplicationsCsv($programId, $cohortId, $search, $paymentStatus = 'all') {
         $adminModel = new AdminModel();
-        $result = $adminModel->getUnifiedApplications($programId, 1, 0, $cohortId, $search);
+        $result = $adminModel->getUnifiedApplications($programId, 1, 0, $cohortId, $search, $paymentStatus);
         $rows = $result['data'] ?? [];
 
         $filename = 'program_applications_' . date('Y-m-d_His') . '.csv';
@@ -521,6 +623,11 @@ class AdminController extends AdminBaseController {
             'Phone',
             'Program',
             'Cohort',
+            'Payment Status',
+            'Amount (NGN)',
+            'Payment Ref',
+            'Invoice No',
+            'Paid Date',
             'Gender',
             'Age',
             'State',
@@ -546,6 +653,11 @@ class AdminController extends AdminBaseController {
                 $u['phone'] ?? $u['phone_no'] ?? '',
                 $r['program_name'] ?? '',
                 $r['cohort_name'] ?? ($r['cohort_id'] ? 'Cohort ' . $r['cohort_id'] : 'General Intake'),
+                strtoupper($r['payment_status'] ?? 'not_required'),
+                !empty($r['amount_paid']) ? number_format($r['amount_paid'] / 100, 2) : '0.00',
+                $r['payment_reference'] ?? '',
+                $r['invoice_number'] ?? '',
+                $r['paid_at'] ?? '',
                 $u['gender'] ?? '',
                 $u['age'] ?? '',
                 $u['state_of_origin'] ?? $u['state'] ?? '',
@@ -558,6 +670,136 @@ class AdminController extends AdminBaseController {
         }
 
         fclose($output);
+        exit;
+    }
+
+    public function verifyApplicationPayment() {
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403);
+            exit;
+        }
+
+        $appId = (int)($_POST['application_id'] ?? 0);
+        if (!$appId) {
+            echo json_encode(['status' => 'error', 'message' => 'Missing application ID.']);
+            exit;
+        }
+
+        require_once ROOT_PATH . '/models/PaymentModel.php';
+        $payModel = new PaymentModel($this->db);
+        $application = $payModel->getApplicationById($appId);
+
+        if (!$application) {
+            echo json_encode(['status' => 'error', 'message' => 'Application not found.']);
+            exit;
+        }
+
+        $reference = $application['payment_reference'] ?? '';
+        if (empty($reference)) {
+            echo json_encode(['status' => 'error', 'message' => 'No transaction reference associated with this applicant.']);
+            exit;
+        }
+
+        $verifyResult = PaystackService::verifyTransaction($reference);
+        if ($verifyResult['success'] && $verifyResult['paid']) {
+            $payModel->markTransactionSuccess(
+                $reference,
+                (string)($verifyResult['data']['id'] ?? ''),
+                $verifyResult['channel'],
+                $verifyResult['gateway_response'],
+                $verifyResult['paid_at']
+            );
+
+            $invoiceNumber = $application['invoice_number'] ?: $payModel->generateInvoiceNumber($appId);
+            $payModel->updateApplicationPaymentSuccess(
+                $appId,
+                $reference,
+                $verifyResult['amount'],
+                $invoiceNumber,
+                $verifyResult['paid_at']
+            );
+
+            if (empty($application['invoice_sent_at'])) {
+                $userData = json_decode($application['user_data'] ?? '{}', true) ?: [];
+                $applicantName = trim(($userData['first_name'] ?? $userData['firstname'] ?? '') . ' ' . ($userData['last_name'] ?? $userData['lastname'] ?? ''));
+                if (empty($applicantName)) $applicantName = $userData['full_name'] ?? 'Applicant';
+                $applicantEmail = $userData['email'] ?? ($userData['email_address'] ?? '');
+
+                $token = PaystackService::generateInvoiceToken($reference);
+                $receiptUrl = BASE_URL . "/trainings/invoice?ref=" . urlencode($reference) . "&token=" . urlencode($token);
+
+                require_once ROOT_PATH . '/utils/MailHelper.php';
+                MailHelper::sendPaymentReceipt($applicantEmail, $applicantName, [
+                    'invoice_number' => $invoiceNumber,
+                    'program_name'   => $application['training_name'],
+                    'cohort_name'    => $application['cohort_name'] ?? 'Upcoming Cohort',
+                    'amount_kobo'    => $verifyResult['amount'],
+                    'paid_at'        => $verifyResult['paid_at'] ?? date('Y-m-d H:i:s'),
+                    'channel'        => $verifyResult['channel'],
+                    'reference'      => $reference,
+                    'receipt_url'    => $receiptUrl
+                ]);
+
+                $payModel->markInvoiceSent($appId);
+            }
+
+            echo json_encode([
+                'status'           => 'success',
+                'payment_status'   => 'success',
+                'amount_formatted' => PaystackService::formatKobo($verifyResult['amount']),
+                'message'          => 'Payment successfully verified with Paystack!'
+            ]);
+            exit;
+        } else {
+            echo json_encode([
+                'status'  => 'error',
+                'message' => $verifyResult['message'] ?? 'Transaction is not verified or marked as paid on Paystack.'
+            ]);
+            exit;
+        }
+    }
+
+    public function resendApplicationInvoice() {
+        if (!$this->isAjax() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403);
+            exit;
+        }
+
+        $appId = (int)($_POST['application_id'] ?? 0);
+        require_once ROOT_PATH . '/models/PaymentModel.php';
+        $payModel = new PaymentModel($this->db);
+        $application = $payModel->getApplicationById($appId);
+
+        if (!$application || $application['payment_status'] !== 'success') {
+            echo json_encode(['status' => 'error', 'message' => 'Application is not marked as paid.']);
+            exit;
+        }
+
+        $userData = json_decode($application['user_data'] ?? '{}', true) ?: [];
+        $applicantName = trim(($userData['first_name'] ?? $userData['firstname'] ?? '') . ' ' . ($userData['last_name'] ?? $userData['lastname'] ?? ''));
+        if (empty($applicantName)) $applicantName = $userData['full_name'] ?? 'Applicant';
+        $applicantEmail = $userData['email'] ?? ($userData['email_address'] ?? '');
+
+        $reference = $application['payment_reference'];
+        $token = PaystackService::generateInvoiceToken($reference);
+        $receiptUrl = BASE_URL . "/trainings/invoice?ref=" . urlencode($reference) . "&token=" . urlencode($token);
+
+        require_once ROOT_PATH . '/utils/MailHelper.php';
+        $sent = MailHelper::sendPaymentReceipt($applicantEmail, $applicantName, [
+            'invoice_number' => $application['invoice_number'] ?? 'INV-0000',
+            'program_name'   => $application['training_name'],
+            'cohort_name'    => $application['cohort_name'] ?? 'Upcoming Cohort',
+            'amount_kobo'    => (int)$application['amount_paid'],
+            'paid_at'        => $application['paid_at'] ?? date('Y-m-d H:i:s'),
+            'channel'        => $application['channel'] ?? 'Online Payment',
+            'reference'      => $reference,
+            'receipt_url'    => $receiptUrl
+        ]);
+
+        echo json_encode([
+            'status'  => $sent ? 'success' : 'error',
+            'message' => $sent ? 'Receipt resent to ' . htmlspecialchars($applicantEmail) : 'Failed to dispatch email.'
+        ]);
         exit;
     }
 
@@ -603,6 +845,9 @@ class AdminController extends AdminBaseController {
         $registrationOpen = !empty($_POST['registration_open']) ? 1 : 0;
         $showTopbarBanner = !empty($_POST['show_topbar_banner']) ? 1 : 0;
         $customAnnouncement = !empty($_POST['custom_announcement']) ? trim($_POST['custom_announcement']) : null;
+        $paymentAmountKobo = (isset($_POST['payment_amount']) && $_POST['payment_amount'] !== '' && is_numeric($_POST['payment_amount']) && (float)$_POST['payment_amount'] > 0)
+            ? PaystackService::nairaToKobo((float)$_POST['payment_amount'])
+            : null;
 
         if (!$trainingId || empty($cohortName) || empty($startDate) || empty($endDate)) {
             echo json_encode(['status' => 'error', 'message' => 'Please fill in all required fields.']);
@@ -623,7 +868,8 @@ class AdminController extends AdminBaseController {
             'status'                => $status,
             'registration_open'     => $registrationOpen,
             'show_topbar_banner'    => $showTopbarBanner,
-            'custom_announcement'   => $customAnnouncement
+            'custom_announcement'   => $customAnnouncement,
+            'payment_amount'       => $paymentAmountKobo
         ];
 
         if ($id) {

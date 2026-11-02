@@ -1,7 +1,7 @@
 # Implementation Plan: Paystack Payment Integration for Trainings Feature
 
 **Target Branch:** `feature/paystack-training-payments`  
-**Status:** Under Review (Planning Phase)  
+**Status:** Implemented & Verified  
 **Author:** Antigravity  
 **Date:** November 2, 2026  
 
@@ -246,7 +246,7 @@ Tracks complete transaction attempt history and raw gateway metadata:
 
 ---
 
-### 4.2 Raw Migration SQL File: `database/migrations/2026_11_02_add_paystack_payments.sql`
+### 4.2 Raw Migration SQL File: `database/migrations/add_paystack_payments.sql`
 
 ```sql
 -- ============================================================================
@@ -310,7 +310,7 @@ SET `payment_status` = 'not_required'
 WHERE `payment_status` IS NULL OR `payment_status` = '';
 ```
 
-### 4.3 Rollback SQL File: `database/migrations/2026_11_02_add_paystack_payments_down.sql`
+### 4.3 Rollback SQL File: `database/migrations/add_paystack_payments_down.sql`
 
 ```sql
 -- ============================================================================
@@ -648,7 +648,7 @@ Ensure `.env` cannot be accessed via direct HTTP GET:
 ## 12. Rollout & Deployment Plan
 
 1. **Step 1: Database Migration:**
-   - Run `database/migrations/2026_11_02_add_paystack_payments.sql` in phpMyAdmin on production.
+   - Run `database/migrations/add_paystack_payments.sql` in phpMyAdmin on production.
    - Safe migration: columns added with safe defaults (`payments_enabled = 0`, `payment_status = 'not_required'`). Zero downtime.
 2. **Step 2: Environment Configuration:**
    - Add Paystack test keys (`pk_test_...`, `sk_test_...`) to `.env` on production/staging.
@@ -673,7 +673,7 @@ Ensure `.env` cannot be accessed via direct HTTP GET:
 | **Phase 1** | **Environment & Migration** | | |
 | 1.1 | Create `utils/Env.php` and load in `config/config.php` | `utils/Env.php`, `config/config.php` | 25m |
 | 1.2 | Create `.env.example` with Paystack variables and add `.htaccess` deny rule | `.env.example`, `.htaccess` | 15m |
-| 1.3 | Create SQL migration and rollback files | `database/migrations/2026_11_02_add_paystack_payments.sql`, `..._down.sql` | 30m |
+| 1.3 | Create SQL migration and rollback files | `database/migrations/add_paystack_payments.sql`, `..._down.sql` | 30m |
 | **Phase 2** | **Backend Paystack Client & Models** | | |
 | 2.1 | Create `utils/PaystackService.php` (Raw cURL initialization, verification, webhook signature validator) | `utils/PaystackService.php` | 45m |
 | 2.2 | Update `models/TrainingModel.php` to fetch/save `payments_enabled` & `payment_amount` | `models/TrainingModel.php` | 30m |

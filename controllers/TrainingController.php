@@ -164,19 +164,35 @@ class TrainingController extends BaseController {
             }
         }
 
+        $paymentInfo = $model->getEffectivePaymentAmount($id, $cohort['id'] ?? null);
+
         $data = [
             'training'          => $training,
             'cohort'            => $cohort,
             'sections'          => $sections,
             'program_id'        => $id,
             'registration_type' => $type,
-            'contact'           => $model->getContactDetails()
+            'contact'           => $model->getContactDetails(),
+            'payment_info'      => $paymentInfo
         ];
         $this->render("trainings/register", $data);
     }
 
     public function submit() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: " . BASE_URL . "/trainings");
+            exit();
+        }
+
+        // Optional CSRF check if submitted with form
+        if (!empty($_POST['csrf_token']) && !CSRF::validateToken($_POST['csrf_token'])) {
+            $msg = "Invalid form submission session. Please refresh and try again.";
+            if ($this->isAjax()) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => $msg]);
+                exit();
+            }
+            $_SESSION['registration_error'] = $msg;
             header("Location: " . BASE_URL . "/trainings");
             exit();
         }
@@ -319,7 +335,125 @@ class TrainingController extends BaseController {
             $regType = $_POST['registration_type'] ?? 'training';
             $assignedCohortId = $cohort['id'] ?? null;
 
-            $result = $model->submitRegistration($program_id, $user_data_json, $regType, $assignedCohortId);
+            // Resolve payment gating
+            $paymentInfo = $model->getEffectivePaymentAmount($program_id, $assignedCohortId);
+            $paymentsEnabled = !empty($paymentInfo['payments_enabled']);
+            $requiredAmountKobo = (int)($paymentInfo['amount_kobo'] ?? 0);
+
+            // Path 1: PAID TRAINING FLOW
+            if ($paymentsEnabled) {
+                if ($requiredAmountKobo <= 0) {
+                    $errMsg = "Payment is required for this program but the fee is not configured. Please contact support.";
+                    if ($this->isAjax()) {
+                        header('Content-Type: application/json');
+                        echo json_encode(['success' => false, 'message' => $errMsg]);
+                        exit();
+                    }
+                    $_SESSION['registration_error'] = $errMsg;
+                    header("Location: " . BASE_URL . "/trainings/register?id=" . $program_id);
+                    exit();
+                }
+
+                // Check gateway configuration
+                if (!PaystackService::isConfigured()) {
+                    $errMsg = "Online payment is currently undergoing maintenance. Please try again shortly or contact support.";
+                    if ($this->isAjax()) {
+                        header('Content-Type: application/json');
+                        echo json_encode(['success' => false, 'message' => $errMsg]);
+                        exit();
+                    }
+                    $_SESSION['registration_error'] = $errMsg;
+                    header("Location: " . BASE_URL . "/trainings/register?id=" . $program_id);
+                    exit();
+                }
+
+                // Generate unique transaction reference
+                $reference = 'STP_' . $program_id . '_' . ($assignedCohortId ?: '0') . '_' . time() . '_' . substr(bin2hex(random_bytes(4)), 0, 8);
+
+                // Insert application with status pending
+                $applicationId = $model->submitRegistration($program_id, $user_data_json, $regType, $assignedCohortId, [
+                    'payment_status'    => 'pending',
+                    'payment_reference' => $reference,
+                    'amount_paid'       => 0,
+                    'currency'          => 'NGN'
+                ]);
+
+                if (!$applicationId) {
+                    throw new Exception("Failed to persist registration record.");
+                }
+
+                $applicantEmail = $user_data['email'] ?? ($user_data['email_address'] ?? '');
+                $applicantName  = trim(($user_data['first_name'] ?? $user_data['firstname'] ?? '') . ' ' . ($user_data['last_name'] ?? $user_data['lastname'] ?? ''));
+                if (empty($applicantName)) $applicantName = $user_data['full_name'] ?? 'Applicant';
+
+                // Initialize Paystack checkout transaction
+                $initPayload = [
+                    'email'        => $applicantEmail,
+                    'amount'       => $requiredAmountKobo,
+                    'reference'    => $reference,
+                    'callback_url' => BASE_URL . '/trainings/payment/callback',
+                    'metadata'     => [
+                        'application_id' => $applicationId,
+                        'program_id'     => $program_id,
+                        'cohort_id'      => $assignedCohortId,
+                        'program_name'   => $training['training_name'],
+                        'applicant_name' => $applicantName,
+                        'cancel_action'  => BASE_URL . '/trainings/register?id=' . $program_id . ($assignedCohortId ? '&cohort=' . $assignedCohortId : '')
+                    ]
+                ];
+
+                $initResult = PaystackService::initializeTransaction($initPayload);
+
+                if (!$initResult['success'] || empty($initResult['authorization_url'])) {
+                    $payModel = new PaymentModel($this->db);
+                    $payModel->markTransactionFailed($reference, $initResult['message'] ?? 'Gateway initialization error');
+
+                    $errMsg = "Could not initialize payment: " . ($initResult['message'] ?? 'Please try again.');
+                    if ($this->isAjax()) {
+                        header('Content-Type: application/json');
+                        echo json_encode(['success' => false, 'message' => $errMsg]);
+                        exit();
+                    }
+                    $_SESSION['registration_error'] = $errMsg;
+                    header("Location: " . BASE_URL . "/trainings/register?id=" . $program_id);
+                    exit();
+                }
+
+                // Record initial transaction attempt
+                $payModel = new PaymentModel($this->db);
+                $payModel->createTransaction(
+                    $applicationId,
+                    $program_id,
+                    $assignedCohortId,
+                    $reference,
+                    $requiredAmountKobo,
+                    $applicantEmail,
+                    $initPayload['metadata']
+                );
+
+                if ($this->isAjax()) {
+                    header('Content-Type: application/json');
+                    echo json_encode([
+                        'success'          => true,
+                        'requires_payment' => true,
+                        'redirect_url'     => $initResult['authorization_url'],
+                        'reference'        => $reference,
+                        'message'          => 'Application registered. Redirecting to payment checkout...'
+                    ]);
+                    exit();
+                }
+
+                header("Location: " . $initResult['authorization_url']);
+                exit();
+            }
+
+            // Path 2: FREE TRAINING FLOW (Existing behavior preserved 100%)
+            $result = $model->submitRegistration($program_id, $user_data_json, $regType, $assignedCohortId, [
+                'payment_status'    => 'not_required',
+                'payment_reference' => null,
+                'amount_paid'       => 0,
+                'currency'          => 'NGN'
+            ]);
 
             if ($result) {
                 // Trigger Admin Notification
@@ -348,9 +482,10 @@ class TrainingController extends BaseController {
                 if ($this->isAjax()) {
                     header('Content-Type: application/json');
                     echo json_encode([
-                        'success' => true,
-                        'message' => 'Thank you for registering! We have received your application.',
-                        'redirect' => BASE_URL . "/trainings/detail?id=" . $program_id
+                        'success'          => true,
+                        'requires_payment' => false,
+                        'message'          => 'Thank you for registering! We have received your application.',
+                        'redirect'         => BASE_URL . "/trainings/detail?id=" . $program_id
                     ]);
                     exit();
                 }
@@ -379,5 +514,251 @@ class TrainingController extends BaseController {
             header("Location: " . BASE_URL . "/trainings/register?id=" . $program_id);
             exit();
         }
+    }
+
+    /**
+     * Paystack Callback URL Handler (Browser Return)
+     */
+    public function paymentCallback() {
+        $reference = trim($_GET['reference'] ?? '');
+        if (empty($reference)) {
+            $_SESSION['registration_error'] = "Missing payment reference.";
+            header("Location: " . BASE_URL . "/trainings");
+            exit();
+        }
+
+        $payModel = new PaymentModel($this->db);
+        $transaction = $payModel->getTransactionByReference($reference);
+        $application = $payModel->getApplicationByReference($reference);
+
+        if (!$application) {
+            $_SESSION['registration_error'] = "Application not found for transaction reference {$reference}.";
+            header("Location: " . BASE_URL . "/trainings");
+            exit();
+        }
+
+        // Call Paystack verification API
+        $verifyResult = PaystackService::verifyTransaction($reference);
+
+        if ($verifyResult['success'] && $verifyResult['paid']) {
+            $expectedAmountKobo = (int)($transaction['amount'] ?? 0);
+
+            // Amount and currency validation
+            if ($verifyResult['currency'] !== 'NGN' || $verifyResult['amount'] !== $expectedAmountKobo) {
+                $payModel->markTransactionFailed($reference, "Amount or currency mismatch: expected {$expectedAmountKobo} NGN, got {$verifyResult['amount']} {$verifyResult['currency']}");
+                $this->render("trainings/payment-failed", [
+                    'error'       => "Payment amount mismatch detected. Please contact admissions support with reference: {$reference}.",
+                    'reference'   => $reference,
+                    'application' => $application
+                ]);
+                return;
+            }
+
+            // Atomically mark success (guaranteed exactly once)
+            $isFirstSuccess = $payModel->markTransactionSuccess(
+                $reference,
+                (string)($verifyResult['data']['id'] ?? ''),
+                $verifyResult['channel'],
+                $verifyResult['gateway_response'],
+                $verifyResult['paid_at']
+            );
+
+            $invoiceNumber = $application['invoice_number'] ?: $payModel->generateInvoiceNumber((int)$application['id']);
+
+            $payModel->updateApplicationPaymentSuccess(
+                (int)$application['id'],
+                $reference,
+                $verifyResult['amount'],
+                $invoiceNumber,
+                $verifyResult['paid_at']
+            );
+
+            // Refresh application data
+            $application = $payModel->getApplicationById((int)$application['id']);
+
+            // Send Invoice Email exactly once
+            if ($isFirstSuccess || empty($application['invoice_sent_at'])) {
+                $userData = json_decode($application['user_data'] ?? '{}', true) ?: [];
+                $applicantName = trim(($userData['first_name'] ?? $userData['firstname'] ?? '') . ' ' . ($userData['last_name'] ?? $userData['lastname'] ?? ''));
+                if (empty($applicantName)) $applicantName = $userData['full_name'] ?? 'Applicant';
+                $applicantEmail = $userData['email'] ?? ($userData['email_address'] ?? ($transaction['customer_email'] ?? ''));
+
+                $token = PaystackService::generateInvoiceToken($reference);
+                $receiptUrl = BASE_URL . "/trainings/invoice?ref=" . urlencode($reference) . "&token=" . urlencode($token);
+
+                require_once ROOT_PATH . '/utils/MailHelper.php';
+                MailHelper::sendPaymentReceipt($applicantEmail, $applicantName, [
+                    'invoice_number' => $invoiceNumber,
+                    'program_name'   => $application['training_name'],
+                    'cohort_name'    => $application['cohort_name'] ?? 'Upcoming Cohort',
+                    'amount_kobo'    => $verifyResult['amount'],
+                    'paid_at'        => $verifyResult['paid_at'] ?? date('Y-m-d H:i:s'),
+                    'channel'        => $verifyResult['channel'],
+                    'reference'      => $reference,
+                    'receipt_url'    => $receiptUrl
+                ]);
+
+                $payModel->markInvoiceSent((int)$application['id']);
+
+                // Notify admin
+                $adminModel = new AdminModel();
+                $adminModel->addNotification(
+                    'Enrollment Payment Confirmed',
+                    "Payment of " . PaystackService::formatKobo($verifyResult['amount']) . " received from {$applicantName} for {$application['training_name']}.",
+                    "admin/applications"
+                );
+            }
+
+            $token = PaystackService::generateInvoiceToken($reference);
+            $this->render("trainings/payment-success", [
+                'application'    => $application,
+                'invoice_number' => $invoiceNumber,
+                'reference'      => $reference,
+                'invoice_token'  => $token,
+                'amount_kobo'    => $verifyResult['amount']
+            ]);
+            return;
+        } else {
+            $payModel->markTransactionFailed($reference, $verifyResult['message'] ?? 'Transaction was not completed.');
+            $this->render("trainings/payment-failed", [
+                'error'       => $verifyResult['message'] ?? 'Payment was cancelled or unsuccessful. You may try again.',
+                'reference'   => $reference,
+                'application' => $application
+            ]);
+            return;
+        }
+    }
+
+    /**
+     * Paystack Authoritative Webhook Receiver (Server-to-Server)
+     */
+    public function paymentWebhook() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            exit('Method Not Allowed');
+        }
+
+        $rawBody = file_get_contents('php://input');
+        $signature = $_SERVER['HTTP_X_PAYSTACK_SIGNATURE'] ?? '';
+
+        if (!PaystackService::verifyWebhookSignature($rawBody, $signature)) {
+            http_response_code(400);
+            exit('Invalid signature');
+        }
+
+        $event = json_decode($rawBody, true);
+        if (!$event || empty($event['event'])) {
+            http_response_code(400);
+            exit('Invalid payload');
+        }
+
+        if ($event['event'] === 'charge.success') {
+            $tx = $event['data'] ?? [];
+            $reference = $tx['reference'] ?? '';
+
+            if (!empty($reference)) {
+                $payModel = new PaymentModel($this->db);
+                $transaction = $payModel->getTransactionByReference($reference);
+                $application = $payModel->getApplicationByReference($reference);
+
+                if ($application && $transaction) {
+                    $expectedAmountKobo = (int)$transaction['amount'];
+                    $paidAmountKobo = (int)($tx['amount'] ?? 0);
+                    $paidCurrency = $tx['currency'] ?? 'NGN';
+
+                    if ($paidCurrency === 'NGN' && $paidAmountKobo === $expectedAmountKobo) {
+                        $isFirstSuccess = $payModel->markTransactionSuccess(
+                            $reference,
+                            (string)($tx['id'] ?? ''),
+                            $tx['channel'] ?? 'card',
+                            $tx['gateway_response'] ?? 'Successful',
+                            $tx['paid_at'] ?? null
+                        );
+
+                        $invoiceNumber = $application['invoice_number'] ?: $payModel->generateInvoiceNumber((int)$application['id']);
+
+                        $payModel->updateApplicationPaymentSuccess(
+                            (int)$application['id'],
+                            $reference,
+                            $paidAmountKobo,
+                            $invoiceNumber,
+                            $tx['paid_at'] ?? null
+                        );
+
+                        if ($isFirstSuccess || empty($application['invoice_sent_at'])) {
+                            $userData = json_decode($application['user_data'] ?? '{}', true) ?: [];
+                            $applicantName = trim(($userData['first_name'] ?? $userData['firstname'] ?? '') . ' ' . ($userData['last_name'] ?? $userData['lastname'] ?? ''));
+                            if (empty($applicantName)) $applicantName = $userData['full_name'] ?? 'Applicant';
+                            $applicantEmail = $userData['email'] ?? ($userData['email_address'] ?? ($transaction['customer_email'] ?? ''));
+
+                            $token = PaystackService::generateInvoiceToken($reference);
+                            $receiptUrl = BASE_URL . "/trainings/invoice?ref=" . urlencode($reference) . "&token=" . urlencode($token);
+
+                            require_once ROOT_PATH . '/utils/MailHelper.php';
+                            MailHelper::sendPaymentReceipt($applicantEmail, $applicantName, [
+                                'invoice_number' => $invoiceNumber,
+                                'program_name'   => $application['training_name'],
+                                'cohort_name'    => $application['cohort_name'] ?? 'Upcoming Cohort',
+                                'amount_kobo'    => $paidAmountKobo,
+                                'paid_at'        => $tx['paid_at'] ?? date('Y-m-d H:i:s'),
+                                'channel'        => $tx['channel'] ?? 'card',
+                                'reference'      => $reference,
+                                'receipt_url'    => $receiptUrl
+                            ]);
+
+                            $payModel->markInvoiceSent((int)$application['id']);
+
+                            $adminModel = new AdminModel();
+                            $adminModel->addNotification(
+                                'Enrollment Payment Confirmed (Webhook)',
+                                "Payment of " . PaystackService::formatKobo($paidAmountKobo) . " received from {$applicantName} for {$application['training_name']}.",
+                                "admin/applications"
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
+        http_response_code(200);
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'success']);
+        exit();
+    }
+
+    /**
+     * Standalone Official Printable Invoice / Receipt View
+     */
+    public function viewInvoice() {
+        $reference = trim($_GET['ref'] ?? '');
+        $token     = trim($_GET['token'] ?? '');
+
+        if (empty($reference)) {
+            header("Location: " . BASE_URL . "/trainings");
+            exit();
+        }
+
+        $isAdmin = !empty($_SESSION['admin_id']);
+
+        // Non-admin viewers must provide a valid cryptographic token to prevent ID enumeration
+        if (!$isAdmin && !PaystackService::validateInvoiceToken($reference, $token)) {
+            http_response_code(403);
+            echo "Access denied: Invalid or expired invoice link.";
+            exit();
+        }
+
+        $payModel = new PaymentModel($this->db);
+        $application = $payModel->getApplicationByReference($reference);
+
+        if (!$application || $application['payment_status'] !== 'success') {
+            http_response_code(404);
+            echo "Paid invoice not found for reference: " . htmlspecialchars($reference);
+            exit();
+        }
+
+        $this->render("trainings/invoice", [
+            'application' => $application,
+            'reference'   => $reference
+        ]);
     }
 }

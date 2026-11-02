@@ -34,15 +34,75 @@ class TrainingModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function submitRegistration($program_id, $user_data_json, $type = 'training', $cohort_id = null) {
+    public function submitRegistration($program_id, $user_data_json, $type = 'training', $cohort_id = null, array $paymentData = []) {
+        $paymentStatus = $paymentData['payment_status'] ?? 'not_required';
+        $paymentReference = $paymentData['payment_reference'] ?? null;
+        $amountPaid = !empty($paymentData['amount_paid']) ? (int)$paymentData['amount_paid'] : 0;
+        $currency = $paymentData['currency'] ?? 'NGN';
+
         if ($cohort_id) {
-            $query = "INSERT INTO `training_registrations` (program_id, cohort_id, user_data, registration_type) VALUES (?, ?, ?, ?)";
+            $query = "INSERT INTO `training_registrations` (program_id, cohort_id, user_data, registration_type, payment_status, payment_reference, amount_paid, currency) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->conn->prepare($query);
-            return $stmt->execute([$program_id, $cohort_id, $user_data_json, $type]);
+            $success = $stmt->execute([$program_id, $cohort_id, $user_data_json, $type, $paymentStatus, $paymentReference, $amountPaid, $currency]);
+            return $success ? (int)$this->conn->lastInsertId() : false;
         }
-        $query = "INSERT INTO `training_registrations` (program_id, user_data, registration_type) VALUES (?, ?, ?)";
+        $query = "INSERT INTO `training_registrations` (program_id, user_data, registration_type, payment_status, payment_reference, amount_paid, currency) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($query);
-        return $stmt->execute([$program_id, $user_data_json, $type]);
+        $success = $stmt->execute([$program_id, $user_data_json, $type, $paymentStatus, $paymentReference, $amountPaid, $currency]);
+        return $success ? (int)$this->conn->lastInsertId() : false;
+    }
+
+    /**
+     * Toggle payment gating for a training
+     */
+    public function togglePayments($programId, $enabled) {
+        $stmt = $this->conn->prepare("UPDATE `trainings_tb` SET payments_enabled = ? WHERE id = ?");
+        return $stmt->execute([!empty($enabled) ? 1 : 0, $programId]);
+    }
+
+    /**
+     * Update default enrollment fee for a training (stored in kobo)
+     */
+    public function updatePaymentAmount($programId, $amountKobo) {
+        $stmt = $this->conn->prepare("UPDATE `trainings_tb` SET payment_amount = ? WHERE id = ?");
+        return $stmt->execute([(int)$amountKobo, $programId]);
+    }
+
+    /**
+     * Resolve effective payment settings: cohort override > training default
+     */
+    public function getEffectivePaymentAmount($programId, $cohortId = null): array {
+        $training = $this->getTrainingById($programId);
+        if (!$training) {
+            return [
+                'payments_enabled'    => false,
+                'amount_kobo'         => 0,
+                'amount_naira'        => 0.0,
+                'is_cohort_override'  => false
+            ];
+        }
+
+        $paymentsEnabled = !empty($training['payments_enabled']);
+        $trainingFeeKobo = (int)($training['payment_amount'] ?? 0);
+        $effectiveKobo = $trainingFeeKobo;
+        $isCohortOverride = false;
+
+        if ($cohortId) {
+            $stmt = $this->conn->prepare("SELECT payment_amount FROM `training_cohorts` WHERE id = ? LIMIT 1");
+            $stmt->execute([$cohortId]);
+            $cohortFee = $stmt->fetchColumn();
+            if ($cohortFee !== false && $cohortFee !== null && (int)$cohortFee > 0) {
+                $effectiveKobo = (int)$cohortFee;
+                $isCohortOverride = true;
+            }
+        }
+
+        return [
+            'payments_enabled'   => $paymentsEnabled,
+            'amount_kobo'        => $effectiveKobo,
+            'amount_naira'       => round($effectiveKobo / 100, 2),
+            'is_cohort_override' => $isCohortOverride
+        ];
     }
 
     public function isEmailRegistered($email, $program_id, $cohort_id = null) {
