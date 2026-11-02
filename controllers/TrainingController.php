@@ -9,11 +9,11 @@ class TrainingController extends BaseController {
         $cohortModel = new CohortModel($this->db);
 
         foreach ($trainings as &$t) {
-            $t['active_cohort'] = $cohortModel->getActiveCohort($t['id']);
+            $t['active_cohort'] = $cohortModel->getActiveCohort($t['id']) ?: null;
             if (!$t['active_cohort']) {
-                $t['upcoming_cohort'] = $cohortModel->getUpcomingCohort($t['id']);
+                $t['upcoming_cohort'] = $cohortModel->getUpcomingCohort($t['id']) ?: null;
             }
-            $selectedCohort = $t['active_cohort'] ?? $t['upcoming_cohort'] ?? null;
+            $selectedCohort = $t['active_cohort'] ?: ($t['upcoming_cohort'] ?: null);
             $t['effective_fee'] = $model->getEffectivePaymentAmount($t['id'], $selectedCohort['id'] ?? null);
         }
         unset($t);
@@ -33,11 +33,11 @@ class TrainingController extends BaseController {
         require_once ROOT_PATH . '/models/CohortModel.php';
         $cohortModel = new CohortModel($this->db);
 
-        $activeCohort = $cohortModel->getActiveCohort($id);
-        $upcomingCohort = $cohortModel->getUpcomingCohort($id);
-        $allCohorts = $cohortModel->getCohortsByTrainingId($id);
+        $activeCohort = $cohortModel->getActiveCohort($id) ?: null;
+        $upcomingCohort = $cohortModel->getUpcomingCohort($id) ?: null;
+        $allCohorts = $cohortModel->getCohortsByTrainingId($id) ?: [];
 
-        $effectiveCohort = $activeCohort ?? $upcomingCohort ?? null;
+        $effectiveCohort = $activeCohort ?: ($upcomingCohort ?: null);
         $paymentInfo = $model->getEffectivePaymentAmount($id, $effectiveCohort['id'] ?? null);
 
         $data = [

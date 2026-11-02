@@ -141,11 +141,13 @@ function format_naira($amountKobo, bool $forceDecimals = false): string
  * Replaces hardcoded strings and brittle acronym logic.
  *
  * @param array $training Training record from database
- * @param array|null $cohort Active or upcoming cohort record, if any
+ * @param array|bool|null $cohort Active or upcoming cohort record, if any
  * @return array{cohort_name: string, status: string, badge_text: string, status_class: string, dot_class: string}
  */
-function resolve_training_status_badge(array $training, ?array $cohort = null): array
+function resolve_training_status_badge(array $training, $cohort = null): array
 {
+    $cohort = (!empty($cohort) && is_array($cohort)) ? $cohort : null;
+
     // 1. Resolve Cohort Name
     $cohortName = '';
     if (!empty($cohort['cohort_name'])) {
@@ -234,12 +236,13 @@ function resolve_training_status_badge(array $training, ?array $cohort = null): 
  * Avoids hardcoded strings while preventing button overflows on mobile.
  *
  * @param string $trainingName Training program title
- * @param string|null $cohortName Cohort name if available
+ * @param string|null|bool $cohortName Cohort name if available
  * @param int $maxLength Maximum character length before truncation
  * @return string Formatted label (e.g. "Enroll in we Digitize – Cohort 1")
  */
-function resolve_enroll_button_label(string $trainingName, ?string $cohortName = null, int $maxLength = 38): string
+function resolve_enroll_button_label(string $trainingName, $cohortName = null, int $maxLength = 38): string
 {
+    $cohortName = (!empty($cohortName) && is_string($cohortName)) ? $cohortName : null;
     $title = trim(strip_tags($trainingName));
     if (empty($title)) {
         return 'Enroll Now';

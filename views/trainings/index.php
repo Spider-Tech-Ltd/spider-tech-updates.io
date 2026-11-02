@@ -102,7 +102,9 @@ if (!function_exists('truncateTrainingDescWordAware')) {
                     }
 
                     // Resolve data-backed dynamic status badge
-                    $selectedCohort = $training['active_cohort'] ?? $training['upcoming_cohort'] ?? null;
+                    $selectedCohort = (!empty($training['active_cohort']) && is_array($training['active_cohort']))
+                        ? $training['active_cohort']
+                        : ((!empty($training['upcoming_cohort']) && is_array($training['upcoming_cohort'])) ? $training['upcoming_cohort'] : null);
                     $statusBadge = resolve_training_status_badge($training, $selectedCohort);
                 ?>
                 <div class="col-lg-4 col-md-6 mb-4 d-flex">
