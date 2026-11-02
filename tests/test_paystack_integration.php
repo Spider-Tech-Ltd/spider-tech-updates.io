@@ -306,6 +306,53 @@ assertTest("InvoiceRenderer plain text contains issuer name", strpos($plainText,
 assertTest("InvoiceRenderer plain text contains invoice number", strpos($plainText, 'STP-INV-202604-0099') !== false);
 assertTest("InvoiceRenderer plain text contains total amount", strpos($plainText, '₦45,000.00') !== false);
 
+// --- 9. Test Currency Formatter, Status Badges, and Dynamic CTA Labels ---
+echo "\n--- 9. Testing Currency Formatter, Dynamic Badges & Dynamic Labels ---\n";
+require_once __DIR__ . '/../utils/helpers.php';
+
+// A. format_naira()
+assertTest("format_naira formats whole thousands without decimals", format_naira(5000000) === '₦50,000');
+assertTest("format_naira formats non-zero kobo with 2 decimals", format_naira(5000050) === '₦50,000.50');
+assertTest("format_naira honors forceDecimals = true", format_naira(5000000, true) === '₦50,000.00');
+assertTest("format_naira formats 0 kobo to '₦0'", format_naira(0) === '₦0');
+
+// B. resolve_training_status_badge()
+$badgeOpen = resolve_training_status_badge(
+    ['id' => 1, 'registration_available' => 1],
+    ['cohort_name' => 'Cohort 1', 'status' => 'open', 'registration_open' => 1]
+);
+assertTest("resolve_training_status_badge produces 'Cohort 1 · Registration Open'", $badgeOpen['badge_text'] === 'Cohort 1 · Registration Open');
+assertTest("resolve_training_status_badge sets open status_class", $badgeOpen['status_class'] === 'open');
+
+$badgeUpcoming = resolve_training_status_badge(
+    ['id' => 1, 'registration_available' => 1],
+    ['cohort_name' => 'Cohort 2', 'status' => 'upcoming', 'registration_open' => 0, 'start_date' => date('Y-m-d', strtotime('+10 days'))]
+);
+assertTest("resolve_training_status_badge produces 'Cohort 2 · Coming Soon'", $badgeUpcoming['badge_text'] === 'Cohort 2 · Coming Soon');
+assertTest("resolve_training_status_badge sets upcoming status_class", $badgeUpcoming['status_class'] === 'upcoming');
+
+$badgeClosed = resolve_training_status_badge(
+    ['id' => 1, 'registration_available' => 0],
+    ['cohort_name' => 'Cohort 1', 'status' => 'open']
+);
+assertTest("resolve_training_status_badge produces 'Cohort 1 · Registration Closed' when master switch off", $badgeClosed['badge_text'] === 'Cohort 1 · Registration Closed');
+
+$badgeCompleted = resolve_training_status_badge(
+    ['id' => 1, 'registration_available' => 1],
+    ['cohort_name' => 'Cohort 1', 'status' => 'completed']
+);
+assertTest("resolve_training_status_badge produces 'Cohort 1 · Completed'", $badgeCompleted['badge_text'] === 'Cohort 1 · Completed');
+
+// C. resolve_enroll_button_label()
+$btnShort = resolve_enroll_button_label('we Digitize', 'Cohort 1');
+assertTest("resolve_enroll_button_label builds full dynamic label for short program", $btnShort === 'Enroll in we Digitize – Cohort 1');
+
+$btnLong = resolve_enroll_button_label('Digital Skills & Web Engineering Executive Track', 'Cohort 1', 38);
+assertTest("resolve_enroll_button_label truncates cleanly with ellipsis", str_ends_with($btnLong, '…') && mb_strlen($btnLong) <= 38);
+
+$btnFallback = resolve_enroll_button_label('');
+assertTest("resolve_enroll_button_label falls back to 'Enroll Now'", $btnFallback === 'Enroll Now');
+
 
 echo "\n========================================================\n";
 echo "TEST RESULTS: {$passed} PASSED, {$failed} FAILED\n";

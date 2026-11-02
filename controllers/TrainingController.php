@@ -13,6 +13,8 @@ class TrainingController extends BaseController {
             if (!$t['active_cohort']) {
                 $t['upcoming_cohort'] = $cohortModel->getUpcomingCohort($t['id']);
             }
+            $selectedCohort = $t['active_cohort'] ?? $t['upcoming_cohort'] ?? null;
+            $t['effective_fee'] = $model->getEffectivePaymentAmount($t['id'], $selectedCohort['id'] ?? null);
         }
         unset($t);
 
@@ -35,12 +37,16 @@ class TrainingController extends BaseController {
         $upcomingCohort = $cohortModel->getUpcomingCohort($id);
         $allCohorts = $cohortModel->getCohortsByTrainingId($id);
 
+        $effectiveCohort = $activeCohort ?? $upcomingCohort ?? null;
+        $paymentInfo = $model->getEffectivePaymentAmount($id, $effectiveCohort['id'] ?? null);
+
         $data = [
             'training'        => $training,
             'active_cohort'   => $activeCohort,
             'upcoming_cohort' => $upcomingCohort,
             'all_cohorts'     => $allCohorts,
-            'contact'         => $model->getContactDetails()
+            'contact'         => $model->getContactDetails(),
+            'payment_info'    => $paymentInfo
         ];
         $this->render("trainings/detail", $data);
     }

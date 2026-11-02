@@ -222,28 +222,29 @@
                                     <span class="info-value">English</span>
                                 </div>
                             </li>
+                            <li class="info-item">
+                                <span class="info-icon-box">
+                                    <span class="material-symbols-outlined"><?= !empty($payment_info['payments_enabled']) ? 'payments' : 'card_giftcard' ?></span>
+                                </span>
+                                <div class="info-meta">
+                                    <span class="info-label">Tuition Fee</span>
+                                    <span class="info-value" style="font-weight: 700; color: <?= !empty($payment_info['payments_enabled']) ? '#f48221' : '#047857' ?>;">
+                                        <?= !empty($payment_info['payments_enabled']) ? format_naira($payment_info['amount_kobo'] ?? 0) : 'Free' ?>
+                                    </span>
+                                </div>
+                            </li>
                         </ul>
 
                         <?php if (!empty($training['registration_available']) && !empty($active_cohort)): ?>
                             <?php
-                            $cCode = 'DSE';
-                            if (!empty($training['training_name']) && stripos($training['training_name'], 'Digital Skills') === false) {
-                                $words = preg_split('/\s+/', trim(strip_tags($training['training_name'])));
-                                $cCode = '';
-                                foreach ($words as $w) {
-                                    if (strlen($w) > 2) $cCode .= strtoupper($w[0]);
-                                }
-                                if (!$cCode) $cCode = 'Cohort';
-                            }
-                            $cohortNum = $active_cohort['cohort_number'] ?? 4;
-                            $badgeLabel = $cCode . ' Cohort ' . $cohortNum . ' Registration Open';
-                            $btnLabel = 'Enroll for DSE - Cohort ' . $cohortNum;
+                            $badgeData = resolve_training_status_badge($training, $active_cohort);
+                            $btnLabel = resolve_enroll_button_label($training['training_name'] ?? '', $active_cohort['cohort_name'] ?? null);
                             ?>
                             <div class="cohort-callout-panel">
                                 <div class="cohort-callout-header">
-                                    <span class="cohort-status-pill">
+                                    <span class="cohort-status-pill <?= htmlspecialchars($badgeData['status_class']) ?>">
                                         <span class="cohort-status-dot"></span>
-                                        <?= htmlspecialchars($badgeLabel) ?>
+                                        <?= htmlspecialchars($badgeData['badge_text']) ?>
                                     </span>
                                 </div>
                                 <h6 class="cohort-panel-name"><?= htmlspecialchars($active_cohort['cohort_name']) ?></h6>

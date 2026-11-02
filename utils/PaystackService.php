@@ -266,6 +266,9 @@ class PaystackService
      */
     public static function formatKobo(int $kobo): string
     {
+        if (function_exists('format_naira')) {
+            return format_naira($kobo, true);
+        }
         return '₦' . number_format($kobo / 100, 2);
     }
 
