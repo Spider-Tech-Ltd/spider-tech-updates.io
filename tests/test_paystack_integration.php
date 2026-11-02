@@ -10,6 +10,7 @@ require_once dirname(__DIR__) . '/utils/PaystackService.php';
 require_once dirname(__DIR__) . '/models/TrainingModel.php';
 require_once dirname(__DIR__) . '/models/CohortModel.php';
 require_once dirname(__DIR__) . '/models/PaymentModel.php';
+require_once dirname(__DIR__) . '/models/AdminModel.php';
 
 $passed = 0;
 $failed = 0;
@@ -141,6 +142,65 @@ try {
     $summary = $payModel->getPaymentSummaryStats();
     assertTest("Payment summary stats contains total_revenue_kobo >= 0", isset($summary['total_revenue_kobo']) && $summary['total_revenue_kobo'] >= 0);
     assertTest("Payment summary stats contains total_paid_count >= 1", isset($summary['total_paid_count']) && $summary['total_paid_count'] >= 1);
+
+    // 5.8 Test AdminModel Training Store & Payment Gating
+    $adminModel = new AdminModel();
+    $testTrainingName = "Test Payment Gated Track " . time();
+    $insertData = [
+        "action_mode" => "store",
+        "training_name" => $testTrainingName,
+        "training_description" => "Test description for paystack gating",
+        "training_details" => "Detailed syllabus",
+        "training_icon" => "fas fa-code",
+        "show_on_home" => 0,
+        "sort_order" => 999,
+        "registration_available" => 1,
+        "payments_enabled" => 1,
+        "payment_amount" => "75000", // 75,000 NGN entered by admin
+        "start_date" => date("Y-m-d"),
+        "end_date" => date("Y-m-d", strtotime("+30 days")),
+        "training_time" => "9am - 1pm",
+        "certified_count" => 0
+    ];
+
+    $storeRes = $adminModel->storeRecord("training", $insertData);
+    assertTest("AdminModel::storeRecord creates training with payments enabled", $storeRes === true);
+
+    $testTrRow = $db->query("SELECT * FROM `trainings_tb` WHERE `training_name` = " . $db->quote($testTrainingName))->fetch(PDO::FETCH_ASSOC);
+    $createdTrId = $testTrRow ? (int)$testTrRow["id"] : 0;
+    assertTest("Training payments_enabled saved as 1", $testTrRow && (int)$testTrRow["payments_enabled"] === 1);
+    assertTest("Training payment_amount saved as 7,500,000 kobo (75,000 NGN)", $testTrRow && (int)$testTrRow["payment_amount"] === 7500000);
+
+    // Test validation failure when enabled with fee <= 0
+    $validationFailedAsExpected = false;
+    try {
+        $invalidData = $insertData;
+        $invalidData["id"] = $createdTrId;
+        $invalidData["action_mode"] = "update";
+        $invalidData["payments_enabled"] = 1;
+        $invalidData["payment_amount"] = "0"; // Invalid
+        $adminModel->storeRecord("training", $invalidData);
+    } catch (Exception $e) {
+        $validationFailedAsExpected = (strpos($e->getMessage(), "fee greater than 0 is required") !== false);
+    }
+    assertTest("AdminModel rejects payments enabled with zero fee", $validationFailedAsExpected === true);
+
+    // Test toggle off preserves saved fee
+    $disableData = $insertData;
+    $disableData["id"] = $createdTrId;
+    $disableData["action_mode"] = "update";
+    $disableData["payments_enabled"] = 0; // Disabled
+    $disableData["payment_amount"] = "75000"; // Existing fee kept
+    $disableRes = $adminModel->storeRecord("training", $disableData);
+    assertTest("AdminModel::storeRecord updates training to disabled", $disableRes === true);
+
+    $disabledTrRow = $db->query("SELECT * FROM `trainings_tb` WHERE `id` = {$createdTrId}")->fetch(PDO::FETCH_ASSOC);
+    assertTest("Training payments_enabled updated to 0", $disabledTrRow && (int)$disabledTrRow["payments_enabled"] === 0);
+    assertTest("Training payment_amount preserved as 7,500,000 kobo while inactive", $disabledTrRow && (int)$disabledTrRow["payment_amount"] === 7500000);
+
+    if ($createdTrId > 0) {
+        $db->prepare("DELETE FROM `trainings_tb` WHERE `id` = ?")->execute([$createdTrId]);
+    }
 
     // Cleanup test record
     $db->prepare("DELETE FROM `payment_transactions` WHERE `reference` = ?")->execute([$uniqueRef]);

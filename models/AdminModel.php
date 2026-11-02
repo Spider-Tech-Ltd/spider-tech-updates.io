@@ -616,7 +616,7 @@ class AdminModel
             'faq' => ['table' => 'faq_tb', 'pk' => 'faq_id', 'fields' => ['faq_question', 'faq_answer'], 'upload' => null],
             'testimonial' => ['table' => 'testimonials_tb', 'pk' => 'id', 'fields' => ['name', 'organization', 'title', 'testimonial'], 'upload' => 'image', 'path' => 'images/pictures/'],
             'event' => ['table' => 'events', 'pk' => 'event_id', 'fields' => ['event_title', 'event_content', 'event_detail', 'event_date', 'event_time', 'event_address', 'event_status', 'show_on_home', 'sort_order', 'video_url', 'video_type'], 'upload' => 'event_img', 'path' => 'images/pictures/'],
-            'training' => ['table' => 'trainings_tb', 'pk' => 'id', 'fields' => ['training_name', 'training_description', 'training_details', 'training_icon', 'show_on_home', 'sort_order', 'registration_available', 'start_date', 'end_date', 'training_time', 'certified_count'], 'upload' => 'training_image', 'path' => 'images/pictures/'],
+            'training' => ['table' => 'trainings_tb', 'pk' => 'id', 'fields' => ['training_name', 'training_description', 'training_details', 'training_icon', 'show_on_home', 'sort_order', 'registration_available', 'payments_enabled', 'payment_amount', 'start_date', 'end_date', 'training_time', 'certified_count'], 'upload' => 'training_image', 'path' => 'images/pictures/'],
             'blog' => ['table' => 'blogs', 'pk' => 'uuid', 'fields' => ['category_id', 'title', 'slug', 'summary', 'content', 'status'], 'upload' => 'image_path', 'path' => 'images/blog/'],
             'partner' => ['table' => 'partners_tb', 'pk' => 'id', 'fields' => ['name', 'website_url', 'sort_order', 'is_active'], 'upload' => 'logo', 'path' => 'images/partners/']
         ];
@@ -656,10 +656,29 @@ class AdminModel
                 $sets = [];
                 $values = [];
                 foreach ($fields as $field) {
-                    if ($field === 'show_on_home' || $field === 'registration_available' || $field === 'is_active') {
+                    if ($field === 'show_on_home' || $field === 'registration_available' || $field === 'is_active' || $field === 'payments_enabled') {
                         $sets[] = "$field = ?";
                         // Safeguard checkbox state checking
-                        $values[] = (isset($data[$field]) && $data[$field]) ? 1 : 0;
+                        $values[] = (isset($data[$field]) && ($data[$field] == 1 || $data[$field] === '1' || $data[$field] === true)) ? 1 : 0;
+                    } elseif ($field === 'payment_amount' && $type === 'training') {
+                        $sets[] = "$field = ?";
+                        $isEnabled = (isset($data['payments_enabled']) && ($data['payments_enabled'] == 1 || $data['payments_enabled'] === '1' || $data['payments_enabled'] === true));
+                        $rawAmount = (isset($data['payment_amount']) && $data['payment_amount'] !== '') ? (float)$data['payment_amount'] : null;
+                        if ($isEnabled) {
+                            if ($rawAmount === null || $rawAmount <= 0) {
+                                throw new Exception('A payment fee greater than 0 is required when payments are enabled.');
+                            }
+                            $values[] = (int)round($rawAmount * 100);
+                        } else {
+                            if ($rawAmount !== null && $rawAmount > 0) {
+                                $values[] = (int)round($rawAmount * 100);
+                            } elseif (!empty($id)) {
+                                $existing = $this->getById($table, $pk, $id);
+                                $values[] = (int)($existing['payment_amount'] ?? 0);
+                            } else {
+                                $values[] = 0;
+                            }
+                        }
                     } elseif ($field === 'sort_order') {
                         $sets[] = "sort_order = ?";
                         $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
@@ -714,8 +733,19 @@ class AdminModel
                 $fieldNames = implode(',', $fields);
                 $values = [];
                 foreach ($fields as $field) {
-                    if ($field === 'show_on_home' || $field === 'registration_available' || $field === 'is_active') {
-                        $values[] = (isset($data[$field]) && $data[$field]) ? 1 : 0;
+                    if ($field === 'show_on_home' || $field === 'registration_available' || $field === 'is_active' || $field === 'payments_enabled') {
+                        $values[] = (isset($data[$field]) && ($data[$field] == 1 || $data[$field] === '1' || $data[$field] === true)) ? 1 : 0;
+                    } elseif ($field === 'payment_amount' && $type === 'training') {
+                        $isEnabled = (isset($data['payments_enabled']) && ($data['payments_enabled'] == 1 || $data['payments_enabled'] === '1' || $data['payments_enabled'] === true));
+                        $rawAmount = (isset($data['payment_amount']) && $data['payment_amount'] !== '') ? (float)$data['payment_amount'] : null;
+                        if ($isEnabled) {
+                            if ($rawAmount === null || $rawAmount <= 0) {
+                                throw new Exception('A payment fee greater than 0 is required when payments are enabled.');
+                            }
+                            $values[] = (int)round($rawAmount * 100);
+                        } else {
+                            $values[] = ($rawAmount !== null && $rawAmount > 0) ? (int)round($rawAmount * 100) : 0;
+                        }
                     } elseif ($field === 'sort_order') {
                         $values[] = isset($data['sort_order']) ? (int)$data['sort_order'] : 0;
                     } elseif ($field === 'category_id' && $type === 'blog') {

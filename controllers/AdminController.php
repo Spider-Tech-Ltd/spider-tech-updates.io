@@ -1209,6 +1209,12 @@ class AdminController extends AdminBaseController {
             exit;
         }
 
+        // Validate CSRF token if provided
+        if (isset($_POST['csrf_token']) && !CSRF::validateToken($_POST['csrf_token'])) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid or expired security token. Please refresh the page and try again.']);
+            exit;
+        }
+
         try {
             $adminModel = new AdminModel();
             $success = $adminModel->storeRecord($type, $_POST);

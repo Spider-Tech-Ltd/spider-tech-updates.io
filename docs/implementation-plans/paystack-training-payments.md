@@ -688,6 +688,7 @@ Ensure `.env` cannot be accessed via direct HTTP GET:
 | 4.2 | Update `views/admin/trainings.php` with payments toggle, fee badge, and Alpine.js handler | `views/admin/trainings.php` | 45m |
 | 4.3 | Update `views/admin/cohorts.php` modal with cohort fee override input | `views/admin/cohorts.php` | 30m |
 | 4.4 | Update `views/admin/applications.php` with payment status badges, filters, revenue KPI, and manual verify button | `views/admin/applications.php` | 60m |
+| 4.5 | Add "Enable Payments" switch toggle & "Payment Fee (NGN)" input in `views/admin/forms/training_form.php` and persist via `models/AdminModel.php` with server validation and CSRF protection | `views/admin/forms/training_form.php`, `models/AdminModel.php`, `controllers/AdminController.php` | 30m |
 | **Phase 5** | **Applicant Frontend & Invoice** | | |
 | 5.1 | Update `views/trainings/register.php` with fee summary on review step & redirect logic | `views/trainings/register.php` | 45m |
 | 5.2 | Implement `MailHelper::sendPaymentReceipt` in `utils/MailHelper.php` | `utils/MailHelper.php` | 40m |
