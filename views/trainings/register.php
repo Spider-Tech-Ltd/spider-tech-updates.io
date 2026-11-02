@@ -267,7 +267,7 @@ if (!empty($rawThumb)) {
                                                 <!-- Left Action: Cancel or Previous -->
                                                 <?php if ($stepNumber === 1): ?>
                                                     <a href="<?= BASE_URL ?>/trainings/detail?id=<?= $program_id; ?>" class="btn-cancel-step">
-                                                        <span class="material-symbols-outlined" style="font-size: 16px;">keyboard_backspace</span>
+                                                        <span class="material-symbols-outlined" style="font-size: 16px;">arrow_back</span>
                                                         <span>Cancel Application</span>
                                                     </a>
                                                 <?php else: ?>
@@ -474,9 +474,9 @@ if (!empty($rawThumb)) {
                                             </div>
                                         </div>
 
-                                        <div class="step-nav-footer d-flex align-items-center justify-content-between gap-3">
+                                        <div class="step-nav-footer d-flex flex-wrap align-items-center justify-content-between gap-3">
                                             <a href="<?= BASE_URL ?>/trainings/detail?id=<?= $program_id; ?>" class="btn-cancel-step">
-                                                <span class="material-symbols-outlined" style="font-size: 16px;">keyboard_backspace</span>
+                                                <span class="material-symbols-outlined" style="font-size: 16px;">arrow_back</span>
                                                 <span>Cancel Application</span>
                                             </a>
                                             <button type="submit" class="btn-submit-registration" :disabled="loading">
