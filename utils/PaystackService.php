@@ -31,6 +31,48 @@ class PaystackService
     }
 
     /**
+     * Resolve CA bundle certificate path for cURL if system lacks one (e.g. Windows/XAMPP)
+     */
+    public static function resolveCaBundlePath(): ?string
+    {
+        // 1. Explicit path in environment variable
+        $envPath = Env::get('PAYSTACK_CA_BUNDLE');
+        if (!empty($envPath) && file_exists($envPath)) {
+            return $envPath;
+        }
+
+        // 2. Project local bundle in config/cacert.pem
+        $projectCa = defined('ROOT_PATH') ? ROOT_PATH . '/config/cacert.pem' : dirname(__DIR__) . '/config/cacert.pem';
+        if (file_exists($projectCa)) {
+            return $projectCa;
+        }
+
+        // 3. Check if PHP already has a working default CA file configured
+        $iniCurl = ini_get('curl.cainfo');
+        if (!empty($iniCurl) && file_exists($iniCurl)) {
+            return $iniCurl;
+        }
+        $iniSsl = ini_get('openssl.cafile');
+        if (!empty($iniSsl) && file_exists($iniSsl)) {
+            return $iniSsl;
+        }
+
+        // 4. Fallback to common Windows / XAMPP CA bundle locations
+        $knownPaths = [
+            'C:/xampp/apache/bin/curl-ca-bundle.crt',
+            'C:/xampp/perl/vendor/lib/Mozilla/CA/cacert.pem',
+            'C:/xampp/php/extras/ssl/cacert.pem'
+        ];
+        foreach ($knownPaths as $p) {
+            if (file_exists($p)) {
+                return $p;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Initialize a Paystack hosted checkout transaction
      *
      * @param array $payload [email, amount (kobo), reference, callback_url, metadata]
@@ -52,8 +94,7 @@ class PaystackService
         $timeout = (int)Env::get('PAYSTACK_TIMEOUT_SECONDS', 30);
         $verifySsl = (bool)Env::get('PAYSTACK_VERIFY_SSL', true);
 
-        $ch = curl_init();
-        curl_setopt_array($ch, [
+        $curlOptions = [
             CURLOPT_URL            => $url,
             CURLOPT_POST           => true,
             CURLOPT_POSTFIELDS     => $jsonPayload,
@@ -68,7 +109,17 @@ class PaystackService
                 'Cache-Control: no-cache',
                 'User-Agent: SpiderTech-Paystack/1.0'
             ]
-        ]);
+        ];
+
+        if ($verifySsl) {
+            $caBundle = self::resolveCaBundlePath();
+            if ($caBundle !== null) {
+                $curlOptions[CURLOPT_CAINFO] = $caBundle;
+            }
+        }
+
+        $ch = curl_init();
+        curl_setopt_array($ch, $curlOptions);
 
         $response = curl_exec($ch);
         $errNo    = curl_errno($ch);
@@ -124,8 +175,7 @@ class PaystackService
         $timeout = (int)Env::get('PAYSTACK_TIMEOUT_SECONDS', 30);
         $verifySsl = (bool)Env::get('PAYSTACK_VERIFY_SSL', true);
 
-        $ch = curl_init();
-        curl_setopt_array($ch, [
+        $curlOptions = [
             CURLOPT_URL            => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_CONNECTTIMEOUT => 10,
@@ -137,7 +187,17 @@ class PaystackService
                 'Cache-Control: no-cache',
                 'User-Agent: SpiderTech-Paystack/1.0'
             ]
-        ]);
+        ];
+
+        if ($verifySsl) {
+            $caBundle = self::resolveCaBundlePath();
+            if ($caBundle !== null) {
+                $curlOptions[CURLOPT_CAINFO] = $caBundle;
+            }
+        }
+
+        $ch = curl_init();
+        curl_setopt_array($ch, $curlOptions);
 
         $response = curl_exec($ch);
         $errNo    = curl_errno($ch);

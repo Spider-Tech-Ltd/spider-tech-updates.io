@@ -40,6 +40,7 @@ assertTest("PaystackService::formatKobo formats 2500000 kobo to '₦25,000.00'",
 assertTest("PaystackService::formatKobo formats 0 kobo to '₦0.00'", PaystackService::formatKobo(0) === '₦0.00');
 assertTest("PaystackService::nairaToKobo converts 35000 to 3500000", PaystackService::nairaToKobo(35000) === 3500000);
 assertTest("PaystackService::koboToNaira converts 3500000 to 35000.0", PaystackService::koboToNaira(3500000) === 35000.0);
+assertTest("PaystackService::resolveCaBundlePath resolves a valid existing CA bundle file", PaystackService::resolveCaBundlePath() !== null && file_exists(PaystackService::resolveCaBundlePath()));
 
 // --- 3. Test HMAC Webhook Signature Verification ---
 putenv("PAYSTACK_SECRET_KEY=sk_test_mock_secret_key_12345");
