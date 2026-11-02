@@ -179,7 +179,7 @@ class PaymentModel
                 FROM `training_registrations` tr
                 JOIN `trainings_tb` t ON t.id = tr.program_id
                 LEFT JOIN `training_cohorts` tc ON tc.id = tr.cohort_id
-                LEFT JOIN `payment_transactions` pt ON pt.reference = tr.payment_reference
+                LEFT JOIN `payment_transactions` pt ON pt.reference = tr.payment_reference COLLATE utf8mb4_general_ci
                 WHERE tr.payment_reference = :reference
                 LIMIT 1";
 
@@ -201,7 +201,7 @@ class PaymentModel
                 FROM `training_registrations` tr
                 JOIN `trainings_tb` t ON t.id = tr.program_id
                 LEFT JOIN `training_cohorts` tc ON tc.id = tr.cohort_id
-                LEFT JOIN `payment_transactions` pt ON pt.reference = tr.payment_reference
+                LEFT JOIN `payment_transactions` pt ON pt.reference = tr.payment_reference COLLATE utf8mb4_general_ci
                 WHERE tr.id = :id
                 LIMIT 1";
 

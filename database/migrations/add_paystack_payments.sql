@@ -51,7 +51,10 @@ CREATE TABLE IF NOT EXISTS `payment_transactions` (
     INDEX `idx_tx_program_cohort` (`program_id`, `cohort_id`),
     INDEX `idx_tx_status` (`status`),
     INDEX `idx_tx_created_at` (`created_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 4b. Ensure collation matches existing tables (utf8mb4_general_ci)
+ALTER TABLE `payment_transactions` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 -- 5. Backfill existing applications as 'not_required' (safe idempotency)
 UPDATE `training_registrations` 

@@ -82,9 +82,10 @@ try {
         INDEX `idx_tx_program_cohort` (`program_id`, `cohort_id`),
         INDEX `idx_tx_status` (`status`),
         INDEX `idx_tx_created_at` (`created_at`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;";
     $db->exec($sql);
-    echo "[OK] Table `payment_transactions` ensured.\n";
+    $db->exec("ALTER TABLE `payment_transactions` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci");
+    echo "[OK] Table `payment_transactions` ensured with utf8mb4_general_ci.\n";
 
     // 5. Backfill existing applications safely
     $db->exec("UPDATE `training_registrations` SET `payment_status` = 'not_required' WHERE `payment_status` IS NULL OR `payment_status` = ''");
