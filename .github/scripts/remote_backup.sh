@@ -34,3 +34,4 @@ if [ -d "$DEPLOY_PATH" ] && [ "$(ls -A "$DEPLOY_PATH" 2>/dev/null)" ]; then
 else
   echo "Deploy directory is empty or not created yet; skipping initial backup."
 fi
+

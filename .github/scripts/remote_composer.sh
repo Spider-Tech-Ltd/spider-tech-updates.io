@@ -19,3 +19,4 @@ if command -v composer >/dev/null 2>&1; then
 else
   echo "Composer command not found globally; skipping remote composer install."
 fi
+
