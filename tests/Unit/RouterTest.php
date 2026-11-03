@@ -15,3 +15,4 @@ class RouterTest extends TestCase
         $this->assertInstanceOf(Router::class, $router);
     }
 }
+

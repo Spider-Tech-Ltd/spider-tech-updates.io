@@ -69,3 +69,4 @@ class PaystackServiceTest extends TestCase
         $this->assertFalse(PaystackService::validateInvoiceToken('DIFFERENT_REF', $token));
     }
 }
+

@@ -238,3 +238,4 @@ jobs:
             shred -u "$SSH_KEY_FILE" 2>/dev/null || rm -f "$SSH_KEY_FILE"
             echo "Cleaned up temporary SSH deploy key."
           fi
+

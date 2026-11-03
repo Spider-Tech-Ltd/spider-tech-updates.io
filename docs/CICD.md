@@ -282,3 +282,4 @@ To verify and prove the pipeline works end-to-end:
    - Pre-deploy backup is created on cPanel.
    - Files are synchronized via `rsync`.
    - Health check runs against `${HEALTH_CHECK_URL}` and returns HTTP 200.
+

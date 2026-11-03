@@ -71,3 +71,4 @@ class PaystackDatabaseTest extends TestCase
         $this->assertFalse($secondSuccess, 'Subsequent execution of markTransactionSuccess must be idempotent');
     }
 }
+
