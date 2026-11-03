@@ -22,6 +22,11 @@ yarn-error.log*
 node_modules/
 vendor/
 
+# Testing and Static Analysis
+.phpunit.cache/
+.phpstan.cache/
+.phpunit.result.cache
+
 # Environment and Secrets
 .env
 .env.local
@@ -29,6 +34,19 @@ vendor/
 .env.development.local
 .env.test.local
 .env.production.local
+*.pem
+*.key
+*.p12
+
+# Dynamic Storage & User Uploads
+storage/receipts/*
+!storage/receipts/.gitkeep
+uploads/forum/*
+!uploads/forum/.gitkeep
+images/registrations/*
+!images/registrations/.gitkeep
+images/pictures/*
+!images/pictures/.gitkeep
 
 # Temp and Cache
 tmp/

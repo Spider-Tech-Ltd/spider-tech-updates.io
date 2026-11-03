@@ -1,0 +1,53 @@
+#!/usr/bin/env sh
+# ==============================================================================
+# Git Pre-Commit Hook: PHP Syntax Lint & Secret Protection
+# Enabled locally via: git config core.hooksPath .githooks
+# ==============================================================================
+
+echo "🔍 Running pre-commit checks..."
+
+# 1. Block accidental staging of sensitive files (.env, private keys, certs)
+STAGED_BLOCKED_FILES=$(git diff --cached --name-only | grep -E '^(\.env|\.env\..*|.*\.key|.*\.pem|.*\.p12)$' | grep -v '^\.env\.example$')
+if [ -n "$STAGED_BLOCKED_FILES" ]; then
+    echo "❌ [SECURITY ERROR] Attempting to commit sensitive/private key files:"
+    echo "$STAGED_BLOCKED_FILES"
+    echo "Please unstage them: git restore --staged <file>"
+    exit 1
+fi
+
+# 2. Syntax check (php -l) on all staged PHP files
+STAGED_PHP_FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.php$')
+
+if [ -n "$STAGED_PHP_FILES" ]; then
+    echo "🔬 Checking syntax of staged PHP files..."
+    HAS_ERROR=0
+    for FILE in $STAGED_PHP_FILES; do
+        if [ -f "$FILE" ]; then
+            php -l "$FILE" > /dev/null 2>&1
+            if [ $? -ne 0 ]; then
+                echo "❌ Syntax error detected in: $FILE"
+                php -l "$FILE"
+                HAS_ERROR=1
+            fi
+        fi
+    done
+
+    if [ $HAS_ERROR -ne 0 ]; then
+        echo "❌ Pre-commit hook failed due to PHP syntax errors."
+        exit 1
+    fi
+fi
+
+# 3. Secret scan on staged diff
+FORBIDDEN_PATTERNS="sk_live_[0-9a-zA-Z]{20,}|-----BEGIN (RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----"
+STAGED_SECRETS=$(git diff --cached -S"sk_live_" -S"PRIVATE KEY" -G"$FORBIDDEN_PATTERNS" --name-only 2>/dev/null)
+
+if [ -n "$STAGED_SECRETS" ]; then
+    echo "❌ [SECURITY WARNING] Potential production secret or private key found in staged files:"
+    echo "$STAGED_SECRETS"
+    echo "Please remove secrets before committing."
+    exit 1
+fi
+
+echo "✅ All pre-commit checks passed successfully!"
+exit 0
