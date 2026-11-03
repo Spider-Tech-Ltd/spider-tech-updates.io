@@ -67,6 +67,7 @@ Go to your repository on GitHub: **Settings > Secrets and variables > Actions**.
 | `SSH_KNOWN_HOSTS` | Output from `ssh-keyscan` pinned for host verification | `server.spidertech.com.ng ssh-ed25519 AAAAC3N...` |
 | `DEPLOY_PATH` | Absolute path to the web root on cPanel | `/home/cpaneluser/public_html` |
 | `HEALTH_CHECK_URL` | Public URL to verify site health after deploy | `https://spidertech.com.ng/health` |
+| `GITLEAKS_LICENSE` | License key from gitleaks.io for secret scanning | `your_gitleaks_license_key` |
 
 > [!NOTE]
 > `HEALTH_CHECK_URL` can also be stored as a GitHub Actions **Variable** (non-secret) instead of a Secret.
