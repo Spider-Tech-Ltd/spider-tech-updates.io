@@ -126,7 +126,6 @@ if (isset($_POST['send'])) {
                             $reasons.=$value.',';
                         }
                         $reason = trim($reasons,',');
-                        //var_dump($reason);
                         if(!empty($_POST['g-recaptcha-response'])){  
                             // Google reCAPTCHA verification API Request  
                             $api_url = 'https://www.google.com/recaptcha/api/siteverify';  

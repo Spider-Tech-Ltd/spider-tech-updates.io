@@ -108,7 +108,7 @@ jobs:
       - name: Security Check - Audit Debug Leftovers
         run: |
           echo "Auditing for active phpinfo() or var_dump() leftovers in application code..."
-          MATCHES=$(grep -rn --include="*.php" --exclude-dir={vendor,node_modules,scratch,tests} -E '(var_dump|phpinfo)\s*\(' . | grep -v '^[[:space:]]*//' | grep -v '^[[:space:]]*\#' | grep -v '^[[:space:]]*\*' || true)
+          MATCHES=$(grep -rn --include="*.php" --exclude-dir={vendor,node_modules,scratch,tests} -E '(var_dump|phpinfo)\s*\(' . | grep -vE ':[0-9]+:\s*(//|#|\*)' || true)
           if [ -n "$MATCHES" ]; then
             echo "::error::Active debug statement detected in production code:"
             echo "$MATCHES"
