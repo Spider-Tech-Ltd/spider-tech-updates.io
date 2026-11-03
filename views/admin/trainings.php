@@ -13,7 +13,7 @@ $hasActiveFilters = (($current_status ?? 'all') !== 'all' || !empty($search_quer
                 <h1 class="dashboard-title mb-0">Trainings & Bootcamps</h1>
                 <span class="title-badge-count"><?= (int)$totalCount ?> total</span>
             </div>
-            <p class="dashboard-subtitle">Manage skill tracks, cohort curriculums, candidate enrollments, and home showcase.</p>
+            <p class="dashboard-subtitle">Manage skill tracks, cohort curriculums, candidate enrollments, fees, and home showcase.</p>
         </div>
         <div class="d-flex align-items-center gap-2">
             <?php if ($hasActiveFilters): ?>
@@ -185,18 +185,14 @@ $hasActiveFilters = (($current_status ?? 'all') !== 'all' || !empty($search_quer
                         <span>Most Applications</span>
                         <svg class="check-icon" x-show="current === 'apps_desc'" width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </button>
-                    <button type="button" class="custom-dropdown-item" :class="{ 'active': current === 'id_desc' }" @click="applyTrainingParam('sort', 'id_desc'); open = false;">
-                        <span>Newest First</span>
-                        <svg class="check-icon" x-show="current === 'id_desc'" width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </button>
                 </div>
             </div>
 
-            <!-- Custom Brand Dropdown: Rows Per Page -->
+            <!-- Custom Brand Dropdown: Pagination Limit -->
             <div class="custom-dropdown" x-data="{
                 open: false,
-                current: '<?= (string)$current_limit ?>',
-                label: '<?= (string)$current_limit ?> rows'
+                current: '<?= (string)($current_limit ?? 10) ?>',
+                label: '<?= (int)($current_limit ?? 10) ?> rows'
             }" @click.outside="open = false">
                 <button type="button" class="custom-dropdown-trigger" @click="open = !open">
                     <span class="d-flex align-items-center">
@@ -231,11 +227,12 @@ $hasActiveFilters = (($current_status ?? 'all') !== 'all' || !empty($search_quer
             <table class="table table-custom mb-0">
                 <thead>
                     <tr>
-                        <th style="width: 320px;">Training Program</th>
-                        <th style="width: 140px;">Cohorts</th>
-                        <th style="width: 130px;">Applications</th>
-                        <th style="width: 160px;">Registration</th>
-                        <th style="width: 130px;">Visibility</th>
+                        <th style="width: 280px;">Training Program</th>
+                        <th style="width: 120px;">Cohorts</th>
+                        <th style="width: 110px;">Applications</th>
+                        <th style="width: 120px;">Registration</th>
+                        <th style="width: 180px;">Payment Gating</th>
+                        <th style="width: 100px;">Visibility</th>
                         <th class="text-end" style="width: 140px;">Actions</th>
                     </tr>
                 </thead>
@@ -247,6 +244,9 @@ $hasActiveFilters = (($current_status ?? 'all') !== 'all' || !empty($search_quer
                             $openCohorts = (int)($training['open_cohorts'] ?? 0);
                             $totalApps = (int)($training['total_applications'] ?? 0);
                             $showOnHome = !empty($training['show_on_home']);
+                            $paymentsEnabled = !empty($training['payments_enabled']);
+                            $feeKobo = (int)($training['payment_amount'] ?? 0);
+                            $feeFormatted = PaystackService::formatKobo($feeKobo);
                         ?>
                         <tr>
                             <!-- Training Program Identity -->
@@ -262,7 +262,7 @@ $hasActiveFilters = (($current_status ?? 'all') !== 'all' || !empty($search_quer
                                                 <i class="<?= htmlspecialchars($training['training_icon']) ?> text-orange" style="font-size: 0.82rem;" title="Track Icon"></i>
                                             <?php endif; ?>
                                         </div>
-                                        <div class="text-muted text-truncate" style="font-size: 0.77rem; max-width: 240px;">
+                                        <div class="text-muted text-truncate" style="font-size: 0.77rem; max-width: 220px;">
                                             <?= htmlspecialchars(strip_tags($training['training_description'])) ?>
                                         </div>
                                     </div>
@@ -311,6 +311,35 @@ $hasActiveFilters = (($current_status ?? 'all') !== 'all' || !empty($search_quer
                                 </button>
                             </td>
 
+                            <!-- Payment Gating & Training Fee -->
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button type="button" 
+                                            class="badge-status-pill <?= $paymentsEnabled ? 'badge-soft-green' : 'badge-soft-muted' ?>" 
+                                            onclick="toggleTrainingPayments(<?= $training['id'] ?>, <?= $paymentsEnabled ? 0 : 1 ?>, <?= $feeKobo / 100 ?>)" 
+                                            title="Click to toggle payments on/off">
+                                        <?php if ($paymentsEnabled): ?>
+                                            <span class="status-pulse-dot" style="background-color: #10b981;"></span>
+                                            <span>Paid</span>
+                                        <?php else: ?>
+                                            <span>Free</span>
+                                        <?php endif; ?>
+                                    </button>
+                                    
+                                    <div class="d-inline-flex align-items-center gap-1">
+                                        <span class="fw-700 text-dark" style="font-size: 0.82rem;" id="feeDisplay_<?= $training['id'] ?>">
+                                            <?= $paymentsEnabled ? $feeFormatted : '₦0' ?>
+                                        </span>
+                                        <button type="button" 
+                                                class="btn btn-sm text-muted p-0 border-0" 
+                                                onclick="openFeeModal(<?= $training['id'] ?>, <?= $feeKobo / 100 ?>, '<?= htmlspecialchars(addslashes($training['training_name'])) ?>')" 
+                                                title="Set or update training fee">
+                                            <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">tune</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+
                             <!-- Visibility / Home Feature -->
                             <td>
                                 <?php if ($showOnHome): ?>
@@ -343,7 +372,7 @@ $hasActiveFilters = (($current_status ?? 'all') !== 'all' || !empty($search_quer
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="6" class="text-center py-5">
+                            <td colspan="7" class="text-center py-5">
                                 <div class="py-4">
                                     <span class="material-symbols-outlined text-muted" style="font-size: 48px;">school</span>
                                     <p class="text-muted mt-2 mb-3">No training programs match your criteria.</p>
@@ -360,6 +389,43 @@ $hasActiveFilters = (($current_status ?? 'all') !== 'all' || !empty($search_quer
             </table>
         </div>
         <?php include ROOT_PATH . '/views/admin/layout/pagination.php'; ?>
+    </div>
+</div>
+
+<!-- ====================================================
+     SET TRAINING FEE MODAL
+     ==================================================== -->
+<div class="modal fade" id="feeConfigModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+        <div class="modal-content border-0 shadow rounded-4 overflow-hidden">
+            <div class="modal-header border-bottom p-3 px-4 bg-light">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined text-warning fs-20">payments</span>
+                    <h5 class="modal-title fw-bold fs-6 mb-0">Set Training Fee</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="feeConfigForm" onsubmit="submitTrainingFee(event)">
+                <input type="hidden" name="id" id="feeModalTrainingId" value="">
+                <input type="hidden" name="csrf_token" value="<?= CSRF::generateToken() ?>">
+                <div class="modal-body p-4">
+                    <p class="small text-muted mb-3" id="feeModalProgramName">Configure default candidate admission fee.</p>
+                    
+                    <label class="form-label-custom small fw-semibold mb-1">Fee Amount (NGN)</label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text bg-light border-end-0 fw-bold">₦</span>
+                        <input type="number" step="100" min="0" class="form-control form-control-custom border-start-0" id="feeModalAmountInput" placeholder="e.g. 35000" required>
+                    </div>
+                    <div class="small text-muted">
+                        <i class="fas fa-info-circle me-1"></i> Individual cohorts can still override this fee in the Cohorts Console.
+                    </div>
+                </div>
+                <div class="modal-footer border-top p-3 px-4 bg-light">
+                    <button type="button" class="btn btn-sm btn-light border px-3" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-primary-custom px-4" id="saveFeeBtn">Save Fee</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -393,6 +459,90 @@ async function toggleTrainingRegistration(id) {
         }
     } catch (err) {
         alert('Network communication error.');
+    }
+}
+
+async function toggleTrainingPayments(id, enabled, currentFeeNaira) {
+    if (enabled && (!currentFeeNaira || currentFeeNaira <= 0)) {
+        openFeeModal(id, 0, 'This Program');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('id', id);
+    formData.append('enabled', enabled);
+    formData.append('csrf_token', '<?= CSRF::generateToken() ?>');
+
+    try {
+        const res = await fetch('<?= BASE_URL ?>/admin/trainings/toggle-payments', {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const json = await res.json();
+        if (json.status === 'success') {
+            location.reload();
+        } else {
+            alert(json.message || 'Failed to update payment status.');
+        }
+    } catch (err) {
+        alert('Network communication error.');
+    }
+}
+
+let feeModalInstance = null;
+
+function openFeeModal(id, feeNaira, name) {
+    document.getElementById('feeModalTrainingId').value = id;
+    document.getElementById('feeModalAmountInput').value = feeNaira > 0 ? feeNaira : '';
+    document.getElementById('feeModalProgramName').innerText = 'Setting admission fee for: ' + name;
+    
+    const modalEl = document.getElementById('feeConfigModal');
+    if (window.bootstrap && bootstrap.Modal) {
+        feeModalInstance = new bootstrap.Modal(modalEl);
+        feeModalInstance.show();
+    } else {
+        $(modalEl).modal('show');
+    }
+}
+
+async function submitTrainingFee(e) {
+    e.preventDefault();
+    const id = document.getElementById('feeModalTrainingId').value;
+    const amount = document.getElementById('feeModalAmountInput').value;
+    const saveBtn = document.getElementById('saveFeeBtn');
+
+    if (!id || amount === '' || parseFloat(amount) < 0) {
+        alert('Please enter a valid fee amount.');
+        return;
+    }
+
+    saveBtn.disabled = true;
+    saveBtn.innerText = 'Saving...';
+
+    const formData = new FormData();
+    formData.append('id', id);
+    formData.append('amount', amount);
+    formData.append('csrf_token', '<?= CSRF::generateToken() ?>');
+
+    try {
+        const res = await fetch('<?= BASE_URL ?>/admin/trainings/set-payment-amount', {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const json = await res.json();
+        if (json.status === 'success') {
+            location.reload();
+        } else {
+            alert(json.message || 'Failed to save fee.');
+            saveBtn.disabled = false;
+            saveBtn.innerText = 'Save Fee';
+        }
+    } catch (err) {
+        alert('Network communication error.');
+        saveBtn.disabled = false;
+        saveBtn.innerText = 'Save Fee';
     }
 }
 </script>

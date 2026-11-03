@@ -131,34 +131,34 @@
                             <?php
                             $rawDetails = stripslashes($training['training_details']);
 
-                            $detailsBoxHtml = '<div class="programme-details-minimal">
-                                <h4 class="details-heading">Programme Details</h4>
-                                <div class="details-spec-grid">
-                                    <div class="spec-row">
-                                        <span class="spec-key">Date:</span>
-                                        <span class="spec-val">' . htmlspecialchars($scheduleDetails) . '</span>
-                                    </div>
-                                    <div class="spec-row">
-                                        <span class="spec-key">Duration:</span>
-                                        <span class="spec-val">' . htmlspecialchars($durationText) . '</span>
-                                    </div>
-                                    <div class="spec-row">
-                                        <span class="spec-key">Days:</span>
-                                        <span class="spec-val">Mondays – Thursdays</span>
-                                    </div>
-                                    <div class="spec-row">
-                                        <span class="spec-key">Time:</span>
-                                        <span class="spec-val">' . $sessionTime . ' daily</span>
-                                    </div>
-                                    <div class="spec-row full-width">
-                                        <span class="spec-key">Location:</span>
-                                        <span class="spec-val">Flat 3, Abinsa House, Zaria road, Kano</span>
-                                    </div>
+                            $detailsBoxHtml = '<div class="program-details-minimal">
+                                <h4 class="details-heading">Program Details</h4>
+                                <div class="program-details-table-wrap">
+                                    <table class="program-details-table">
+                                        <tbody>
+                                            <tr>
+                                                <td class="detail-key">Date:</td>
+                                                <td class="detail-val">' . htmlspecialchars($scheduleDetails) . '</td>
+                                                <td class="detail-key">Duration:</td>
+                                                <td class="detail-val">' . htmlspecialchars($durationText) . '</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="detail-key">Days:</td>
+                                                <td class="detail-val">Mondays – Fridays</td>
+                                                <td class="detail-key">Time:</td>
+                                                <td class="detail-val">' . $sessionTime . ' daily</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="detail-key">Location:</td>
+                                                <td class="detail-val" colspan="3">Flat 3, Abinsa House, Zaria road, Kano</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>';
 
-                            if (preg_match('/<p><strong>Programme Details:<\/strong><\/p>\s*<ul>.*?<\/ul>/si', $rawDetails)) {
-                                $processedDetails = preg_replace('/<p><strong>Programme Details:<\/strong><\/p>\s*<ul>.*?<\/ul>/si', $detailsBoxHtml, $rawDetails);
+                            if (preg_match('/<p><strong>Programm?e Details:<\/strong><\/p>\s*<ul>.*?<\/ul>/si', $rawDetails)) {
+                                $processedDetails = preg_replace('/<p><strong>Programm?e Details:<\/strong><\/p>\s*<ul>.*?<\/ul>/si', $detailsBoxHtml, $rawDetails);
                             } else {
                                 $processedDetails = $rawDetails . "\n" . $detailsBoxHtml;
                             }
@@ -222,28 +222,29 @@
                                     <span class="info-value">English</span>
                                 </div>
                             </li>
+                            <li class="info-item">
+                                <span class="info-icon-box">
+                                    <span class="material-symbols-outlined"><?= !empty($payment_info['payments_enabled']) ? 'payments' : 'card_giftcard' ?></span>
+                                </span>
+                                <div class="info-meta">
+                                    <span class="info-label">Training Fee</span>
+                                    <span class="info-value" style="font-weight: 700; color: <?= !empty($payment_info['payments_enabled']) ? '#f48221' : '#047857' ?>;">
+                                        <?= !empty($payment_info['payments_enabled']) ? format_naira($payment_info['amount_kobo'] ?? 0) : 'Free' ?>
+                                    </span>
+                                </div>
+                            </li>
                         </ul>
 
                         <?php if (!empty($training['registration_available']) && !empty($active_cohort)): ?>
                             <?php
-                            $cCode = 'DSE';
-                            if (!empty($training['training_name']) && stripos($training['training_name'], 'Digital Skills') === false) {
-                                $words = preg_split('/\s+/', trim(strip_tags($training['training_name'])));
-                                $cCode = '';
-                                foreach ($words as $w) {
-                                    if (strlen($w) > 2) $cCode .= strtoupper($w[0]);
-                                }
-                                if (!$cCode) $cCode = 'Cohort';
-                            }
-                            $cohortNum = $active_cohort['cohort_number'] ?? 4;
-                            $badgeLabel = $cCode . ' Cohort ' . $cohortNum . ' Registration Open';
-                            $btnLabel = 'Enroll for DSE - Cohort ' . $cohortNum;
+                            $badgeData = resolve_training_status_badge($training, $active_cohort);
+                            $btnLabel = resolve_enroll_button_label($training['training_name'] ?? '', $active_cohort['cohort_name'] ?? null);
                             ?>
                             <div class="cohort-callout-panel">
                                 <div class="cohort-callout-header">
-                                    <span class="cohort-status-pill">
+                                    <span class="cohort-status-pill <?= htmlspecialchars($badgeData['status_class']) ?>">
                                         <span class="cohort-status-dot"></span>
-                                        <?= htmlspecialchars($badgeLabel) ?>
+                                        <?= htmlspecialchars($badgeData['badge_text']) ?>
                                     </span>
                                 </div>
                                 <h6 class="cohort-panel-name"><?= htmlspecialchars($active_cohort['cohort_name']) ?></h6>

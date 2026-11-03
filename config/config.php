@@ -14,6 +14,10 @@ if ($is_production) {
 
 define('ROOT_PATH', dirname(__DIR__));
 
+// Load Environment Configuration
+require_once ROOT_PATH . '/utils/Env.php';
+Env::load(ROOT_PATH . '/.env');
+
 // Dynamic BASE_URL calculation
 $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
@@ -38,6 +42,13 @@ define('MAIL_ENCRYPTION', 'tls');
 // Default Sender Info
 define('MAIL_FROM_ADDRESS', 'no-reply@yourcompany.com');
 define('MAIL_FROM_NAME', 'Membership Portal');
+
+// Central Company & Invoice Issuer Details
+define('INVOICE_COMPANY_NAME', Env::get('INVOICE_COMPANY_NAME', 'Spider Technologies Limited'));
+define('INVOICE_COMPANY_ADDRESS', Env::get('INVOICE_COMPANY_ADDRESS', 'Flat 3, Left Wing, Abinsa House, Zaria Road, Kano'));
+define('INVOICE_COMPANY_EMAIL', Env::get('INVOICE_COMPANY_EMAIL', 'info@spidertech.com.ng'));
+define('INVOICE_COMPANY_PHONE', Env::get('INVOICE_COMPANY_PHONE', '+234 911 626 5708'));
+define('INVOICE_COMPANY_WEBSITE', Env::get('INVOICE_COMPANY_WEBSITE', 'www.spidertech.com.ng'));
 
 spl_autoload_register(function ($class_name) {
     $paths = [

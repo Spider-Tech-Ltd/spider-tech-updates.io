@@ -12,6 +12,17 @@ RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
 # Prevent directory browsing
 Options -Indexes
 
+# Protect sensitive environment and configuration files from direct HTTP access
+<FilesMatch "^\.env">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
 # ========================================================
 # GZIP / Deflate Compression
 # Drastically reduces transferred page weight (CSS, JS, HTML)

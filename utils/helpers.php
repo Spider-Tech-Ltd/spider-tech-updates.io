@@ -117,4 +117,148 @@ function getFacebookEmbedUrl($url) {
 
     return "https://www.facebook.com/plugins/{$plugin}?href=" . urlencode($url) . "&show_text=false&width=500" . $params;
 }
-?>
+/**
+ * Formats an amount in kobo into a Nigerian Naira string with the ₦ symbol.
+ * Uses whole naira without decimals (e.g. ₦50,000) unless kobo is non-zero
+ * or $forceDecimals is explicitly true.
+ *
+ * @param int|float|numeric-string $amountKobo Amount in kobo
+ * @param bool $forceDecimals Whether to always show two decimal places
+ * @return string Formatted string, e.g. "₦50,000" or "₦50,000.50"
+ */
+function format_naira($amountKobo, bool $forceDecimals = false): string
+{
+    $amountKobo = (int) round((float) $amountKobo);
+    $naira = $amountKobo / 100;
+    if ($forceDecimals || ($amountKobo % 100 !== 0)) {
+        return '₦' . number_format($naira, 2);
+    }
+    return '₦' . number_format($naira);
+}
+
+/**
+ * Resolves the dynamic status badge data for a training program and cohort.
+ * Replaces hardcoded strings and brittle acronym logic.
+ *
+ * @param array $training Training record from database
+ * @param array|bool|null $cohort Active or upcoming cohort record, if any
+ * @return array{cohort_name: string, status: string, badge_text: string, status_class: string, dot_class: string}
+ */
+function resolve_training_status_badge(array $training, $cohort = null): array
+{
+    $cohort = (!empty($cohort) && is_array($cohort)) ? $cohort : null;
+
+    // 1. Resolve Cohort Name
+    $cohortName = '';
+    if (!empty($cohort['cohort_name'])) {
+        $cohortName = trim($cohort['cohort_name']);
+    } elseif (!empty($cohort['cohort_number'])) {
+        $cohortName = 'Cohort ' . (int)$cohort['cohort_number'];
+    }
+
+    // 2. Resolve Status
+    $status = 'Registration Open';
+    $statusClass = 'open';
+    $dotClass = 'cohort-pulse-dot';
+
+    $trainingRegOpen = !empty($training['registration_available']);
+
+    if (!$trainingRegOpen) {
+        $status = 'Registration Closed';
+        $statusClass = 'closed';
+        $dotClass = 'cohort-dot-closed';
+    } elseif ($cohort === null) {
+        $status = 'Registration Open';
+        $statusClass = 'open';
+        $dotClass = 'cohort-pulse-dot';
+    } else {
+        $cohortStatus = strtolower(trim($cohort['status'] ?? ''));
+        $startDate = !empty($cohort['start_date']) ? strtotime($cohort['start_date']) : null;
+        $endDate = !empty($cohort['end_date']) ? strtotime($cohort['end_date']) : null;
+        $deadline = !empty($cohort['registration_deadline']) ? strtotime($cohort['registration_deadline']) : null;
+        $capacity = (int)($cohort['capacity'] ?? 0);
+        $registrations = isset($cohort['total_registrations']) ? (int)$cohort['total_registrations'] : 0;
+        $regOpen = !empty($cohort['registration_open']);
+        $today = strtotime('today');
+        $now = time();
+
+        if ($cohortStatus === 'completed' || ($endDate !== null && $endDate < $today)) {
+            $status = 'Completed';
+            $statusClass = 'completed';
+            $dotClass = 'cohort-dot-completed';
+        } elseif ($startDate !== null && $startDate <= $today && ($endDate === null || $endDate >= $today) && (!$regOpen || ($deadline !== null && $deadline < $now))) {
+            $status = 'Ongoing';
+            $statusClass = 'ongoing';
+            $dotClass = 'cohort-dot-ongoing';
+        } elseif ($capacity > 0 && $registrations >= $capacity) {
+            $status = 'Registration Closed';
+            $statusClass = 'closed';
+            $dotClass = 'cohort-dot-closed';
+        } elseif ($deadline !== null && $deadline < $now) {
+            $status = 'Registration Closed';
+            $statusClass = 'closed';
+            $dotClass = 'cohort-dot-closed';
+        } elseif (!$regOpen) {
+            if ($startDate !== null && $startDate > $today) {
+                $status = 'Coming Soon';
+                $statusClass = 'upcoming';
+                $dotClass = 'cohort-dot-upcoming';
+            } else {
+                $status = 'Registration Closed';
+                $statusClass = 'closed';
+                $dotClass = 'cohort-dot-closed';
+            }
+        } else {
+            $status = 'Registration Open';
+            $statusClass = 'open';
+            $dotClass = 'cohort-pulse-dot';
+        }
+    }
+
+    // 3. Compose Badge Text: {Cohort Name} · {Status}
+    if (!empty($cohortName)) {
+        $badgeText = $cohortName . ' · ' . $status;
+    } else {
+        $badgeText = $status;
+    }
+
+    return [
+        'cohort_name'  => $cohortName,
+        'status'       => $status,
+        'badge_text'   => $badgeText,
+        'status_class' => $statusClass,
+        'dot_class'    => $dotClass
+    ];
+}
+
+/**
+ * Resolves a dynamic, cleanly formatted CTA button label.
+ * Avoids hardcoded strings while preventing button overflows on mobile.
+ *
+ * @param string $trainingName Training program title
+ * @param string|null|bool $cohortName Cohort name if available
+ * @param int $maxLength Maximum character length before truncation
+ * @return string Formatted label (e.g. "Enroll in we Digitize – Cohort 1")
+ */
+function resolve_enroll_button_label(string $trainingName, $cohortName = null, int $maxLength = 38): string
+{
+    $cohortName = (!empty($cohortName) && is_string($cohortName)) ? $cohortName : null;
+    $title = trim(strip_tags($trainingName));
+    if (empty($title)) {
+        return 'Enroll Now';
+    }
+
+    $base = 'Enroll in ' . $title;
+    if (!empty($cohortName)) {
+        $candidate = $base . ' – ' . trim($cohortName);
+        if (mb_strlen($candidate) <= $maxLength) {
+            return $candidate;
+        }
+    }
+
+    if (mb_strlen($base) > $maxLength) {
+        return mb_substr($base, 0, $maxLength - 1) . '…';
+    }
+
+    return $base;
+}

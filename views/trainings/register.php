@@ -23,6 +23,15 @@ if (isset($_SESSION['registration_error'])) {
 unset($_SESSION['registration_errors']);
 unset($_SESSION['old_input']);
 
+$isPaidProgram = !empty($payment_info['payments_enabled']) && ((int)($payment_info['amount_kobo'] ?? 0) > 0);
+$programFeeKobo = (int)($payment_info['amount_kobo'] ?? 0);
+$programFeeFormatted = format_naira($programFeeKobo);
+
+// Step calculations: Paid programs include a 5th "Payment" step
+$sectionKeys = !empty($sections) ? array_keys($sections) : ['Basic Info'];
+$formStepsCount = count($sectionKeys);
+$totalStepsCount = $isPaidProgram ? ($formStepsCount + 1) : $formStepsCount;
+
 // Thumbnail resolution
 $rawThumb = trim($training['image_url'] ?? $training['training_image'] ?? '');
 $hasThumb = false;
@@ -46,8 +55,7 @@ if (!empty($rawThumb)) {
     }
 }
 
-$sectionKeys = !empty($sections) ? array_keys($sections) : ['Basic Info'];
-$totalStepsCount = count($sectionKeys);
+
 ?>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>/css/training-register.css?v=<?= filemtime(ROOT_PATH . '/css/training-register.css') ?>" />
@@ -110,11 +118,10 @@ $totalStepsCount = count($sectionKeys);
 
         <section class="registration-content">
             <div class="container">
-                <div class="row g-4 align-items-start">
-                    <!-- Left: Multi-Step Application Form (col-lg-8) -->
-                    <div class="col-lg-8">
-                        <!-- Multi-Step Interactive Progress Tracker -->
-                        <?php if ($totalStepsCount > 1): ?>
+                <!-- Full-Width Multi-Step Interactive Progress Tracker -->
+                <?php if ($totalStepsCount > 1): ?>
+                    <div class="row">
+                        <div class="col-12">
                             <div class="registration-progress-bar-wrap mb-4">
                                 <div class="progress-steps-flex">
                                     <?php
@@ -145,15 +152,40 @@ $totalStepsCount = count($sectionKeys);
                                         $sIndex++;
                                     endforeach;
                                     ?>
+                                    <?php if ($isPaidProgram): ?>
+                                        <div class="progress-step-node"
+                                             :class="{
+                                                 'completed': currentStep > <?= $totalStepsCount ?>,
+                                                 'active': currentStep === <?= $totalStepsCount ?>,
+                                                 'upcoming': currentStep < <?= $totalStepsCount ?>
+                                             }"
+                                             @click="goToStep(<?= $totalStepsCount ?>)">
+                                            <div class="step-node-bubble">
+                                                <template x-if="currentStep > <?= $totalStepsCount ?>">
+                                                    <span class="material-symbols-outlined" style="font-size: 17px; font-weight: bold;">check</span>
+                                                </template>
+                                                <template x-if="currentStep <= <?= $totalStepsCount ?>">
+                                                    <span><?= $totalStepsCount ?></span>
+                                                </template>
+                                            </div>
+                                            <span class="step-node-label">Payment</span>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
-                        <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
 
+                <div class="row g-4 align-items-start">
+                    <!-- Left: Multi-Step Application Form (col-lg-8) -->
+                    <div class="col-lg-8">
                         <!-- Registration Form Wizard -->
                         <form @submit.prevent="submitForm" id="registrationForm" enctype="multipart/form-data">
                             <input type="hidden" name="program_id" value="<?= $program_id; ?>">
                             <input type="hidden" name="cohort_id" value="<?= !empty($cohort['id']) ? (int)$cohort['id'] : ''; ?>">
                             <input type="hidden" name="registration_type" value="<?= $registration_type ?? 'training'; ?>">
+                            <input type="hidden" name="csrf_token" value="<?= CSRF::generateToken() ?>">
 
                             <?php if (!empty($sections)) : ?>
                                 <?php
@@ -188,7 +220,13 @@ $totalStepsCount = count($sectionKeys);
                                     }
 
                                     // Next step title
-                                    $nextStepTitle = ($stepNumber < $totalStepsCount) ? $sectionKeys[$stepNumber] : '';
+                                    if ($stepNumber < $formStepsCount) {
+                                        $nextStepTitle = $sectionKeys[$stepNumber] ?? 'Next Step';
+                                    } elseif ($stepNumber === $formStepsCount && $isPaidProgram) {
+                                        $nextStepTitle = 'Review & Payment';
+                                    } else {
+                                        $nextStepTitle = '';
+                                    }
                                 ?>
                                     <!-- Step Card Container -->
                                     <div class="form-step-container"
@@ -229,7 +267,7 @@ $totalStepsCount = count($sectionKeys);
                                                 <!-- Left Action: Cancel or Previous -->
                                                 <?php if ($stepNumber === 1): ?>
                                                     <a href="<?= BASE_URL ?>/trainings/detail?id=<?= $program_id; ?>" class="btn-cancel-step">
-                                                        <span class="material-symbols-outlined" style="font-size: 16px;">keyboard_backspace</span>
+                                                        <span class="material-symbols-outlined" style="font-size: 16px;">arrow_back</span>
                                                         <span>Cancel Application</span>
                                                     </a>
                                                 <?php else: ?>
@@ -240,9 +278,14 @@ $totalStepsCount = count($sectionKeys);
                                                 <?php endif; ?>
 
                                                 <!-- Right Action: Next or Submit -->
-                                                <?php if ($stepNumber < $totalStepsCount): ?>
+                                                <?php if ($stepNumber < $formStepsCount): ?>
                                                     <button type="button" class="btn-next-step" @click="nextStep()">
                                                         <span>Continue to <?= htmlspecialchars($nextStepTitle) ?></span>
+                                                        <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+                                                    </button>
+                                                <?php elseif ($stepNumber === $formStepsCount && $isPaidProgram): ?>
+                                                    <button type="button" class="btn-next-step" @click="nextStep()">
+                                                        <span>Continue to Review &amp; Payment</span>
                                                         <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
                                                     </button>
                                                 <?php else: ?>
@@ -268,6 +311,116 @@ $totalStepsCount = count($sectionKeys);
                                     $stepNumber++;
                                 endforeach;
                                 ?>
+
+                                <?php if ($isPaidProgram): ?>
+                                    <!-- Step 5: Order Summary & Paystack Payment -->
+                                    <div class="form-step-container"
+                                         data-step="<?= $totalStepsCount ?>"
+                                         x-show="currentStep === <?= $totalStepsCount ?>"
+                                         x-cloak>
+                                        <div class="form-section-card">
+                                            <div class="form-section-header">
+                                                <div class="section-step-pill" title="Phase <?= str_pad((string)$totalStepsCount, 2, '0', STR_PAD_LEFT) ?>">
+                                                    <span class="material-symbols-outlined">payments</span>
+                                                </div>
+                                                <div class="section-header-text">
+                                                    <span class="section-phase-tag">Phase <?= str_pad((string)$totalStepsCount, 2, '0', STR_PAD_LEFT) ?> of <?= str_pad((string)$totalStepsCount, 2, '0', STR_PAD_LEFT) ?></span>
+                                                    <h3>Order Summary &amp; Payment</h3>
+                                                    <p>Review your training reservation and proceed with secure online payment.</p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Order Summary Card -->
+                                            <div class="order-summary-card mb-4">
+                                                <div class="order-summary-header d-flex justify-content-between align-items-center">
+                                                    <span class="order-summary-title">Enrollment Summary</span>
+                                                    <span class="order-badge-secure">
+                                                        <span class="material-symbols-outlined" style="font-size: 14px;">lock</span>
+                                                        <span>Paystack Secured</span>
+                                                    </span>
+                                                </div>
+                                                
+                                                <div class="order-summary-body">
+                                                    <div class="order-item-row">
+                                                        <span class="order-item-label">Training Program</span>
+                                                        <span class="order-item-val fw-bold"><?= htmlspecialchars(strip_tags($training['training_name'] ?? '')) ?></span>
+                                                    </div>
+                                                    <?php if (!empty($cohort['cohort_name'])): ?>
+                                                    <div class="order-item-row">
+                                                        <span class="order-item-label">Cohort Track</span>
+                                                        <span class="order-item-val"><?= htmlspecialchars($cohort['cohort_name']) ?></span>
+                                                    </div>
+                                                    <?php endif; ?>
+                                                    <?php
+                                                    $sStart = !empty($cohort['start_date']) ? $cohort['start_date'] : ($training['start_date'] ?? '');
+                                                    if (!empty($sStart)):
+                                                    ?>
+                                                    <div class="order-item-row">
+                                                        <span class="order-item-label">Classes Begin</span>
+                                                        <span class="order-item-val"><?= date('F j, Y', strtotime($sStart)) ?></span>
+                                                    </div>
+                                                    <?php endif; ?>
+                                                    <div class="order-item-row">
+                                                        <span class="order-item-label">Reserved Seats</span>
+                                                        <span class="order-item-val">1 Candidate</span>
+                                                    </div>
+                                                    <div class="order-divider"></div>
+                                                    <div class="order-item-row">
+                                                        <span class="order-item-label">Training Fee</span>
+                                                        <span class="order-item-val"><?= $programFeeFormatted ?></span>
+                                                    </div>
+                                                    <div class="order-item-row">
+                                                        <span class="order-item-label">Processing &amp; Gateway Fee</span>
+                                                        <span class="order-item-val text-success">₦0 (Waived)</span>
+                                                    </div>
+                                                    <div class="order-total-row">
+                                                        <span class="order-total-label">Total Payable</span>
+                                                        <span class="order-total-amount"><?= $programFeeFormatted ?></span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="order-summary-footer">
+                                                    <div class="d-flex align-items-center gap-2 text-muted" style="font-size: 0.82rem;">
+                                                        <span class="material-symbols-outlined text-orange" style="font-size: 18px;">verified_user</span>
+                                                        <span>Official Spider Tech receipt generated immediately upon transaction confirmation.</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Data Protection Pledge -->
+                                            <div class="data-protection-pledge">
+                                                <span class="material-symbols-outlined pledge-icon">shield_lock</span>
+                                                <div>
+                                                    <span class="pledge-title">Encrypted Payment Guarantee</span>
+                                                    <p class="pledge-desc">Transactions are processed through Paystack's PCI-DSS Level 1 certified gateway. Spider Technologies never stores your card credentials.</p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Step Navigation Footer -->
+                                            <div class="step-nav-footer d-flex flex-wrap align-items-center justify-content-between gap-3">
+                                                <button type="button" class="btn-prev-step" @click="prevStep()">
+                                                    <span class="material-symbols-outlined" style="font-size: 16px;">arrow_back</span>
+                                                    <span>Previous Step</span>
+                                                </button>
+
+                                                <button type="submit" class="btn-submit-registration btn-pay-now" :disabled="loading">
+                                                    <template x-if="!loading">
+                                                        <div class="d-flex align-items-center justify-content-center gap-2">
+                                                            <span class="material-symbols-outlined" style="font-size: 20px;">credit_card</span>
+                                                            <span>Pay <?= $programFeeFormatted ?></span>
+                                                        </div>
+                                                    </template>
+                                                    <template x-if="loading">
+                                                        <div class="d-flex align-items-center justify-content-center gap-2">
+                                                            <div class="spinner-border spinner-border-sm" role="status" style="width: 1rem; height: 1rem; border-width: 2px;"></div>
+                                                            <span>Redirecting to Paystack...</span>
+                                                        </div>
+                                                    </template>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
                             <?php else : ?>
                                 <!-- Clean Fallback -->
                                 <div class="form-step-container" data-step="1">
@@ -321,13 +474,13 @@ $totalStepsCount = count($sectionKeys);
                                             </div>
                                         </div>
 
-                                        <div class="step-nav-footer d-flex align-items-center justify-content-between gap-3">
+                                        <div class="step-nav-footer d-flex flex-wrap align-items-center justify-content-between gap-3">
                                             <a href="<?= BASE_URL ?>/trainings/detail?id=<?= $program_id; ?>" class="btn-cancel-step">
-                                                <span class="material-symbols-outlined" style="font-size: 16px;">keyboard_backspace</span>
+                                                <span class="material-symbols-outlined" style="font-size: 16px;">arrow_back</span>
                                                 <span>Cancel Application</span>
                                             </a>
                                             <button type="submit" class="btn-submit-registration" :disabled="loading">
-                                                <span>Submit Application</span>
+                                                <span><?= $isPaidProgram ? 'Proceed to Payment (' . $programFeeFormatted . ')' : 'Submit Application' ?></span>
                                             </button>
                                         </div>
                                     </div>
@@ -358,21 +511,11 @@ $totalStepsCount = count($sectionKeys);
                             </div>
 
                             <?php
-                            $cCode = 'DSE';
-                            if (!empty($training['training_name']) && stripos($training['training_name'], 'Digital Skills') === false) {
-                                $words = preg_split('/\s+/', trim(strip_tags($training['training_name'])));
-                                $cCode = '';
-                                foreach ($words as $w) {
-                                    if (strlen($w) > 2) $cCode .= strtoupper($w[0]);
-                                }
-                                if (!$cCode) $cCode = 'Cohort';
-                            }
-                            $cNum = $cohort['cohort_number'] ?? 4;
-                            $badgeLabel = $cCode . ' Cohort ' . $cNum . ' Registration Open';
+                            $badgeData = resolve_training_status_badge($training, $cohort);
                             ?>
-                            <span class="badge-enrollment-active">
-                                <span class="pulse-dot"></span>
-                                <span><?= htmlspecialchars($badgeLabel) ?></span>
+                            <span class="badge-enrollment-active <?= htmlspecialchars($badgeData['status_class']) ?>">
+                                <span class="<?= htmlspecialchars($badgeData['dot_class']) ?>"></span>
+                                <span><?= htmlspecialchars($badgeData['badge_text']) ?></span>
                             </span>
 
                             <h3 class="sidebar-program-title"><?= htmlspecialchars(strip_tags($training['training_name'])); ?></h3>
@@ -380,6 +523,20 @@ $totalStepsCount = count($sectionKeys);
 
                             <!-- Course Metrics -->
                             <ul class="sidebar-meta-list">
+                                <li class="sidebar-meta-item">
+                                    <div class="sidebar-meta-icon" style="<?= $isPaidProgram ? 'background: rgba(244, 130, 33, 0.12); color: #f48221;' : 'background: rgba(16, 185, 129, 0.12); color: #059669;' ?>">
+                                        <span class="material-symbols-outlined"><?= $isPaidProgram ? 'payments' : 'card_giftcard' ?></span>
+                                    </div>
+                                    <div class="sidebar-meta-info">
+                                        <span class="meta-label">Training Fee</span>
+                                        <span class="meta-value" style="font-size: 1rem; font-weight: 800; color: <?= $isPaidProgram ? '#f48221' : '#059669' ?>;">
+                                            <?= $isPaidProgram ? $programFeeFormatted : 'Free Registration' ?>
+                                        </span>
+                                        <?php if ($isPaidProgram): ?>
+                                            <span style="font-size: 0.72rem; color: #64748b;">Secured via Paystack</span>
+                                        <?php endif; ?>
+                                    </div>
+                                </li>
                                 <li class="sidebar-meta-item">
                                     <div class="sidebar-meta-icon">
                                         <span class="material-symbols-outlined">calendar_today</span>
@@ -623,7 +780,11 @@ $totalStepsCount = count($sectionKeys);
 
                     if (result.success) {
                         this.showToast(result.message, 'success');
-                        if (result.redirect) {
+                        if (result.redirect_url) {
+                            setTimeout(() => {
+                                window.location.href = result.redirect_url;
+                            }, 800);
+                        } else if (result.redirect) {
                             setTimeout(() => {
                                 window.location.href = result.redirect;
                             }, 2000);

@@ -17,12 +17,14 @@ function getInitials($fullName) {
     return strtoupper(substr($parts[0], 0, 1) . substr(end($parts), 0, 1));
 }
 
-$hasActiveFilters = ($current_program !== 'all' || ($current_cohort ?? 'all') !== 'all' || !empty($current_search));
+$currentPayment = $current_payment_status ?? 'all';
+$hasActiveFilters = ($current_program !== 'all' || ($current_cohort ?? 'all') !== 'all' || ($currentPayment !== 'all') || !empty($current_search));
 
 // Build CSV Export URL preserving current filter parameters
 $exportParams = [];
 if ($current_program !== 'all') $exportParams['program'] = $current_program;
 if (($current_cohort ?? 'all') !== 'all') $exportParams['cohort'] = $current_cohort;
+if ($currentPayment !== 'all') $exportParams['payment_status'] = $currentPayment;
 if (!empty($current_search)) $exportParams['search'] = $current_search;
 $exportParams['export'] = 'csv';
 $exportUrl = BASE_URL . '/admin/applications?' . http_build_query($exportParams);
@@ -95,6 +97,17 @@ $exportUrl = BASE_URL . '/admin/applications?' . http_build_query($exportParams)
         </div>
         <div class="stat-value"><?= number_format($stats['programs'] ?? 0) ?></div>
         <div class="stat-desc">Tracks with candidate registrations</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="stat-label">Verified Revenue</span>
+            <span class="stat-icon bg-soft-green text-green">
+                <span class="material-symbols-outlined">payments</span>
+            </span>
+        </div>
+        <div class="stat-value">₦<?= number_format(($stats['revenue_kobo'] ?? 0) / 100, 2) ?></div>
+        <div class="stat-desc"><?= number_format($stats['paid_count'] ?? 0) ?> paid enrollments</div>
     </div>
 </div>
 
@@ -174,6 +187,45 @@ $exportUrl = BASE_URL . '/admin/applications?' . http_build_query($exportParams)
                 </div>
             </div>
 
+            <!-- Custom Brand Dropdown: Payment Status -->
+            <div class="custom-dropdown" x-data="{
+                open: false,
+                current: '<?= $currentPayment ?>',
+                label: '<?= match($currentPayment) { 'success' => 'Paid', 'pending' => 'Pending Payment', 'not_required' => 'Free', 'failed' => 'Failed', default => 'All Payments' } ?>'
+            }" @click.outside="open = false">
+                <button type="button" class="custom-dropdown-trigger" @click="open = !open">
+                    <span class="d-flex align-items-center">
+                        <span class="custom-dropdown-label">Payment:</span>
+                        <strong class="custom-dropdown-val" x-text="label"></strong>
+                    </span>
+                    <svg class="dropdown-chevron" :class="{ 'rotate-180': open }" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <div class="custom-dropdown-menu" x-show="open" x-transition.opacity.duration.150ms x-cloak>
+                    <button type="button" class="custom-dropdown-item" :class="{ 'active': current === 'all' }" @click="applyAppParam('payment_status', 'all'); open = false;">
+                        <span>All Payments</span>
+                        <svg class="check-icon" x-show="current === 'all'" width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <button type="button" class="custom-dropdown-item" :class="{ 'active': current === 'success' }" @click="applyAppParam('payment_status', 'success'); open = false;">
+                        <span>Paid (Verified)</span>
+                        <svg class="check-icon" x-show="current === 'success'" width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <button type="button" class="custom-dropdown-item" :class="{ 'active': current === 'pending' }" @click="applyAppParam('payment_status', 'pending'); open = false;">
+                        <span>Pending Payment</span>
+                        <svg class="check-icon" x-show="current === 'pending'" width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <button type="button" class="custom-dropdown-item" :class="{ 'active': current === 'not_required' }" @click="applyAppParam('payment_status', 'not_required'); open = false;">
+                        <span>Free Enrollment</span>
+                        <svg class="check-icon" x-show="current === 'not_required'" width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <button type="button" class="custom-dropdown-item" :class="{ 'active': current === 'failed' }" @click="applyAppParam('payment_status', 'failed'); open = false;">
+                        <span>Failed / Cancelled</span>
+                        <svg class="check-icon" x-show="current === 'failed'" width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2.5 7.5L5.5 10.5L11.5 3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                </div>
+            </div>
+
             <!-- Custom Brand Dropdown: Cohort -->
             <?php
                 $activeCohortLabel = 'All Cohorts';
@@ -223,8 +275,9 @@ $exportUrl = BASE_URL . '/admin/applications?' . http_build_query($exportParams)
                     <tr>
                         <th style="width: 45px;">#</th>
                         <th style="min-width: 230px;">Applicant</th>
-                        <th style="min-width: 220px;">Program &amp; Track</th>
-                        <th style="min-width: 170px;">Contact &amp; Location</th>
+                        <th style="min-width: 180px;">Program &amp; Track</th>
+                        <th style="min-width: 150px;">Payment Status</th>
+                        <th style="min-width: 150px;">Contact &amp; Location</th>
                         <th style="min-width: 170px;">Enterprise / Background</th>
                         <th style="min-width: 125px;">Applied</th>
                         <th class="text-end" style="width: 100px;">Actions</th>
@@ -279,14 +332,28 @@ $exportUrl = BASE_URL . '/admin/applications?' . http_build_query($exportParams)
                             $cohortId = (int)($app['cohort_id'] ?? 0);
 
                             // JSON payload for rich modal preview
+                            $payStatus = $app['payment_status'] ?? 'not_required';
+                            $amountPaid = (int)($app['amount_paid'] ?? 0);
+                            $payRef = $app['payment_reference'] ?? '';
+                            $invNum = $app['invoice_number'] ?? '';
+                            $invToken = !empty($payRef) ? PaystackService::generateInvoiceToken($payRef) : '';
+
                             $recordPayload = [
-                                'id'           => $app['id'],
-                                'program_name' => $programName,
-                                'cohort_name'  => $cohortName,
-                                'cohort_number'=> $cohortNumber,
-                                'cohort_id'    => $cohortId,
-                                'created_at'   => $app['created_at'],
-                                'user_data'    => $userData
+                                'id'               => $app['id'],
+                                'program_name'     => $programName,
+                                'cohort_name'      => $cohortName,
+                                'cohort_number'    => $cohortNumber,
+                                'cohort_id'        => $cohortId,
+                                'payment_status'   => $payStatus,
+                                'amount_paid'      => $amountPaid,
+                                'amount_formatted' => PaystackService::formatKobo($amountPaid),
+                                'payment_reference' => $payRef,
+                                'invoice_number'   => $invNum,
+                                'invoice_token'    => $invToken,
+                                'paid_at'          => $app['paid_at'] ?? '',
+                                'invoice_sent_at'  => $app['invoice_sent_at'] ?? '',
+                                'created_at'       => $app['created_at'],
+                                'user_data'        => $userData
                             ];
                         ?>
                         <tr>
@@ -329,6 +396,44 @@ $exportUrl = BASE_URL . '/admin/applications?' . http_build_query($exportParams)
                                         <span class="material-symbols-outlined fs-12 align-middle">open_in_new</span>
                                         <span>General Intake</span>
                                     </span>
+                                <?php endif; ?>
+                            </td>
+                            <!-- Payment Status Badge & Quick Verify -->
+                            <td>
+                                <?php if ($payStatus === 'success'): ?>
+                                    <span class="badge d-inline-flex align-items-center gap-1" style="background: rgba(16, 185, 129, 0.1); color: #059669; font-weight: 700; font-size: 0.76rem; padding: 4px 8px; border-radius: 6px;">
+                                        <span class="status-pulse-dot" style="background: #10b981;"></span>
+                                        <span>Paid (<?= PaystackService::formatKobo($amountPaid) ?>)</span>
+                                    </span>
+                                    <?php if (!empty($payRef)): ?>
+                                        <div class="mt-1">
+                                            <a href="<?= BASE_URL ?>/trainings/invoice?ref=<?= urlencode($payRef) ?>&token=<?= urlencode($invToken) ?>" target="_blank" class="small text-muted text-decoration-none d-inline-flex align-items-center gap-1" style="font-size: 0.72rem;">
+                                                <span class="material-symbols-outlined" style="font-size: 13px;">receipt</span>
+                                                <span>Invoice</span>
+                                            </a>
+                                        </div>
+                                    <?php endif; ?>
+                                <?php elseif ($payStatus === 'pending'): ?>
+                                    <div class="d-flex align-items-center gap-1">
+                                        <span class="badge d-inline-flex align-items-center gap-1" style="background: rgba(245, 158, 11, 0.1); color: #d97706; font-weight: 600; font-size: 0.74rem; padding: 4px 7px; border-radius: 6px;">
+                                            <span class="status-pulse-dot" style="background: #f59e0b;"></span>
+                                            <span>Pending</span>
+                                        </span>
+                                        <button type="button" class="btn btn-sm btn-light border p-1" onclick="verifyApplicationPayment(<?= $app['id'] ?>)" title="Check payment status with Paystack">
+                                            <span class="material-symbols-outlined" style="font-size: 14px;">sync</span>
+                                        </button>
+                                    </div>
+                                <?php elseif ($payStatus === 'failed' || $payStatus === 'abandoned'): ?>
+                                    <div class="d-flex align-items-center gap-1">
+                                        <span class="badge" style="background: rgba(239, 68, 68, 0.1); color: #dc2626; font-weight: 600; font-size: 0.74rem; padding: 4px 7px; border-radius: 6px;">
+                                            Failed
+                                        </span>
+                                        <button type="button" class="btn btn-sm btn-light border p-1" onclick="verifyApplicationPayment(<?= $app['id'] ?>)" title="Re-check Paystack">
+                                            <span class="material-symbols-outlined" style="font-size: 14px;">sync</span>
+                                        </button>
+                                    </div>
+                                <?php else: ?>
+                                    <span class="text-muted" style="font-size: 0.76rem;">Free Intake</span>
                                 <?php endif; ?>
                             </td>
                             <td>
@@ -620,6 +725,67 @@ function openApplicationModal(record) {
         `;
     }
 
+    // Payment & Ledger Card
+    let payBadgeClass = 'text-muted';
+    let payStatusLabel = 'Free Enrollment';
+    if (record.payment_status === 'success') {
+        payBadgeClass = 'text-success fw-700';
+        payStatusLabel = `Paid (${record.amount_formatted})`;
+    } else if (record.payment_status === 'pending') {
+        payBadgeClass = 'text-warning fw-700';
+        payStatusLabel = 'Pending Payment Checkout';
+    } else if (record.payment_status === 'failed') {
+        payBadgeClass = 'text-danger fw-700';
+        payStatusLabel = 'Payment Failed / Incomplete';
+    }
+
+    html += `
+    <div class="modal-app-card" style="background: #fcfcfd;">
+        <div class="modal-app-card-title d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined text-orange">payments</span>
+                <span>Financial & Payment Status</span>
+            </div>
+            <span class="${payBadgeClass}" style="font-size: 0.8rem;">&bull; ${escapeHtml(payStatusLabel)}</span>
+        </div>
+        <div class="row g-2 small">
+            ${record.payment_reference ? `
+            <div class="col-md-6 modal-data-item">
+                <span class="modal-data-label">Transaction Reference</span>
+                <div class="modal-data-value font-monospace">${escapeHtml(record.payment_reference)}</div>
+            </div>` : ''}
+            ${record.invoice_number ? `
+            <div class="col-md-6 modal-data-item">
+                <span class="modal-data-label">Official Invoice Number</span>
+                <div class="modal-data-value font-monospace fw-bold text-dark">${escapeHtml(record.invoice_number)}</div>
+            </div>` : ''}
+            ${record.paid_at ? `
+            <div class="col-md-6 modal-data-item">
+                <span class="modal-data-label">Settled At</span>
+                <div class="modal-data-value">${escapeHtml(record.paid_at)}</div>
+            </div>` : ''}
+        </div>
+
+        <div class="d-flex align-items-center gap-2 mt-3 pt-2 border-top">
+            ${record.payment_status === 'success' ? `
+                <a href="<?= BASE_URL ?>/trainings/invoice?ref=${encodeURIComponent(record.payment_reference)}&token=${encodeURIComponent(record.invoice_token)}" target="_blank" class="btn btn-sm btn-dark d-inline-flex align-items-center gap-1">
+                    <span class="material-symbols-outlined fs-15">print</span>
+                    <span>View / Print Receipt</span>
+                </a>
+                <button type="button" class="btn btn-sm btn-light border d-inline-flex align-items-center gap-1" onclick="resendInvoice(${record.id})">
+                    <span class="material-symbols-outlined fs-15">mail</span>
+                    <span>Resend Invoice Email</span>
+                </button>
+            ` : (record.payment_reference ? `
+                <button type="button" class="btn btn-sm btn-outline-custom d-inline-flex align-items-center gap-1" onclick="verifyApplicationPayment(${record.id})">
+                    <span class="material-symbols-outlined fs-15">verified</span>
+                    <span>Verify with Paystack API</span>
+                </button>
+            ` : '')}
+        </div>
+    </div>
+    `;
+
     // Submission Metadata
     html += `
     <div class="text-muted fs-075 d-flex align-items-center justify-content-between pt-2">
@@ -655,6 +821,47 @@ function applyAppParam(key, value) {
     }
     url.searchParams.delete('page');
     window.location.href = url.toString();
+}
+
+async function verifyApplicationPayment(appId) {
+    if (!confirm('Force verify this transaction with Paystack API now?')) return;
+    
+    const formData = new FormData();
+    formData.append('application_id', appId);
+    formData.append('csrf_token', '<?= CSRF::generateToken() ?>');
+
+    try {
+        const res = await fetch('<?= BASE_URL ?>/admin/applications/verify-payment', {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const json = await res.json();
+        alert(json.message || 'Verification check complete.');
+        if (json.status === 'success') {
+            location.reload();
+        }
+    } catch (err) {
+        alert('Network error while verifying with Paystack.');
+    }
+}
+
+async function resendInvoice(appId) {
+    const formData = new FormData();
+    formData.append('application_id', appId);
+    formData.append('csrf_token', '<?= CSRF::generateToken() ?>');
+
+    try {
+        const res = await fetch('<?= BASE_URL ?>/admin/applications/resend-invoice', {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const json = await res.json();
+        alert(json.message || 'Invoice dispatch attempted.');
+    } catch (err) {
+        alert('Failed to resend receipt email.');
+    }
 }
 
 window.onclick = function(event) {

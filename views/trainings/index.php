@@ -73,11 +73,49 @@ if (!function_exists('truncateTrainingDescWordAware')) {
                     $tName = trim(strip_tags(stripslashes($training['training_name'] ?? 'Training Program')));
                     $tDesc = truncateTrainingDescWordAware($training['training_description'] ?? '', 118);
                     $certifiedCount = (int) ($training['certified_count'] ?? 0);
+
+                    // Resolve payment fee badge according to spec
+                    $feeInfo = $training['effective_fee'] ?? null;
+                    $paymentsEnabled = !empty($feeInfo['payments_enabled']);
+                    $feeKobo = (int)($feeInfo['amount_kobo'] ?? 0);
+
+                    $feeBadgeText = null;
+                    $feeBadgeClass = null;
+
+                    if ($paymentsEnabled) {
+                        if ($feeKobo > 0) {
+                            $feeBadgeText = format_naira($feeKobo);
+                            $feeBadgeClass = 'paid';
+                        } else {
+                            // Misconfigured fee: log warning, hide badge, do NOT show Free
+                            error_log(sprintf(
+                                "[TRAINING PAYMENT MISCONFIG] Training ID %d ('%s') has payments_enabled=1 but resolved fee is %d kobo.",
+                                $training['id'],
+                                $training['training_name'] ?? 'Unknown',
+                                $feeKobo
+                            ));
+                            $feeBadgeText = null;
+                        }
+                    } else {
+                        $feeBadgeText = 'Free';
+                        $feeBadgeClass = 'free';
+                    }
+
+                    // Resolve data-backed dynamic status badge
+                    $selectedCohort = (!empty($training['active_cohort']) && is_array($training['active_cohort']))
+                        ? $training['active_cohort']
+                        : ((!empty($training['upcoming_cohort']) && is_array($training['upcoming_cohort'])) ? $training['upcoming_cohort'] : null);
+                    $statusBadge = resolve_training_status_badge($training, $selectedCohort);
                 ?>
                 <div class="col-lg-4 col-md-6 mb-4 d-flex">
                     <div class="research-card">
                         <div class="card-img-wrap">
                             <span class="card-category"><?= $isFeatured ? 'Featured Program' : 'Certification Track' ?></span>
+                            <?php if ($feeBadgeText !== null): ?>
+                                <span class="card-fee-badge <?= $feeBadgeClass ?>" aria-label="Fee: <?= htmlspecialchars($feeBadgeText) ?>">
+                                    <?= htmlspecialchars($feeBadgeText) ?>
+                                </span>
+                            <?php endif; ?>
                             <?php if ($hasImg): ?>
                                 <img src="<?= htmlspecialchars($imageSrc) ?>"
                                      alt="<?= htmlspecialchars($tName) ?>"
@@ -95,34 +133,12 @@ if (!function_exists('truncateTrainingDescWordAware')) {
                             </div>
                         </div>
                         <div class="card-body-content">
-                            <?php if (!empty($training['active_cohort'])): ?>
-                                <?php
-                                $cCode = 'DSE';
-                                if (!empty($training['training_name']) && stripos($training['training_name'], 'Digital Skills') === false) {
-                                    $words = preg_split('/\s+/', trim(strip_tags($training['training_name'])));
-                                    $cCode = '';
-                                    foreach ($words as $w) {
-                                        if (strlen($w) > 2) $cCode .= strtoupper($w[0]);
-                                    }
-                                    if (!$cCode) $cCode = 'Cohort';
-                                }
-                                $cNum = $training['active_cohort']['cohort_number'] ?? 4;
-                                $badgeLabel = $cCode . ' Cohort ' . $cNum . ' Registration Open';
-                                ?>
-                                <div class="card-cohort-wrap mb-2">
-                                    <span class="card-cohort-badge open">
-                                        <span class="cohort-pulse-dot"></span>
-                                        <span><?= htmlspecialchars($badgeLabel) ?></span>
-                                    </span>
-                                </div>
-                            <?php elseif (!empty($training['upcoming_cohort'])): ?>
-                                <div class="card-cohort-wrap mb-2">
-                                    <span class="card-cohort-badge upcoming">
-                                        <span class="cohort-dot-upcoming"></span>
-                                        <span>Upcoming: Starts <?= date('M d', strtotime($training['upcoming_cohort']['start_date'])) ?></span>
-                                    </span>
-                                </div>
-                            <?php endif; ?>
+                            <div class="card-cohort-wrap mb-2">
+                                <span class="card-cohort-badge <?= htmlspecialchars($statusBadge['status_class']) ?>">
+                                    <span class="<?= htmlspecialchars($statusBadge['dot_class']) ?>"></span>
+                                    <span><?= htmlspecialchars($statusBadge['badge_text']) ?></span>
+                                </span>
+                            </div>
                             <a href="<?= BASE_URL ?>/trainings/detail?id=<?= (int) $training['id']; ?>" class="card-title-link">
                                 <h3><?= htmlspecialchars($tName) ?></h3>
                             </a>

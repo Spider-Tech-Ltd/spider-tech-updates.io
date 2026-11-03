@@ -133,4 +133,81 @@ HTML;
             return false;
         }
     }
+
+    /**
+     * Send official payment receipt & enrollment confirmation email with PDF attachment
+     */
+    public static function sendPaymentReceipt(string $email, string $name, array $paymentDetails): bool
+    {
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return false;
+        }
+
+        $mail = new PHPMailer(true);
+
+        try {
+            // Server settings
+            $mail->isSMTP();
+            $mail->Host       = defined('MAIL_HOST') ? MAIL_HOST : 'sandbox.smtp.mailtrap.io';
+            $mail->SMTPAuth   = defined('MAIL_AUTH') ? MAIL_AUTH : true;
+            $mail->Username   = defined('MAIL_USER') ? MAIL_USER : '';
+            $mail->Password   = defined('MAIL_PASS') ? MAIL_PASS : '';
+            $mail->Port       = defined('MAIL_PORT') ? MAIL_PORT : 2525;
+            $mail->CharSet    = 'UTF-8';
+
+            if (defined('MAIL_ENCRYPTION') && strtolower(MAIL_ENCRYPTION) === 'ssl') {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            } else {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            }
+
+            // Centralized Issuer Details
+            $issuer = InvoiceRenderer::getIssuerDetails();
+
+            // Sender, Reply-To & Recipient
+            $fromAddress = defined('MAIL_FROM_ADDRESS') ? MAIL_FROM_ADDRESS : $issuer['email'];
+            $fromName    = defined('MAIL_FROM_NAME') ? MAIL_FROM_NAME : $issuer['name'];
+            $mail->setFrom($fromAddress, $fromName);
+            $mail->addReplyTo($issuer['email'], $issuer['name']);
+            $mail->addAddress($email, $name ?: 'Applicant');
+
+            // Build normalized invoice payload
+            $invoiceData = InvoiceRenderer::normalizeData([], array_merge($paymentDetails, [
+                'payer_name'  => $name,
+                'payer_email' => $email
+            ]));
+
+            // Embed brand logo via CID for 100% reliable rendering in all email clients & Mailtrap
+            $logoPath = defined('ROOT_PATH') ? ROOT_PATH . '/images/spider-tech.png' : dirname(__DIR__) . '/images/spider-tech.png';
+            if (file_exists($logoPath)) {
+                $mail->addEmbeddedImage($logoPath, 'spider_logo', 'spider-tech.png', 'base64', 'image/png');
+                $invoiceData['logo_cid'] = 'spider_logo';
+            }
+
+            $invoiceNumber = $invoiceData['invoice_number'];
+            $cleanInvoice  = preg_replace('/[^A-Za-z0-9_-]/', '', $invoiceNumber);
+            $trackTitle    = $invoiceData['program']['track_title'] ?? InvoiceRenderer::formatTrackTitle($invoiceData['program']['name'], $invoiceData['program']['cohort']);
+
+            // Subject: Your payment receipt – {Training Name} ({RECEIPT_NO})
+            $mail->isHTML(true);
+            $mail->Subject = "Your payment receipt – {$trackTitle} ({$invoiceNumber})";
+
+            // Short Typeform-style HTML & Plain-text notification body
+            $mail->Body    = InvoiceRenderer::renderEmailHtml($invoiceData);
+            $mail->AltBody = InvoiceRenderer::renderEmailPlainText($invoiceData);
+
+            // Generate and attach PDF receipt
+            try {
+                $pdfBytes = InvoiceRenderer::generatePdf($invoiceData);
+                $mail->addStringAttachment($pdfBytes, "invoice_{$cleanInvoice}.pdf", 'base64', 'application/pdf');
+            } catch (\Throwable $pdfEx) {
+                error_log("MailHelper Warning: Could not generate PDF attachment: " . $pdfEx->getMessage());
+            }
+
+            return $mail->send();
+        } catch (Exception $e) {
+            error_log("MailHelper Error: Could not send payment receipt to {$email}. Error: " . $mail->ErrorInfo);
+            return false;
+        }
+    }
 }

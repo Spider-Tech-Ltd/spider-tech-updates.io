@@ -1,0 +1,21 @@
+# Gitleaks Configuration for spider_tech_updates
+title = "Spider Tech Gitleaks Config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allowlist for test fixtures, examples, and lock files"
+paths = [
+    '''^\.env\.example$''',
+    '''^config/db_config\.example\.php$''',
+    '''^docs/''',
+    '''^tests/''',
+    '''^composer\.lock$''',
+    '''^package-lock\.json$'''
+]
+regexes = [
+    '''pk_test_[a-zA-Z0-9_]+''',
+    '''sk_test_[a-zA-Z0-9_]+'''
+]
+

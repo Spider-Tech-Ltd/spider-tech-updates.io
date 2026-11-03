@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Receipt - STP-INV-202611-0008 — Spider Technologies Limited</title>
+    <link rel="icon" type="image/png" href="http://localhost./images/spider-tech.png">
+
+    <!-- Google Fonts: Poppins & Space Grotesk -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #f3f4f6;
+            color: #374151;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
+            padding: 32px 14px 60px 14px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .btn-invoice-back:hover {
+            background-color: #f9fafb !important;
+            border-color: #9ca3af !important;
+            color: #f48221 !important;
+        }
+        .btn-invoice-download:hover {
+            background-color: #e6751c !important;
+            border-color: #e6751c !important;
+        }
+        .btn-invoice-print:hover {
+            background-color: #27272a !important;
+            border-color: #27272a !important;
+        }
+
+        /* Responsive rules */
+        @media only screen and (max-width: 540px) {
+            body {
+                padding: 16px 8px 36px 8px;
+            }
+            .stack-col {
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                border-right: none !important;
+                border-bottom: 1px solid #e5e7eb !important;
+            }
+            .stack-col:last-child {
+                border-bottom: none !important;
+            }
+            .stack-hide {
+                display: none !important;
+            }
+            .stack-full {
+                width: 100% !important;
+            }
+        }
+
+        /* Print Media Styles */
+        @media print {
+            body {
+                background: #ffffff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                font-size: 12px !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            table {
+                box-shadow: none !important;
+                border: 1px solid #d1d5db !important;
+                border-radius: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+        <!-- ACTION TOOLBAR (Hidden in Print) -->
+    <div class="no-print" style="max-width: 680px; margin: 0 auto 18px auto; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <a href="http://localhost./trainings" class="btn-invoice-back" style="display: inline-flex; align-items: center; gap: 6px; background-color: #ffffff; color: #111827; border: 1px solid #d1d5db; border-radius: 4px; padding: 8px 16px; font-size: 13px; font-weight: 500; text-decoration: none; cursor: pointer; transition: all 0.15s ease;">
+            &larr; Back to Programs
+        </a>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+                        <a href="http://localhost./trainings/invoice?ref=STP_8_1_1730554800_a1b2&token=6548a454eed7f21aeb9a72e3e6945cc9a5691daea570953a1294ceac7ae055af&download=pdf" class="btn-invoice-download" style="display: inline-flex; align-items: center; gap: 6px; background-color: #f48221; color: #ffffff; border: 1px solid #f48221; border-radius: 4px; padding: 8px 18px; font-size: 13px; font-weight: 600; text-decoration: none; cursor: pointer; transition: all 0.15s ease;">
+                <span>Download PDF</span>
+            </a>
+            <button onclick="window.print()" class="btn-invoice-print" style="display: inline-flex; align-items: center; gap: 6px; background-color: #110f0d; color: #ffffff; border: 1px solid #110f0d; border-radius: 4px; padding: 8px 18px; font-size: 13px; font-weight: 600; text-decoration: none; cursor: pointer; transition: all 0.15s ease;">
+                <span>Print Receipt</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- RECEIPT CONTAINER (Width 680px) -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 680px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 4px; border-collapse: separate; font-family: 'Poppins', 'DejaVu Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #374151; font-size: 13px; line-height: 1.5;">
+
+    <!-- 1. TOP ACCENT BAR (4px brand orange) -->
+    <tr>
+        <td style="height: 4px; background-color: #f48221; font-size: 0; line-height: 0; padding: 0; border: 0;">&nbsp;</td>
+    </tr>
+
+    <!-- 2. OPTION A: CLEAN LIGHT HEADER BAND (Original Full-Color Logo, Larger, Centered, No Border) -->
+    <tr>
+        <td align="center" style="background-color: #ffffff; padding: 36px 20px 26px 20px; text-align: center; border-bottom: 1px solid #e5e7eb;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto; text-align: center;">
+                <tr>
+                    <td align="center" style="text-align: center;">
+                        <img src="http://localhost./images/spider-tech.png" alt="Spider Technologies Limited" width="220" style="width: 220px; max-width: 70%; height: auto; display: block; margin: 0 auto; border: 0; outline: none;" />
+                        <div style="font-family: 'Poppins', 'DejaVu Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: #6b7280; margin-top: 22px;">
+                            PAYMENT RECEIPT
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <!-- RECEIPT BODY CONTENT -->
+    <tr>
+        <td style="padding: 26px 28px;">
+
+            <!-- 3. SUMMARY STRIP (4 Equal Bordered Columns + Large Amount Paid Banner) -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border: 1px solid #e5e7eb; border-radius: 4px; background-color: #ffffff; border-collapse: collapse; margin-bottom: 22px;">
+                <tr>
+                    <td width="25%" class="stack-col" style="padding: 12px 14px; border-right: 1px solid #e5e7eb; vertical-align: top; width: 25%;">
+                        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; margin-bottom: 4px;">RECEIPT NO.</div>
+                        <div style="font-size: 13px; font-weight: 700; color: #111827; font-family: 'Space Grotesk', 'DejaVu Sans', monospace;">STP-INV-202611-0008</div>
+                    </td>
+                    <td width="25%" class="stack-col" style="padding: 12px 14px; border-right: 1px solid #e5e7eb; vertical-align: top; width: 25%;">
+                        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; margin-bottom: 4px;">DATE PAID</div>
+                        <div style="font-size: 13px; font-weight: 600; color: #111827;">2 Nov 2026</div>
+                    </td>
+                    <td width="25%" class="stack-col" style="padding: 12px 14px; border-right: 1px solid #e5e7eb; vertical-align: top; width: 25%;">
+                        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; margin-bottom: 4px;">PAYMENT REF</div>
+                        <div style="font-size: 11px; font-weight: 600; color: #111827; font-family: 'Space Grotesk', 'DejaVu Sans', monospace; word-break: break-all;">STP_8_1_1730554800_a1b2</div>
+                    </td>
+                    <td width="25%" class="stack-col" style="padding: 12px 14px; vertical-align: top; width: 25%;">
+                        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; margin-bottom: 5px;">STATUS</div>
+                        <div>
+                            <span style="display: inline-block; padding: 2px 8px; font-size: 11px; font-weight: 700; color: #047857; background-color: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 3px; letter-spacing: 0.5px;">PAID</span>
+                        </div>
+                    </td>
+                </tr>
+                <!-- Amount Paid Large Banner -->
+                <tr>
+                    <td colspan="4" style="border-top: 1px solid #e5e7eb; background-color: #f9fafb; padding: 13px 16px;">
+                        <span style="font-size: 19px; font-weight: 700; color: #111827; font-family: 'Space Grotesk', 'DejaVu Sans', monospace;">
+                            ₦75,000.00
+                        </span>
+                        <span style="font-size: 13px; font-weight: 500; color: #4b5563; margin-left: 6px;">
+                            paid on 2 Nov 2026
+                        </span>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- 4. PARTIES ROW (2 Equal Bordered Columns: FROM vs BILLED TO) -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border: 1px solid #e5e7eb; border-radius: 4px; border-collapse: collapse; margin-bottom: 22px;">
+                <tr>
+                    <!-- FROM (Issuer) -->
+                    <td width="50%" class="stack-col" style="padding: 14px 16px; border-right: 1px solid #e5e7eb; vertical-align: top; width: 50%;">
+                        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; margin-bottom: 6px;">FROM</div>
+                        <div style="font-size: 13px; font-weight: 700; color: #111827; margin-bottom: 3px;">Spider Technologies Limited</div>
+                        <div style="color: #4b5563; font-size: 12px; line-height: 1.45; margin-bottom: 4px;">
+                            Flat 3, Left Wing, Abinsa House, Zaria Road, Kano
+                        </div>
+                        <div style="color: #4b5563; font-size: 12px; line-height: 1.45;">
+                            Email: info@spidertech.com.ng<br>
+                            Phone: +234 911 626 5708
+                        </div>
+                    </td>
+                    <!-- BILLED TO (Payer) -->
+                    <td width="50%" class="stack-col" style="padding: 14px 16px; vertical-align: top; width: 50%;">
+                        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; margin-bottom: 6px;">BILLED TO</div>
+                        <div style="font-size: 13px; font-weight: 700; color: #111827; margin-bottom: 3px;">Amina Bello</div>
+                        <div style="color: #4b5563; font-size: 12px; line-height: 1.45; margin-bottom: 2px;">
+                            Email: amina.bello@example.com
+                        </div>
+                        <div style="color: #4b5563; font-size: 12px; line-height: 1.45; margin-bottom: 4px;">
+                            Phone: 0809 123 4567
+                        </div>
+                        <div style="font-size: 11px; font-weight: 600; color: #6b7280; font-family: 'Space Grotesk', 'DejaVu Sans', monospace;">
+                            Applicant ID: #8
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- 5. ITEMS TABLE (Training | Cohort | Start Date | Seats | Amount) -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border: 1px solid #e5e7eb; border-radius: 4px; border-collapse: collapse; margin-bottom: 20px;">
+                <thead>
+                    <tr style="background-color: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                        <th align="left" style="padding: 10px 14px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; width: 34%;">TRAINING</th>
+                        <th align="left" style="padding: 10px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; width: 22%;">COHORT</th>
+                        <th align="left" style="padding: 10px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; width: 18%;">START DATE</th>
+                        <th align="center" style="padding: 10px 10px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; width: 8%; text-align: center;">SEATS</th>
+                        <th align="right" style="padding: 10px 14px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; width: 18%; text-align: right;">AMOUNT</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 12px 14px; font-size: 13px; font-weight: 600; color: #111827; vertical-align: top; border-bottom: 1px solid #e5e7eb;">
+                            Digital Skills & Web Engineering (DSE)
+                        </td>
+                        <td style="padding: 12px 12px; font-size: 12px; color: #374151; vertical-align: top; border-bottom: 1px solid #e5e7eb;">
+                            Cohort 1 (Weekday Immersion)
+                        </td>
+                        <td style="padding: 12px 12px; font-size: 12px; color: #374151; vertical-align: top; border-bottom: 1px solid #e5e7eb;">
+                            15 Nov 2026
+                        </td>
+                        <td align="center" style="padding: 12px 10px; font-size: 12px; color: #111827; font-weight: 600; vertical-align: top; text-align: center; border-bottom: 1px solid #e5e7eb;">
+                            1
+                        </td>
+                        <td align="right" style="padding: 12px 14px; font-size: 13px; font-weight: 700; color: #111827; vertical-align: top; text-align: right; font-family: 'Space Grotesk', 'DejaVu Sans', monospace; border-bottom: 1px solid #e5e7eb;">
+                            ₦75,000.00
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- 6. TOTALS BLOCK (Right-Aligned Bordered Table, No Empty Left Cell) -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 24px;">
+                <tr>
+                    <td class="stack-hide" width="50%">&nbsp;</td>
+                    <td width="50%" align="right" class="stack-full">
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 300px; border: 1px solid #e5e7eb; border-radius: 4px; border-collapse: collapse; margin-left: auto;">
+                            <tr>
+                                <td style="padding: 9px 12px; font-size: 12px; color: #4b5563; font-weight: 500; border-bottom: 1px solid #e5e7eb;">Subtotal</td>
+                                <td align="right" style="padding: 9px 12px; font-size: 12px; font-weight: 600; color: #111827; text-align: right; font-family: 'Space Grotesk', 'DejaVu Sans', monospace; border-bottom: 1px solid #e5e7eb;">₦75,000.00</td>
+                            </tr>
+                            <tr style="background-color: #fafbfc;">
+                                <td style="padding: 9px 12px; font-size: 13px; color: #111827; font-weight: 700; border-bottom: 1px solid #e5e7eb;">Total</td>
+                                <td align="right" style="padding: 9px 12px; font-size: 13px; font-weight: 700; color: #111827; text-align: right; font-family: 'Space Grotesk', 'DejaVu Sans', monospace; border-bottom: 1px solid #e5e7eb;">₦75,000.00</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 9px 12px; font-size: 12px; color: #047857; font-weight: 600; border-bottom: 1px solid #e5e7eb;">Amount Paid</td>
+                                <td align="right" style="padding: 9px 12px; font-size: 12px; font-weight: 700; color: #047857; text-align: right; font-family: 'Space Grotesk', 'DejaVu Sans', monospace; border-bottom: 1px solid #e5e7eb;">₦75,000.00</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 9px 12px; font-size: 12px; color: #6b7280; font-weight: 600;">Balance Due</td>
+                                <td align="right" style="padding: 9px 12px; font-size: 12px; font-weight: 700; color: #111827; text-align: right; font-family: 'Space Grotesk', 'DejaVu Sans', monospace;">₦0.00</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- 7. PAYMENT DETAILS TABLE (Bordered Label/Value Audit Rows) -->
+            <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; margin-bottom: 6px;">
+                PAYMENT AUDIT TRAIL
+            </div>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border: 1px solid #e5e7eb; border-radius: 4px; border-collapse: collapse; margin-bottom: 10px;">
+                <tr>
+                    <td width="35%" style="padding: 8px 14px; background-color: #f9fafb; font-size: 12px; font-weight: 600; color: #4b5563; border-bottom: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb;">Payment Method</td>
+                    <td style="padding: 8px 14px; font-size: 12px; color: #111827; border-bottom: 1px solid #e5e7eb;">Paystack (Card)</td>
+                </tr>
+                <tr>
+                    <td width="35%" style="padding: 8px 14px; background-color: #f9fafb; font-size: 12px; font-weight: 600; color: #4b5563; border-bottom: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb;">Transaction Reference</td>
+                    <td style="padding: 8px 14px; font-size: 12px; font-family: 'Space Grotesk', 'DejaVu Sans', monospace; color: #111827; border-bottom: 1px solid #e5e7eb;">STP_8_1_1730554800_a1b2</td>
+                </tr>
+                <tr>
+                    <td width="35%" style="padding: 8px 14px; background-color: #f9fafb; font-size: 12px; font-weight: 600; color: #4b5563; border-bottom: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb;">Date & Time Paid</td>
+                    <td style="padding: 8px 14px; font-size: 12px; color: #111827; border-bottom: 1px solid #e5e7eb;">2 Nov 2026 at 11:30 AM</td>
+                </tr>
+                <tr>
+                    <td width="35%" style="padding: 8px 14px; background-color: #f9fafb; font-size: 12px; font-weight: 600; color: #4b5563; border-right: 1px solid #e5e7eb;">Gateway Status</td>
+                    <td style="padding: 8px 14px; font-size: 12px; color: #047857; font-weight: 600;">Success (Verified)</td>
+                </tr>
+            </table>
+
+        </td>
+    </tr>
+
+    <!-- 8. FOOTER BLOCK -->
+    <tr>
+        <td style="background-color: #fafbfc; border-top: 1px solid #e5e7eb; padding: 22px 28px; text-align: center; font-size: 11px; color: #6b7280; line-height: 1.6;">
+            <div style="font-weight: 600; color: #374151; margin-bottom: 3px;">
+                Thank you for your payment to Spider Technologies Limited.
+            </div>
+            <div>
+                Questions? Contact <a href="mailto:info@spidertech.com.ng" style="color: #f48221; text-decoration: none;">info@spidertech.com.ng</a> or +234 911 626 5708
+            </div>
+            <div style="margin-top: 3px;">
+                Flat 3, Left Wing, Abinsa House, Zaria Road, Kano
+            </div>
+            <div style="font-size: 10px; color: #9ca3af; margin-top: 8px; font-style: italic;">
+                This is a computer-generated receipt and does not require a signature.
+            </div>
+        </td>
+    </tr>
+
+</table>
+
+</body>
+</html>

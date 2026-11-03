@@ -7,11 +7,13 @@ class Database {
     public $conn;
 
     public function __construct() {
-        $config = require __DIR__ . '/db_config.php';
-        $this->host = $config['db_host'];
-        $this->db_name = $config['db_name'];
-        $this->username = $config['db_user'];
-        $this->password = $config['db_pass'];
+        $configFile = __DIR__ . '/db_config.php';
+        $config = file_exists($configFile) ? require $configFile : [];
+
+        $this->host = $config['db_host'] ?? (class_exists('Env') ? Env::get('DB_HOST', '127.0.0.1') : '127.0.0.1');
+        $this->db_name = $config['db_name'] ?? (class_exists('Env') ? Env::get('DB_NAME', 'spider_tech_updated_db') : 'spider_tech_updated_db');
+        $this->username = $config['db_user'] ?? (class_exists('Env') ? Env::get('DB_USER', 'root') : 'root');
+        $this->password = $config['db_pass'] ?? (class_exists('Env') ? Env::get('DB_PASS', '') : '');
     }
 
     public function getConnection() {
