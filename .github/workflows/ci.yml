@@ -1,0 +1,240 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run deploy (rsync --dry-run preview without modifying server)'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo, pdo_mysql, curl, mbstring, gd, zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Validate Composer configuration
+        run: composer validate --strict
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: PHP Syntax Lint (php -l)
+        run: |
+          echo "Running syntax check (php -l) on all PHP files..."
+          ERRORS=0
+          while IFS= read -r -d '' file; do
+            if ! php -l "$file" > /dev/null 2>&1; then
+              echo "::error file=$file::PHP syntax error in $file"
+              php -l "$file"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done < <(find . -type f -name "*.php" ! -path "./vendor/*" ! -path "./node_modules/*" ! -path "./scratch/*" -print0)
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "❌ Syntax lint failed with $ERRORS error(s)."
+            exit 1
+          fi
+          echo "✅ All PHP files passed syntax check."
+
+      - name: Run PHPUnit Test Suite
+        run: ./vendor/bin/phpunit --testdox
+
+      - name: Run PHPStan Static Analysis
+        run: ./vendor/bin/phpstan analyse --memory-limit 512M
+
+      - name: Security Check - Composer Audit
+        run: composer audit
+
+      - name: Security Check - Secret Scanning (Gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: false
+
+      - name: Security Check - Block Committed Secrets & Private Keys
+        run: |
+          echo "Verifying no private keys or committed .env files exist in git index..."
+          BLOCKED=$(git ls-files | grep -E '^(\.env|\.env\..*|.*\.key|.*id_rsa.*)$' | grep -v '^\.env\.example$' || true)
+          if [ -n "$BLOCKED" ]; then
+            echo "::error::Prohibited sensitive files committed in git:"
+            echo "$BLOCKED"
+            exit 1
+          fi
+          echo "✅ No prohibited files tracked in git."
+
+      - name: Security Check - Audit Debug Leftovers
+        run: |
+          echo "Auditing for active phpinfo() or var_dump() leftovers in application code..."
+          MATCHES=$(grep -rn --include="*.php" --exclude-dir={vendor,node_modules,scratch,tests} -E '(var_dump|phpinfo)\s*\(' . | grep -v '^[[:space:]]*//' | grep -v '^[[:space:]]*\#' | grep -v '^[[:space:]]*\*' || true)
+          if [ -n "$MATCHES" ]; then
+            echo "::error::Active debug statement detected in production code:"
+            echo "$MATCHES"
+            exit 1
+          fi
+          echo "✅ No active debug statements found."
+
+      - name: Security Check - Audit Dangerous Code Patterns (Warnings)
+        run: |
+          echo "Scanning for risky legacy patterns (reported as warnings)..."
+          RISKY=$(grep -rn --include="*.php" --exclude-dir={vendor,node_modules,scratch,tests} -E 'eval\s*\(' . || true)
+          if [ -n "$RISKY" ]; then
+            echo "::warning::Potentially risky eval() calls detected:"
+            echo "$RISKY" | head -n 20
+          else
+            echo "✅ No eval() occurrences found."
+          fi
+
+  deploy:
+    name: Deploy to Production
+    needs: verify
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure SSH Deploy Key
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+          SSH_KEY_FILE=$(mktemp)
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > "$SSH_KEY_FILE"
+          chmod 600 "$SSH_KEY_FILE"
+
+          echo "SSH_KEY_FILE=$SSH_KEY_FILE" >> "$GITHUB_ENV"
+
+      - name: Remote Pre-Deploy Backup on cPanel
+        run: |
+          echo "Connecting to cPanel over SSH to take pre-deploy backup..."
+          ssh -i "$SSH_KEY_FILE" -p "${{ secrets.SSH_PORT }}" "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "bash -s" << 'EOF'
+            set -euo pipefail
+            DEPLOY_PATH="${{ secrets.DEPLOY_PATH }}"
+            BACKUP_PARENT="$(dirname "$DEPLOY_PATH")"
+            BACKUP_DIR="${BACKUP_PARENT}/deploy_backups"
+            mkdir -p "$BACKUP_DIR"
+
+            if [ -d "$DEPLOY_PATH" ] && [ "$(ls -A "$DEPLOY_PATH")" ]; then
+              TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+              BACKUP_FILE="${BACKUP_DIR}/backup_${TIMESTAMP}.tar.gz"
+              echo "Creating timestamped backup: ${BACKUP_FILE}"
+              tar --exclude='storage/receipts' \
+                  --exclude='uploads' \
+                  --exclude='images/registrations' \
+                  --exclude='images/pictures' \
+                  -czf "${BACKUP_FILE}" -C "$DEPLOY_PATH" .
+              
+              # Keep only the 5 most recent backups
+              cd "$BACKUP_DIR"
+              ls -t backup_*.tar.gz | tail -n +6 | xargs -r rm -f
+              echo "Backup complete. Retained last 5 backups:"
+              ls -lh backup_*.tar.gz
+            else
+              echo "Deploy directory is empty or not created yet; skipping initial backup."
+            fi
+          EOF
+
+      - name: Synchronize Files via Rsync
+        run: |
+          DRY_RUN_ARG=""
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            DRY_RUN_ARG="--dry-run"
+            echo "⚠️ DRY RUN MODE: No files will be modified on the server."
+          fi
+
+          echo "Executing rsync over SSH..."
+          rsync -az $DRY_RUN_ARG \
+            --delete \
+            --exclude-from='.rsync-exclude' \
+            -e "ssh -i $SSH_KEY_FILE -p ${{ secrets.SSH_PORT }}" \
+            ./ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/"
+
+      - name: Remote Post-Deploy Tasks (Composer)
+        if: ${{ inputs.dry_run != true }}
+        run: |
+          echo "Running remote post-deploy tasks..."
+          ssh -i "$SSH_KEY_FILE" -p "${{ secrets.SSH_PORT }}" "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "bash -s" << 'EOF'
+            set -euo pipefail
+            cd "${{ secrets.DEPLOY_PATH }}"
+            if command -v composer >/dev/null 2>&1; then
+              echo "Running 'composer install --no-dev --optimize-autoloader' on server..."
+              composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+            else
+              echo "Composer command not found globally; skipping remote composer install."
+            fi
+          EOF
+
+      - name: Health Check Verification
+        if: ${{ inputs.dry_run != true }}
+        run: |
+          HEALTH_URL="${{ vars.HEALTH_CHECK_URL || secrets.HEALTH_CHECK_URL }}"
+          echo "Running health check against: $HEALTH_URL"
+          
+          HTTP_STATUS=$(curl -s -o /tmp/health_response.json -w "%{http_code}" --retry 3 --retry-delay 3 --max-time 15 "$HEALTH_URL" || true)
+          
+          echo "HTTP Status Code: $HTTP_STATUS"
+          echo "Response Body:"
+          cat /tmp/health_response.json 2>/dev/null || true
+          echo ""
+
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "::error::Health check failed! Expected HTTP 200, got HTTP $HTTP_STATUS"
+            exit 1
+          fi
+          echo "✅ Health check succeeded! Application is healthy on production."
+
+      - name: Cleanup Temporary SSH Key
+        if: always()
+        run: |
+          if [ -n "${SSH_KEY_FILE:-}" ] && [ -f "$SSH_KEY_FILE" ]; then
+            shred -u "$SSH_KEY_FILE" 2>/dev/null || rm -f "$SSH_KEY_FILE"
+            echo "Cleaned up temporary SSH deploy key."
+          fi

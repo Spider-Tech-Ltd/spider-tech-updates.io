@@ -1,0 +1,46 @@
+# Version control & Git metadata
+.git/
+.github/
+.githooks/
+.gitleaks.toml
+.gitignore
+
+# Testing and Static Analysis
+tests/
+phpunit.xml
+.phpunit.cache/
+.phpunit.result.cache
+phpstan.neon
+.phpstan.cache/
+
+# Local Dev and Documentation
+docs/
+scratch/
+plans/
+.agents/
+skills-lock.json
+*.md
+404.html
+screenshot_*.png
+
+# Node Tooling (Not needed in production)
+node_modules/
+package.json
+package-lock.json
+build-minify.js
+
+# Environment and Secrets (Must NEVER be overwritten on server!)
+.env
+.env.*
+.env.example
+config/db_config.example.php
+config/db_config.php
+
+# Server-side Persistent & Upload Directories (DO NOT OVERWRITE/DELETE)
+storage/receipts/*
+uploads/forum/*
+images/registrations/*
+images/pictures/*
+*.log
+tmp/
+temp/
