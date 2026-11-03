@@ -197,10 +197,15 @@ Below is a proposed hardening template for your production `.htaccess`. Review a
 # SPIDER TECH PRODUCTION HARDENING RECOMMENDATIONS
 # ==============================================================================
 
-# 1. Disable Directory Browsing
+# 1. Block Direct Execution of Scripts in Upload / Storage Folders (mod_rewrite)
+<IfModule mod_rewrite.c>
+    RewriteRule ^(uploads|storage|images)/.*\.(php[0-9]?|phtml|phps|cgi|pl|py|sh)$ - [F,NC,L]
+</IfModule>
+
+# 2. Disable Directory Browsing
 Options -Indexes
 
-# 2. Prevent Access to Dotfiles and Hidden Files (.env, .git, etc.)
+# 3. Prevent Access to Dotfiles and Hidden Files (.env, .git, etc.)
 <FilesMatch "^\.">
     <IfModule mod_authz_core.c>
         Require all denied
@@ -211,8 +216,8 @@ Options -Indexes
     </IfModule>
 </FilesMatch>
 
-# 3. Block Direct HTTP Access to Sensitive Configuration and Maintenance Files
-<FilesMatch "(^db_config\.php|\.neon$|\.xml$|\.log$|\.sql$|composer\.(json|lock)|package(-lock)?\.json|repair_.*\.php|sync_database\.php|reset_admin\.php)">
+# 4. Block Direct HTTP Access to Sensitive Configuration and Maintenance Files
+<FilesMatch "(^db_config\.php|\.neon$|\.xml$|\.log$|\.sql$|composer\.(json|lock)|package(-lock)?\.json|repair_.*\.php|sync_database\.php|reset_admin\.php|fix_blog_db\.php|migrate_settings\.php)">
     <IfModule mod_authz_core.c>
         Require all denied
     </IfModule>
@@ -221,19 +226,6 @@ Options -Indexes
         Deny from all
     </IfModule>
 </FilesMatch>
-
-# 4. Block Direct Execution of Scripts in Upload / Storage Folders
-<DirectoryMatch "^.*/(uploads|storage|images)/.*">
-    <FilesMatch "\.(php|phtml|php3|php4|php5|php7|phps|cgi|pl|py|sh)$">
-        <IfModule mod_authz_core.c>
-            Require all denied
-        </IfModule>
-        <IfModule !mod_authz_core.c>
-            Order allow,deny
-            Deny from all
-        </IfModule>
-    </FilesMatch>
-</DirectoryMatch>
 
 # 5. Modern Security Headers
 <IfModule mod_headers.c>
