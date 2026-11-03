@@ -134,20 +134,44 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     environment: production
+    env:
+      SSH_HOST: ${{ secrets.SSH_HOST || vars.SSH_HOST }}
+      SSH_PORT: ${{ secrets.SSH_PORT || vars.SSH_PORT || '22' }}
+      SSH_USER: ${{ secrets.SSH_USER || vars.SSH_USER }}
+      SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS || vars.SSH_KNOWN_HOSTS }}
+      DEPLOY_PATH: ${{ secrets.DEPLOY_PATH || vars.DEPLOY_PATH }}
+      HEALTH_CHECK_URL: ${{ secrets.HEALTH_CHECK_URL || vars.HEALTH_CHECK_URL }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Validate Deployment Configuration
+        run: |
+          echo "Validating deployment secrets and configuration..."
+          MISSING=""
+          [ -z "$SSH_HOST" ] && MISSING="$MISSING SSH_HOST"
+          [ -z "$SSH_USER" ] && MISSING="$MISSING SSH_USER"
+          [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ] && MISSING="$MISSING SSH_PRIVATE_KEY"
+          [ -z "$SSH_KNOWN_HOSTS" ] && MISSING="$MISSING SSH_KNOWN_HOSTS"
+          [ -z "$DEPLOY_PATH" ] && MISSING="$MISSING DEPLOY_PATH"
+
+          if [ -n "$MISSING" ]; then
+            echo "::error::Missing required deployment credentials:$MISSING"
+            echo "Please ensure they are defined under Settings > Environments > production (or Settings > Secrets and variables > Actions)."
+            exit 1
+          fi
+          echo "✅ Configuration validated (SSH_HOST=$SSH_HOST, SSH_PORT=$SSH_PORT, SSH_USER=$SSH_USER, DEPLOY_PATH=$DEPLOY_PATH)."
+
       - name: Configure SSH Deploy Key
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          printf "%s\n" "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
           SSH_KEY_FILE=$(mktemp)
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > "$SSH_KEY_FILE"
+          printf "%s\n" "${{ secrets.SSH_PRIVATE_KEY }}" > "$SSH_KEY_FILE"
           chmod 600 "$SSH_KEY_FILE"
 
           echo "SSH_KEY_FILE=$SSH_KEY_FILE" >> "$GITHUB_ENV"
@@ -155,32 +179,7 @@ jobs:
       - name: Remote Pre-Deploy Backup on cPanel
         run: |
           echo "Connecting to cPanel over SSH to take pre-deploy backup..."
-          ssh -i "$SSH_KEY_FILE" -p "${{ secrets.SSH_PORT }}" "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "bash -s" << 'EOF'
-            set -euo pipefail
-            DEPLOY_PATH="${{ secrets.DEPLOY_PATH }}"
-            BACKUP_PARENT="$(dirname "$DEPLOY_PATH")"
-            BACKUP_DIR="${BACKUP_PARENT}/deploy_backups"
-            mkdir -p "$BACKUP_DIR"
-
-            if [ -d "$DEPLOY_PATH" ] && [ "$(ls -A "$DEPLOY_PATH")" ]; then
-              TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-              BACKUP_FILE="${BACKUP_DIR}/backup_${TIMESTAMP}.tar.gz"
-              echo "Creating timestamped backup: ${BACKUP_FILE}"
-              tar --exclude='storage/receipts' \
-                  --exclude='uploads' \
-                  --exclude='images/registrations' \
-                  --exclude='images/pictures' \
-                  -czf "${BACKUP_FILE}" -C "$DEPLOY_PATH" .
-              
-              # Keep only the 5 most recent backups
-              cd "$BACKUP_DIR"
-              ls -t backup_*.tar.gz | tail -n +6 | xargs -r rm -f
-              echo "Backup complete. Retained last 5 backups:"
-              ls -lh backup_*.tar.gz
-            else
-              echo "Deploy directory is empty or not created yet; skipping initial backup."
-            fi
-          EOF
+          ssh -i "$SSH_KEY_FILE" -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "bash -s -- \"$DEPLOY_PATH\"" < .github/scripts/remote_backup.sh
 
       - name: Synchronize Files via Rsync
         run: |
@@ -194,31 +193,25 @@ jobs:
           rsync -az $DRY_RUN_ARG \
             --delete \
             --exclude-from='.rsync-exclude' \
-            -e "ssh -i $SSH_KEY_FILE -p ${{ secrets.SSH_PORT }}" \
-            ./ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/"
+            -e "ssh -i $SSH_KEY_FILE -p $SSH_PORT" \
+            ./ "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/"
 
       - name: Remote Post-Deploy Tasks (Composer)
         if: ${{ inputs.dry_run != true }}
         run: |
           echo "Running remote post-deploy tasks..."
-          ssh -i "$SSH_KEY_FILE" -p "${{ secrets.SSH_PORT }}" "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" "bash -s" << 'EOF'
-            set -euo pipefail
-            cd "${{ secrets.DEPLOY_PATH }}"
-            if command -v composer >/dev/null 2>&1; then
-              echo "Running 'composer install --no-dev --optimize-autoloader' on server..."
-              composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
-            else
-              echo "Composer command not found globally; skipping remote composer install."
-            fi
-          EOF
+          ssh -i "$SSH_KEY_FILE" -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "bash -s -- \"$DEPLOY_PATH\"" < .github/scripts/remote_composer.sh
 
       - name: Health Check Verification
         if: ${{ inputs.dry_run != true }}
         run: |
-          HEALTH_URL="${{ vars.HEALTH_CHECK_URL || secrets.HEALTH_CHECK_URL }}"
-          echo "Running health check against: $HEALTH_URL"
+          echo "Running health check against: $HEALTH_CHECK_URL"
+          if [ -z "$HEALTH_CHECK_URL" ]; then
+            echo "::warning::HEALTH_CHECK_URL not configured; skipping health check."
+            exit 0
+          fi
           
-          HTTP_STATUS=$(curl -s -o /tmp/health_response.json -w "%{http_code}" --retry 3 --retry-delay 3 --max-time 15 "$HEALTH_URL" || true)
+          HTTP_STATUS=$(curl -s -o /tmp/health_response.json -w "%{http_code}" --retry 3 --retry-delay 3 --max-time 15 "$HEALTH_CHECK_URL" || true)
           
           echo "HTTP Status Code: $HTTP_STATUS"
           echo "Response Body:"
@@ -238,4 +231,3 @@ jobs:
             shred -u "$SSH_KEY_FILE" 2>/dev/null || rm -f "$SSH_KEY_FILE"
             echo "Cleaned up temporary SSH deploy key."
           fi
-
