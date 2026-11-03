@@ -1,19 +1,26 @@
 <IfModule mod_rewrite.c>
 RewriteEngine On
 
-# Ensure CSS, JS, and Images are served directly
+# 1. Block direct execution of scripts in upload / storage / images folders
+RewriteRule ^(uploads|storage|images)/.*\.(php[0-9]?|phtml|phps|cgi|pl|py|sh)$ - [F,NC,L]
+
+# 2. Ensure existing CSS, JS, and Images are served directly
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
-# Send all other requests to index.php
+# 3. Send all other requests to index.php
 RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
 </IfModule>
 
-# Prevent directory browsing
+# ==============================================================================
+# 1. Directory Browsing Protection
+# ==============================================================================
 Options -Indexes
 
-# Protect sensitive environment and configuration files from direct HTTP access
-<FilesMatch "^\.env">
+# ==============================================================================
+# 2. Block Direct Access to Dotfiles and Hidden Files (.env, .git, etc.)
+# ==============================================================================
+<FilesMatch "^\.">
   <IfModule mod_authz_core.c>
     Require all denied
   </IfModule>
@@ -23,10 +30,23 @@ Options -Indexes
   </IfModule>
 </FilesMatch>
 
-# ========================================================
-# GZIP / Deflate Compression
+# ==============================================================================
+# 3. Block Direct HTTP Access to Sensitive Configs, Lockfiles & Maintenance Scripts
+# ==============================================================================
+<FilesMatch "(^db_config\.php|\.neon$|\.xml$|\.log$|\.sql$|composer\.(json|lock)|package(-lock)?\.json|repair_.*\.php|sync_database\.php|reset_admin\.php|fix_blog_db\.php|migrate_settings\.php)">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# ==============================================================================
+# 4. GZIP / Deflate Compression
 # Drastically reduces transferred page weight (CSS, JS, HTML)
-# ========================================================
+# ==============================================================================
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/plain
   AddOutputFilterByType DEFLATE text/html
@@ -45,9 +65,9 @@ Options -Indexes
   AddOutputFilterByType DEFLATE font/ttf
 </IfModule>
 
-# ========================================================
-# Leverage Browser Caching (mod_expires)
-# ========================================================
+# ==============================================================================
+# 5. Leverage Browser Caching (mod_expires)
+# ==============================================================================
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresDefault "access plus 1 month"
@@ -77,15 +97,21 @@ Options -Indexes
   ExpiresByType application/json "access plus 0 seconds"
 </IfModule>
 
-# ========================================================
-# Security & Cache Control Headers (mod_headers)
-# ========================================================
+# ==============================================================================
+# 6. Security & Cache Control Headers (mod_headers)
+# ==============================================================================
 <IfModule mod_headers.c>
   # Protect against MIME sniffing
   Header set X-Content-Type-Options "nosniff"
 
   # Clickjacking Protection
   Header always set X-Frame-Options "SAMEORIGIN"
+
+  # Cross-Site Scripting Filter
+  Header always set X-XSS-Protection "1; mode=block"
+
+  # Referrer Policy
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
 
   # Static Assets Cache Control
   <FilesMatch "\.(ico|jpe?g|png|gif|webp|svg|woff2?|ttf)$">
