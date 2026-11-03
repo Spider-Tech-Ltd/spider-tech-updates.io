@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/trainings.css?v=<?= filemtime(ROOT_PATH . '/css/trainings.css') ?>" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/trainings.css?v=<?= file_exists(ROOT_PATH . '/css/trainings.css') ? filemtime(ROOT_PATH . '/css/trainings.css') : 1 ?>" />
 
 <!-- ====== Page Header ====== -->
 <section class="page-header">

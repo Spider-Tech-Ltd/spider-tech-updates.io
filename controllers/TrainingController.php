@@ -2,53 +2,97 @@
 
 class TrainingController extends BaseController {
     public function index() {
-        $model = new TrainingModel($this->db);
-        $trainings = $model->getAllTrainings();
+        try {
+            $model = new TrainingModel($this->db);
+            $trainings = $model->getAllTrainings();
 
-        require_once ROOT_PATH . '/models/CohortModel.php';
-        $cohortModel = new CohortModel($this->db);
+            require_once ROOT_PATH . '/models/CohortModel.php';
+            $cohortModel = new CohortModel($this->db);
 
-        foreach ($trainings as &$t) {
-            $t['active_cohort'] = $cohortModel->getActiveCohort($t['id']) ?: null;
-            if (!$t['active_cohort']) {
-                $t['upcoming_cohort'] = $cohortModel->getUpcomingCohort($t['id']) ?: null;
+            foreach ($trainings as &$t) {
+                try {
+                    $t['active_cohort'] = $cohortModel->getActiveCohort($t['id']) ?: null;
+                    if (!$t['active_cohort']) {
+                        $t['upcoming_cohort'] = $cohortModel->getUpcomingCohort($t['id']) ?: null;
+                    }
+                    $selectedCohort = $t['active_cohort'] ?: ($t['upcoming_cohort'] ?: null);
+                    $t['effective_fee'] = $model->getEffectivePaymentAmount($t['id'], $selectedCohort['id'] ?? null);
+                } catch (\Throwable $te) {
+                    $t['active_cohort'] = null;
+                    $t['upcoming_cohort'] = null;
+                    $t['effective_fee'] = [
+                        'payments_enabled'   => false,
+                        'amount_kobo'        => 0,
+                        'amount_naira'       => 0.0,
+                        'is_cohort_override' => false
+                    ];
+                }
             }
-            $selectedCohort = $t['active_cohort'] ?: ($t['upcoming_cohort'] ?: null);
-            $t['effective_fee'] = $model->getEffectivePaymentAmount($t['id'], $selectedCohort['id'] ?? null);
-        }
-        unset($t);
+            unset($t);
 
-        $data = [
-            'trainings' => $trainings,
-            'contact' => $model->getContactDetails()
-        ];
-        $this->render("trainings/index", $data);
+            $data = [
+                'trainings' => $trainings,
+                'contact' => $model->getContactDetails()
+            ];
+            $this->render("trainings/index", $data);
+        } catch (\Throwable $e) {
+            error_log("TrainingController::index error: " . $e->getMessage());
+            $this->render("trainings/index", [
+                'trainings' => [],
+                'contact' => []
+            ]);
+        }
     }
 
     public function detail($id = null) {
         $id = $id ?? $_GET['id'] ?? null;
-        $model = new TrainingModel($this->db);
-        $training = $model->getTrainingById($id);
+        try {
+            $model = new TrainingModel($this->db);
+            $training = $id ? $model->getTrainingById($id) : null;
 
-        require_once ROOT_PATH . '/models/CohortModel.php';
-        $cohortModel = new CohortModel($this->db);
+            if (!$training) {
+                header("Location: " . BASE_URL . "/trainings");
+                exit();
+            }
 
-        $activeCohort = $cohortModel->getActiveCohort($id) ?: null;
-        $upcomingCohort = $cohortModel->getUpcomingCohort($id) ?: null;
-        $allCohorts = $cohortModel->getCohortsByTrainingId($id) ?: [];
+            require_once ROOT_PATH . '/models/CohortModel.php';
+            $cohortModel = new CohortModel($this->db);
 
-        $effectiveCohort = $activeCohort ?: ($upcomingCohort ?: null);
-        $paymentInfo = $model->getEffectivePaymentAmount($id, $effectiveCohort['id'] ?? null);
+            $activeCohort = null;
+            $upcomingCohort = null;
+            $allCohorts = [];
+            $effectiveCohort = null;
+            $paymentInfo = [
+                'payments_enabled'   => false,
+                'amount_kobo'        => 0,
+                'amount_naira'       => 0.0,
+                'is_cohort_override' => false
+            ];
 
-        $data = [
-            'training'        => $training,
-            'active_cohort'   => $activeCohort,
-            'upcoming_cohort' => $upcomingCohort,
-            'all_cohorts'     => $allCohorts,
-            'contact'         => $model->getContactDetails(),
-            'payment_info'    => $paymentInfo
-        ];
-        $this->render("trainings/detail", $data);
+            try {
+                $activeCohort = $cohortModel->getActiveCohort($id) ?: null;
+                $upcomingCohort = $cohortModel->getUpcomingCohort($id) ?: null;
+                $allCohorts = $cohortModel->getCohortsByTrainingId($id) ?: [];
+                $effectiveCohort = $activeCohort ?: ($upcomingCohort ?: null);
+                $paymentInfo = $model->getEffectivePaymentAmount($id, $effectiveCohort['id'] ?? null);
+            } catch (\Throwable $ce) {
+                error_log("TrainingController::detail cohort error: " . $ce->getMessage());
+            }
+
+            $data = [
+                'training'        => $training,
+                'active_cohort'   => $activeCohort,
+                'upcoming_cohort' => $upcomingCohort,
+                'all_cohorts'     => $allCohorts,
+                'contact'         => $model->getContactDetails(),
+                'payment_info'    => $paymentInfo
+            ];
+            $this->render("trainings/detail", $data);
+        } catch (\Throwable $e) {
+            error_log("TrainingController::detail error: " . $e->getMessage());
+            header("Location: " . BASE_URL . "/trainings");
+            exit();
+        }
     }
 
     public function register() {
