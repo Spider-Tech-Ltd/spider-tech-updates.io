@@ -10,6 +10,8 @@ $router = new Router();
 
 // Define mapping
 $routes = [
+    'health' => ['HealthController', 'check'],
+    'api/health' => ['HealthController', 'check'],
     'home' => ['HomeController', 'index'],
     '' => ['HomeController', 'index'],
     'events' => ['EventController', 'index'],

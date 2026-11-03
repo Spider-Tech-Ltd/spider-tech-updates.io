@@ -1,0 +1,15 @@
+parameters:
+    level: 1
+    paths:
+        - controllers
+        - models
+        - utils
+        - config
+    bootstrapFiles:
+        - tests/phpstan-bootstrap.php
+    excludePaths:
+        - vendor/*
+        - node_modules/*
+        - scratch/*
+    ignoreErrors:
+        - '#Variable \$(firstName|id) in empty\(\) always exists#'
