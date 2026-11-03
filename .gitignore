@@ -52,6 +52,7 @@ images/pictures/*
 tmp/
 temp/
 .cache/
+scratch/
 
 # Executables and archives
 *.exe
