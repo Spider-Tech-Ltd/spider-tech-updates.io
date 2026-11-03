@@ -2,6 +2,7 @@
     "name": "spider-tech/forum",
     "description": "Industrial Forum with MVC and Email Verification",
     "type": "project",
+    "license": "proprietary",
     "require": {
         "php": ">=8.2 <8.5",
         "phpmailer/phpmailer": "^6.8",
