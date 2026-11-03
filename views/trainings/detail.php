@@ -3,7 +3,7 @@
  * Training Detail View
  */
 ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/css/training-detail.css?v=<?= filemtime(ROOT_PATH . '/css/training-detail.css') ?>" />
+<link rel="stylesheet" href="<?= BASE_URL ?>/css/training-detail.css?v=<?= file_exists(ROOT_PATH . '/css/training-detail.css') ? filemtime(ROOT_PATH . '/css/training-detail.css') : 1 ?>" />
 
 <!-- ====== Page Header ====== -->
 <section class="page-header">
