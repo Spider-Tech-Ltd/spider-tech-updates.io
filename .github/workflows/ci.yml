@@ -181,7 +181,7 @@ jobs:
           echo "Connecting to cPanel over SSH to take pre-deploy backup..."
           ssh -i "$SSH_KEY_FILE" -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "bash -s -- \"$DEPLOY_PATH\"" < .github/scripts/remote_backup.sh
 
-      - name: Synchronize Files via Rsync
+      - name: Synchronize Files (Rsync with Tar Fallback)
         run: |
           DRY_RUN_ARG=""
           if [ "${{ inputs.dry_run }}" = "true" ]; then
@@ -189,12 +189,28 @@ jobs:
             echo "⚠️ DRY RUN MODE: No files will be modified on the server."
           fi
 
-          echo "Executing rsync over SSH..."
-          rsync -az $DRY_RUN_ARG \
-            --delete \
-            --exclude-from='.rsync-exclude' \
-            -e "ssh -i $SSH_KEY_FILE -p $SSH_PORT" \
-            ./ "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/"
+          echo "Detecting remote rsync availability on server..."
+          REMOTE_RSYNC=$(ssh -i "$SSH_KEY_FILE" -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "command -v rsync || which rsync || for p in /usr/bin/rsync /usr/local/bin/rsync /bin/rsync; do [ -x \"\$p\" ] && echo \"\$p\" && break; done" 2>/dev/null || true)
+
+          if [ -n "$REMOTE_RSYNC" ]; then
+            echo "✅ Remote rsync found at: $REMOTE_RSYNC"
+            echo "Executing rsync over SSH..."
+            rsync -az $DRY_RUN_ARG \
+              --delete \
+              --rsync-path="$REMOTE_RSYNC" \
+              --exclude-from='.rsync-exclude' \
+              -e "ssh -i $SSH_KEY_FILE -p $SSH_PORT" \
+              ./ "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/"
+          else
+            echo "ℹ️ rsync command not available on remote server. Deploying via streaming tar over SSH..."
+            if [ "${{ inputs.dry_run }}" = "true" ]; then
+              echo "DRY RUN preview of files that would be deployed:"
+              tar --exclude-from='.rsync-exclude' -cvzf /dev/null .
+            else
+              tar --exclude-from='.rsync-exclude' -czf - . | ssh -i "$SSH_KEY_FILE" -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "tar -xzf - -C \"$DEPLOY_PATH\""
+            fi
+            echo "✅ Files synchronized successfully."
+          fi
 
       - name: Remote Post-Deploy Tasks (Composer)
         if: ${{ inputs.dry_run != true }}
